@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://co453pji2jcqe"]
+
+[ext_resource type="PackedScene" uid="uid://c2xoxd2pp5ve3" path="res://piece/piece.tscn" id="1_p5jdo"]
+[ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="2_mqw5f"]
+
+[node name="green_sq_" instance=ExtResource("1_p5jdo")]
+color = "green"
+base_texture = ExtResource("2_mqw5f")
+scene_location = "res://piece/_green_sq/green_sq_0.tscn"

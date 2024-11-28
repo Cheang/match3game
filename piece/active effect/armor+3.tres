@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DefenceResource" load_steps=2 format=3 uid="uid://biyewp5jf4ta7"]
+
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseDefence.gd" id="1_1yhbh"]
+
+[resource]
+script = ExtResource("1_1yhbh")
+armor = 3.0
+mage_armor = 0

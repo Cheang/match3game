@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://fkwi6d3pn4c4"]
+
+[ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_bg.png" id="1_ioeul"]
+[ext_resource type="Script" path="res://grid.gd" id="2_i4bg5"]
+[ext_resource type="PackedScene" uid="uid://dwha7dciwfxlb" path="res://piece/red_sq/red_sq_1.tscn" id="4_8k3p4"]
+
+[node name="game_window" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ioeul")
+centered = false
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 255.0
+offset_right = 546.0
+offset_bottom = 835.0
+grow_vertical = 0
+color = Color(0.0807833, 0.0807833, 0.0807833, 1)
+
+[node name="Grid" type="Node2D" parent="."]
+script = ExtResource("2_i4bg5")
+grd_x_start = 64
+grd_y_start = 800
+grd_width = 7
+grd_height = 9
+grd_offset = 64
+deck = Array[PackedScene]([ExtResource("4_8k3p4")])
+
+[node name="destroy_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="collapse_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="destroy_timer" to="Grid" method="_on_destroy_timer_timeout"]
+[connection signal="timeout" from="collapse_timer" to="Grid" method="_on_collapse_timer_timeout"]

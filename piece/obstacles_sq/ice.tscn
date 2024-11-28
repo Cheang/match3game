@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://6bg86rq0qfm7"]
+
+[ext_resource type="Script" path="res://piece/obstacles_sq/ice.gd" id="1_ij5jg"]
+[ext_resource type="Texture2D" uid="uid://iid6060fpqx0" path="res://assets/obstacles/ice_0_sq.png" id="1_t78ve"]
+
+[node name="ice" type="Node2D"]
+script = ExtResource("1_ij5jg")
+
+[node name="sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_t78ve")

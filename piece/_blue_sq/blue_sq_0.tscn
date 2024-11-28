@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bth1axcbcess2"]
+
+[ext_resource type="PackedScene" uid="uid://c2xoxd2pp5ve3" path="res://piece/piece.tscn" id="1_iurr3"]
+[ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_wcpfq"]
+
+[node name="blue_sq_" instance=ExtResource("1_iurr3")]
+color = "blue"
+base_texture = ExtResource("2_wcpfq")
+
+[node name="base" parent="." index="0"]
+texture = ExtResource("2_wcpfq")

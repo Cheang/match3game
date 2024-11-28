@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3 uid="uid://d20iwi733vona"]
+
+[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/red_sq_0.tscn" id="1_82b50"]
+[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="2_b7sem"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_bqbga"]
+[ext_resource type="Resource" uid="uid://t1q3a7d18m50" path="res://piece/active effect/attack+1.tres" id="4_04lm0"]
+
+[node name="red_sq_1" instance=ExtResource("1_82b50")]
+icon_texture = ExtResource("2_b7sem")
+type = 1
+scene_location = "res://piece/_red_sq/red_sq_1.tscn"
+action = Array[ExtResource("3_bqbga")]([ExtResource("4_04lm0")])

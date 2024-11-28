@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://u8xfuav2kkon"]
+
+[ext_resource type="PackedScene" uid="uid://c2xoxd2pp5ve3" path="res://piece/piece.tscn" id="1_8ap24"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="2_wr1up"]
+
+[node name="white_sq_" instance=ExtResource("1_8ap24")]
+color = "white"
+base_texture = ExtResource("2_wr1up")
+scene_location = "res://piece/_white_sq/white_sq_0.tscn"

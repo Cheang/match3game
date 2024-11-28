@@ -1,0 +1,211 @@
+[gd_scene load_steps=20 format=3 uid="uid://fkwi6d3pn4c4"]
+
+[ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
+[ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
+[ext_resource type="Script" path="res://game_master.gd" id="1_q6hof"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd.gd" id="2_i4bg5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_ice.gd" id="4_a7uqp"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy.gd" id="5_7ysvn"]
+[ext_resource type="Texture2D" uid="uid://bjgsv4h0k734v" path="res://assets/level_ui/grd_border.png" id="7_238bl"]
+[ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="9_a7vs4"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="10_lbrow"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="11_ghvty"]
+[ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="12_tovol"]
+[ext_resource type="PackedScene" uid="uid://dl0flt3tsf4q0" path="res://scene_trans_animation.tscn" id="14_aywqd"]
+[ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
+
+[sub_resource type="Gradient" id="Gradient_0drn5"]
+offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
+colors = PackedColorArray(0.976471, 0.760784, 0.168627, 1, 0.960784, 0.490196, 0.290196, 1, 0.917647, 0.309804, 0.211765, 1, 0.701961, 0.219608, 0.192157, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fxgpp"]
+gradient = SubResource("Gradient_0drn5")
+
+[sub_resource type="Curve" id="Curve_i0e58"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.208791), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_raivq"]
+curve = SubResource("Curve_i0e58")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4x0u5"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(-2, 26, 1)
+direction = Vector3(0, -1, 0)
+spread = 30.0
+initial_velocity_min = 90.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_raivq")
+color_ramp = SubResource("GradientTexture1D_fxgpp")
+turbulence_enabled = true
+turbulence_noise_strength = 0.88
+turbulence_noise_scale = 2.825
+
+[node name="game_window" type="Node2D"]
+script = ExtResource("1_q6hof")
+
+[node name="background" type="Sprite2D" parent="."]
+texture = ExtResource("1_h0vfo")
+centered = false
+
+[node name="grd" type="Node2D" parent="."]
+script = ExtResource("2_i4bg5")
+
+[node name="destroy_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="collapse_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="refill_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="grd_ice" type="Node2D" parent="."]
+script = ExtResource("4_a7uqp")
+
+[node name="grd_freeze" type="Node2D" parent="."]
+script = ExtResource("4_lguch")
+
+[node name="middleground" type="Sprite2D" parent="."]
+texture = ExtResource("1_ioeul")
+centered = false
+
+[node name="enemy" type="Node2D" parent="."]
+script = ExtResource("5_7ysvn")
+
+[node name="art" type="Node2D" parent="enemy"]
+
+[node name="enemy_healthbar" type="TextureProgressBar" parent="enemy"]
+offset_left = 34.0
+offset_top = 197.0
+offset_right = 319.0
+offset_bottom = 243.0
+value = 100.0
+texture_under = ExtResource("9_a7vs4")
+texture_progress = ExtResource("10_lbrow")
+
+[node name="fire_particles" type="GPUParticles2D" parent="enemy/enemy_healthbar"]
+visible = false
+position = Vector2(285, 23)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_4x0u5")
+lifetime = 0.5
+speed_scale = 0.7
+randomness = 1.0
+fixed_fps = 60
+
+[node name="health" type="Label" parent="enemy"]
+offset_left = 38.0
+offset_top = 176.0
+offset_right = 146.0
+offset_bottom = 199.0
+theme = ExtResource("12_tovol")
+text = "Health : "
+
+[node name="attack" type="Label" parent="enemy"]
+offset_left = 210.0
+offset_top = 176.0
+offset_right = 318.0
+offset_bottom = 199.0
+theme = ExtResource("12_tovol")
+text = "15 :Attack"
+horizontal_alignment = 2
+
+[node name="player" type="Node2D" parent="."]
+script = ExtResource("11_ghvty")
+
+[node name="art" type="Node2D" parent="player"]
+
+[node name="player_healthbar" type="TextureProgressBar" parent="player"]
+offset_left = 257.0
+offset_top = 845.0
+offset_right = 542.0
+offset_bottom = 891.0
+value = 100.0
+texture_under = ExtResource("9_a7vs4")
+texture_progress = ExtResource("10_lbrow")
+
+[node name="fire_particles" type="GPUParticles2D" parent="player/player_healthbar"]
+visible = false
+position = Vector2(285, 23)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_4x0u5")
+lifetime = 0.5
+speed_scale = 0.7
+randomness = 1.0
+fixed_fps = 60
+
+[node name="buff_container" type="HFlowContainer" parent="player"]
+offset_left = 257.0
+offset_top = 893.0
+offset_right = 543.0
+offset_bottom = 933.0
+
+[node name="armor" type="TextureRect" parent="player/buff_container"]
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="armorlabel" type="Label" parent="player/buff_container/armor"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="marmor" type="TextureRect" parent="player/buff_container"]
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/buff_container/marmor"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="move_remaing" type="Label" parent="player"]
+offset_top = 7.0
+offset_right = 576.0
+offset_bottom = 37.0
+theme = ExtResource("12_tovol")
+theme_override_font_sizes/font_size = 32
+text = "Moves Remaing: 2"
+horizontal_alignment = 1
+
+[node name="foreground" type="Node2D" parent="."]
+
+[node name="border" type="Sprite2D" parent="foreground"]
+texture = ExtResource("7_238bl")
+centered = false
+
+[node name="scene_trans_animation" parent="." instance=ExtResource("14_aywqd")]
+
+[connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
+[connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
+[connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
+[connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
+[connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
+[connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
+[connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
+[connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
+[connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]
+[connection signal="remove_freeze" from="grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]
+[connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
+[connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
+[connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Basic_Attack" load_steps=2 format=3 uid="uid://hjj2qcqtybi5"]
+
+[ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="1_hgo81"]
+
+[resource]
+script = ExtResource("1_hgo81")
+damage = 1.0
+attacks = 1
+tooltip = "Weak Attack"
+animation = "attack_1"

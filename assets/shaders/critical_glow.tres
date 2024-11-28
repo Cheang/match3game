@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://bx5wdhjhroa7g"]
+
+[ext_resource type="Shader" path="res://assets/shaders/critical_glow.gdshader" id="1_xr0j1"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_pyv5b"]
+seed = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_faqmc"]
+width = 1280
+height = 1280
+invert = true
+seamless = true
+noise = SubResource("FastNoiseLite_pyv5b")
+
+[resource]
+shader = ExtResource("1_xr0j1")
+shader_parameter/radius = 0.448
+shader_parameter/effectControl = 0.101
+shader_parameter/burnSpeed = 0.076
+shader_parameter/shape = 0.73
+shader_parameter/textureNoise = SubResource("NoiseTexture2D_faqmc")

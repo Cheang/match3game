@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cq7p5ohskxr3l"]
+
+[ext_resource type="PackedScene" uid="uid://6bg86rq0qfm7" path="res://piece/obstacles_sq/ice.tscn" id="1_33a2s"]
+[ext_resource type="Texture2D" uid="uid://dcom3higufo3p" path="res://assets/obstacles/freeze_0_sq.png" id="2_md8o5"]
+
+[node name="freeze" instance=ExtResource("1_33a2s")]
+
+[node name="sprite" parent="." index="0"]
+texture = ExtResource("2_md8o5")

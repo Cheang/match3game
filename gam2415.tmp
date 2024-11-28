@@ -1,0 +1,83 @@
+[gd_scene load_steps=11 format=3 uid="uid://fkwi6d3pn4c4"]
+
+[ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
+[ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd.gd" id="2_i4bg5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_ice.gd" id="4_a7uqp"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]
+[ext_resource type="Script" path="res://scripts/Enemies/enemy.gd" id="5_7ysvn"]
+[ext_resource type="Texture2D" uid="uid://mbuvb6425dqb" path="res://assets/enemy/lamia_body.png" id="5_fdw0g"]
+[ext_resource type="Texture2D" uid="uid://sthdsxoo7cxw" path="res://assets/enemy/lamia_head.png" id="6_dgcrs"]
+[ext_resource type="Texture2D" uid="uid://bjgsv4h0k734v" path="res://assets/level_ui/grd_border.png" id="7_238bl"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="10_lbrow"]
+
+[node name="game_window" type="Node2D"]
+
+[node name="background" type="Sprite2D" parent="."]
+texture = ExtResource("1_h0vfo")
+centered = false
+
+[node name="grd" type="Node2D" parent="."]
+script = ExtResource("2_i4bg5")
+empty_spaces = Array[Vector2]([Vector2(0, 0), Vector2(7, 0), Vector2(7, 8), Vector2(0, 8)])
+ice_spaces = Array[Vector2]([Vector2(3, 0), Vector2(4, 0), Vector2(3, 8), Vector2(4, 8)])
+
+[node name="destroy_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="collapse_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="refill_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="grd_ice" type="Node2D" parent="."]
+script = ExtResource("4_a7uqp")
+
+[node name="grd_freeze" type="Node2D" parent="."]
+script = ExtResource("4_lguch")
+
+[node name="middleground" type="Sprite2D" parent="."]
+texture = ExtResource("1_ioeul")
+centered = false
+
+[node name="enemy" type="Node2D" parent="."]
+script = ExtResource("5_7ysvn")
+
+[node name="Lamia" type="Node2D" parent="enemy"]
+
+[node name="Sprite2D" type="Sprite2D" parent="enemy/Lamia"]
+position = Vector2(291, 0)
+texture = ExtResource("5_fdw0g")
+centered = false
+
+[node name="Sprite2D2" type="Sprite2D" parent="enemy/Lamia"]
+position = Vector2(274, 8)
+texture = ExtResource("6_dgcrs")
+centered = false
+
+[node name="enemy_healthbar" type="TextureProgressBar" parent="enemy"]
+offset_left = 34.0
+offset_top = 197.0
+offset_right = 319.0
+offset_bottom = 243.0
+value = 100.0
+texture_progress = ExtResource("10_lbrow")
+
+[node name="foreground" type="Node2D" parent="."]
+
+[node name="border" type="Sprite2D" parent="foreground"]
+texture = ExtResource("7_238bl")
+centered = false
+
+[connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
+[connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
+[connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
+[connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
+[connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
+[connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
+[connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]
+[connection signal="remove_freeze" from="grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]

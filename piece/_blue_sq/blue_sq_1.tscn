@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3 uid="uid://cd0nyvfnjstgb"]
+
+[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/blue_sq_0.tscn" id="1_vpbq8"]
+[ext_resource type="Texture2D" uid="uid://l16w0n5oght0" path="res://assets/_blue_icons/blue_icon_1.png" id="2_w4d5a"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_njiqj"]
+[ext_resource type="Resource" uid="uid://biyewp5jf4ta7" path="res://piece/active effect/armor+3.tres" id="4_l3bkk"]
+
+[node name="blue_sq_1" instance=ExtResource("1_vpbq8")]
+icon_texture = ExtResource("2_w4d5a")
+type = 1
+scene_location = "res://piece/_blue_sq/blue_sq_1.tscn"
+action = Array[ExtResource("3_njiqj")]([ExtResource("4_l3bkk")])
