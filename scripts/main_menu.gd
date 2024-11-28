@@ -7,7 +7,9 @@ func _on_start_pressed() -> void:
 	EnemyData.pick_random_minion()
 	EnemyData.set_enemie_stats()
 	#this needs to become dynamic______________________________________|
-	PlayerData.set_player_stats(temp_player)
+	if Global.is_null(PlayerData.resource):
+		PlayerData.resource = temp_player
+	PlayerData.set_player_stats()
 	#__________________________________________________________________|
 	Global.game_is_played = true
 	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

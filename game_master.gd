@@ -7,6 +7,8 @@ signal enemy_attacking
 @onready var enemy: Enemy = $enemy
 @onready var player: Player = $player
 
+var enemy_attacked_once: bool = false
+
 func _ready() -> void:
 	EnemyData.pick_next_attack()
 	load_player()
@@ -18,7 +20,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Global.moves_done <= 0:
 		grd.state = grd.wait
-		emit_signal("enemy_attacking")
+		if !enemy_attacked_once:
+			enemy_attacked_once = true
+			emit_signal("enemy_attacking")
+			
 	if PlayerData.cur_health <= 0 or EnemyData.enemy_cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
@@ -31,6 +36,7 @@ func _on_enemy_enemy_attacked() -> void:
 	await get_tree().create_timer(.5).timeout
 	PlayerData.armor = 0
 	grd.state = grd.move
+	enemy_attacked_once = false
 
 func load_player():
 	var player_sprite = PlayerData.sprite.instantiate()

@@ -37,9 +37,9 @@ func move(target, time = .3):
 func _on_game_window_enemy_attacking() -> void:
 	if EnemyData.enemy_next_attack.animation != null:
 		art.get_child(0).set_animp(EnemyData.enemy_next_attack.animation)
+	await get_tree().create_timer(.8).timeout
 	Global.moves_done = PlayerData.speed
 	EnemyData.enemy_next_attack.attack()
-	await get_tree().create_timer(.8).timeout
 	art.get_child(0).set_animp("idle")
 	EnemyData.pick_next_attack()
 	emit_signal("enemy_attacked")

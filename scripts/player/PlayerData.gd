@@ -23,23 +23,26 @@ var mage_armor: float
 #marked
 var marked_this_turn_all: float
 var marked_this_turn_red: float
+var marked_this_turn_blue: float
+var marked_this_turn_green: float
+var marked_this_turn_purple: float
+var marked_this_turn_white: float
 
 
-func set_player_stats(player: PlayerResource):
-	if player != null:
-		resource = player
-		max_health = player.health
-		cur_health = player.health
-		speed = player.speed
-		mana = player.mana
-		sprite = player.sprite
-		deck = player.deck
-		fluf = player.fluf
-		crit_chanse = player.crit_chanse
-		crit_dmg = player.crit_dmg
-		dmg = player.dmg
-		fluf_dmg = player.fluf_dmg
-		life_steal = player.life_steal
+func set_player_stats():
+	if resource != null:
+		max_health = resource.health
+		cur_health = resource.health
+		speed = resource.speed
+		mana = resource.mana
+		sprite = resource.sprite
+		deck = resource.deck
+		fluf = resource.fluf
+		crit_chanse = resource.crit_chanse
+		crit_dmg = resource.crit_dmg
+		dmg = resource.dmg
+		fluf_dmg = resource.fluf_dmg
+		life_steal = resource.life_steal
 
 func take_damage(enemy_damage, piercing: bool = false):
 	if !piercing:
