@@ -10,5 +10,4 @@ func _ready() -> void:
 	pratic2.visible = true
 	pratic3.visible = true
 	pratic4.visible = true
-	pass
 	
