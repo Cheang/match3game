@@ -35,6 +35,7 @@ enabled=PackedStringArray("res://addons/scene_manager/plugin.cfg")
 
 [gui]
 
+theme/custom="res://assets/theme/mainTheme.tres"
 theme/default_font_antialiasing=0
 
 [input]

@@ -1,10 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bn1uj84j4pspt"]
+[gd_scene load_steps=3 format=3 uid="uid://bn1uj84j4pspt"]
 
 [ext_resource type="Texture2D" uid="uid://ckg1imb4dj3bj" path="res://assets/level_ui/main_menu_bg.png" id="1_0x4yc"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m0wtd"]
-[ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="2_7r4tb"]
-[ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="3_52452"]
-[ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="5_t4ykt"]
 
 [node name="main_menu" type="Node2D"]
 script = ExtResource("1_m0wtd")
@@ -21,96 +18,43 @@ offset_right = 430.5
 offset_bottom = 526.0
 theme_override_constants/separation = 20
 
-[node name="start" type="TextureButton" parent="VBoxContainer"]
+[node name="start" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-texture_normal = ExtResource("2_7r4tb")
-
-[node name="Label" type="Label" parent="VBoxContainer/start"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_52452")
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
 text = "Start Game"
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="load" type="TextureButton" parent="VBoxContainer"]
+[node name="load" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-disabled = true
-texture_normal = ExtResource("2_7r4tb")
-texture_disabled = ExtResource("5_t4ykt")
-
-[node name="Label" type="Label" parent="VBoxContainer/load"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_52452")
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
+disabled = true
 text = "Load Game"
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="characters" type="TextureButton" parent="VBoxContainer"]
+[node name="char_select" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-disabled = true
-texture_normal = ExtResource("2_7r4tb")
-
-[node name="Label" type="Label" parent="VBoxContainer/characters"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_52452")
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
+disabled = true
 text = "Character Select"
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="settings" type="TextureButton" parent="VBoxContainer"]
+[node name="settings" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-disabled = true
-texture_normal = ExtResource("2_7r4tb")
-
-[node name="Label" type="Label" parent="VBoxContainer/settings"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_52452")
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
+disabled = true
 text = "Settings"
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="quit" type="TextureButton" parent="VBoxContainer"]
+[node name="quit" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-disabled = true
-texture_normal = ExtResource("2_7r4tb")
-
-[node name="Label" type="Label" parent="VBoxContainer/quit"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_52452")
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
-text = "Quit
-"
-horizontal_alignment = 1
-vertical_alignment = 1
+text = "Quit"
 
 [connection signal="pressed" from="VBoxContainer/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]
