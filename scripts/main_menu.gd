@@ -1,6 +1,6 @@
 extends Node2D
 
-var temp_player: PlayerResource = preload("res://players/warrior.tres")
+var temp_player: PlayerResource = preload("res://players/warrior/warrior.tres")
 
 func _on_start_pressed() -> void:
 	EnemyData.pick_bosses()
@@ -13,6 +13,9 @@ func _on_start_pressed() -> void:
 	#__________________________________________________________________|
 	Global.game_is_played = true
 	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+
+func _on_char_select_pressed() -> void:
+	SceneManager.change_scene("res://hero_select_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

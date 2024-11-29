@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="PlayerResource" load_steps=12 format=3 uid="uid://b8jo32hmbbisk"]
+
+[ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/blue_sq_1.tscn" id="1_pardm"]
+[ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/green_sq_1.tscn" id="2_upqac"]
+[ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/red_sq_1.tscn" id="3_eihym"]
+[ext_resource type="PackedScene" uid="uid://cw3airgurvyv5" path="res://piece/_white_sq/white_sq_1.tscn" id="4_6q3uv"]
+[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/red_sq_0.tscn" id="5_68sr3"]
+[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/blue_sq_0.tscn" id="6_1pvt5"]
+[ext_resource type="PackedScene" uid="uid://co453pji2jcqe" path="res://piece/_green_sq/green_sq_0.tscn" id="7_pwnkj"]
+[ext_resource type="PackedScene" uid="uid://bthiuci0deljg" path="res://piece/_purple_sq/purple_sq_0.tscn" id="8_en3c6"]
+[ext_resource type="PackedScene" uid="uid://u8xfuav2kkon" path="res://piece/_white_sq/white_sq_0.tscn" id="9_3l6gg"]
+[ext_resource type="Script" path="res://scripts/player/player_resource.gd" id="10_ljvcx"]
+[ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://players/warrior/warrior.tscn" id="11_pi64o"]
+
+[resource]
+script = ExtResource("10_ljvcx")
+max_health = 20.0
+life_steal = 0.0
+start_armor = 0.0
+start_mage_armor = 0.0
+speed = 2
+cooldown_reduction = 0
+mana = 0.0
+dmg = 1.0
+fluf_dmg = 0.0
+crit_chanse = 5
+crit_dmg = 2.0
+deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
+fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
+sprite = ExtResource("11_pi64o")
