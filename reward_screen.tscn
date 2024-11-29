@@ -119,3 +119,23 @@ size_flags_vertical = 3
 [node name="PanelContainer3" type="PanelContainer" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="skip" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "Skip"
+
+[node name="reroll" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "Reroll"
+
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
