@@ -55,7 +55,6 @@ func on_startup() -> void:
 	spawn_fluf_piece(fluf)
 	spawn_obstacles(ice_spaces, "make_ice")
 	spawn_obstacles(freeze_spaces, "make_freeze")
-	
 
 func _process(_delta: float) -> void:
 	if state == move:
@@ -242,7 +241,7 @@ func destroy_matched():
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].matched:
 					damage_specials(i,j)
-					if all_pieces[i][j].type != 0:
+					if all_pieces[i][j].type != 0 and !all_pieces[i][j].one_per_battle:
 						var piece_to_add = all_pieces[i][j]
 						deck_on_cd.push_back(piece_to_add)
 					was_matched = true

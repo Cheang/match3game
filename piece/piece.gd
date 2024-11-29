@@ -8,6 +8,7 @@ class_name PieceClass
 @export var crit_shader: Resource
 @export var scene_location: String
 @export var cooldown: int
+@export var one_per_battle: bool
 
 @export var action: Array[PieceActivation]
 
