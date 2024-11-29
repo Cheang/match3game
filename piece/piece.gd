@@ -1,4 +1,5 @@
 extends Node2D
+class_name PieceClass
 
 @export var color: String
 @export var base_texture: Texture
@@ -6,6 +7,7 @@ extends Node2D
 @export_enum("fluf","atk") var type: int
 @export var crit_shader: Resource
 @export var scene_location: String
+@export var cooldown: int
 
 @export var action: Array[PieceActivation]
 
@@ -34,7 +36,7 @@ func mark():
 func will_crit():
 	randomize()
 	var rand = floor(randf_range(1,100))
-	if rand <= PlayerData.crit_chanse:
+	if rand <= Global.cur_char.crit_chanse:
 		base.material = crit_shader
 		is_criting = true
 
@@ -44,3 +46,6 @@ func activate_actions(to_activate: Array):
 			if !Global.is_null(to_activate[i]):
 				to_activate[i].criting = is_criting
 				to_activate[i].activate()
+
+func lower_cooldown():
+	cooldown -= 1

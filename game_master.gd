@@ -13,18 +13,18 @@ func _ready() -> void:
 	EnemyData.pick_next_attack()
 	load_player()
 	load_enemie()
-	Global.moves_done = PlayerData.speed
+	Global.cur_char.moves_left = Global.cur_char.speed
 	grd.on_startup()
 	grd.state = grd.move
 
 func _process(_delta: float) -> void:
-	if Global.moves_done <= 0:
+	if Global.cur_char.moves_left <= 0:
 		grd.state = grd.wait
 		if !enemy_attacked_once:
 			enemy_attacked_once = true
 			emit_signal("enemy_attacking")
 			
-	if PlayerData.cur_health <= 0 or EnemyData.enemy_cur_health <= 0:
+	if Global.cur_char.cur_health <= 0 or EnemyData.enemy_cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
 			Global.game_is_played = false
@@ -34,12 +34,12 @@ func _process(_delta: float) -> void:
 
 func _on_enemy_enemy_attacked() -> void:
 	await get_tree().create_timer(.5).timeout
-	PlayerData.armor = 0
+	Global.cur_char.armor = 0
 	grd.state = grd.move
 	enemy_attacked_once = false
 
 func load_player():
-	var player_sprite = PlayerData.sprite.instantiate()
+	var player_sprite = Global.cur_char.sprite.instantiate()
 	get_node("player").get_child(0).add_child(player_sprite)
 
 func load_enemie():

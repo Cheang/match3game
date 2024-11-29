@@ -16,14 +16,14 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 var one_time = false
 
 func update():
-	move_remaing.text = "Moves Remaing: " + str(Global.moves_done)
-	health.text = "Health: " + str(PlayerData.max_health) + "/" + str(PlayerData.cur_health)
-	if PlayerData.cur_health < 0:
-		PlayerData.cur_health = 0
-	if PlayerData.max_health != PlayerData.cur_health or PlayerData.cur_health <= 0:
-		player_healthbar.value = PlayerData.cur_health * 100 / PlayerData.max_health
-	update_buff(marmor,marmorlabel,PlayerData.mage_armor)
-	update_buff(armor,armorlabel,PlayerData.armor)
+	move_remaing.text = "Moves Remaing: " + str(Global.cur_char.moves_left)
+	health.text = "Health: " + str(Global.cur_char.max_health) + "/" + str(Global.cur_char.cur_health)
+	if Global.cur_char.cur_health < 0:
+		Global.cur_char.cur_health = 0
+	if Global.cur_char.max_health != Global.cur_char.cur_health or Global.cur_char.cur_health <= 0:
+		player_healthbar.value = Global.cur_char.cur_health * 100 / Global.cur_char.max_health
+	update_buff(marmor,marmorlabel,Global.cur_char.mage_armor)
+	update_buff(armor,armorlabel,Global.cur_char.armor)
 
 func _on_player_healthbar_value_changed(value: float) -> void:
 	if !one_time:

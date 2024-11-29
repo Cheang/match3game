@@ -6,8 +6,8 @@ class_name PieceBaseDefence
 
 func activate():
 	if criting:
-		PlayerData.armor += armor * 2
-		PlayerData.mage_armor += mage_armor * 2
+		Global.cur_char.armor += armor * 2
+		Global.cur_char.mage_armor += mage_armor * 2
 	else:
-		PlayerData.armor += armor
-		PlayerData.mage_armor += mage_armor
+		Global.cur_char.armor += armor
+		Global.cur_char.mage_armor += mage_armor

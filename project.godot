@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*res://scripts/Global.gd"
-PlayerData="*res://scripts/player/PlayerData.gd"
 EnemyData="*res://scripts/enemies/EnemyData.gd"
 SceneManager="*res://addons/scene_manager/SceneManager.tscn"
 

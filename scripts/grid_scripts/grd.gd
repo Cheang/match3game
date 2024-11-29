@@ -4,11 +4,6 @@ extends Node2D
 enum {wait, move} 
 var state
 
-#enemie
-@onready var enemy: Enemy = $"../enemy"
-
-
-
 #Grid Variables
 var grd_x_start: int = Global.grd_x_start
 var grd_y_start: int = Global.grd_y_start
@@ -18,6 +13,7 @@ var grd_offset: int = Global.grd_offset
 
 #player tiles will go in here
 var deck : Array[PackedScene]
+var deck_on_cd : Array[PieceClass] = []
 var fluf : Array[PackedScene]
 
 #the current pieces in the game
@@ -48,8 +44,8 @@ var controling_grd: bool = false
 
 
 func on_startup() -> void:
-	deck = PlayerData.deck.duplicate()
-	fluf = PlayerData.fluf.duplicate()
+	deck = Global.cur_char.deck.duplicate()
+	fluf = Global.cur_char.fluf.duplicate()
 	deck.shuffle()
 	fluf.shuffle()
 	randomize()
@@ -247,11 +243,10 @@ func destroy_matched():
 				if all_pieces[i][j].matched:
 					damage_specials(i,j)
 					if all_pieces[i][j].type != 0:
-						var piece_to_add = load(all_pieces[i][j].scene_location)
-						deck.push_back(piece_to_add)
-						pass
+						var piece_to_add = all_pieces[i][j]
+						deck_on_cd.push_back(piece_to_add)
 					was_matched = true
-					all_pieces[i][j].queue_free()
+					remove_child(all_pieces[i][j])
 					all_pieces[i][j] = null
 	move_checked = true
 	if was_matched:
@@ -272,6 +267,7 @@ func collapse_col():
 	get_node("refill_timer").start()
 
 func refill_col():
+	
 	if !deck.is_empty():
 		spawn_deck_pieces_fill(deck)
 	spawn_fluf_piece(fluf)
@@ -284,10 +280,24 @@ func after_refill():
 				if match_at(i,j,all_pieces[i][j].color):
 					find_matches()
 					return
-	Global.moves_done -= 1
+	Global.cur_char.moves_left -= 1
+	cooldown_and_refill_deck()
 	state = move
 	move_checked = false
 
+func cooldown_and_refill_deck():
+	for i in deck_on_cd.size():
+		if !Global.is_null(deck_on_cd[i]):
+			deck_on_cd[i].lower_cooldown()
+			if deck_on_cd[i].cooldown == 0:
+				var piece_to_add = load(deck_on_cd[i].scene_location)
+				deck.push_back(piece_to_add)
+				deck_on_cd[i].queue_free()
+	for i in deck_on_cd.size():
+		if i >= deck_on_cd.size():
+			break
+		if Global.is_null(deck_on_cd[i]):
+			deck_on_cd.pop_at(i)
 
 #Helper _____________________________________________________
 func damage_specials(col, row):

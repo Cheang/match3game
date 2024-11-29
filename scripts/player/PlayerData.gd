@@ -1,6 +1,6 @@
 extends Node
 
-var resource: PlayerResource
+var cur_char: PlayerResource
 
 #stats that are set
 var max_health: float 
@@ -30,19 +30,19 @@ var marked_this_turn_white: float
 
 
 func set_player_stats():
-	if resource != null:
-		max_health = resource.health
-		cur_health = resource.health
-		speed = resource.speed
-		mana = resource.mana
-		sprite = resource.sprite
-		deck = resource.deck
-		fluf = resource.fluf
-		crit_chanse = resource.crit_chanse
-		crit_dmg = resource.crit_dmg
-		dmg = resource.dmg
-		fluf_dmg = resource.fluf_dmg
-		life_steal = resource.life_steal
+	if cur_char != null:
+		max_health = cur_char.max_health
+		cur_health = cur_char.max_health
+		speed = cur_char.speed
+		mana = cur_char.mana
+		sprite = cur_char.sprite
+		deck = cur_char.deck
+		fluf = cur_char.fluf
+		crit_chanse = cur_char.crit_chanse
+		crit_dmg = cur_char.crit_dmg
+		dmg = cur_char.dmg
+		fluf_dmg = cur_char.fluf_dmg
+		life_steal = cur_char.life_steal
 
 func take_damage(enemy_damage, piercing: bool = false):
 	if !piercing:

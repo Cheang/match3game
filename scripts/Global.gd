@@ -1,6 +1,6 @@
 extends Node
 
-var moves_done: int = 0
+var cur_char: PlayerResource
 
 var grd_x_start: int = 64
 var grd_y_start: int = 800
@@ -40,3 +40,6 @@ func is_in_array(array, item):
 		if array[i] == item:
 			return true
 	return false
+
+func set_cur_character(char: PlayerResource):
+	cur_char = char

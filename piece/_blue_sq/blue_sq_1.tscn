@@ -9,4 +9,5 @@
 icon_texture = ExtResource("2_w4d5a")
 type = 1
 scene_location = "res://piece/_blue_sq/blue_sq_1.tscn"
+cooldown = 1
 action = Array[ExtResource("3_njiqj")]([ExtResource("4_l3bkk")])
