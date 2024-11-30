@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=27 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://bmulmclix0w0" path="res://assets/level_ui/player_health_panel.png" id="13_fditc"]
 [ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
+[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="18_thmtv"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
@@ -231,6 +232,13 @@ text = "Health : "
 texture = ExtResource("7_238bl")
 centered = false
 
+[node name="TextureButton" type="TextureButton" parent="."]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 85.0
+offset_bottom = 85.0
+texture_normal = ExtResource("18_thmtv")
+
 [node name="defeat_overlay" type="PanelContainer" parent="."]
 visible = false
 offset_right = 576.0
@@ -275,6 +283,59 @@ size_flags_vertical = 4
 theme_override_font_sizes/font_size = 25
 text = "Main Menu"
 
+[node name="pause_overlay" type="PanelContainer" parent="."]
+visible = false
+offset_right = 576.0
+offset_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
+
+[node name="MarginContainer" type="MarginContainer" parent="pause_overlay"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CenterContainer" type="CenterContainer" parent="pause_overlay/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="pause_overlay/MarginContainer/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "The game is paused"
+horizontal_alignment = 1
+
+[node name="resume" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+text = "Resume"
+
+[node name="options" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+disabled = true
+text = "Options"
+
+[node name="back_to_mm" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+text = "Main Menu"
+
 [connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
 [connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
@@ -288,4 +349,7 @@ text = "Main Menu"
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
+[connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
+[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

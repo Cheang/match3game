@@ -7,13 +7,13 @@ signal enemy_attacking
 @onready var enemy: Enemy = $enemy
 @onready var player: Player = $player
 @onready var defeat_overlay: PanelContainer = $defeat_overlay
+@onready var pause_overlay: PanelContainer = $pause_overlay
 
 var enemy_attacked_once: bool = false
 
 func _ready() -> void:
 	defeat_overlay.visible = false
-	EnemyData.pick_next_attack()
-	Global.reset_character_stats()
+	pause_overlay.visible = false
 	load_player()
 	load_enemie()
 	grd.on_startup()
@@ -45,10 +45,11 @@ func _on_enemy_enemy_attacked() -> void:
 	enemy_attacked_once = false
 
 func load_player():
+	Global.reset_character_stats()
 	var player_sprite = Global.cur_char.sprite.instantiate()
 	get_node("player").get_child(0).add_child(player_sprite)
-
 func load_enemie():
+	EnemyData.pick_next_attack()
 	grd.empty_spaces = EnemyData.empty_spaces
 	grd.ice_spaces = EnemyData.ice_spaces
 	grd.freeze_spaces = EnemyData.freeze_spaces
@@ -58,3 +59,14 @@ func load_enemie():
 
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+
+func _on_texture_button_pressed() -> void:
+	grd.state = grd.wait
+	Global.game_is_played = false
+	pause_overlay.visible = true
+
+
+func _on_resume_pressed() -> void:
+	grd.state = grd.move
+	Global.game_is_played = true
+	pause_overlay.visible = false
