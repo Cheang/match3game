@@ -9,5 +9,5 @@ func _ready() -> void:
 
 func set_animp(animation: String):
 	if anim_player != null:
-		anim_player.current_animation = animation
-	pass
+		if anim_player.current_animation != null:
+			anim_player.current_animation = animation

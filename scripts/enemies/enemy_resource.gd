@@ -1,6 +1,7 @@
 extends Resource
 class_name EnemyResource
 
+@export var name: String
 @export var health: float
 @export var damage: float
 @export var attacks: Array[EnemyAttackBase]

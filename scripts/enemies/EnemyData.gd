@@ -1,7 +1,7 @@
 extends Node
 
 var resource: EnemyResource
-var all_minions: Array[EnemyResource] = [preload("res://enemies/lamia.tres")]
+var all_minions: Array[EnemyResource] = [preload("res://enemies/lamia.tres"), preload("res://enemies/minion/karjaliia_cap/karjaliia_cap.tres")]
 var bosses: Array[EnemyResource]
 #_____________________________________________________________________________#
 var max_health: float
