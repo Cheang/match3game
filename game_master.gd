@@ -53,8 +53,8 @@ func load_enemie():
 	grd.ice_spaces = EnemyData.ice_spaces
 	grd.freeze_spaces = EnemyData.freeze_spaces
 	var enemy_sprite = EnemyData.enemy_sprite.instantiate()
+	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
-
 
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })

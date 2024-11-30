@@ -7,6 +7,8 @@ class_name EnemyResource
 @export var speed: int
 @export_enum("minion", "boss") var type: int
 @export var sprite: PackedScene
+@export var health_bar: Texture2D
+
 
 @export var empty_spaces: Array[Vector2]
 @export var ice_spaces: Array[Vector2]

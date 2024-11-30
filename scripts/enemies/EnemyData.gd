@@ -15,6 +15,7 @@ var enemy_attacks: Array[EnemyAttackBase]
 var enemy_next_attack: EnemyAttackBase
 var enemy_type: int
 var enemy_sprite: PackedScene
+var health_bar: Texture2D
 
 var empty_spaces: Array[Vector2]
 var ice_spaces: Array[Vector2]
@@ -30,6 +31,7 @@ func set_enemie_stats():
 	ice_spaces = resource.ice_spaces
 	freeze_spaces = resource.freeze_spaces
 	enemy_sprite = resource.sprite
+	health_bar = resource.health_bar
 
 func take_dmg(dmg):
 	enemy_cur_health -= dmg

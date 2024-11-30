@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=7 format=3 uid="uid://cyl7kv84j6vky"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=8 format=3 uid="uid://cyl7kv84j6vky"]
 
 [ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_jldn6"]
 [ext_resource type="PackedScene" uid="uid://c48fmwq3lbdm2" path="res://enemies/lamia.tscn" id="1_pn4db"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_wui25"]
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="3_yogkf"]
 [ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://enemies/attacks/enrage+1.tres" id="4_eur0i"]
+[ext_resource type="Texture2D" uid="uid://dbg7s86dsv7pt" path="res://assets/level_ui/player_health.png" id="5_f65nt"]
 
 [resource]
 script = ExtResource("2_wui25")
@@ -15,6 +16,7 @@ attacks = Array[ExtResource("1_jldn6")]([ExtResource("2_wlnfn"), ExtResource("2_
 speed = 1
 type = 0
 sprite = ExtResource("1_pn4db")
+health_bar = ExtResource("5_f65nt")
 empty_spaces = Array[Vector2]([Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(6, 7), Vector2(7, 7), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1)])
 ice_spaces = Array[Vector2]([])
 freeze_spaces = Array[Vector2]([])
