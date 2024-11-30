@@ -62,9 +62,10 @@ func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_pause_btn_pressed() -> void:
-	grd.state = grd.wait
-	Global.game_is_played = false
-	pause_overlay.visible = true
+	if Global.game_is_played == true:
+		grd.state = grd.wait
+		Global.game_is_played = false
+		pause_overlay.visible = true
 
 func _on_resume_pressed() -> void:
 	grd.state = grd.move
