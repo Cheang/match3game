@@ -16,6 +16,7 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	load_player()
 	load_enemie()
+	enemy.enemy_name.text = EnemyData.resource.name
 	grd.on_startup()
 	grd.state = grd.move
 
@@ -60,11 +61,10 @@ func load_enemie():
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
-func _on_texture_button_pressed() -> void:
+func _on_pause_btn_pressed() -> void:
 	grd.state = grd.wait
 	Global.game_is_played = false
 	pause_overlay.visible = true
-
 
 func _on_resume_pressed() -> void:
 	grd.state = grd.move

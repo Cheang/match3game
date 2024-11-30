@@ -1,13 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://cw3airgurvyv5"]
+[gd_scene load_steps=6 format=3 uid="uid://cw3airgurvyv5"]
 
 [ext_resource type="PackedScene" uid="uid://u8xfuav2kkon" path="res://piece/_white_sq/white_sq_0.tscn" id="1_ydkun"]
 [ext_resource type="Texture2D" uid="uid://cuj6n0jrqbw8j" path="res://assets/_white_icons/white_icon_1.png" id="2_us7n4"]
 [ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_hpmtl"]
 [ext_resource type="Resource" uid="uid://b2m8wq0s3eg1n" path="res://piece/active effect/mgArmor+3.tres" id="4_4soyc"]
+[ext_resource type="Resource" uid="uid://biyewp5jf4ta7" path="res://piece/active effect/armor+3.tres" id="5_vt468"]
 
 [node name="white_sq_1" instance=ExtResource("1_ydkun")]
 icon_texture = ExtResource("2_us7n4")
-type = 1
+type = 2
 scene_location = "res://piece/_white_sq/white_sq_1.tscn"
 cooldown = 4
-action = Array[ExtResource("3_hpmtl")]([ExtResource("4_4soyc")])
+action = Array[ExtResource("3_hpmtl")]([ExtResource("4_4soyc"), ExtResource("4_4soyc"), ExtResource("5_vt468")])

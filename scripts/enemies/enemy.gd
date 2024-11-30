@@ -10,12 +10,13 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var art: Node2D = $art
 @onready var health: Label = $PanelContainer/HBoxContainer/health
 @onready var attack: Label = $PanelContainer/HBoxContainer/attack
+@onready var enemy_name: Label = $enemy_name
 
 var one_time = false
 	
 func update():
 	attack.text = EnemyData.next_attack.tooltip
-	health.text = "Health: " + str(EnemyData.max_health) + "/" + str(EnemyData.cur_health)
+	health.text = "Health: " + str(EnemyData.cur_health) + "/" + str(EnemyData.max_health)
 	if EnemyData.cur_health < 0:
 		EnemyData.cur_health = 0
 	if EnemyData.max_health != EnemyData.cur_health or EnemyData.cur_health <= 0:

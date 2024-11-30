@@ -140,6 +140,14 @@ theme = ExtResource("12_tovol")
 text = "15 :Attack"
 horizontal_alignment = 2
 
+[node name="enemy_name" type="Label" parent="enemy"]
+offset_left = 32.0
+offset_top = 125.0
+offset_right = 112.0
+offset_bottom = 155.0
+theme_override_font_sizes/font_size = 32
+text = "Name"
+
 [node name="player" type="Node2D" parent="."]
 script = ExtResource("11_ghvty")
 
@@ -210,10 +218,11 @@ texture = ExtResource("14_bu8h0")
 centered = false
 
 [node name="move_remaing" type="Label" parent="player"]
-offset_top = 232.0
+offset_top = 233.0
 offset_right = 576.0
-offset_bottom = 254.0
+offset_bottom = 255.0
 theme = ExtResource("12_tovol")
+theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_font_sizes/font_size = 20
 text = "Moves Remaing: 2"
 horizontal_alignment = 1
@@ -232,7 +241,7 @@ text = "Health : "
 texture = ExtResource("7_238bl")
 centered = false
 
-[node name="TextureButton" type="TextureButton" parent="."]
+[node name="pause_btn" type="TextureButton" parent="."]
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 85.0
@@ -349,7 +358,7 @@ text = "Main Menu"
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
-[connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="pause_btn" to="." method="_on_pause_btn_pressed"]
 [connection signal="pressed" from="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
 [connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

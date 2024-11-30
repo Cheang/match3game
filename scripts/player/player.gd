@@ -17,7 +17,7 @@ var one_time = false
 
 func update():
 	move_remaing.text = "Moves Remaing: " + str(Global.cur_char.moves_left)
-	health.text = "Health: " + str(Global.cur_char.max_health) + "/" + str(Global.cur_char.cur_health)
+	health.text = "Health: " + str(Global.cur_char.cur_health) + "/" + str(Global.cur_char.max_health)
 	if Global.cur_char.cur_health < 0:
 		Global.cur_char.cur_health = 0
 	if Global.cur_char.max_health != Global.cur_char.cur_health or Global.cur_char.cur_health <= 0:

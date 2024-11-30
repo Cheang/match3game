@@ -239,7 +239,6 @@ func mark_for_destruction(space_to_destroy: Array[Vector2]):
 		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(false)
 	get_node("destroy_timer").start()
 
-
 func destroy_matched(player:bool = true):
 	var was_matched = false
 	for i in grd_width:
@@ -247,9 +246,13 @@ func destroy_matched(player:bool = true):
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].matched:
 					damage_specials(i,j)
-					if all_pieces[i][j].type != 0 and !all_pieces[i][j].one_per_battle:
-						var piece_to_add = all_pieces[i][j]
-						deck_on_cd.push_back(piece_to_add)
+					if all_pieces[i][j].type == 1:
+						deck_on_cd.push_back(all_pieces[i][j])
+					if all_pieces[i][j].type == 3:
+						for k in Global.cur_char.deck.size():
+							if Global.cur_char.deck[k].resource_path == all_pieces[i][j].scene_location:
+								Global.cur_char.deck.pop_at(k)
+								break
 					was_matched = true
 					remove_child(all_pieces[i][j])
 					all_pieces[i][j] = null

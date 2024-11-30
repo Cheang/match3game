@@ -6,10 +6,11 @@
 [ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://enemies/attacks/enrage+1.tres" id="3_tuo2f"]
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="4_pdeom"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="5_ck8d1"]
-[ext_resource type="PackedScene" uid="uid://3j3pvno8yhem" path="res://enemies/minion/karjaliia_cap/karjaliia_cap.tscn" id="7_duoj2"]
+[ext_resource type="PackedScene" uid="uid://3j3pvno8yhem" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tscn" id="7_duoj2"]
 
 [resource]
 script = ExtResource("2_3jfvh")
+name = "Kardzaliia Capitan"
 health = 18.0
 damage = 1.0
 attacks = Array[ExtResource("1_mu0b4")]([ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("3_tuo2f"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("4_pdeom")])

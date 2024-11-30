@@ -1,6 +1,7 @@
 extends Node
 
 var cur_char: PlayerResource
+var selected_char: PlayerResource
 
 var grd_x_start: int = 64
 var grd_y_start: int = 800

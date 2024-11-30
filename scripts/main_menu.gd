@@ -7,8 +7,9 @@ func _on_start_pressed() -> void:
 	EnemyData.pick_random_minion()
 	EnemyData.set_enemie_stats()
 	#this needs to become dynamic______________________________________|
-	if Global.is_null(Global.cur_char):
-		Global.cur_char = temp_player.duplicate()
+	if Global.is_null(Global.selected_char):
+		Global.selected_char = temp_player.duplicate()
+	Global.cur_char = Global.selected_char.duplicate()
 	Global.cur_char.cur_health = Global.cur_char.max_health
 	#__________________________________________________________________|
 	Global.game_is_played = true
