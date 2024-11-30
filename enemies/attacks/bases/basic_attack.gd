@@ -6,5 +6,5 @@ class_name Basic_Attack
 
 func attack():
 	for i in attacks:
-		Global.cur_char.take_damage(damage*EnemyData.enemy_damage)
+		Global.cur_char.take_damage(damage*EnemyData.damage)
 		

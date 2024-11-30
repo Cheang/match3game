@@ -8,3 +8,4 @@ damage = 1.0
 attacks = 1
 tooltip = "Weak Attack"
 animation = "attack_1"
+animation_time = 0.8

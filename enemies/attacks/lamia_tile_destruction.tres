@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Tile_Destruction_Attack" load_steps=2 format=3 uid="uid://d3cbjkicneo3u"]
+
+[ext_resource type="Script" path="res://enemies/attacks/bases/tile_destuction_attac.gd" id="1_0q63g"]
+
+[resource]
+script = ExtResource("1_0q63g")
+space_to_destroy = Array[Vector2]([Vector2(0, 4), Vector2(1, 4), Vector2(2, 4), Vector2(3, 4), Vector2(4, 4), Vector2(5, 4), Vector2(6, 4), Vector2(7, 4)])
+tooltip = "Massive swipe"
+animation = "attack_2"
+animation_time = 1.0

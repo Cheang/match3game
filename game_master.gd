@@ -13,9 +13,9 @@ var enemy_attacked_once: bool = false
 func _ready() -> void:
 	defeat_overlay.visible = false
 	EnemyData.pick_next_attack()
+	Global.reset_character_stats()
 	load_player()
 	load_enemie()
-	Global.cur_char.moves_left = Global.cur_char.speed
 	grd.on_startup()
 	grd.state = grd.move
 
@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 		if !enemy_attacked_once:
 			enemy_attacked_once = true
 			emit_signal("enemy_attacking")
-	if EnemyData.enemy_cur_health <= 0:
+	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
 			Global.game_is_played = false
@@ -52,7 +52,7 @@ func load_enemie():
 	grd.empty_spaces = EnemyData.empty_spaces
 	grd.ice_spaces = EnemyData.ice_spaces
 	grd.freeze_spaces = EnemyData.freeze_spaces
-	var enemy_sprite = EnemyData.enemy_sprite.instantiate()
+	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
 

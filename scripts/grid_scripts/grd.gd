@@ -234,7 +234,13 @@ func find_matches():
 							all_pieces[i][j+1].mark()
 		get_node("destroy_timer").start()
 
-func destroy_matched():
+func mark_for_destruction(space_to_destroy: Array[Vector2]):
+	for i in space_to_destroy.size():
+		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(false)
+	get_node("destroy_timer").start()
+
+
+func destroy_matched(player:bool = true):
 	var was_matched = false
 	for i in grd_width:
 		for j in grd_height:

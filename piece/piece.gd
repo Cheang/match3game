@@ -29,10 +29,12 @@ func move(target, time = .3):
 	var tween: Tween = create_tween()
 	tween.tween_property(self,"position",target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
-func mark():
+func mark(activate: bool = true):
 	base.modulate = Color(1, 1, 1, .5)
 	matched = true
-	activate_actions(action)
+	if activate:
+		activate_actions(action)
+
 
 func will_crit():
 	randomize()

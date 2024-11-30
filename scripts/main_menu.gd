@@ -3,7 +3,7 @@ extends Node2D
 var temp_player: PlayerResource = preload("res://players/warrior/warrior.tres")
 
 func _on_start_pressed() -> void:
-	EnemyData.pick_bosses()
+	EnemyData.pick_bosses(1)
 	EnemyData.pick_random_minion()
 	EnemyData.set_enemie_stats()
 	#this needs to become dynamic______________________________________|

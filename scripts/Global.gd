@@ -43,3 +43,8 @@ func is_in_array(array, item):
 
 func set_cur_character(char: PlayerResource):
 	cur_char = char
+
+func reset_character_stats():
+	cur_char.moves_left = cur_char.speed
+	cur_char.armor = cur_char.start_armor
+	cur_char.mage_armor = cur_char.start_mage_armor
