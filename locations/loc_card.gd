@@ -1,16 +1,8 @@
 extends Control
 class_name location_card
-@export_category("Location")
-@export var loc_name: String
-@export var loc_description: String
-@export var loc_pic: Texture2D
-@export var next_scene: String = "res://main_menu.tscn"
-@export var transition_color: Color = Color('#2e222f')
-@onready var loc_card: location_card = $"."
 
-@export_category("Enemy")
-@export var enemy_encounter: bool
-@export var which_enemy: Array[EnemyResource]
+var loc_res: Location
+@export var index: int
 
 @onready var loc_texture: TextureRect = $HBoxContainer/loc_texture
 @onready var loc_name_l: Label = $HBoxContainer/MarginContainer/VBoxContainer/loc_name
@@ -19,24 +11,31 @@ class_name location_card
 var selected: bool = false
 
 func _ready() -> void:
-	loc_texture.texture = loc_pic
-	loc_name_l.text = loc_name
-	loc_description_l.text = loc_description
+	
+	pass
 
+func load_btn():
+	if loc_res.pic != null:
+		loc_texture.texture = loc_res.pic
+	if loc_name_l.text != null:
+		loc_name_l.text = loc_res.name
+	if loc_description_l.text != null:
+		loc_description_l.text = loc_res.description
+	
 func _on_selection_btn_pressed() -> void:
-	if !Global.is_null(next_scene):
-		if enemy_encounter and !which_enemy.is_empty():
-			var enemy_chosen = which_enemy.pick_random()
+	if !Global.is_null(loc_res.next_scene):
+		if loc_res.enemy_encounter and !loc_res.which_enemy.is_empty():
+			var enemy_chosen = loc_res.which_enemy.pick_random()
 			if !Global.is_null(enemy_chosen):
 				EnemyData.set_minion(enemy_chosen)
 				EnemyData.set_enemie_stats()
 				Global.game_is_played = true
-				next_scene = "res://game_window.tscn"
+				loc_res.next_scene = "res://game_window.tscn"
 		Global.current_wave += 1
 		selected = true
-		SceneManager.change_scene(next_scene, { "pattern": "diagonal", "color": transition_color })
+		
+		SceneManager.change_scene(loc_res.next_scene, { "pattern": "diagonal", "color": loc_res.transition_color })
 
 func _on_tree_exiting() -> void:
-	if !selected:
-		print(loc_card,"   ", self)
-		Global.locations.push_back(loc_card)
+	if selected:
+		Global.locations.pop_at(index)

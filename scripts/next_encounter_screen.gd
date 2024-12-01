@@ -1,16 +1,26 @@
 extends Node2D
 
-@onready var loc_holder: VBoxContainer = $loaction_cards/MarginContainer/VBoxContainer/loc_howder
+@onready var loc_card_1: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card
+@onready var loc_card_2: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card2
+@onready var loc_card_3: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card3
+
+const LOC_DEADEND = preload("res://locations/loc_deadend.tres")
+
+var loc_cards: Array[location_card] 
 
 func _ready() -> void:
-	add_random_cards(Global.locations, loc_holder)
+	loc_cards = [loc_card_1,loc_card_2,loc_card_3]
+	Global.add_boss_to_locations(4)
+	get_locations()
 	pass
 
-func add_random_cards(control_array: Array, target_node: Node):
-	if control_array.size() < 3:
-		print("Not enough controls in the array to choose from.")
-		return
-	control_array.shuffle()
+func get_locations():
 	for i in 3:
-		var instance = control_array.pop_back()
-		target_node.add_child(instance)
+		if i >= Global.locations.size():
+			loc_cards[i].loc_res = LOC_DEADEND
+			loc_cards[i].load_btn()
+			return
+		var location = Global.locations[i]
+		loc_cards[i].loc_res = location
+		loc_cards[i].load_btn()
+		pass

@@ -11,7 +11,9 @@ var grd_offset: int = 64
 
 var current_wave: int = 0
 var game_is_played: bool = false
-var locations: Array[location_card]
+var locations: Array[Location]
+var minions_killed: int = 0
+var boss_added: bool = false
 
 #_________________________________________________________#
 
@@ -56,16 +58,21 @@ func pick_locations(enemies_numb: int = 4, event_num: int = 4, services_num: int
 	locations.clear()
 	if !Locations.enemy_loc_cards.is_empty():
 		for i in enemies_numb:
-			var loc: location_card = Locations.enemy_loc_cards.pick_random().instantiate()
+			var loc: Location = Locations.enemy_loc_cards.pick_random()
 			locations.append(loc)
 	if !Locations.event_loc_cards.is_empty():
 		for i in event_num:
-			var loc: location_card = Locations.event_loc_cards.pick_random().instantiate()
+			var loc: Location = Locations.event_loc_cards.pick_random()
 			locations.append(loc)
 	if !Locations.services_loc_cards.is_empty():
 		for i in services_num:
-			var loc: location_card = Locations.services_loc_cards.pick_random().instantiate()
+			var loc: Location = Locations.services_loc_cards.pick_random()
 			locations.append(loc)
-	if !Locations.boss_loc_cards.is_empty():
-		var loc: location_card = Locations.boss_loc_cards.pick_random().instantiate()
-		locations.append(loc)
+	locations.shuffle()
+
+func add_boss_to_locations(req: int):
+	if !boss_added:
+		if minions_killed >= req:
+			if !is_null(Locations.boss_loc_cards):
+				locations.append(Locations.boss_loc_cards.pick_random())
+				boss_added = true

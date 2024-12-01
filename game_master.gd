@@ -29,6 +29,7 @@ func _process(_delta: float) -> void:
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
+			Global.minions_killed += 1
 			Global.game_is_played = false
 			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	if Global.cur_char.cur_health <= 0:

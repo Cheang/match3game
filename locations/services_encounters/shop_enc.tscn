@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh8n445rg2hrk"]
-
-[ext_resource type="PackedScene" uid="uid://ccly008m1l4s5" path="res://locations/loc_card.tscn" id="1_kkqi2"]
-
-[node name="shop_enc" instance=ExtResource("1_kkqi2")]
-loc_name = "A small shack"
-loc_description = "A small shack with a crude drawing of a gem carved into the wooden door"

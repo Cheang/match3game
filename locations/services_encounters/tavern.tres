@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Location" load_steps=3 format=3 uid="uid://ccc1sbv8dne52"]
+
+[ext_resource type="Script" path="res://locations/location_resource.gd" id="1_yadtw"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_l6bfy"]
+
+[resource]
+script = ExtResource("1_yadtw")
+name = "Tavern"
+description = "Lorem Ipsum"
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = false
+which_enemy = Array[ExtResource("2_l6bfy")]([])

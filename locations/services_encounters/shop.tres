@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Location" load_steps=4 format=3 uid="uid://7qvry0noinq1"]
+
+[ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_jquq7"]
+[ext_resource type="Script" path="res://locations/location_resource.gd" id="1_l732g"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_t0ha1"]
+
+[resource]
+script = ExtResource("1_l732g")
+name = "A small shack"
+description = "A small shack with a crude drawing of a gem carved into the wooden door"
+pic = ExtResource("1_jquq7")
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = false
+which_enemy = Array[ExtResource("2_t0ha1")]([])
