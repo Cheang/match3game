@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://wwspg7wrl4os"]
+[gd_scene load_steps=3 format=3 uid="uid://wwspg7wrl4os"]
 
 [ext_resource type="Script" path="res://scripts/next_encounter_screen.gd" id="1_bd8ig"]
 [ext_resource type="Texture2D" uid="uid://ehrb2ibqd0f6" path="res://assets/level_ui/location_bg.png" id="1_wp1ki"]
-[ext_resource type="PackedScene" uid="uid://o8617khwcu3c" path="res://locations/enemie_encounters/karjaliia_cap_1_enc.tscn" id="3_gtfuq"]
 
 [node name="next_encounter_screen" type="Node2D"]
 script = ExtResource("1_bd8ig")
@@ -40,14 +39,9 @@ theme_override_constants/separation = 20
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="karjaliia_cap_1_enc" parent="loaction_cards/MarginContainer/VBoxContainer" instance=ExtResource("3_gtfuq")]
+[node name="loc_howder" type="VBoxContainer" parent="loaction_cards/MarginContainer/VBoxContainer"]
 layout_mode = 2
-
-[node name="karjaliia_cap_1_enc2" parent="loaction_cards/MarginContainer/VBoxContainer" instance=ExtResource("3_gtfuq")]
-layout_mode = 2
-
-[node name="karjaliia_cap_1_enc3" parent="loaction_cards/MarginContainer/VBoxContainer" instance=ExtResource("3_gtfuq")]
-layout_mode = 2
+theme_override_constants/separation = 20
 
 [node name="spacer1" type="Control" parent="loaction_cards/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)

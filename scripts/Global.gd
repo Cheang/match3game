@@ -11,6 +11,7 @@ var grd_offset: int = 64
 
 var current_wave: int = 0
 var game_is_played: bool = false
+var locations: Array[location_card]
 
 #_________________________________________________________#
 
@@ -51,5 +52,20 @@ func reset_character_stats():
 	cur_char.armor = cur_char.start_armor
 	cur_char.mage_armor = cur_char.start_mage_armor
 
-func pick_locations():
-	pass
+func pick_locations(enemies_numb: int = 4, event_num: int = 4, services_num: int = 2):
+	locations.clear()
+	if !Locations.enemy_loc_cards.is_empty():
+		for i in enemies_numb:
+			var loc: location_card = Locations.enemy_loc_cards.pick_random().instantiate()
+			locations.append(loc)
+	if !Locations.event_loc_cards.is_empty():
+		for i in event_num:
+			var loc: location_card = Locations.event_loc_cards.pick_random().instantiate()
+			locations.append(loc)
+	if !Locations.services_loc_cards.is_empty():
+		for i in services_num:
+			var loc: location_card = Locations.services_loc_cards.pick_random().instantiate()
+			locations.append(loc)
+	if !Locations.boss_loc_cards.is_empty():
+		var loc: location_card = Locations.boss_loc_cards.pick_random().instantiate()
+		locations.append(loc)

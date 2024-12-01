@@ -10,6 +10,7 @@ func _on_start_pressed() -> void:
 	Global.cur_char.cur_health = Global.cur_char.max_health
 	#__________________________________________________________________|
 	Global.current_wave = 0
+	Global.pick_locations(5)
 	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_char_select_pressed() -> void:
