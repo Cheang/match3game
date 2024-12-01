@@ -6,6 +6,7 @@ class_name location_card
 @export var loc_pic: Texture2D
 @export var next_scene: String = "res://main_menu.tscn"
 @export var transition_color: Color = Color('#2e222f')
+@onready var loc_card: location_card = $"."
 
 @export_category("Enemy")
 @export var enemy_encounter: bool
@@ -15,6 +16,7 @@ class_name location_card
 @onready var loc_name_l: Label = $HBoxContainer/MarginContainer/VBoxContainer/loc_name
 @onready var loc_description_l: RichTextLabel = $HBoxContainer/MarginContainer/VBoxContainer/loc_decription
 
+var selected: bool = false
 
 func _ready() -> void:
 	loc_texture.texture = loc_pic
@@ -31,4 +33,10 @@ func _on_selection_btn_pressed() -> void:
 				Global.game_is_played = true
 				next_scene = "res://game_window.tscn"
 		Global.current_wave += 1
+		selected = true
 		SceneManager.change_scene(next_scene, { "pattern": "diagonal", "color": transition_color })
+
+func _on_tree_exiting() -> void:
+	if !selected:
+		print(loc_card,"   ", self)
+		Global.locations.push_back(loc_card)
