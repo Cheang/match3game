@@ -9,6 +9,7 @@ var grd_width: int = 8
 var grd_height: int = 9
 var grd_offset: int = 64
 
+var current_wave: int = 0
 var game_is_played: bool = false
 
 #_________________________________________________________#
@@ -42,10 +43,13 @@ func is_in_array(array, item):
 			return true
 	return false
 
-func set_cur_character(char: PlayerResource):
-	cur_char = char
+func set_cur_character(character: PlayerResource):
+	cur_char = character
 
 func reset_character_stats():
 	cur_char.moves_left = cur_char.speed
 	cur_char.armor = cur_char.start_armor
 	cur_char.mage_armor = cur_char.start_mage_armor
+
+func pick_locations():
+	pass

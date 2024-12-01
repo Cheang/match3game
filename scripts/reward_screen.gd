@@ -14,7 +14,4 @@ func _ready() -> void:
 
 
 func _on_skip_pressed() -> void:
-	EnemyData.pick_random_minion()
-	EnemyData.set_enemie_stats()
-	Global.game_is_played = true
-	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

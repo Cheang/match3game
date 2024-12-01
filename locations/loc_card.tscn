@@ -1,0 +1,69 @@
+[gd_scene load_steps=4 format=3 uid="uid://ccly008m1l4s5"]
+
+[ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="1_sj7he"]
+[ext_resource type="Script" path="res://locations/loc_card.gd" id="2_tcvsp"]
+[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="2_ufadj"]
+
+[node name="loc_card" type="PanelContainer"]
+size_flags_vertical = 6
+theme_override_styles/panel = ExtResource("1_sj7he")
+script = ExtResource("2_tcvsp")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="loc_texture" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_ufadj")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="devider2" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.572549, 0.662745, 0.517647, 1)
+
+[node name="loc_name" type="Label" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_font_sizes/font_size = 32
+text = "Location Name"
+
+[node name="devider3" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.572549, 0.662745, 0.517647, 1)
+
+[node name="loc_decription" type="RichTextLabel" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_colors/table_border = Color(0, 0, 0, 1)
+theme_override_colors/default_color = Color(0.329412, 0.494118, 0.392157, 1)
+text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
+fit_content = true
+
+[node name="devider" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.572549, 0.662745, 0.517647, 1)
+
+[node name="selection_btn" type="TextureButton" parent="."]
+layout_mode = 2
+
+[connection signal="pressed" from="selection_btn" to="." method="_on_selection_btn_pressed"]
