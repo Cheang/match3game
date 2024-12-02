@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
-[ext_resource type="Script" path="res://game_master.gd" id="1_q6hof"]
+[ext_resource type="Script" path="res://scripts/game_master.gd" id="1_q6hof"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd.gd" id="2_i4bg5"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd_ice.gd" id="4_a7uqp"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]

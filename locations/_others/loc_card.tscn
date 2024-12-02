@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ccly008m1l4s5"]
 
 [ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="1_sj7he"]
-[ext_resource type="Script" path="res://locations/loc_card.gd" id="2_tcvsp"]
+[ext_resource type="Script" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
 
 [node name="loc_card" type="PanelContainer"]
 size_flags_vertical = 6

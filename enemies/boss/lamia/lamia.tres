@@ -19,7 +19,6 @@ attacks_p2 = Array[ExtResource("1_j17yo")]([])
 attacks_p3 = Array[ExtResource("1_j17yo")]([])
 attacks_p4 = Array[ExtResource("1_j17yo")]([])
 speed = 1
-level = 0
 type = 1
 has_phases = false
 sprite = ExtResource("8_c4omb")

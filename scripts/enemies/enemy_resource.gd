@@ -11,7 +11,6 @@ class_name EnemyResource
 @export var attacks_p4: Array[EnemyAttackBase]
 @export_group("")
 @export var speed: int
-@export var level: int
 @export_enum("minion", "boss") var type: int
 @export var has_phases: bool
 @export var sprite: PackedScene

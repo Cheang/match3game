@@ -1,8 +1,7 @@
 extends Node
 
-var resource: EnemyResource
-var all_minions: Array[EnemyResource] = [preload("res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres"),]
-var bosses: Array[EnemyResource] = [preload("res://enemies/boss/lamia/lamia.tres"),]
+var enemy: EnemyResource
+
 #health_variables_____________________________________________________________#
 var health_scaler: float = .4
 var max_health: float
@@ -29,22 +28,21 @@ var ice_spaces: Array[Vector2]
 var freeze_spaces: Array[Vector2]
 
 func set_enemie_stats():
-	max_health = round(resource.health + (health_scaler * Global.current_wave))
-	cur_health = round(resource.health + (health_scaler * Global.current_wave))
-	damage = round(resource.damage + (damage_scaler * Global.current_wave))
-	attacks_p1 = resource.attacks
-	attacks_p2 = resource.attacks_p2
-	attacks_p3 = resource.attacks_p3
-	attacks_p4 = resource.attacks_p4
-	level = resource.level
-	type = resource.type
-	has_phases = resource.has_phases
-	sprite = resource.sprite
-	health_bar = resource.health_bar
+	max_health = round(enemy.health + (health_scaler * Global.current_wave))
+	cur_health = round(enemy.health + (health_scaler * Global.current_wave))
+	damage = round(enemy.damage + (damage_scaler * Global.current_wave))
+	attacks_p1 = enemy.attacks
+	attacks_p2 = enemy.attacks_p2
+	attacks_p3 = enemy.attacks_p3
+	attacks_p4 = enemy.attacks_p4
+	type = enemy.type
+	has_phases = enemy.has_phases
+	sprite = enemy.sprite
+	health_bar = enemy.health_bar
 	
-	empty_spaces = resource.empty_spaces
-	ice_spaces = resource.ice_spaces
-	freeze_spaces = resource.freeze_spaces	
+	empty_spaces = enemy.empty_spaces
+	ice_spaces = enemy.ice_spaces
+	freeze_spaces = enemy.freeze_spaces	
 
 func take_dmg(dmg):
 	cur_health -= dmg
@@ -54,14 +52,10 @@ func take_dmg(dmg):
 		phase = 3
 	elif cur_health <= max_health * .25 and has_phases and phase == 3:
 		phase = 4
-	
 
 func set_minion(specific_enemy: EnemyResource):
-	resource = specific_enemy.duplicate()
+	enemy = specific_enemy.duplicate()
 
-func pick_bosses(targ_level: int):
-	pass
-	
 func pick_next_attack():
 	randomize()
 	if phase == 2 and !attacks_p2.is_empty():

@@ -11,3 +11,4 @@ class_name Location
 @export_category("Enemy")
 @export var enemy_encounter: bool
 @export var which_enemy: Array[EnemyResource]
+@export var level: int

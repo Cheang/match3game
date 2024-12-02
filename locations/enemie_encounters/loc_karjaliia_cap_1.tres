@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://csp37q5bepa8w"]
 
 [ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_1vh0f"]
-[ext_resource type="Script" path="res://locations/location_resource.gd" id="1_mhrhg"]
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_mhrhg"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_0gdu8"]
 [ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="4_wxd0i"]
 

@@ -16,7 +16,7 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	load_player()
 	load_enemie()
-	enemy.enemy_name.text = EnemyData.resource.name
+	enemy.enemy_name.text = EnemyData.enemy.name
 	grd.on_startup()
 	grd.state = grd.move
 

@@ -9,9 +9,13 @@ var grd_width: int = 8
 var grd_height: int = 9
 var grd_offset: int = 64
 
-var current_wave: int = 0
 var game_is_played: bool = false
+var current_wave: int = 0
+var current_level: int = 1
+
 var locations: Array[Location]
+
+#for boss spawning
 var minions_killed: int = 0
 var boss_added: bool = false
 
@@ -76,3 +80,17 @@ func add_boss_to_locations(req: int):
 			if !is_null(Locations.boss_loc_cards):
 				locations.append(Locations.boss_loc_cards.pick_random())
 				boss_added = true
+
+func set_up_player():
+	if is_null(selected_char):
+		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
+		selected_char = def_char.duplicate()
+	cur_char = selected_char.duplicate()
+	cur_char.cur_health = cur_char.max_health
+	cur_char.armor = cur_char.start_armor
+	cur_char.mage_armor = cur_char.start_mage_armor
+
+func set_up_variable():
+	current_wave = 0
+	minions_killed = 0
+	boss_added = false

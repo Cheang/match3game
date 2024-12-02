@@ -1,19 +1,15 @@
 extends Node
 
-var enemy_dir: String = "res://locations/enemie_encounters"
 var enemy_loc_cards: Array[Location] 
-var services_dir: String = "res://locations/services_encounters"
 var services_loc_cards: Array[Location] 
-var event_dir: String = "res://locations/event_encounters"
 var event_loc_cards: Array[Location] 
-var boss_dir: String = "res://locations/boss_encounters"
 var boss_loc_cards: Array[Location] 
 
 func _ready() -> void:
-	load_locations_from_directory(enemy_dir, enemy_loc_cards)
-	load_locations_from_directory(services_dir, services_loc_cards)
-	load_locations_from_directory(event_dir, event_loc_cards)
-	load_locations_from_directory(boss_dir, boss_loc_cards)
+	load_locations_from_directory("res://locations/enemie_encounters", enemy_loc_cards)
+	load_locations_from_directory("res://locations/services_encounters", services_loc_cards)
+	load_locations_from_directory("res://locations/event_encounters", event_loc_cards)
+	load_locations_from_directory("res://locations/boss_encounters", boss_loc_cards)
 
 func load_locations_from_directory(directory_path: String, target_array:Array[Location]) -> void:
 	var dir = DirAccess.open(directory_path)  # Create and open the directory
