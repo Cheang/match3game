@@ -31,6 +31,9 @@ func _process(_delta: float) -> void:
 			grd.state = grd.wait
 			Global.minions_killed += 1
 			Global.game_is_played = false
+			if EnemyData.type == 1:
+				Global.boss_beaten = true
+				pass
 			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	if Global.cur_char.cur_health <= 0:
 		if Global.game_is_played:

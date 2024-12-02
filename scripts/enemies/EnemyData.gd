@@ -15,7 +15,6 @@ var attacks_p3: Array[EnemyAttackBase]
 var attacks_p4: Array[EnemyAttackBase]
 var next_attack: EnemyAttackBase
 
-var level: int
 var type: int
 var has_phases: bool
 var sprite: PackedScene

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ccly008m1l4s5"]
+[gd_scene load_steps=4 format=3 uid="uid://ccly008m1l4s5"]
 
 [ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="1_sj7he"]
 [ext_resource type="Script" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
+[ext_resource type="Texture2D" uid="uid://bbpd48s55of6d" path="res://assets/level_ui/location_pictures/loc_empty.png" id="3_t8ffi"]
 
 [node name="loc_card" type="PanelContainer"]
 size_flags_vertical = 6
@@ -17,6 +18,7 @@ custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+texture = ExtResource("3_t8ffi")
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 layout_mode = 2

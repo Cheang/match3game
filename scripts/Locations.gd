@@ -12,19 +12,45 @@ func _ready() -> void:
 	load_locations_from_directory("res://locations/boss_encounters", boss_loc_cards)
 
 func load_locations_from_directory(directory_path: String, target_array:Array[Location]) -> void:
-	var dir = DirAccess.open(directory_path)  # Create and open the directory
+	var dir = DirAccess.open(directory_path)
 	if dir:
-		dir.list_dir_begin()  # Begin listing files in the directory
-		var file_name = dir.get_next()  # Get the first file
-		# Loop through the files in the directory
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
 		while file_name != "":
-			if !dir.current_is_dir():  # Only process files (skip directories)
-				# Check if the file is a scene file (.tscn or .scn)
+			if !dir.current_is_dir():
 				if file_name.ends_with(".tres"):
-					var scene = load(directory_path + "/" + file_name)  # Load the scene as a PackedScene
+					var scene = load(directory_path + "/" + file_name)
 					if scene is Location:
-						target_array.append(scene)  # Add the PackedScene to the array
-			file_name = dir.get_next()  # Get the next file
-		dir.list_dir_end()  # End the directory listing
+						target_array.append(scene)
+			file_name = dir.get_next()
+		dir.list_dir_end()
 	else:
 		print("Failed to open directory: %s" % directory_path)
+
+func pick_locations(target: Array[Location], enemies_numb: int = 4, event_numb: int = 4, services_numb: int = 2):
+	target.clear()
+	if !Locations.enemy_loc_cards.is_empty():
+		for i in enemies_numb:
+			var loc: Location = Locations.enemy_loc_cards.pick_random()
+			target.append(loc)
+	if !Locations.event_loc_cards.is_empty():
+		for i in event_numb:
+			var loc: Location = Locations.event_loc_cards.pick_random()
+			target.append(loc)
+	if !Locations.services_loc_cards.is_empty():
+		for i in services_numb:
+			var loc: Location = Locations.services_loc_cards.pick_random()
+			target.append(loc)
+	target.shuffle()
+
+func add_boss_to_locations(target: Array[Location], req: int = 4):
+	if !Global.boss_added:
+		if Global.minions_killed >= req:
+			if !Global.is_null(boss_loc_cards):
+				var pick: Location = boss_loc_cards.pick_random()
+				if pick.level != 0:
+					while pick.level != null and pick.level <= Global.current_level:
+						randomize()
+						pick = boss_loc_cards.pick_random()
+				target.append(pick)
+				Global.boss_added = true

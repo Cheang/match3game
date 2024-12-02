@@ -10,17 +10,16 @@ var loc_cards: Array[location_card]
 
 func _ready() -> void:
 	loc_cards = [loc_card_1,loc_card_2,loc_card_3]
-	Global.add_boss_to_locations(4)
+	Locations.add_boss_to_locations(Global.locations, Global.minions_needed)
 	get_locations()
 	pass
 
 func get_locations():
-	for i in 3:
+	for i in range(3):
 		if i >= Global.locations.size():
 			loc_cards[i].loc_res = LOC_DEADEND
 			loc_cards[i].load_btn()
-			return
-		var location = Global.locations[i]
-		loc_cards[i].loc_res = location
-		loc_cards[i].load_btn()
-		pass
+		else:
+			var location = Global.locations[i]
+			loc_cards[i].loc_res = location
+			loc_cards[i].load_btn()

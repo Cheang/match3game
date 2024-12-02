@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="Location" load_steps=4 format=3 uid="uid://cqehju5d485x1"]
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://cqehju5d485x1"]
 
+[ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/level_ui/location_pictures/loc_lamia_boss.png" id="1_avet4"]
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_pkour"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_kevmu"]
 [ext_resource type="Resource" uid="uid://cyl7kv84j6vky" path="res://enemies/boss/lamia/lamia.tres" id="3_kdd54"]
@@ -8,7 +9,8 @@
 script = ExtResource("1_pkour")
 name = "Great Snake Creature"
 description = "Lorem Ipsum"
-next_scene = "res://game_window.tscn"
+pic = ExtResource("1_avet4")
+next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = true
 which_enemy = Array[ExtResource("2_kevmu")]([ExtResource("3_kdd54")])

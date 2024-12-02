@@ -14,4 +14,7 @@ func _ready() -> void:
 
 
 func _on_skip_pressed() -> void:
-	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	if Global.boss_beaten == true:
+		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	else:
+		SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

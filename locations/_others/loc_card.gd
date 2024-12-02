@@ -33,8 +33,8 @@ func _on_selection_btn_pressed() -> void:
 				loc_res.next_scene = "res://game_window.tscn"
 		Global.current_wave += 1
 		selected = true
-		
-		SceneManager.change_scene(loc_res.next_scene, { "pattern": "diagonal", "color": loc_res.transition_color })
+		if loc_res.next_scene != "":
+			SceneManager.change_scene(loc_res.next_scene, { "pattern": "diagonal", "color": loc_res.transition_color })
 
 func _on_tree_exiting() -> void:
 	if selected:

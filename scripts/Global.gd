@@ -11,13 +11,19 @@ var grd_offset: int = 64
 
 var game_is_played: bool = false
 var current_wave: int = 0
-var current_level: int = 1
+var current_level: int = 0
 
+#for locations
 var locations: Array[Location]
+var enemy_loc_numb: int = 4
+var event_loc_numb: int = 5
+var services_loc_numb: int = 2
 
 #for boss spawning
 var minions_killed: int = 0
+var minions_needed: int = 1
 var boss_added: bool = false
+var boss_beaten: bool = false
 
 #_________________________________________________________#
 
@@ -58,29 +64,6 @@ func reset_character_stats():
 	cur_char.armor = cur_char.start_armor
 	cur_char.mage_armor = cur_char.start_mage_armor
 
-func pick_locations(enemies_numb: int = 4, event_num: int = 4, services_num: int = 2):
-	locations.clear()
-	if !Locations.enemy_loc_cards.is_empty():
-		for i in enemies_numb:
-			var loc: Location = Locations.enemy_loc_cards.pick_random()
-			locations.append(loc)
-	if !Locations.event_loc_cards.is_empty():
-		for i in event_num:
-			var loc: Location = Locations.event_loc_cards.pick_random()
-			locations.append(loc)
-	if !Locations.services_loc_cards.is_empty():
-		for i in services_num:
-			var loc: Location = Locations.services_loc_cards.pick_random()
-			locations.append(loc)
-	locations.shuffle()
-
-func add_boss_to_locations(req: int):
-	if !boss_added:
-		if minions_killed >= req:
-			if !is_null(Locations.boss_loc_cards):
-				locations.append(Locations.boss_loc_cards.pick_random())
-				boss_added = true
-
 func set_up_player():
 	if is_null(selected_char):
 		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
@@ -90,7 +73,9 @@ func set_up_player():
 	cur_char.armor = cur_char.start_armor
 	cur_char.mage_armor = cur_char.start_mage_armor
 
-func set_up_variable():
+func reset_variable():
 	current_wave = 0
 	minions_killed = 0
 	boss_added = false
+	boss_beaten = false
+	current_level += 1
