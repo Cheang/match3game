@@ -21,7 +21,7 @@ var services_loc_numb: int = 2
 
 #for boss spawning
 var minions_killed: int = 0
-var minions_needed: int = 1
+var minions_needed: int = 4
 var boss_added: bool = false
 var boss_beaten: bool = false
 
@@ -61,17 +61,8 @@ func set_cur_character(character: PlayerResource):
 
 func reset_character_stats():
 	cur_char.moves_left = cur_char.speed
-	cur_char.armor = cur_char.start_armor
-	cur_char.mage_armor = cur_char.start_mage_armor
-
-func set_up_player():
-	if is_null(selected_char):
-		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
-		selected_char = def_char.duplicate()
-	cur_char = selected_char.duplicate()
-	cur_char.cur_health = cur_char.max_health
-	cur_char.armor = cur_char.start_armor
-	cur_char.mage_armor = cur_char.start_mage_armor
+	cur_char.cur_armor = cur_char.start_armor
+	cur_char.cur_mage_armor = cur_char.start_mage_armor
 
 func reset_variable():
 	current_wave = 0
@@ -79,3 +70,15 @@ func reset_variable():
 	boss_added = false
 	boss_beaten = false
 	current_level += 1
+	
+func set_up_player():
+	if is_null(selected_char):
+		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
+		selected_char = def_char.duplicate()
+	cur_char = selected_char.duplicate()
+	cur_char.cur_health = cur_char.max_health
+	cur_char.gold = cur_char.start_gold
+	cur_char.rerolls = cur_char.start_reroll
+	reset_character_stats()
+	reset_variable()
+	

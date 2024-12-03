@@ -66,3 +66,6 @@ func take_damage(enemy_damage, piercing: bool = false):
 		else:
 			mage_armor = 0
 			cur_health += temp
+
+func add_to_deck():
+	pass

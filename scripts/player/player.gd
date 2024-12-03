@@ -22,8 +22,8 @@ func update():
 		Global.cur_char.cur_health = 0
 	if Global.cur_char.max_health != Global.cur_char.cur_health or Global.cur_char.cur_health <= 0:
 		player_healthbar.value = Global.cur_char.cur_health * 100 / Global.cur_char.max_health
-	update_buff(marmor,marmorlabel,Global.cur_char.mage_armor)
-	update_buff(armor,armorlabel,Global.cur_char.armor)
+	update_buff(marmor,marmorlabel,Global.cur_char.cur_mage_armor)
+	update_buff(armor,armorlabel,Global.cur_char.cur_armor)
 
 func _on_player_healthbar_value_changed(value: float) -> void:
 	if !one_time:

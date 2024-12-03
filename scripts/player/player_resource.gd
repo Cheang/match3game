@@ -12,6 +12,8 @@ class_name PlayerResource
 @export_group("Utility")
 @export var speed: int
 @export var cooldown_reduction: int
+@export var start_gold: int
+@export var start_reroll: int
 
 #Magic
 @export_group("Magic")
@@ -28,6 +30,8 @@ class_name PlayerResource
 @export_group("Decks")
 @export var deck: Array[PackedScene]
 @export var fluf: Array[PackedScene]
+@export var rewards_piece: Array[Reward]
+@export var rewards_passive: Array[Reward]
 
 #Art
 @export_group("Art")
@@ -35,33 +39,37 @@ class_name PlayerResource
 
 #Stats that change in-game
 var cur_health: float = max_health
-var armor: float 
-var mage_armor: float 
+var cur_armor: float 
+var cur_mage_armor: float 
 var moves_left: int = 0
-
-
-
+var gold: int = 0
+var rerolls: int = 0
 
 
 func take_damage(enemy_damage, piercing: bool = false):
 	if !piercing:
 		var temp
-		temp = armor - enemy_damage 
+		temp = cur_mage_armor - enemy_damage 
 		if temp >= 0:
-			armor = temp
+			cur_mage_armor = temp
 		else:
-			armor = 0
-			temp = mage_armor + temp
+			cur_mage_armor = 0
+			temp = cur_armor + temp
 			if temp >= 0:
-				mage_armor = temp
+				cur_armor = temp
 			else:
-				mage_armor = 0
+				cur_armor = 0
 				cur_health += temp
 	else:
 		var temp
-		temp = mage_armor - enemy_damage
+		temp = cur_mage_armor - enemy_damage
 		if temp >= 0:
-			mage_armor = temp
+			cur_mage_armor = temp
 		else:
-			mage_armor = 0
+			cur_mage_armor = 0
 			cur_health += temp
+
+func add_piece(deck_to_add, pieces):
+	if deck_to_add != null and pieces != null:
+		for piece in pieces:
+			deck_to_add.append(piece)

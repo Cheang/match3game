@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://c7cawpgd1yofl"]
+
+[ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="1_q2otd"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_yl784"]
+[ext_resource type="Texture2D" uid="uid://b373kp8ylc4wn" path="res://assets/_green_icons/green_icon_1.png" id="2_pus3p"]
+[ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/green_sq_1.tscn" id="3_6une1"]
+
+[resource]
+script = ExtResource("1_yl784")
+piece_to_add = Array[PackedScene]([ExtResource("3_6une1")])
+passives_to_boost = []
+name = "Rush (Week)"
+description = "123"
+base = ExtResource("1_q2otd")
+icon = ExtResource("2_pus3p")

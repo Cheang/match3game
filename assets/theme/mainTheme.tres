@@ -33,12 +33,9 @@ anti_aliasing = false
 
 [resource]
 default_font = ExtResource("1_p6mby")
-Button/colors/font_color = Color(1, 1, 1, 1)
-Button/colors/font_outline_color = Color(0.176471, 0.129412, 0.180392, 1)
-Button/constants/outline_size = 4
+Button/colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
 Button/styles/disabled = SubResource("StyleBoxTexture_h7t2y")
 Button/styles/hover = SubResource("StyleBoxTexture_3p4xp")
 Button/styles/normal = ExtResource("2_y3e2i")
-Label/colors/font_outline_color = Color(0, 0, 0, 0)
-Label/colors/font_shadow_color = Color(0.180392, 0.133333, 0.184314, 1)
+Button/styles/pressed = null
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_1jxyf")

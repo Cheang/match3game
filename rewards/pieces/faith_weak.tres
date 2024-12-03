@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://b5css5l7lenvq"]
+
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_4ioti"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="1_c4hnu"]
+[ext_resource type="Texture2D" uid="uid://cuj6n0jrqbw8j" path="res://assets/_white_icons/white_icon_1.png" id="2_r7a3h"]
+[ext_resource type="PackedScene" uid="uid://cw3airgurvyv5" path="res://piece/_white_sq/white_sq_1.tscn" id="3_pa0rj"]
+
+[resource]
+script = ExtResource("1_4ioti")
+piece_to_add = Array[PackedScene]([ExtResource("3_pa0rj")])
+passives_to_boost = []
+name = "Faith"
+description = "somethng"
+base = ExtResource("1_c4hnu")
+icon = ExtResource("2_r7a3h")

@@ -33,7 +33,6 @@ func _process(_delta: float) -> void:
 			Global.game_is_played = false
 			if EnemyData.type == 1:
 				Global.boss_beaten = true
-				pass
 			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	if Global.cur_char.cur_health <= 0:
 		if Global.game_is_played:
@@ -45,7 +44,7 @@ func _process(_delta: float) -> void:
 
 func _on_enemy_enemy_attacked() -> void:
 	await get_tree().create_timer(.5).timeout
-	Global.cur_char.armor = 0
+	Global.cur_char.cur_armor = 0
 	grd.state = grd.move
 	enemy_attacked_once = false
 

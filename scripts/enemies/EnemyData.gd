@@ -27,8 +27,8 @@ var ice_spaces: Array[Vector2]
 var freeze_spaces: Array[Vector2]
 
 func set_enemie_stats():
-	max_health = round(enemy.health + (health_scaler * Global.current_wave))
-	cur_health = round(enemy.health + (health_scaler * Global.current_wave))
+	max_health = round(enemy.health + ((health_scaler * Global.current_wave)* enemy.health))
+	cur_health = round(enemy.health + ((health_scaler * Global.current_wave)* enemy.health))
 	damage = round(enemy.damage + (damage_scaler * Global.current_wave))
 	attacks_p1 = enemy.attacks
 	attacks_p2 = enemy.attacks_p2

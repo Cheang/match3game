@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b14oaurjk3n0q"]
+[gd_scene load_steps=11 format=3 uid="uid://b14oaurjk3n0q"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_iwqhq"]
 [ext_resource type="Script" path="res://scripts/reward_screen.gd" id="1_k3umh"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="4_qgy55"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="5_wbtxd"]
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="6_0sge2"]
+[ext_resource type="PackedScene" uid="uid://bksjsebs3posk" path="res://rewards/others/reward_card.tscn" id="8_m3h2k"]
 [ext_resource type="PackedScene" uid="uid://bte76kklshdrl" path="res://other/pause.tscn" id="8_mmhr7"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3tf3b"]
@@ -105,21 +106,19 @@ offset_right = 263.0
 offset_bottom = 15.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
 theme_override_font_sizes/font_size = 32
 text = "Pick a reward"
 horizontal_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="Control/MarginContainer/VBoxContainer"]
+[node name="reward_card_0" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="PanelContainer2" type="PanelContainer" parent="Control/MarginContainer/VBoxContainer"]
+[node name="reward_card_1" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="PanelContainer3" type="PanelContainer" parent="Control/MarginContainer/VBoxContainer"]
+[node name="reward_card_2" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -142,3 +141,4 @@ text = "Reroll"
 [node name="pause" parent="." instance=ExtResource("8_mmhr7")]
 
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]

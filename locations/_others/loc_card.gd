@@ -10,10 +10,6 @@ var loc_res: Location
 
 var selected: bool = false
 
-func _ready() -> void:
-	
-	pass
-
 func load_btn():
 	if loc_res.pic != null:
 		loc_texture.texture = loc_res.pic
