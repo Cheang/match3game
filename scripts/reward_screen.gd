@@ -48,3 +48,5 @@ func _on_reroll_pressed() -> void:
 	if Global.cur_char.rerolls > 0:
 		get_rewards()
 		Global.cur_char.rerolls -= 1
+	if Global.cur_char.rerolls <= 0:
+		reroll.disabled = true

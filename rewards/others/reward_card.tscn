@@ -1,10 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bksjsebs3posk"]
+[gd_scene load_steps=5 format=3 uid="uid://bksjsebs3posk"]
 
 [ext_resource type="Texture2D" uid="uid://i1x4yl7wxjam" path="res://assets/level_ui/reward_panel.png" id="1_qyjgv"]
 [ext_resource type="Script" path="res://rewards/others/reward_card.gd" id="2_six43"]
 [ext_resource type="Texture2D" uid="uid://cip6rlu65sv6c" path="res://assets/level_ui/reward_panel_2.png" id="2_wjh80"]
-[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_hegb4"]
-[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="4_xdstp"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d366o"]
 texture = ExtResource("1_qyjgv")
@@ -43,7 +41,6 @@ offset_right = 64.0
 offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_hegb4")
 
 [node name="reward_icon" type="TextureRect" parent="HBoxContainer/reward_texture"]
 layout_mode = 1
@@ -58,7 +55,6 @@ offset_right = 64.0
 offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_xdstp")
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 layout_mode = 2

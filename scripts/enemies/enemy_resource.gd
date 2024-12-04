@@ -16,7 +16,6 @@ class_name EnemyResource
 @export var sprite: PackedScene
 @export var health_bar: Texture2D
 
-
 @export var empty_spaces: Array[Vector2]
 @export var ice_spaces: Array[Vector2]
 @export var freeze_spaces: Array[Vector2]

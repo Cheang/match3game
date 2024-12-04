@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlayerResource" load_steps=17 format=3 uid="uid://b8jo32hmbbisk"]
+[gd_resource type="Resource" script_class="PlayerResource" load_steps=18 format=3 uid="uid://b8jo32hmbbisk"]
 
 [ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/blue_sq_1.tscn" id="1_pardm"]
 [ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/green_sq_1.tscn" id="2_upqac"]
@@ -16,11 +16,13 @@
 [ext_resource type="Resource" uid="uid://c0qvoqs1c838t" path="res://rewards/pieces/men_at_arms.tres" id="12_bsl58"]
 [ext_resource type="Resource" uid="uid://c7cawpgd1yofl" path="res://rewards/pieces/rush.tres" id="13_6tq0m"]
 [ext_resource type="Resource" uid="uid://e32mdgnksepq" path="res://rewards/pieces/shileds_up.tres" id="14_yvsha"]
+[ext_resource type="Resource" uid="uid://b3udh1gopxu2p" path="res://rewards/pieces/strong_body.tres" id="15_sslxp"]
 
 [resource]
 script = ExtResource("10_ljvcx")
 max_health = 20.0
 life_steal = 0.0
+dmg_reduction = 0.0
 start_armor = 0.0
 start_mage_armor = 0.0
 speed = 2
@@ -34,6 +36,6 @@ crit_chanse = 5
 crit_dmg = 2.0
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
-rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_wab3o"), ExtResource("12_bsl58"), ExtResource("13_6tq0m"), ExtResource("14_yvsha")])
-rewards_passive = []
+rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_wab3o"), ExtResource("12_bsl58"), ExtResource("13_6tq0m"), ExtResource("14_yvsha"), ExtResource("15_sslxp")])
+rewards_passive = Array[ExtResource("10_k67pm")]([])
 sprite = ExtResource("11_pi64o")

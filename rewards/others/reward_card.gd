@@ -1,7 +1,7 @@
 extends PanelContainer
 class_name reward_card
 
-var reward_res: R_Piece
+var reward_res: Reward
 var index: int
 
 @onready var reward_base: TextureRect = $HBoxContainer/reward_texture/reward_base

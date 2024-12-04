@@ -5,6 +5,7 @@ class_name PlayerResource
 @export_group("Health")
 @export var max_health: float
 @export var life_steal: float
+@export var dmg_reduction: float
 @export var start_armor: float
 @export var start_mage_armor: float
 
@@ -47,6 +48,7 @@ var rerolls: int = 0
 
 
 func take_damage(enemy_damage, piercing: bool = false):
+	enemy_damage -= dmg_reduction
 	if !piercing:
 		var temp
 		temp = cur_mage_armor - enemy_damage 
