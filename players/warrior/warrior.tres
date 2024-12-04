@@ -37,5 +37,5 @@ crit_dmg = 2.0
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
 rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_wab3o"), ExtResource("12_bsl58"), ExtResource("13_6tq0m"), ExtResource("14_yvsha"), ExtResource("15_sslxp")])
-rewards_passive = Array[ExtResource("10_k67pm")]([])
+rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("15_sslxp"), ExtResource("15_sslxp"), ExtResource("15_sslxp")])
 sprite = ExtResource("11_pi64o")

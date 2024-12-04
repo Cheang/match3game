@@ -12,6 +12,9 @@ var index: int
 func _on_choise_btn_pressed() -> void:
 	reward_res.activate()
 	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	if Global.boss_beaten:
+		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+
 
 func load_btn():
 	if reward_res.base != null:
