@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="R_Stat" load_steps=3 format=3 uid="uid://b3udh1gopxu2p"]
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://b3udh1gopxu2p"]
 
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_q111g"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="1_wrsmf"]
+[ext_resource type="Texture2D" uid="uid://doo5kw02eiju" path="res://assets/_red_icons/red_icon_3.png" id="2_35ijb"]
 
 [resource]
 script = ExtResource("1_wrsmf")
@@ -10,3 +11,4 @@ increase = [10.0, 10.0]
 name = "Strong Body"
 description = "Max health +10"
 base = ExtResource("1_q111g")
+icon = ExtResource("2_35ijb")

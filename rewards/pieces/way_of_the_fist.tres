@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=6 format=3 uid="uid://ba0s3qgm8su2y"]
+
+[ext_resource type="Script" path="res://rewards/others/reward_resource.gd" id="1_soo0t"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_sqn1k"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="2_1tce8"]
+[ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/_red_icons/red_icon_2.png" id="2_xlt1w"]
+[ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/red_sq_2.tscn" id="4_4whi7"]
+
+[resource]
+script = ExtResource("2_1tce8")
+piece_to_add = Array[PackedScene]([ExtResource("4_4whi7"), ExtResource("4_4whi7"), ExtResource("4_4whi7")])
+passives_to_boost = Array[ExtResource("1_soo0t")]([])
+name = "Way of the Fist"
+description = "Get 3 punches.
+Each punch deals 1 DMG * the amount of Combo Points you have.
+(Generates Combo Points)"
+base = ExtResource("1_sqn1k")
+icon = ExtResource("2_xlt1w")

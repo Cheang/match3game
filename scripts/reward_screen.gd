@@ -15,6 +15,8 @@ var reward_cards: Array[reward_card]
 func _ready() -> void:
 	particles(true)
 	reward_cards = [reward_card_0, reward_card_1, reward_card_2]
+	if Global.cur_char.rerolls <= 0:
+		reroll.disabled = true
 	get_rewards()
 
 func _process(_delta: float) -> void:

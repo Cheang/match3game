@@ -25,6 +25,7 @@ func _process(_delta: float) -> void:
 		grd.state = grd.wait
 		if !enemy_attacked_once:
 			enemy_attacked_once = true
+			end_turn_reset()
 			emit_signal("enemy_attacking")
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
@@ -60,6 +61,10 @@ func load_enemie():
 	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
+
+func end_turn_reset():
+	Global.cur_char.hand_combo = 0
+	pass
 
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
