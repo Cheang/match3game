@@ -16,9 +16,7 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	load_player()
 	load_enemie()
-	enemy.enemy_name.text = EnemyData.enemy.name
 	grd.on_startup()
-	Global.cur_char.reset_stats_at_beging_of_fight()
 	grd.state = grd.move
 
 func _process(_delta: float) -> void:
@@ -29,14 +27,16 @@ func _process(_delta: float) -> void:
 			emit_signal("enemy_attacking")
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
+			Global.game_is_played = false
 			grd.state = grd.wait
+			SceneManager.fade_out( {"pattern_enter": "diagonal", "color": Color('#2e222f')} )
+			await SceneManager.fade_out()
 			grd.clean_deck_to_dest()
 			grd.clear_board()
 			Global.minions_killed += 1
-			Global.game_is_played = false
 			if EnemyData.type == 1:
 				Global.boss_beaten = true
-			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 	if Global.cur_char.cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
@@ -55,6 +55,7 @@ func load_player():
 	Global.cur_char.reset_stats_at_beging_of_fight()
 	var player_sprite = Global.cur_char.sprite.instantiate()
 	get_node("player").get_child(0).add_child(player_sprite)
+	
 func load_enemie():
 	EnemyData.pick_next_attack()
 	grd.empty_spaces = EnemyData.empty_spaces
@@ -62,6 +63,7 @@ func load_enemie():
 	grd.freeze_spaces = EnemyData.freeze_spaces
 	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
+	enemy.enemy_name.text = EnemyData.enemy.name
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
 
 func _on_back_to_mm_pressed() -> void:

@@ -38,7 +38,7 @@ func mark(activate: bool = true):
 
 func unmark():
 	base.modulate = Color(1, 1, 1, 1)
-	position = Vector2(0,0)
+	global_position = Vector2.ZERO
 	cooldown = original_cd
 	matched = false
 	is_criting = false
@@ -50,6 +50,8 @@ func will_crit():
 	if rand <= Global.cur_char.crit_chanse:
 		base.material = crit_shader
 		is_criting = true
+	else:
+		base.material = null
 
 func activate_actions(to_activate: Array):
 	if !to_activate.is_empty():

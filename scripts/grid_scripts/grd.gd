@@ -318,8 +318,9 @@ func clear_board():
 				if all_pieces[i][j].type != 0:
 					remove_child(all_pieces[i][j])
 					all_pieces[i][j] = null
-	for piece in deck:
-		piece.unmark()
+	for piece in Global.cur_char.deck_in_game:
+		if piece != null:
+			piece.unmark()
 
 func clean_deck_to_dest():
 	for piece in deck_to_dest:
@@ -336,6 +337,7 @@ func _on_grd_freeze_remove_freeze(place) -> void:
 	for i in range(freeze_spaces.size()-1, -1, -1):
 		if freeze_spaces[i] == place:
 			freeze_spaces.remove_at(i)
+
 func _on_game_window_enemy_attacking() -> void:
 	
 	pass # Replace with function body.
