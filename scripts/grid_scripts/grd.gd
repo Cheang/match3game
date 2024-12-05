@@ -112,8 +112,10 @@ func spawn_deck_pieces_random(deck_to_use):
 						loops += 1 
 						piece = deck_to_use[rand]
 					add_child(piece)
+					#piece.position = Global.grd_to_pixel(rand_col,grd_height+1)
+					piece.move(Global.grd_to_pixel(rand_col,grd_height+1), 0)
+					piece.unmark()
 					deck_to_use.pop_at(rand)
-					piece.position = Global.grd_to_pixel(rand_col,grd_height+1)
 					piece.move(Global.grd_to_pixel(rand_col,rand_row), .5)
 					all_pieces[rand_col][rand_row] = piece
 		else:
@@ -135,9 +137,10 @@ func spawn_deck_pieces_fill(deck_to_use):
 							loops += 1 
 							piece = deck_to_use[rand]
 						add_child(piece)
+						#piece.position = Global.grd_to_pixel(i,grd_height+1)
+						piece.move(Global.grd_to_pixel(i,grd_height+1), 0)
+						piece.unmark()
 						deck_to_use.pop_at(rand)
-						piece.move(Global.grd_to_pixel(i,grd_height+1), .01)
-						piece.position = Global.grd_to_pixel(i,grd_height+1)
 						piece.move(Global.grd_to_pixel(i,j), .5)
 						all_pieces[i][j] = piece
 
@@ -252,6 +255,7 @@ func destroy_matched():
 						Global.cur_char.deck_in_game.pop_at(Global.cur_char.deck_in_game.find(all_pieces[i][j]))
 						deck_to_dest.push_back(all_pieces[i][j])
 					was_matched = true
+					all_pieces[i][j].position = Vector2(0,0)
 					remove_child(all_pieces[i][j])
 					if all_pieces[i][j].type == 0:
 						all_pieces[i][j].queue_free()
@@ -293,18 +297,20 @@ func after_refill():
 	move_checked = false
 
 func cooldown_and_refill_deck():
+	var pieces_to_remove = []
 	for piece in deck_on_cd:
-		if !Global.is_null(piece):
-			if piece.cooldown == 0:
-				piece.unmark()
-				deck.push_back(piece)
-				deck_on_cd.remove_at(deck_on_cd.find(piece))
+		if piece:
 			piece.lower_cooldown()
-	for i in deck_on_cd.size():
-		if i >= deck_on_cd.size():
-			break
-		if Global.is_null(deck_on_cd[i]):
-			deck_on_cd.pop_at(i)
+			if piece.cooldown == 0:
+				pieces_to_remove.append(piece)
+	for piece in pieces_to_remove:
+		deck.append(piece)
+		deck_on_cd.erase(piece)
+	deck_on_cd = deck_on_cd.filter(func(piece):
+		return piece != null
+		)
+	
+	
 
 #Helper _____________________________________________________
 func damage_specials(col, row):
@@ -316,11 +322,9 @@ func clear_board():
 		for j in range(grd_height):
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].type != 0:
+					all_pieces[i][j].position = Vector2(0,0)
 					remove_child(all_pieces[i][j])
 					all_pieces[i][j] = null
-	for piece in Global.cur_char.deck_in_game:
-		if piece != null:
-			piece.unmark()
 
 func clean_deck_to_dest():
 	for piece in deck_to_dest:

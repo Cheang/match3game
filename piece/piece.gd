@@ -38,7 +38,6 @@ func mark(activate: bool = true):
 
 func unmark():
 	base.modulate = Color(1, 1, 1, 1)
-	global_position = Vector2.ZERO
 	cooldown = original_cd
 	matched = false
 	is_criting = false

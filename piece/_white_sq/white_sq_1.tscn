@@ -8,7 +8,7 @@
 
 [node name="white_sq_1" instance=ExtResource("1_ydkun")]
 icon_texture = ExtResource("2_us7n4")
-type = 3
+type = 2
 scene_location = "res://piece/_white_sq/white_sq_1.tscn"
 cooldown = 4
 action = Array[ExtResource("3_hpmtl")]([ExtResource("4_4soyc"), ExtResource("4_4soyc"), ExtResource("5_vt468")])
