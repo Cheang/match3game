@@ -39,6 +39,7 @@ class_name PlayerResource
 @export var sprite: PackedScene
 
 #Stats that change in-game
+var deck_in_game: Array[PieceClass]
 var cur_health: float = max_health
 var cur_armor: float 
 var cur_mage_armor: float 
@@ -72,6 +73,29 @@ func take_damage(enemy_damage, piercing: bool = false):
 			cur_health += temp
 
 func add_piece(deck_to_add, pieces):
-	if deck_to_add != null and pieces != null:
+	if deck_to_add and pieces:
 		for piece in pieces:
 			deck_to_add.append(piece)
+
+func unpack_deck(deck_to_unpack, target):
+	for scene in deck_to_unpack:
+		if scene and scene is PackedScene:
+			var instance = scene.instantiate()
+			if instance and instance is Node2D:
+				target.append(instance)
+			else: 
+				push_error("Scene in deck is not a Node2D!")
+		else:
+			push_error("Invalid PackedScene in deck!")
+
+func reset_stats_at_beging_of_fight():
+	moves_left = speed
+	cur_armor = start_armor
+	cur_mage_armor = start_mage_armor
+
+func set_stats_at_beging_of_game():
+	deck_in_game.clear()
+	unpack_deck(deck, deck_in_game)
+	cur_health = max_health
+	gold = start_gold
+	rerolls = start_reroll

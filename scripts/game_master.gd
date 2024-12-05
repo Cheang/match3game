@@ -18,6 +18,7 @@ func _ready() -> void:
 	load_enemie()
 	enemy.enemy_name.text = EnemyData.enemy.name
 	grd.on_startup()
+	Global.cur_char.reset_stats_at_beging_of_fight()
 	grd.state = grd.move
 
 func _process(_delta: float) -> void:
@@ -29,6 +30,8 @@ func _process(_delta: float) -> void:
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
 			grd.state = grd.wait
+			grd.clean_deck_to_dest()
+			grd.clear_board()
 			Global.minions_killed += 1
 			Global.game_is_played = false
 			if EnemyData.type == 1:
@@ -49,7 +52,7 @@ func _on_enemy_enemy_attacked() -> void:
 	enemy_attacked_once = false
 
 func load_player():
-	Global.reset_character_stats()
+	Global.cur_char.reset_stats_at_beging_of_fight()
 	var player_sprite = Global.cur_char.sprite.instantiate()
 	get_node("player").get_child(0).add_child(player_sprite)
 func load_enemie():

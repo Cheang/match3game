@@ -8,6 +8,7 @@ class_name PieceClass
 @export var crit_shader: Resource
 @export var scene_location: String
 @export var cooldown: int
+var original_cd: int
 
 @export var action: Array[PieceActivation]
 
@@ -18,6 +19,7 @@ var matched: bool = false
 var is_criting: bool = false
 
 func _ready() -> void:
+	original_cd = cooldown
 	if icon_texture != null:
 		icon.texture = icon_texture
 	if base_texture != null:
@@ -34,6 +36,13 @@ func mark(activate: bool = true):
 	if activate:
 		activate_actions(action)
 
+func unmark():
+	base.modulate = Color(1, 1, 1, 1)
+	position = Vector2(0,0)
+	cooldown = original_cd
+	matched = false
+	is_criting = false
+	will_crit()
 
 func will_crit():
 	randomize()

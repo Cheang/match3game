@@ -12,7 +12,7 @@ func _ready() -> void:
 	loc_cards = [loc_card_1,loc_card_2,loc_card_3]
 	Locations.add_boss_to_locations(Global.locations, Global.minions_needed)
 	get_locations()
-	pass
+
 
 func get_locations():
 	for i in range(3):
