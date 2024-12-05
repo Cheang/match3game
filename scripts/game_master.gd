@@ -84,3 +84,9 @@ func _on_resume_pressed() -> void:
 	grd.state = grd.move
 	Global.game_is_played = true
 	pause_overlay.visible = false
+
+func set_to_center():
+	var target = get_tree().get_current_scene()
+	var screen_center = get_viewport().size / 2
+	var actual_center = Vector2(screen_center.x - (576/2), screen_center.y - (1024/2))
+	target.position = actual_center

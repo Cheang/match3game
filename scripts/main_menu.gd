@@ -1,6 +1,7 @@
 extends Node2D
 
 func _on_start_pressed() -> void:
+	
 	Global.set_up_player()
 	Locations.pick_locations(Global.locations, Global.enemy_loc_numb, Global.event_loc_numb, Global.services_loc_numb)
 	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

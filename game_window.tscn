@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=28 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="18_thmtv"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -344,6 +345,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 25
 text = "Main Menu"
+
+[node name="cam" parent="." instance=ExtResource("20_sxuy2")]
 
 [connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b14oaurjk3n0q"]
+[gd_scene load_steps=12 format=3 uid="uid://b14oaurjk3n0q"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_iwqhq"]
 [ext_resource type="Script" path="res://scripts/reward_screen.gd" id="1_k3umh"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="6_0sge2"]
 [ext_resource type="PackedScene" uid="uid://bksjsebs3posk" path="res://rewards/others/reward_card.tscn" id="8_m3h2k"]
 [ext_resource type="PackedScene" uid="uid://bte76kklshdrl" path="res://other/pause.tscn" id="8_mmhr7"]
+[ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="10_77pof"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3tf3b"]
 particle_flag_disable_z = true
@@ -139,6 +140,8 @@ theme_override_font_sizes/font_size = 22
 text = "Reroll"
 
 [node name="pause" parent="." instance=ExtResource("8_mmhr7")]
+
+[node name="cam" parent="." instance=ExtResource("10_77pof")]
 
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]
