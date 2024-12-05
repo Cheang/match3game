@@ -29,8 +29,8 @@ func _process(_delta: float) -> void:
 		if Global.game_is_played:
 			Global.game_is_played = false
 			grd.state = grd.wait
-			SceneManager.fade_out( {"pattern_enter": "diagonal", "color": Color('#2e222f')} )
-			await SceneManager.fade_out()
+			SceneManager.fade_in_place( {"pattern": "diagonal", "color": Color('#2e222f')} )
+			await SceneManager.fade_complete
 			grd.clean_deck_to_dest()
 			grd.clear_board()
 			Global.minions_killed += 1
