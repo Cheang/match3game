@@ -57,12 +57,7 @@ func is_in_array(array, item):
 	return false
 
 func set_cur_character(character: PlayerResource):
-	cur_char = character
-
-func reset_character_stats():
-	cur_char.moves_left = cur_char.speed
-	cur_char.cur_armor = cur_char.start_armor
-	cur_char.cur_mage_armor = cur_char.start_mage_armor
+	selected_char = character
 
 func reset_variable():
 	current_wave = 0
@@ -74,11 +69,8 @@ func reset_variable():
 func set_up_player():
 	if is_null(selected_char):
 		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
-		selected_char = def_char.duplicate()
+		selected_char = def_char
 	cur_char = selected_char.duplicate()
-	cur_char.cur_health = cur_char.max_health
-	cur_char.gold = cur_char.start_gold
-	cur_char.rerolls = cur_char.start_reroll
-	reset_character_stats()
+	cur_char.set_stats_at_beging_of_game()
 	reset_variable()
 	

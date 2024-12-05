@@ -12,8 +12,9 @@ var grd_height: int = Global.grd_height
 var grd_offset: int = Global.grd_offset
 
 #player tiles will go in here
-var deck : Array[PackedScene]
+var deck : Array[PieceClass]
 var deck_on_cd : Array[PieceClass] = []
+var deck_to_dest : Array[PieceClass] = []
 var fluf : Array[PackedScene]
 
 #the current pieces in the game
@@ -44,11 +45,11 @@ var controling_grd: bool = false
 
 
 func on_startup() -> void:
-	deck = Global.cur_char.deck.duplicate()
+	deck = Global.cur_char.deck_in_game.duplicate()
 	fluf = Global.cur_char.fluf.duplicate()
+	randomize()
 	deck.shuffle()
 	fluf.shuffle()
-	randomize()
 	all_pieces = Global.make_2d_array(grd_width, grd_height)
 	await get_tree().create_timer(.8).timeout
 	spawn_deck_pieces_random(deck)
@@ -95,53 +96,50 @@ func spawn_fluf_piece(deck_to_use):
 					all_pieces[i][j] = piece
 
 func spawn_deck_pieces_random(deck_to_use):
-	if !deck_to_use.is_empty():
-		for i in deck_to_use.size():
-			var rand_col = floor(randf_range(0,grd_width))
-			var rand_row = floor(randf_range(0,grd_height))
-			if !deck_to_use.is_empty():
-				if !restricted_fill(Vector2(rand_col, rand_row)):
-					if all_pieces[rand_col][rand_row] == null:
-						var rand = floor(randf_range(0,deck_to_use.size()))
-						var piece = deck_to_use[rand].instantiate()
-						var loops = 0;
-						while match_at(rand_col, rand_row, piece.color) && loops < 100:
-							piece.queue_free()
-							if loops >= 99:
-									return
-							rand = floor(randf_range(0,deck_to_use.size()))
-							loops += 1 
-							piece = deck_to_use[rand].instantiate()
-						add_child(piece)
-						deck_to_use.pop_at(rand)
-						piece.position = Global.grd_to_pixel(rand_col,grd_height+1)
-						piece.move(Global.grd_to_pixel(rand_col,rand_row), .5)
-						all_pieces[rand_col][rand_row] = piece
-			else:
-				break
+	for i in deck_to_use.size():
+		var rand_col = floor(randf_range(0,grd_width))
+		var rand_row = floor(randf_range(0,grd_height))
+		if !deck_to_use.is_empty():
+			if !restricted_fill(Vector2(rand_col, rand_row)):
+				if all_pieces[rand_col][rand_row] == null:
+					var rand = floor(randf_range(0,deck_to_use.size()))
+					var piece = deck_to_use[rand]
+					var loops = 0;
+					while match_at(rand_col, rand_row, piece.color) && loops < 100:
+						if loops >= 99:
+								return
+						rand = floor(randf_range(0,deck_to_use.size()))
+						loops += 1 
+						piece = deck_to_use[rand]
+					add_child(piece)
+					deck_to_use.pop_at(rand)
+					piece.position = Global.grd_to_pixel(rand_col,grd_height+1)
+					piece.move(Global.grd_to_pixel(rand_col,rand_row), .5)
+					all_pieces[rand_col][rand_row] = piece
+		else:
+			break
 
 func spawn_deck_pieces_fill(deck_to_use):
-	if !deck_to_use.is_empty():
-		for i in range(grd_width):
-			for j in range(grd_height):
-				if !restricted_fill(Vector2(i, j)):
-					if !deck_to_use.is_empty():
-						if all_pieces[i][j] == null:
-							var rand = floor(randf_range(0,deck_to_use.size()))
-							var piece = deck_to_use[rand].instantiate()
-							var loops = 0;
-							while match_at(i, j, piece.color) && loops < 100:
-								piece.queue_free()
-								if loops >= 99:
-									return
-								rand = floor(randf_range(0,deck_to_use.size()))
-								loops += 1 
-								piece = deck_to_use[rand].instantiate()
-							add_child(piece)
-							deck_to_use.pop_at(rand)
-							piece.position = Global.grd_to_pixel(i,grd_height+1)
-							piece.move(Global.grd_to_pixel(i,j), .5)
-							all_pieces[i][j] = piece
+	for i in range(grd_width):
+		for j in range(grd_height):
+			if !restricted_fill(Vector2(i, j)):
+				if !deck_to_use.is_empty():
+					if all_pieces[i][j] == null:
+						var rand = floor(randf_range(0,deck_to_use.size()))
+						var piece = deck_to_use[rand]
+						var loops = 0;
+						while match_at(i, j, piece.color) && loops < 100:
+							if loops >= 99:
+								return
+							rand = floor(randf_range(0,deck_to_use.size()))
+							loops += 1 
+							piece = deck_to_use[rand]
+						add_child(piece)
+						deck_to_use.pop_at(rand)
+						piece.move(Global.grd_to_pixel(i,grd_height+1), .01)
+						piece.position = Global.grd_to_pixel(i,grd_height+1)
+						piece.move(Global.grd_to_pixel(i,j), .5)
+						all_pieces[i][j] = piece
 
 func match_at(col, row, color: String):
 	if col > 1:
@@ -248,13 +246,15 @@ func destroy_matched():
 					damage_specials(i,j)
 					if all_pieces[i][j].type == 1:
 						deck_on_cd.push_back(all_pieces[i][j])
+					if all_pieces[i][j].type == 2:
+						deck_to_dest.push_back(all_pieces[i][j])
 					if all_pieces[i][j].type == 3:
-						for k in Global.cur_char.deck.size():
-							if Global.cur_char.deck[k].resource_path == all_pieces[i][j].scene_location:
-								Global.cur_char.deck.pop_at(k)
-								break
+						Global.cur_char.deck_in_game.pop_at(Global.cur_char.deck_in_game.find(all_pieces[i][j]))
+						deck_to_dest.push_back(all_pieces[i][j])
 					was_matched = true
 					remove_child(all_pieces[i][j])
+					if all_pieces[i][j].type == 0:
+						all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
 	move_checked = true
 	if was_matched:
@@ -275,7 +275,6 @@ func collapse_col():
 	get_node("refill_timer").start()
 
 func refill_col():
-	
 	if !deck.is_empty():
 		spawn_deck_pieces_fill(deck)
 	spawn_fluf_piece(fluf)
@@ -294,13 +293,13 @@ func after_refill():
 	move_checked = false
 
 func cooldown_and_refill_deck():
-	for i in deck_on_cd.size():
-		if !Global.is_null(deck_on_cd[i]):
-			deck_on_cd[i].lower_cooldown()
-			if deck_on_cd[i].cooldown == 0:
-				var piece_to_add = load(deck_on_cd[i].scene_location)
-				deck.push_back(piece_to_add)
-				deck_on_cd[i].queue_free()
+	for piece in deck_on_cd:
+		if !Global.is_null(piece):
+			if piece.cooldown == 0:
+				piece.unmark()
+				deck.push_back(piece)
+				deck_on_cd.remove_at(deck_on_cd.find(piece))
+			piece.lower_cooldown()
 	for i in deck_on_cd.size():
 		if i >= deck_on_cd.size():
 			break
@@ -312,6 +311,21 @@ func damage_specials(col, row):
 	emit_signal("damage_ice", Vector2(col,row))
 	emit_signal("damage_freeze", Vector2(col,row))
 
+func clear_board():
+	for i in range(grd_width):
+		for j in range(grd_height):
+			if all_pieces[i][j] != null:
+				if all_pieces[i][j].type != 0:
+					remove_child(all_pieces[i][j])
+					all_pieces[i][j] = null
+	for piece in Global.cur_char.deck_in_game:
+		if piece != null:
+			piece.unmark()
+
+func clean_deck_to_dest():
+	for piece in deck_to_dest:
+		piece.queue_free()
+	deck_to_dest.clear()
 #On Signal __________________________________________________
 func _on_destroy_timer_timeout() -> void:
 	destroy_matched()
@@ -323,6 +337,7 @@ func _on_grd_freeze_remove_freeze(place) -> void:
 	for i in range(freeze_spaces.size()-1, -1, -1):
 		if freeze_spaces[i] == place:
 			freeze_spaces.remove_at(i)
+
 func _on_game_window_enemy_attacking() -> void:
 	
 	pass # Replace with function body.

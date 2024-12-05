@@ -45,6 +45,7 @@ func set_enemie_stats():
 
 func take_dmg(dmg):
 	cur_health -= dmg
+	
 	if cur_health <= max_health * .75 and has_phases and phase == 1:
 		phase = 2
 	elif cur_health <= max_health * .5 and has_phases and phase == 2:
