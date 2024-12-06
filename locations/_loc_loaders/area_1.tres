@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="LocationLoader" load_steps=7 format=3 uid="uid://beq8vfn2nxrdo"]
+
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_wcv6m"]
+[ext_resource type="Resource" uid="uid://cqehju5d485x1" path="res://locations/boss_encounters/loc_boss_lamia.tres" id="2_vg4qu"]
+[ext_resource type="Resource" uid="uid://csp37q5bepa8w" path="res://locations/enemie_encounters/loc_karjaliia_cap_1.tres" id="3_0pvec"]
+[ext_resource type="Script" path="res://locations/_others/locations_loader.gd" id="4_kqrmq"]
+[ext_resource type="Resource" uid="uid://7qvry0noinq1" path="res://locations/services_encounters/loc_shop.tres" id="5_jcwch"]
+[ext_resource type="Resource" uid="uid://ccc1sbv8dne52" path="res://locations/services_encounters/loc_tavern.tres" id="6_o68wa"]
+
+[resource]
+script = ExtResource("4_kqrmq")
+enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec")])
+services = Array[ExtResource("1_wcv6m")]([ExtResource("5_jcwch"), ExtResource("6_o68wa")])
+event = Array[ExtResource("1_wcv6m")]([])
+boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])
