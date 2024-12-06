@@ -87,6 +87,7 @@ script = ExtResource("4_a7uqp")
 script = ExtResource("4_lguch")
 
 [node name="middleground" type="Sprite2D" parent="."]
+position = Vector2(0, -163)
 texture = ExtResource("1_ioeul")
 centered = false
 

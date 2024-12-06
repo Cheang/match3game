@@ -10,9 +10,11 @@
 script = ExtResource("1_bd8ig")
 
 [node name="background" type="TextureRect" parent="."]
+offset_top = -163.0
 offset_right = 576.0
-offset_bottom = 1024.0
+offset_bottom = 1187.0
 texture = ExtResource("1_wp1ki")
+stretch_mode = 3
 
 [node name="loaction_cards" type="Control" parent="."]
 layout_mode = 3
