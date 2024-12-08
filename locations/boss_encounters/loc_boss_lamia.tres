@@ -15,3 +15,4 @@ transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = true
 which_enemy = Array[ExtResource("2_kevmu")]([ExtResource("3_kdd54")])
 level = 0
+event_encounter = false

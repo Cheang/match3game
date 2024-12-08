@@ -4,14 +4,21 @@ const CHOISE_BTN = preload("res://event/_other/choise_btn.tscn")
 
 var resource: Event
 
+@onready var label: Label = $MarginContainer/VBoxContainer/HBoxContainer/TextureRect/Label
+
 @onready var event_bg: TextureRect = $event_bg
 @onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/event_text
 @onready var choises_holder: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/choises_holder
 
+@onready var reward: Control = $reward
+
 func _ready() -> void:
 	resource = Global.cur_event
+	label.text = resource.categorie
 	event_text.get_child(0).text = resource.title
 	event_text.get_child(1).text = resource.description
+	if resource.background != null:
+		event_bg.texture = resource.background
 	for choise in resource.choises:
 		if choise.req_class != "None" and choise.req_class != Global.cur_char.player_class:
 			continue
@@ -31,3 +38,14 @@ func _ready() -> void:
 		choises_holder.add_child(btn)
 		btn.set_btn()
 	Global.cur_event = null
+
+func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):
+	reward.get_child(2).get_child(0).get_child(0).get_child(0).texture = texture
+	reward.get_child(2).get_child(0).get_child(0).get_child(0).get_child(0).texture = icon
+	reward.get_child(2).get_child(0).get_child(0).get_child(1).text = text
+	if description != "":
+		reward.get_child(2).get_child(0).get_child(0).get_child(2).visible = true
+		reward.get_child(2).get_child(0).get_child(0).get_child(2).text = description
+	reward.get_child(0).current_animation = "drop_down"
+	reward.visible = true
+	pass

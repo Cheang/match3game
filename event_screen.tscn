@@ -1,10 +1,48 @@
-[gd_scene load_steps=6 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=10 format=3 uid="uid://dc82ykxpsf1if"]
 
-[ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0g4u3"]
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
+[ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="3_qtnoo"]
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="4_cb86u"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
+
+[sub_resource type="Animation" id="Animation_u0pyg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -69)]
+}
+
+[sub_resource type="Animation" id="Animation_t1iey"]
+resource_name = "drop_down"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 2.82843),
+"update": 0,
+"values": [Vector2(0, -400), Vector2(0, 20)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1pdey"]
+_data = {
+"RESET": SubResource("Animation_u0pyg"),
+"drop_down": SubResource("Animation_t1iey")
+}
 
 [node name="event_screen" type="Control"]
 layout_mode = 3
@@ -30,7 +68,7 @@ offset_right = 288.0
 offset_bottom = 675.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_0g4u3")
+texture = ExtResource("2_mcnt1")
 
 [node name="event_gradient" type="TextureRect" parent="."]
 layout_mode = 1
@@ -127,6 +165,8 @@ text = "Title"
 
 [node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
 layout_mode = 2
+theme_override_constants/line_separation = 5
+theme_override_font_sizes/normal_font_size = 18
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
 fit_content = true
 
@@ -139,3 +179,91 @@ alignment = 2
 [node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+
+[node name="reward" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -69.0
+offset_bottom = -69.0
+grow_horizontal = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="reward"]
+libraries = {
+"": SubResource("AnimationLibrary_1pdey")
+}
+
+[node name="event_gradient2" type="TextureRect" parent="reward"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -569.0
+offset_right = 288.0
+offset_bottom = 199.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_opvah")
+expand_mode = 3
+stretch_mode = 2
+flip_v = true
+
+[node name="PanelContainer" type="PanelContainer" parent="reward"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -125.0
+offset_right = 125.0
+offset_bottom = 190.0
+grow_horizontal = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="reward/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="reward/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+texture = ExtResource("6_wnyme")
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer/TextureRect"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -112.0
+offset_top = -75.0
+offset_right = 112.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "title"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "title"
+horizontal_alignment = 1

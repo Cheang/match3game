@@ -1,0 +1,175 @@
+[gd_resource type="Resource" script_class="Event" load_steps=23 format=3 uid="uid://lalxc0m4oab8"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_iep27"]
+[ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/strong_body.tres" id="2_8vgu3"]
+[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_x30kn"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="4_6gs8v"]
+[ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="5_1yqpo"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="5_lr1ko"]
+[ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="6_eddm6"]
+
+[sub_resource type="Resource" id="Resource_lpeh0"]
+script = ExtResource("1_iep27")
+text = "Continue"
+type = 6
+stat_res = ExtResource("2_8vgu3")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_188xq"]
+script = ExtResource("2_x30kn")
+categorie = ""
+title = "Rowdy Villagers"
+description = "You propose a solution: you will give the first man a Healing Potion, allowing him to return the gold while still helping his daughter. Both villagers appear relieved and pleased with your plan."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_lpeh0")])
+
+[sub_resource type="Resource" id="Resource_m882c"]
+script = ExtResource("1_iep27")
+text = "Give him a potion"
+type = 1
+next_event_res = SubResource("Resource_188xq")
+stat_res = ExtResource("2_8vgu3")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = true
+req_piece = "Healing Potion"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_58ve7"]
+script = ExtResource("5_lr1ko")
+stats = Array[String](["gold"])
+increase = [2]
+name = "Gold Piece"
+description = ""
+base = ExtResource("4_6gs8v")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false
+
+[sub_resource type="Resource" id="Resource_q13i1"]
+script = ExtResource("1_iep27")
+text = "Continue..."
+type = 6
+stat_res = SubResource("Resource_58ve7")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_qml3h"]
+script = ExtResource("2_x30kn")
+categorie = ""
+title = "Rowdy Villagers"
+description = "As you compel the man to return the gold, he begins to weep, overwhelmed by the thought of his young daughter's fate. The other villager, grateful for your intervention, hands you 2 gold as a token of thanks."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_q13i1")])
+
+[sub_resource type="Resource" id="Resource_cre1f"]
+script = ExtResource("1_iep27")
+text = "Make him return the gold"
+type = 1
+next_event_res = SubResource("Resource_qml3h")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_8psiw"]
+script = ExtResource("1_iep27")
+text = "Defend the man, let him keep the gold"
+type = 2
+enemy = ExtResource("6_eddm6")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_nw6r4"]
+script = ExtResource("2_x30kn")
+categorie = ""
+title = "Rowdy Villagers"
+description = "When you ask what’s going on, the villagers explain that the man on the right stole 8 gold from the man on the left, claiming he needed the money to buy medicine for his sick daughter. What will you do?"
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_m882c"), SubResource("Resource_cre1f"), SubResource("Resource_8psiw")])
+
+[sub_resource type="Resource" id="Resource_rx8u2"]
+script = ExtResource("1_iep27")
+text = "Try to talk to them"
+type = 1
+next_event_res = SubResource("Resource_nw6r4")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_jaqi7"]
+script = ExtResource("1_iep27")
+text = "Join in the Fight"
+type = 2
+enemy = ExtResource("6_eddm6")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_y7jwi"]
+script = ExtResource("5_lr1ko")
+stats = Array[String](["gold"])
+increase = [10]
+name = "Gold Pouch"
+description = "Get 10 Gold"
+base = ExtResource("4_6gs8v")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false
+
+[sub_resource type="Resource" id="Resource_7daes"]
+script = ExtResource("1_iep27")
+text = "Continue"
+type = 6
+stat_res = SubResource("Resource_y7jwi")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_7byd2"]
+script = ExtResource("2_x30kn")
+categorie = ""
+title = "Rowdy Villagers"
+description = "As you approach and brandish your sword, the villagers recoil in fear and gradually back away. While leaving the village, a short, chubby man hurries to catch up with you, pressing a gold purse into your hand and thanking you for stopping the fight."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_7daes")])
+
+[sub_resource type="Resource" id="Resource_ef558"]
+script = ExtResource("1_iep27")
+text = "Flash you blade to calm them"
+type = 1
+next_event_res = SubResource("Resource_7byd2")
+gold_cost = 0
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "Sword"
+req_class = "None"
+
+[resource]
+script = ExtResource("2_x30kn")
+categorie = "Event"
+title = "Rowdy Villagers"
+description = "A group of villagers, clad in traditional garb, stand in a dusty village square, their faces flushed with anger as they argue heatedly over a boundary dispute. Nearby, curious onlookers gather around small stone houses. What would you do..."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_rx8u2"), SubResource("Resource_jaqi7"), SubResource("Resource_ef558"), ExtResource("5_1yqpo")])

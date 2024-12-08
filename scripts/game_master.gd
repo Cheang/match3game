@@ -50,7 +50,6 @@ func _process(_delta: float) -> void:
 			await SceneManager.fade_complete
 			grd.clean_deck_to_dest()
 			grd.clear_board()
-			Global.minions_killed += 1
 			if EnemyData.type == 1:
 				Global.boss_beaten = true
 			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })

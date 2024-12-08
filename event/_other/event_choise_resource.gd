@@ -33,5 +33,6 @@ class_name EventChoise
 @export_category("Requirements")
 @export var req_stat: String = "None"
 @export var req_value: float = 0
+@export var req_piece_remove: bool = false
 @export var req_piece: String = "None"
 @export var req_class: String = "None"

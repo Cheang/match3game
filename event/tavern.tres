@@ -1,13 +1,65 @@
-[gd_resource type="Resource" script_class="Event" load_steps=6 format=3 uid="uid://5b2qagjixfgm"]
+[gd_resource type="Resource" script_class="Event" load_steps=12 format=3 uid="uid://5b2qagjixfgm"]
 
+[ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0knlt"]
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_gykjm"]
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_g8liw"]
+[ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="2_lyahq"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="2_twdd2"]
-[ext_resource type="Resource" uid="uid://d1s2p18tv1fx8" path="res://event/choises/tavern_heal_bg.tres" id="3_wo0v4"]
-[ext_resource type="Resource" uid="uid://dkam3pl4xcfet" path="res://event/choises/tavern_heal_sm.tres" id="4_y8sx8"]
+[ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/puprle_icon_3.png" id="3_u5k8t"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="4_q28c1"]
+
+[sub_resource type="Resource" id="Resource_s108n"]
+script = ExtResource("4_q28c1")
+stats = Array[String](["cur_health"])
+increase = [4.0]
+name = "Drink"
+description = "Heal 4 HP"
+base = ExtResource("2_lyahq")
+icon = ExtResource("3_u5k8t")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false
+
+[sub_resource type="Resource" id="Resource_uid4y"]
+script = ExtResource("1_gykjm")
+text = "Get a drink (Heal 4HP, -6 Gold)"
+type = 6
+stat_res = SubResource("Resource_s108n")
+gold_cost = 6
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_pm48m"]
+script = ExtResource("4_q28c1")
+stats = Array[String](["cur_health"])
+increase = [10.0]
+name = "Have a rest"
+description = "Heal 10 HP"
+base = ExtResource("2_lyahq")
+icon = ExtResource("3_u5k8t")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false
+
+[sub_resource type="Resource" id="Resource_tfntl"]
+script = ExtResource("1_gykjm")
+text = "Get a room (Heal 10 HP, -10 Gold)"
+type = 6
+stat_res = SubResource("Resource_pm48m")
+gold_cost = 10
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
 
 [resource]
 script = ExtResource("2_g8liw")
-title = "Taver"
-description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-choises = Array[ExtResource("1_gykjm")]([ExtResource("2_twdd2"), ExtResource("4_y8sx8"), ExtResource("3_wo0v4")])
+categorie = "Service"
+title = "Kruchma"
+description = "The dimly lit kruchma is alive with the sound of lively folk music, as a trio of musicians plays a gadulka, tambura, and kaval in the corner, their melodies weaving through the air. Wooden beams stained with smoke support the low ceiling, and the warm glow of an open hearth casts flickering shadows on the rough-hewn walls adorned with woven rugs and copperware. Villagers sit at sturdy wooden tables, sharing stories over clay jugs of rakia and plates of roasted lamb, bread, and fresh cheese"
+background = ExtResource("1_0knlt")
+choises = Array[ExtResource("1_gykjm")]([SubResource("Resource_uid4y"), SubResource("Resource_tfntl"), ExtResource("2_twdd2")])

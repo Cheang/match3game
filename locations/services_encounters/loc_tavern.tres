@@ -7,8 +7,8 @@
 
 [resource]
 script = ExtResource("1_yadtw")
-name = "Tavern"
-description = "Lorem Ipsum"
+name = "Kruchma"
+description = "On a cold, moonless night, you spot the faint glow of an old kruchma ahead, its ivy-covered walls lit by swaying lanterns. Inside, the warmth of a roaring hearth and the hum of music and laughter welcome you."
 pic = ExtResource("1_6e5sc")
 next_scene = "res://next_encounter_screen.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)

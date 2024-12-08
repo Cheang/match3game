@@ -11,5 +11,6 @@ stat_res = ExtResource("2_aqmhu")
 gold_cost = 6
 req_stat = "None"
 req_value = 0.0
+req_piece_remove = false
 req_piece = "None"
 req_class = "None"

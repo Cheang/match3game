@@ -26,6 +26,7 @@ func _on_selection_btn_pressed() -> void:
 				EnemyData.set_minion(enemy_chosen)
 				EnemyData.set_enemie_stats()
 				Global.game_is_played = true
+				Global.minions_killed += 1
 				loc_res.next_scene = "res://game_window.tscn"
 		if loc_res.event_encounter and loc_res.event_resource:
 			Global.cur_event = loc_res.event_resource

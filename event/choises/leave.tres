@@ -4,10 +4,11 @@
 
 [resource]
 script = ExtResource("1_yfxe3")
-text = "Leavel..."
+text = "Leave..."
 type = 0
 gold_cost = 0
 req_stat = "None"
 req_value = 0.0
+req_piece_remove = false
 req_piece = "None"
 req_class = "None"
