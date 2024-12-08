@@ -1,0 +1,13 @@
+[gd_scene load_steps=5 format=3 uid="uid://dfb0wfnp8yxer"]
+
+[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/blue_sq_0.tscn" id="1_m1eb3"]
+[ext_resource type="Texture2D" uid="uid://bikml4uccjvo7" path="res://assets/_blue_icons/blue_icon_2.png" id="2_0s1bo"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_hdmfa"]
+[ext_resource type="Resource" uid="uid://biyewp5jf4ta7" path="res://piece/active effect/armor+3.tres" id="4_3vrgu"]
+
+[node name="blue_sq_2" instance=ExtResource("1_m1eb3")]
+piece_name = "Iron Shield"
+icon_texture = ExtResource("2_0s1bo")
+type = 1
+cooldown = 3
+action = Array[ExtResource("3_hdmfa")]([ExtResource("4_3vrgu"), ExtResource("4_3vrgu")])

@@ -24,13 +24,31 @@ func _process(_delta: float) -> void:
 
 func get_rewards():
 	var rewards: Array[Reward]
+	var picked_rewards: Array[Reward]
 	if Global.boss_beaten == true:
 		rewards = Global.cur_char.rewards_passive.duplicate()
+		Global.boss_beaten = false
 	else:
 		rewards = Global.cur_char.rewards_piece.duplicate()
 	for i in range(3):
 		rewards.shuffle()
-		reward_cards[i].reward_res = rewards[-1]
+		picked_rewards.append(rewards[-1])
+		if i == 1 and picked_rewards[i] == picked_rewards[i-1]:
+			var loops = 0
+			while picked_rewards[i] == picked_rewards[i-1] and loops < 50:
+				picked_rewards.pop_back()
+				rewards.shuffle()
+				picked_rewards.append(rewards[-1])
+				loops += 1
+		if i == 2:
+			if picked_rewards[i] == picked_rewards[i-1] or picked_rewards[i] == picked_rewards[i-2]:
+				var loops = 0
+				while picked_rewards[i] == picked_rewards[i-1] or picked_rewards[i] == picked_rewards[i-2] and loops < 50:
+					picked_rewards.pop_back()
+					rewards.shuffle()
+					picked_rewards.append(rewards[-1])
+					loops += 1
+		reward_cards[i].reward_res = picked_rewards[i]
 		rewards.pop_back()
 		reward_cards[i].load_btn()
 

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Event" load_steps=6 format=3 uid="uid://5b2qagjixfgm"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_gykjm"]
+[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_g8liw"]
+[ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="2_twdd2"]
+[ext_resource type="Resource" uid="uid://d1s2p18tv1fx8" path="res://event/choises/tavern_heal_bg.tres" id="3_wo0v4"]
+[ext_resource type="Resource" uid="uid://dkam3pl4xcfet" path="res://event/choises/tavern_heal_sm.tres" id="4_y8sx8"]
+
+[resource]
+script = ExtResource("2_g8liw")
+title = "Taver"
+description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+choises = Array[ExtResource("1_gykjm")]([ExtResource("2_twdd2"), ExtResource("4_y8sx8"), ExtResource("3_wo0v4")])

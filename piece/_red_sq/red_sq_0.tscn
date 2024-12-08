@@ -6,7 +6,6 @@
 [node name="red_sq_" instance=ExtResource("1_ohcws")]
 color = "red"
 base_texture = ExtResource("2_f85hb")
-scene_location = "res://piece/_red_sq/red_sq_0.tscn"
 
 [node name="base" parent="." index="0"]
 texture = ExtResource("2_f85hb")

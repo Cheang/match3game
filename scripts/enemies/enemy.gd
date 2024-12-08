@@ -13,19 +13,18 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var enemy_name: Label = $enemy_name
 
 var one_time = false
-	
-func update():
-	attack.text = EnemyData.next_attack.tooltip
-	health.text = "Health: " + str(EnemyData.cur_health) + "/" + str(EnemyData.max_health)
-	if EnemyData.cur_health < 0:
-		EnemyData.cur_health = 0
-	if EnemyData.max_health != EnemyData.cur_health or EnemyData.cur_health <= 0:
-		enemy_healthbar.value = EnemyData.cur_health * 100 / EnemyData.max_health
+
+func _ready() -> void:
+	health.text = "Health: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
+	enemy_healthbar.value = EnemyData.cur_health * 100.0 / EnemyData.max_health
 
 func _on_enemy_healthbar_value_changed(value: float) -> void:
 	if !one_time:
 		fire.visible = true
 		one_time = true
+	if EnemyData.max_health == EnemyData.cur_health and one_time:
+		fire.visible = false
+		one_time = false
 	art.set_material(ATTACKED_GLOW)
 	move(Vector2((value * 2.85), fire.position.y), .5)
 	await get_tree().create_timer(.3).timeout
@@ -39,10 +38,13 @@ func _on_game_window_enemy_attacking() -> void:
 	if EnemyData.next_attack.animation != null:
 		art.get_child(0).set_animp(EnemyData.next_attack.animation)
 	await get_tree().create_timer(EnemyData.next_attack.animation_time).timeout
-	Global.cur_char.moves_left = Global.cur_char.speed
 	EnemyData.next_attack.attack()
 	art.get_child(0).set_animp("RESET")
 	art.get_child(0).set_animp("idle")
 	EnemyData.pick_next_attack()
+	attack.text = EnemyData.next_attack.tooltip
 	emit_signal("enemy_attacked")
-	pass # Replace with function body.
+
+func _on_game_window_enemy_health_change() -> void:
+	health.text = "Health: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
+	enemy_healthbar.value = EnemyData.cur_health * 100.0 / EnemyData.max_health

@@ -1,0 +1,13 @@
+[gd_scene load_steps=5 format=3 uid="uid://cdtx6ydh56ox6"]
+
+[ext_resource type="PackedScene" uid="uid://co453pji2jcqe" path="res://piece/_green_sq/green_sq_0.tscn" id="1_wnkqe"]
+[ext_resource type="Texture2D" uid="uid://d1j5mvww6nwto" path="res://assets/_green_icons/green_icon_2.png" id="2_xey7w"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_c1jwc"]
+[ext_resource type="Resource" uid="uid://dt1j85o3ltl6d" path="res://piece/active effect/dodge.tres" id="4_l14ob"]
+
+[node name="green_sq_2" instance=ExtResource("1_wnkqe")]
+piece_name = "Dodge"
+icon_texture = ExtResource("2_xey7w")
+type = 1
+cooldown = 4
+action = Array[ExtResource("3_c1jwc")]([ExtResource("4_l14ob")])

@@ -5,4 +5,3 @@ class_name	Tile_Destruction_Attack
 
 func attack():
 	EnemyData.destroy_pieces(space_to_destroy)
-	pass

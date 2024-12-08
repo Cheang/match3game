@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://be76wjpb7em47"]
+
+[ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="1_a04rh"]
+[ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/puprle_icon_3.png" id="2_e22s1"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="3_v5elr"]
+
+[resource]
+script = ExtResource("3_v5elr")
+stats = Array[String](["cur_health"])
+increase = [4.0]
+name = ""
+description = ""
+base = ExtResource("1_a04rh")
+icon = ExtResource("2_e22s1")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false

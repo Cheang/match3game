@@ -18,12 +18,15 @@ var locations: Array[Location]
 var enemy_loc_numb: int = 4
 var event_loc_numb: int = 5
 var services_loc_numb: int = 2
+var cur_event: Event
 
 #for boss spawning
 var minions_killed: int = 0
 var minions_needed: int = 4
 var boss_added: bool = false
 var boss_beaten: bool = false
+
+var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 
 #_________________________________________________________#
 
@@ -68,7 +71,6 @@ func reset_variable():
 	
 func set_up_player():
 	if is_null(selected_char):
-		var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 		selected_char = def_char
 	cur_char = selected_char.duplicate()
 	cur_char.set_stats_at_beging_of_game()

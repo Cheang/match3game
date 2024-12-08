@@ -1,12 +1,13 @@
 extends Node2D
 class_name PieceClass
 
+@export var piece_name: String
 @export var color: String
 @export var base_texture: Texture
 @export var icon_texture: Texture
 @export_enum("fluf","normal","one_per_battle","glass") var type: int
 @export var crit_shader: Resource
-@export var scene_location: String
+#@export var scene_location: String
 @export var cooldown: int
 var original_cd: int
 
@@ -14,9 +15,11 @@ var original_cd: int
 
 @onready var icon: Sprite2D = $icon
 @onready var base: Sprite2D = $base
+@onready var gold_border: Sprite2D = $gold_border
 
 var matched: bool = false
 var is_criting: bool = false
+var is_gold: bool = false
 
 func _ready() -> void:
 	original_cd = cooldown
@@ -24,6 +27,7 @@ func _ready() -> void:
 		icon.texture = icon_texture
 	if base_texture != null:
 		base.texture = base_texture
+	will_gold()
 	will_crit()
 
 func move(target, time = .3):
@@ -41,6 +45,8 @@ func unmark():
 	cooldown = original_cd
 	matched = false
 	is_criting = false
+	is_gold = false
+	will_gold()
 	will_crit()
 
 func will_crit():
@@ -52,7 +58,18 @@ func will_crit():
 	else:
 		base.material = null
 
+func will_gold():
+	randomize()
+	var rand = floor(randf_range(1,100))
+	if rand <= Global.cur_char.gold_chanse:
+		gold_border.visible = true
+		is_gold = true
+	else:
+		gold_border.visible = false
+
 func activate_actions(to_activate: Array):
+	if is_gold:
+		Global.cur_char.gold += 1
 	if !to_activate.is_empty():
 		for i in to_activate.size():
 			if !Global.is_null(to_activate[i]):

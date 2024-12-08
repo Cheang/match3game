@@ -12,3 +12,7 @@ class_name Location
 @export var enemy_encounter: bool
 @export var which_enemy: Array[EnemyResource]
 @export var level: int
+
+@export_category("Event")
+@export var event_encounter: bool
+@export var event_resource: Event

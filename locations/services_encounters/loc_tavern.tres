@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Location" load_steps=4 format=3 uid="uid://ccc1sbv8dne52"]
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://ccc1sbv8dne52"]
 
 [ext_resource type="Texture2D" uid="uid://caat21xbaixhx" path="res://assets/level_ui/location_pictures/loc_tavern.png" id="1_6e5sc"]
+[ext_resource type="Resource" uid="uid://5b2qagjixfgm" path="res://event/tavern.tres" id="1_aptw2"]
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_yadtw"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_l6bfy"]
 
@@ -14,3 +15,5 @@ transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = false
 which_enemy = Array[ExtResource("2_l6bfy")]([])
 level = 0
+event_encounter = true
+event_resource = ExtResource("1_aptw2")

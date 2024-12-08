@@ -1,0 +1,141 @@
+[gd_scene load_steps=6 format=3 uid="uid://dc82ykxpsf1if"]
+
+[ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0g4u3"]
+[ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
+[ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
+[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="3_qtnoo"]
+[ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="4_cb86u"]
+
+[node name="event_screen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_c7ncb")
+
+[node name="event_bg" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -675.0
+offset_right = 288.0
+offset_bottom = 675.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_0g4u3")
+
+[node name="event_gradient" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -675.0
+offset_right = 288.0
+offset_bottom = 675.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_opvah")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 75
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 75
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="pause_btn" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_qtnoo")
+
+[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+texture = ExtResource("4_cb86u")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/TextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -103.0
+offset_top = -15.0
+offset_right = 103.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Pick a reward"
+horizontal_alignment = 1
+
+[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="pause_btn2" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+disabled = true
+texture_normal = ExtResource("3_qtnoo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="separator" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="title" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Title"
+
+[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+layout_mode = 2
+text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+fit_content = true
+
+[node name="choises_holder" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2

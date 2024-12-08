@@ -1,16 +1,18 @@
-[gd_resource type="Resource" script_class="R_Piece" load_steps=6 format=3 uid="uid://c0qvoqs1c838t"]
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://dbkv21dn6mkqs"]
 
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_r6fm7"]
 [ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/red_sq_1.tscn" id="1_uys6j"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_vs6gy"]
-[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="2_nskrw"]
-[ext_resource type="Script" path="res://rewards/others/reward_resource.gd" id="3_wpt3p"]
+[ext_resource type="Texture2D" uid="uid://53gy6aagisa8" path="res://assets/_red_icons/red_icon_5.png" id="5_dv0wt"]
 
 [resource]
 script = ExtResource("1_r6fm7")
 piece_to_add = Array[PackedScene]([ExtResource("1_uys6j")])
-passives_to_boost = Array[ExtResource("3_wpt3p")]([])
 name = "Men at Arms"
-description = "Adds 1 Sword."
+description = "Adds 1 Sword.
+Swords deal 1 DMG + your DMG"
 base = ExtResource("1_vs6gy")
-icon = ExtResource("2_nskrw")
+icon = ExtResource("5_dv0wt")
+passive_boost = Array[String]([])
+piece_boost = Array[String](["shields_up", "sharp_blades"])
+boost_self = true

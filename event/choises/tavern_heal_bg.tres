@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EventChoise" load_steps=3 format=3 uid="uid://d1s2p18tv1fx8"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_cad6u"]
+[ext_resource type="Resource" uid="uid://bwd2qnirhn500" path="res://rewards/justStats/taver_heal_bg.tres" id="2_nllt7"]
+
+[resource]
+script = ExtResource("1_cad6u")
+text = "Get a room (Heal 10 HP, -10 Gold)"
+type = 6
+stat_res = ExtResource("2_nllt7")
+gold_cost = 10
+req_stat = "None"
+req_value = 0.0
+req_piece = "None"
+req_class = "None"

@@ -1,6 +1,7 @@
 extends Reward
 class_name R_Stat
 
+@export_category("Stats")
 @export var stats: Array[String] = []
 @export var increase: Array = []
 
@@ -10,4 +11,3 @@ func activate():
 		var cur = Global.cur_char.get(stat)
 		Global.cur_char.set(stat,cur + increase[i])
 		i += 1
-	

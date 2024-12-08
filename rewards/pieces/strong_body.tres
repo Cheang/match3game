@@ -1,14 +1,17 @@
-[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://b3udh1gopxu2p"]
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://bbc53l18hvjdl"]
 
-[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_q111g"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="1_wrsmf"]
-[ext_resource type="Texture2D" uid="uid://doo5kw02eiju" path="res://assets/_red_icons/red_icon_3.png" id="2_35ijb"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="2_t8ptp"]
+[ext_resource type="Texture2D" uid="uid://doo5kw02eiju" path="res://assets/_red_icons/red_icon_3.png" id="3_84fiw"]
 
 [resource]
 script = ExtResource("1_wrsmf")
 stats = Array[String](["max_health", "cur_health"])
 increase = [10.0, 10.0]
 name = "Strong Body"
-description = "Max health +10"
-base = ExtResource("1_q111g")
-icon = ExtResource("2_35ijb")
+description = "Max Health and Current Health +10"
+base = ExtResource("2_t8ptp")
+icon = ExtResource("3_84fiw")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false

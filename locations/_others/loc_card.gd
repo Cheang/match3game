@@ -27,6 +27,9 @@ func _on_selection_btn_pressed() -> void:
 				EnemyData.set_enemie_stats()
 				Global.game_is_played = true
 				loc_res.next_scene = "res://game_window.tscn"
+		if loc_res.event_encounter and loc_res.event_resource:
+			Global.cur_event = loc_res.event_resource
+			loc_res.next_scene = "res://event_screen.tscn"
 		Global.current_wave += 1
 		selected = true
 		if loc_res.next_scene != "":

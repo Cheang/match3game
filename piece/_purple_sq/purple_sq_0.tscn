@@ -6,4 +6,3 @@
 [node name="purple_sq_" instance=ExtResource("1_6co4e")]
 color = "purple"
 base_texture = ExtResource("2_qjmgi")
-scene_location = "res://piece/_purple_sq/purple_sq_0.tscn"

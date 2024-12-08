@@ -64,6 +64,7 @@ script = ExtResource("1_q6hof")
 [node name="background" type="Sprite2D" parent="."]
 texture = ExtResource("1_h0vfo")
 centered = false
+offset = Vector2(0, -163)
 
 [node name="grd" type="Node2D" parent="."]
 script = ExtResource("2_i4bg5")
@@ -87,9 +88,9 @@ script = ExtResource("4_a7uqp")
 script = ExtResource("4_lguch")
 
 [node name="middleground" type="Sprite2D" parent="."]
-position = Vector2(0, -163)
 texture = ExtResource("1_ioeul")
 centered = false
+offset = Vector2(0, -163)
 
 [node name="enemy" type="Node2D" parent="."]
 script = ExtResource("5_7ysvn")
@@ -150,8 +151,10 @@ offset_bottom = 155.0
 theme_override_font_sizes/font_size = 32
 text = "Name"
 
-[node name="player" type="Node2D" parent="."]
+[node name="player" type="Node2D" parent="." node_paths=PackedStringArray("buff_texture")]
 script = ExtResource("11_ghvty")
+buff_texture = [NodePath("buff_container/armor"), NodePath("buff_container/marmor"), NodePath("buff_container/hndcombo")]
+buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
 [node name="art" type="Node2D" parent="player"]
 
@@ -205,6 +208,22 @@ layout_mode = 2
 texture = ExtResource("15_pubo4")
 
 [node name="marmorlabel" type="Label" parent="player/buff_container/marmor"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="hndcombo" type="TextureRect" parent="player/buff_container"]
+self_modulate = Color(0.965138, 0.251231, 0.510355, 1)
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/buff_container/hndcombo"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -351,10 +370,13 @@ text = "Main Menu"
 
 [connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
+[connection signal="enemy_health_change" from="." to="enemy" method="_on_game_window_enemy_health_change"]
+[connection signal="player_health_change" from="." to="player" method="_on_game_window_player_health_change"]
 [connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
 [connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
 [connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
 [connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
+[connection signal="move_made" from="grd" to="player" method="_on_grd_move_made"]
 [connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]

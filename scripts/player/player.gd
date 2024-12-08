@@ -1,47 +1,62 @@
 extends Node2D
 class_name Player
 
+@export var buff_texture: Array[TextureRect] 
+@export var buff_stat: Array[String]
+
 @onready var player_healthbar: TextureProgressBar = $player_healthbar
 @onready var fire: GPUParticles2D = $player_healthbar/fire_particles
 @onready var art: Node2D = $art
-@onready var armor: TextureRect = $buff_container/armor
-@onready var armorlabel: Label = $buff_container/armor/armorlabel
-@onready var marmor: TextureRect = $buff_container/marmor
-@onready var marmorlabel: Label = $buff_container/marmor/marmorlabel
 @onready var move_remaing: Label = $move_remaing
 @onready var health: Label = $health
 
 const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 
 var one_time = false
+var char = Global.cur_char
 
-func update():
-	move_remaing.text = "Moves Remaing: " + str(Global.cur_char.moves_left)
-	health.text = "Health: " + str(Global.cur_char.cur_health) + "/" + str(Global.cur_char.max_health)
-	if Global.cur_char.cur_health < 0:
-		Global.cur_char.cur_health = 0
-	if Global.cur_char.max_health != Global.cur_char.cur_health or Global.cur_char.cur_health <= 0:
-		player_healthbar.value = Global.cur_char.cur_health * 100 / Global.cur_char.max_health
-	update_buff(marmor,marmorlabel,Global.cur_char.cur_mage_armor)
-	update_buff(armor,armorlabel,Global.cur_char.cur_armor)
+func _ready() -> void:
+	health.text = "Health: %d / %d" % [char.cur_health, char.max_health]
+	player_healthbar.value = char.cur_health * 100.0 / char.max_health
+	update_buffs()
 
 func _on_player_healthbar_value_changed(value: float) -> void:
-	if !one_time:
-		fire.visible = true
+	if not one_time:
 		one_time = true
+		fire.visible = true
+	if char.cur_health == char.max_health and one_time:
+		fire.visible = false
+		one_time = false
 	art.set_material(ATTACKED_GLOW)
-	move(Vector2((value * 2.85), fire.position.y), .5)
-	await get_tree().create_timer(.3).timeout
+	move(Vector2((value * 2.85), fire.position.y), 0.5)
+	await get_tree().create_timer(0.3).timeout
 	art.set_material(null)
 
-func move(target, time = .3):
+func move(target, time = 0.3):
 	var tween: Tween = create_tween()
 	tween.tween_property(fire,"position",target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
-func update_buff(buff_art:TextureRect, buff_lable:Label, parameter):
+func update_buff(buff_art:TextureRect, parameter):
 	if !Global.is_null(buff_art):
 		if parameter > 0:
 			buff_art.visible = true
-			buff_lable.text = str(parameter)
+			buff_art.get_child(0).text = str(parameter)
 		elif parameter <= 0:
 			buff_art.visible = false
+
+func update_buffs():
+	for i in buff_texture.size():
+		var stat = Global.cur_char.get(buff_stat[i])
+		update_buff(buff_texture[i], stat)
+
+func update_move_counter():
+	move_remaing.text = "Moves Remaing: %d" % char.moves_left
+
+func _on_grd_move_made() -> void:
+	update_move_counter()
+	update_buffs()
+
+func _on_game_window_player_health_change() -> void:
+	health.text = "Health: %d / %d" % [char.cur_health, char.max_health]
+	player_healthbar.value = char.cur_health * 100.0 / char.max_health
+	update_buffs()

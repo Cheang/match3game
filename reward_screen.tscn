@@ -28,13 +28,15 @@ scale_max = 0.4
 script = ExtResource("1_k3umh")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+offset_top = -163.0
 offset_right = 576.0
-offset_bottom = 1024.0
+offset_bottom = 1187.0
 texture = ExtResource("1_iwqhq")
+stretch_mode = 3
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 visible = false
-position = Vector2(288, 0)
+position = Vector2(288, -181)
 amount = 10
 process_material = SubResource("ParticleProcessMaterial_3tf3b")
 texture = ExtResource("2_owuue")
@@ -42,7 +44,7 @@ lifetime = 3.0
 
 [node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
 visible = false
-position = Vector2(288, 0)
+position = Vector2(288, -181)
 amount = 10
 process_material = SubResource("ParticleProcessMaterial_3tf3b")
 texture = ExtResource("3_5u0sd")
@@ -50,7 +52,7 @@ lifetime = 3.0
 
 [node name="GPUParticles2D3" type="GPUParticles2D" parent="."]
 visible = false
-position = Vector2(288, 0)
+position = Vector2(288, -181)
 amount = 10
 process_material = SubResource("ParticleProcessMaterial_3tf3b")
 texture = ExtResource("4_qgy55")
@@ -58,7 +60,7 @@ lifetime = 3.0
 
 [node name="GPUParticles2D4" type="GPUParticles2D" parent="."]
 visible = false
-position = Vector2(288, 0)
+position = Vector2(288, -181)
 amount = 15
 process_material = SubResource("ParticleProcessMaterial_3tf3b")
 texture = ExtResource("5_wbtxd")

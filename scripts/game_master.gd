@@ -2,6 +2,8 @@ extends Node2D
 class_name GameMaster
 
 signal enemy_attacking
+signal player_health_change
+signal enemy_health_change
 
 @onready var grd: Node2D = $grd
 @onready var enemy: Enemy = $enemy
@@ -9,6 +11,8 @@ signal enemy_attacking
 @onready var defeat_overlay: PanelContainer = $defeat_overlay
 @onready var pause_overlay: PanelContainer = $pause_overlay
 
+var last_player_health: float
+var last_enemy_health: float
 var enemy_attacked_once: bool = false
 
 func _ready() -> void:
@@ -17,14 +21,26 @@ func _ready() -> void:
 	load_player()
 	load_enemie()
 	grd.on_startup()
+	last_enemy_health = EnemyData.cur_health
+	last_player_health = Global.cur_char.cur_health
 	grd.state = grd.move
 
 func _process(_delta: float) -> void:
+	EnemyData.cur_health = clamp(EnemyData.cur_health, 0, EnemyData.max_health)
+	Global.cur_char.cur_health = clamp(Global.cur_char.cur_health, 0, Global.cur_char.max_health)
+	
+	if last_enemy_health != EnemyData.cur_health:
+		emit_signal("enemy_health_change")
+	last_enemy_health = EnemyData.cur_health
+	
+	if last_player_health != Global.cur_char.cur_health:
+		emit_signal("player_health_change")
+	last_player_health = Global.cur_char.cur_health
+	
 	if Global.cur_char.moves_left <= 0:
 		grd.state = grd.wait
 		if !enemy_attacked_once:
 			enemy_attacked_once = true
-			end_turn_reset()
 			emit_signal("enemy_attacking")
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
@@ -43,14 +59,13 @@ func _process(_delta: float) -> void:
 			grd.state = grd.wait
 			defeat_overlay.visible = true
 			Global.game_is_played = false
-	enemy.update()
-	player.update()
 
 func _on_enemy_enemy_attacked() -> void:
-	await get_tree().create_timer(.5).timeout
-	Global.cur_char.cur_armor = 0
-	grd.state = grd.move
+	await get_tree().create_timer(.1).timeout
+	Global.cur_char.reset_stats_at_the_beging_of_turn()
+	player._on_grd_move_made()
 	enemy_attacked_once = false
+	grd.state = grd.move
 
 func load_player():
 	Global.cur_char.reset_stats_at_beging_of_fight()
@@ -65,11 +80,8 @@ func load_enemie():
 	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
 	enemy.enemy_name.text = EnemyData.enemy.name
+	enemy.attack.text = EnemyData.next_attack.tooltip
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
-
-func end_turn_reset():
-	Global.cur_char.hand_combo = 0
-	pass
 
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
@@ -84,9 +96,3 @@ func _on_resume_pressed() -> void:
 	grd.state = grd.move
 	Global.game_is_played = true
 	pause_overlay.visible = false
-
-func set_to_center():
-	var target = get_tree().get_current_scene()
-	var screen_center = get_viewport().size / 2
-	var actual_center = Vector2(screen_center.x - (576/2), screen_center.y - (1024/2))
-	target.position = actual_center

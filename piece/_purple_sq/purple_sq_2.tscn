@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3 uid="uid://cxsy6h6mw6nqc"]
+
+[ext_resource type="PackedScene" uid="uid://bthiuci0deljg" path="res://piece/_purple_sq/purple_sq_0.tscn" id="1_0y0ak"]
+[ext_resource type="Texture2D" uid="uid://b6qwbganc5mqs" path="res://assets/_purple_icons/puprle_icon_1.png" id="2_kr6il"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_ljljm"]
+[ext_resource type="Resource" uid="uid://ej7jr7l8kc20" path="res://piece/active effect/heal+1.tres" id="4_vcavn"]
+
+[node name="purple_sq_2" instance=ExtResource("1_0y0ak")]
+piece_name = "Bandage"
+icon_texture = ExtResource("2_kr6il")
+type = 2
+action = Array[ExtResource("3_ljljm")]([ExtResource("4_vcavn"), ExtResource("4_vcavn")])

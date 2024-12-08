@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlayerResource" load_steps=19 format=3 uid="uid://b8jo32hmbbisk"]
+[gd_resource type="Resource" script_class="PlayerResource" load_steps=21 format=3 uid="uid://b8jo32hmbbisk"]
 
 [ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/blue_sq_1.tscn" id="1_pardm"]
 [ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/green_sq_1.tscn" id="2_upqac"]
@@ -11,12 +11,14 @@
 [ext_resource type="PackedScene" uid="uid://u8xfuav2kkon" path="res://piece/_white_sq/white_sq_0.tscn" id="9_3l6gg"]
 [ext_resource type="Script" path="res://rewards/others/reward_resource.gd" id="10_k67pm"]
 [ext_resource type="Script" path="res://scripts/player/player_resource.gd" id="10_ljvcx"]
+[ext_resource type="Resource" uid="uid://b3dxyym36disw" path="res://rewards/pieces/faith_weak.tres" id="11_edbyt"]
 [ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://players/warrior/warrior.tscn" id="11_pi64o"]
-[ext_resource type="Resource" uid="uid://b5css5l7lenvq" path="res://rewards/pieces/faith_weak.tres" id="11_wab3o"]
-[ext_resource type="Resource" uid="uid://c0qvoqs1c838t" path="res://rewards/pieces/men_at_arms.tres" id="12_bsl58"]
+[ext_resource type="Resource" uid="uid://buvd4ertan8e7" path="res://rewards/pieces/healing_potion.tres" id="12_3y1ki"]
+[ext_resource type="Resource" uid="uid://bi6fgd2okm80j" path="res://rewards/pieces/sharp_blades.tres" id="12_4wp5o"]
 [ext_resource type="Resource" uid="uid://c7cawpgd1yofl" path="res://rewards/pieces/rush.tres" id="13_6tq0m"]
-[ext_resource type="Resource" uid="uid://e32mdgnksepq" path="res://rewards/pieces/shileds_up.tres" id="14_yvsha"]
-[ext_resource type="Resource" uid="uid://b3udh1gopxu2p" path="res://rewards/pieces/strong_body.tres" id="15_sslxp"]
+[ext_resource type="Resource" uid="uid://dbkv21dn6mkqs" path="res://rewards/pieces/men_at_arms.tres" id="13_ef1xv"]
+[ext_resource type="Resource" uid="uid://bgcd0ocbytryg" path="res://rewards/pieces/shields_up.tres" id="15_4a05a"]
+[ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/strong_body.tres" id="16_5drnh"]
 [ext_resource type="Resource" uid="uid://ba0s3qgm8su2y" path="res://rewards/pieces/way_of_the_fist.tres" id="16_6rpfp"]
 
 [resource]
@@ -28,7 +30,8 @@ start_armor = 0.0
 start_mage_armor = 0.0
 speed = 2
 cooldown_reduction = 0
-start_gold = 20
+start_gold = 10
+gold_chanse = 1
 start_reroll = 3
 mana = 0.0
 dmg = 1.0
@@ -37,6 +40,7 @@ crit_chanse = 5
 crit_dmg = 2.0
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
-rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_wab3o"), ExtResource("12_bsl58"), ExtResource("13_6tq0m"), ExtResource("14_yvsha"), ExtResource("15_sslxp"), ExtResource("16_6rpfp")])
-rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("15_sslxp"), ExtResource("15_sslxp"), ExtResource("15_sslxp")])
+rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("16_5drnh"), ExtResource("16_6rpfp")])
+rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("16_5drnh"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
+player_class = "Warrior"
 sprite = ExtResource("11_pi64o")

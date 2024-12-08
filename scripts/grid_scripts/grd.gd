@@ -13,6 +13,7 @@ var grd_offset: int = Global.grd_offset
 
 #player tiles will go in here
 var deck : Array[PieceClass]
+var deck_one_per_btl: Array[PieceClass] = []
 var deck_on_cd : Array[PieceClass] = []
 var deck_to_dest : Array[PieceClass] = []
 var fluf : Array[PackedScene]
@@ -30,6 +31,7 @@ signal damage_ice
 signal make_ice
 signal damage_freeze
 signal make_freeze
+signal move_made
 
 #slap back
 var piece_one = null
@@ -43,6 +45,7 @@ var first_touch = Vector2(0, 0)
 var final_touch = Vector2(0, 0)
 var controling_grd: bool = false
 
+var enemy_attacked: bool = false
 
 func on_startup() -> void:
 	deck = Global.cur_char.deck_in_game.duplicate()
@@ -174,9 +177,10 @@ func touch_input():
 			first_touch = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
 			controling_grd = true
 	if Input.is_action_just_released("ui_touch"):
-		if is_in_grd(Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)) and controling_grd: 
+		if controling_grd: 
 			controling_grd = false
 			final_touch = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+			final_touch = Vector2(clamp(final_touch.x, 0, grd_width), clamp(final_touch.y, 0, grd_height))
 			touch_difference(first_touch, final_touch)
 
 func touch_difference(grd_1, grd_2):
@@ -236,6 +240,7 @@ func find_matches():
 		get_node("destroy_timer").start()
 
 func mark_for_destruction(space_to_destroy: Array[Vector2]):
+	enemy_attacked = true
 	for i in space_to_destroy.size():
 		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(false)
 	get_node("destroy_timer").start()
@@ -250,7 +255,7 @@ func destroy_matched():
 					if all_pieces[i][j].type == 1:
 						deck_on_cd.push_back(all_pieces[i][j])
 					if all_pieces[i][j].type == 2:
-						deck_to_dest.push_back(all_pieces[i][j])
+						deck_one_per_btl.push_back(all_pieces[i][j])
 					if all_pieces[i][j].type == 3:
 						Global.cur_char.deck_in_game.pop_at(Global.cur_char.deck_in_game.find(all_pieces[i][j]))
 						deck_to_dest.push_back(all_pieces[i][j])
@@ -291,7 +296,10 @@ func after_refill():
 				if match_at(i,j,all_pieces[i][j].color):
 					find_matches()
 					return
-	Global.cur_char.moves_left -= 1
+	if enemy_attacked == false:
+		Global.cur_char.moves_left -= 1
+	enemy_attacked = false
+	emit_signal("move_made")
 	cooldown_and_refill_deck()
 	state = move
 	move_checked = false

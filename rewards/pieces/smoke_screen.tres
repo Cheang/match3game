@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://dqsqamvg4vfba"]
+
+[ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="1_gewun"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_xwcsn"]
+[ext_resource type="Texture2D" uid="uid://d1j5mvww6nwto" path="res://assets/_green_icons/green_icon_2.png" id="2_u0ibx"]
+[ext_resource type="PackedScene" uid="uid://cdtx6ydh56ox6" path="res://piece/_green_sq/green_sq_2.tscn" id="3_j0feb"]
+
+[resource]
+script = ExtResource("1_xwcsn")
+piece_to_add = Array[PackedScene]([ExtResource("3_j0feb")])
+name = "Smoke Screen"
+description = "Adds 1 Dodge"
+base = ExtResource("1_gewun")
+icon = ExtResource("2_u0ibx")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false

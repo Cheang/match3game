@@ -7,8 +7,8 @@
 [ext_resource type="Resource" uid="uid://biyewp5jf4ta7" path="res://piece/active effect/armor+3.tres" id="5_vt468"]
 
 [node name="white_sq_1" instance=ExtResource("1_ydkun")]
+piece_name = "Holy Shiled"
 icon_texture = ExtResource("2_us7n4")
 type = 2
-scene_location = "res://piece/_white_sq/white_sq_1.tscn"
 cooldown = 4
 action = Array[ExtResource("3_hpmtl")]([ExtResource("4_4soyc"), ExtResource("4_4soyc"), ExtResource("5_vt468")])

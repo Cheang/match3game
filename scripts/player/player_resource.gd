@@ -14,6 +14,7 @@ class_name PlayerResource
 @export var speed: int
 @export var cooldown_reduction: int
 @export var start_gold: int
+@export_range(0, 100) var gold_chanse: int
 @export var start_reroll: int
 
 #Magic
@@ -36,11 +37,13 @@ class_name PlayerResource
 
 #Art
 @export_group("Art")
+@export var player_class: String
 @export var sprite: PackedScene
 
 #Stats that change in-game
 var deck_in_game: Array[PieceClass]
-var cur_health: float = max_health
+var cur_health: float 
+var dodging: bool = false
 var cur_armor: float 
 var cur_mage_armor: float 
 var moves_left: int = 0
@@ -51,6 +54,9 @@ var hand_combo: int = 0
 
 func take_damage(enemy_damage, piercing: bool = false):
 	enemy_damage -= dmg_reduction
+	if dodging:
+		dodging = false
+		return
 	if !piercing:
 		var temp
 		temp = cur_mage_armor - enemy_damage 
@@ -84,19 +90,23 @@ func unpack_deck(deck_to_unpack, target):
 			var instance = scene.instantiate()
 			if instance and instance is Node2D:
 				target.append(instance)
-			else: 
-				push_error("Scene in deck is not a Node2D!")
-		else:
-			push_error("Invalid PackedScene in deck!")
 
 func reset_stats_at_beging_of_fight():
 	moves_left = speed
 	cur_armor = start_armor
 	cur_mage_armor = start_mage_armor
 
+func reset_stats_at_the_beging_of_turn():
+	cur_armor = 0
+	hand_combo = 0
+	moves_left = speed
+
 func set_stats_at_beging_of_game():
 	deck_in_game.clear()
 	unpack_deck(deck, deck_in_game)
-	cur_health = max_health
+	set_cur_health(max_health)
 	gold = start_gold
 	rerolls = start_reroll
+
+func set_cur_health(value: float):
+	cur_health = clamp(value, 0, max_health)

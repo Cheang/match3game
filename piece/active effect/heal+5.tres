@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PieceBaseHeal" load_steps=2 format=3 uid="uid://dn1slhh7ygd0k"]
+
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseHeal.gd" id="1_i2m8n"]
+
+[resource]
+script = ExtResource("1_i2m8n")
+health = 5.0
