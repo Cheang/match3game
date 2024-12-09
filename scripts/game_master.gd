@@ -10,6 +10,7 @@ signal enemy_health_change
 @onready var player: Player = $player
 @onready var defeat_overlay: PanelContainer = $defeat_overlay
 @onready var pause_overlay: PanelContainer = $pause_overlay
+@onready var trun_changer: Control = $trun_changer
 
 var last_player_health: float
 var last_enemy_health: float
@@ -41,6 +42,8 @@ func _process(_delta: float) -> void:
 		grd.state = grd.wait
 		if !enemy_attacked_once:
 			enemy_attacked_once = true
+			trun_changer.change_turn(1)
+			await get_tree().create_timer(1.1).timeout
 			emit_signal("enemy_attacking")
 	if EnemyData.cur_health <= 0:
 		if Global.game_is_played:
@@ -52,6 +55,10 @@ func _process(_delta: float) -> void:
 			grd.clear_board()
 			if EnemyData.type == 1:
 				Global.boss_beaten = true
+				Global.bosses_killed += 1
+				if Global.bosses_killed >= Global.bosses_killed_needed:
+					SceneManager.change_scene("res://thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
+					return
 			SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 	if Global.cur_char.cur_health <= 0:
 		if Global.game_is_played:
@@ -60,16 +67,20 @@ func _process(_delta: float) -> void:
 			Global.game_is_played = false
 
 func _on_enemy_enemy_attacked() -> void:
-	await get_tree().create_timer(.1).timeout
+	player._on_grd_move_made()
+	await get_tree().create_timer(.5).timeout
 	Global.cur_char.reset_stats_at_the_beging_of_turn()
 	player._on_grd_move_made()
 	enemy_attacked_once = false
+	trun_changer.change_turn(0)
+	await get_tree().create_timer(.8).timeout
 	grd.state = grd.move
 
 func load_player():
 	Global.cur_char.reset_stats_at_beging_of_fight()
 	var player_sprite = Global.cur_char.sprite.instantiate()
 	get_node("player").get_child(0).add_child(player_sprite)
+	player.update_buffs()
 	
 func load_enemie():
 	EnemyData.pick_next_attack()

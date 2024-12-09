@@ -53,10 +53,7 @@ func get_rewards():
 		reward_cards[i].load_btn()
 
 func _on_skip_pressed() -> void:
-	if Global.boss_beaten == true:
-		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-	else:
-		SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func particles(value: bool):
 	pratic1.visible = value

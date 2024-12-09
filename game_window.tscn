@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=29 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="18_thmtv"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
@@ -151,8 +152,10 @@ offset_bottom = 155.0
 theme_override_font_sizes/font_size = 32
 text = "Name"
 
-[node name="player" type="Node2D" parent="." node_paths=PackedStringArray("buff_texture")]
+[node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 script = ExtResource("11_ghvty")
+bool_buff_texture = [NodePath("buff_container/dodging")]
+bool_buff_stat = Array[String](["dodging"])
 buff_texture = [NodePath("buff_container/armor"), NodePath("buff_container/marmor"), NodePath("buff_container/hndcombo")]
 buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
@@ -224,6 +227,23 @@ layout_mode = 2
 texture = ExtResource("15_pubo4")
 
 [node name="marmorlabel" type="Label" parent="player/buff_container/hndcombo"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="dodging" type="TextureRect" parent="player/buff_container"]
+self_modulate = Color(0, 0.870821, 0.172243, 1)
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/buff_container/dodging"]
+visible = false
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -365,6 +385,17 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 25
 text = "Main Menu"
+
+[node name="trun_changer" parent="." instance=ExtResource("20_gybn7")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = 289.0
+offset_top = 558.0
+offset_right = 289.0
+offset_bottom = 558.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="cam" parent="." instance=ExtResource("20_sxuy2")]
 

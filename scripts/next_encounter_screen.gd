@@ -11,6 +11,7 @@ var loc_cards: Array[location_card]
 func _ready() -> void:
 	loc_cards = [loc_card_1,loc_card_2,loc_card_3]
 	Locations.add_boss_to_locations(Global.locations, Global.minions_needed)
+	Global.locations.shuffle()
 	get_locations()
 
 

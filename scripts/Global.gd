@@ -25,6 +25,8 @@ var minions_killed: int = 0
 var minions_needed: int = 4
 var boss_added: bool = false
 var boss_beaten: bool = false
+var bosses_killed_needed = 1
+var bosses_killed = 0 
 
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 
@@ -59,7 +61,7 @@ func is_in_array(array, item):
 			return true
 	return false
 
-func set_cur_character(character: PlayerResource):
+func select_character(character: PlayerResource):
 	selected_char = character
 
 func reset_variable():

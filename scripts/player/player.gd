@@ -1,6 +1,8 @@
 extends Node2D
 class_name Player
 
+@export var bool_buff_texture: Array[TextureRect] 
+@export var bool_buff_stat: Array[String]
 @export var buff_texture: Array[TextureRect] 
 @export var buff_stat: Array[String]
 
@@ -44,10 +46,17 @@ func update_buff(buff_art:TextureRect, parameter):
 		elif parameter <= 0:
 			buff_art.visible = false
 
+func updete_bool_buff(buff_art:TextureRect, parameter):
+	if !Global.is_null(buff_art):
+		buff_art.visible = parameter
+
 func update_buffs():
 	for i in buff_texture.size():
 		var stat = Global.cur_char.get(buff_stat[i])
 		update_buff(buff_texture[i], stat)
+	for i in bool_buff_texture.size():
+		var stat = Global.cur_char.get(bool_buff_stat[i])
+		updete_bool_buff(bool_buff_texture[i], stat)
 
 func update_move_counter():
 	move_remaing.text = "Moves Remaing: %d" % char.moves_left

@@ -6,8 +6,8 @@ class_name PlayerResource
 @export var max_health: float
 @export var life_steal: float
 @export var dmg_reduction: float
-@export var start_armor: float
-@export var start_mage_armor: float
+@export var start_armor: float = 0
+@export var start_mage_armor: float = 0
 
 #Utility
 @export_group("Utility")
@@ -44,8 +44,8 @@ class_name PlayerResource
 var deck_in_game: Array[PieceClass]
 var cur_health: float 
 var dodging: bool = false
-var cur_armor: float 
-var cur_mage_armor: float 
+var cur_armor: float = 0
+var cur_mage_armor: float = 0
 var moves_left: int = 0
 var gold: int = 0
 var rerolls: int = 0
@@ -92,7 +92,9 @@ func unpack_deck(deck_to_unpack, target):
 				target.append(instance)
 
 func reset_stats_at_beging_of_fight():
+	dodging = false
 	moves_left = speed
+	hand_combo = 0
 	cur_armor = start_armor
 	cur_mage_armor = start_mage_armor
 

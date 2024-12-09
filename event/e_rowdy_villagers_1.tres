@@ -22,7 +22,7 @@ req_class = "None"
 
 [sub_resource type="Resource" id="Resource_188xq"]
 script = ExtResource("2_x30kn")
-categorie = ""
+categorie = "Event"
 title = "Rowdy Villagers"
 description = "You propose a solution: you will give the first man a Healing Potion, allowing him to return the gold while still helping his daughter. Both villagers appear relieved and pleased with your plan."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_lpeh0")])
@@ -65,7 +65,7 @@ req_class = "None"
 
 [sub_resource type="Resource" id="Resource_qml3h"]
 script = ExtResource("2_x30kn")
-categorie = ""
+categorie = "Event"
 title = "Rowdy Villagers"
 description = "As you compel the man to return the gold, he begins to weep, overwhelmed by the thought of his young daughter's fate. The other villager, grateful for your intervention, hands you 2 gold as a token of thanks."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_q13i1")])
@@ -96,7 +96,7 @@ req_class = "None"
 
 [sub_resource type="Resource" id="Resource_nw6r4"]
 script = ExtResource("2_x30kn")
-categorie = ""
+categorie = "Event"
 title = "Rowdy Villagers"
 description = "When you ask what’s going on, the villagers explain that the man on the right stole 8 gold from the man on the left, claiming he needed the money to buy medicine for his sick daughter. What will you do?"
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_m882c"), SubResource("Resource_cre1f"), SubResource("Resource_8psiw")])
@@ -150,7 +150,7 @@ req_class = "None"
 
 [sub_resource type="Resource" id="Resource_7byd2"]
 script = ExtResource("2_x30kn")
-categorie = ""
+categorie = "Event"
 title = "Rowdy Villagers"
 description = "As you approach and brandish your sword, the villagers recoil in fear and gradually back away. While leaving the village, a short, chubby man hurries to catch up with you, pressing a gold purse into your hand and thanking you for stopping the fight."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_7daes")])
