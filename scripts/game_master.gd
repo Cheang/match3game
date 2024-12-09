@@ -19,6 +19,7 @@ var enemy_attacked_once: bool = false
 func _ready() -> void:
 	
 	defeat_overlay.visible = false
+	pause_overlay.visible = false
 	load_player()
 	load_enemie()
 	grd.on_startup()
@@ -94,8 +95,6 @@ func load_enemie():
 	enemy.attack.text = EnemyData.next_attack.tooltip
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
 
-
-#pause
 func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
