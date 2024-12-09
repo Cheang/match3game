@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=10 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="4_cb86u"]
+[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="6_emdxy"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
 
 [sub_resource type="Animation" id="Animation_u0pyg"]
@@ -260,3 +261,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "title"
 horizontal_alignment = 1
+
+[node name="pause" parent="." instance=ExtResource("6_emdxy")]
+visible = false
+layout_mode = 1

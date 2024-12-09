@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=32 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -19,8 +19,10 @@
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="18_thmtv"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="Script" path="res://other/pause.gd" id="19_o3jtm"]
 [ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
+[ext_resource type="Texture2D" uid="uid://cp7kncqhp30p4" path="res://other/icon.svg" id="21_unoky"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -57,6 +59,9 @@ turbulence_noise_scale = 2.825
 bg_color = Color(0.180392, 0.133333, 0.184314, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]
+bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rde5b"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
 
 [node name="game_window" type="Node2D"]
@@ -282,66 +287,6 @@ text = "Health : "
 texture = ExtResource("7_238bl")
 centered = false
 
-[node name="pause_btn" type="TextureButton" parent="."]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 85.0
-offset_bottom = 85.0
-texture_normal = ExtResource("18_thmtv")
-
-[node name="pause_overlay" type="PanelContainer" parent="."]
-visible = false
-offset_right = 576.0
-offset_bottom = 1024.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
-
-[node name="MarginContainer" type="MarginContainer" parent="pause_overlay"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="CenterContainer" type="CenterContainer" parent="pause_overlay/MarginContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="pause_overlay/MarginContainer/CenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Label" type="Label" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "The game is paused"
-horizontal_alignment = 1
-
-[node name="resume" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-text = "Resume"
-
-[node name="options" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-disabled = true
-text = "Options"
-
-[node name="back_to_mm" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-text = "Main Menu"
-
 [node name="defeat_overlay" type="PanelContainer" parent="."]
 visible = false
 offset_right = 576.0
@@ -386,6 +331,124 @@ size_flags_vertical = 4
 theme_override_font_sizes/font_size = 25
 text = "Main Menu"
 
+[node name="pause" type="Control" parent="."]
+custom_minimum_size = Vector2(576, 1024)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 576.0
+offset_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("19_o3jtm")
+
+[node name="MarginContainer" type="MarginContainer" parent="pause"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="pause/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="pause/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="pause_btn" type="TextureButton" parent="pause/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("18_thmtv")
+
+[node name="spacer" type="Control" parent="pause/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="spacer3" type="Control" parent="pause/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="spacer2" type="Control" parent="pause/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Control" type="Control" parent="pause/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(61, 61)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="pause/MarginContainer/VBoxContainer/HBoxContainer/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -212.0
+offset_right = 136.0
+grow_vertical = 0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+texture = ExtResource("21_unoky")
+stretch_mode = 2
+
+[node name="pause_overlay" type="PanelContainer" parent="pause"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_rde5b")
+
+[node name="CenterContainer" type="CenterContainer" parent="pause/pause_overlay"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="pause/pause_overlay/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="pause/pause_overlay/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "The game is paused"
+horizontal_alignment = 1
+
+[node name="resume" type="Button" parent="pause/pause_overlay/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+text = "Resume"
+
+[node name="options" type="Button" parent="pause/pause_overlay/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+disabled = true
+text = "Options"
+
+[node name="back_to_mm" type="Button" parent="pause/pause_overlay/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(285, 46)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_font_sizes/font_size = 32
+text = "Main Menu"
+
 [node name="trun_changer" parent="." instance=ExtResource("20_gybn7")]
 anchors_preset = 3
 anchor_left = 1.0
@@ -415,7 +478,8 @@ grow_vertical = 0
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
-[connection signal="pressed" from="pause_btn" to="." method="_on_pause_btn_pressed"]
-[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
 [connection signal="pressed" from="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
+[connection signal="pressed" from="pause/MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="pause" method="_on_pause_btn_pressed"]
+[connection signal="pressed" from="pause/pause_overlay/CenterContainer/VBoxContainer/resume" to="pause" method="_on_resume_pressed"]
+[connection signal="pressed" from="pause/pause_overlay/CenterContainer/VBoxContainer/options" to="pause" method="_on_options_pressed"]
+[connection signal="pressed" from="pause/pause_overlay/CenterContainer/VBoxContainer/back_to_mm" to="pause" method="_on_back_to_mm_pressed"]
