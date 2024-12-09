@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="5_wbtxd"]
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="6_0sge2"]
 [ext_resource type="PackedScene" uid="uid://bksjsebs3posk" path="res://rewards/others/reward_card.tscn" id="8_m3h2k"]
-[ext_resource type="PackedScene" uid="uid://bte76kklshdrl" path="res://other/pause.tscn" id="8_mmhr7"]
+[ext_resource type="PackedScene" uid="uid://bte76kklshdrl" path="res://other/pause_old.tscn" id="8_mmhr7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="10_77pof"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3tf3b"]

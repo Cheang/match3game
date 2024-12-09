@@ -17,6 +17,7 @@ var last_enemy_health: float
 var enemy_attacked_once: bool = false
 
 func _ready() -> void:
+	
 	defeat_overlay.visible = false
 	pause_overlay.visible = false
 	load_player()
@@ -24,6 +25,7 @@ func _ready() -> void:
 	grd.on_startup()
 	last_enemy_health = EnemyData.cur_health
 	last_player_health = Global.cur_char.cur_health
+	Global.game_is_played = true
 	grd.state = grd.move
 
 func _process(_delta: float) -> void:

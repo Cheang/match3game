@@ -25,7 +25,6 @@ func boost():
 	if !piece_boost.is_empty():
 		var rewards: Array[Reward] = []
 		for nm in piece_boost:
-			print("res://rewards/pieces/%s.tres" % nm)
 			var reward: Reward = load("res://rewards/pieces/%s.tres" % nm)
 			rewards.append(reward)
 		Global.cur_char.add_piece(Global.cur_char.rewards_piece, rewards)

@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=9 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
-[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="3_qtnoo"]
 [ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="4_cb86u"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
 
@@ -92,23 +91,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 25
+theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 75
-theme_override_constants/margin_right = 25
+theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 75
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="pause_btn" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-texture_normal = ExtResource("3_qtnoo")
-
 [node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(115, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -138,13 +135,9 @@ text = "Pick a reward"
 horizontal_alignment = 1
 
 [node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(115, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="pause_btn2" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-disabled = true
-texture_normal = ExtResource("3_qtnoo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

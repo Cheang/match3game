@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
 
@@ -8,8 +8,14 @@ func _on_start_pressed() -> void:
 	Locations.pick_locations(Global.locations, Global.enemy_loc_numb, Global.event_loc_numb, Global.services_loc_numb)
 	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
+func _on_load_pressed() -> void:
+	pass # Replace with function body.
+
 func _on_char_select_pressed() -> void:
 	SceneManager.change_scene("res://hero_select_screen.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+
+func _on_settings_pressed() -> void:
+	pass # Replace with function body.
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

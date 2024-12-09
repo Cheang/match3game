@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bte76kklshdrl"]
 
-[ext_resource type="Script" path="res://other/pause.gd" id="1_g0hn3"]
+[ext_resource type="Script" path="res://other/pause_old.gd" id="1_g0hn3"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="2_8dan4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]

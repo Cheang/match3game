@@ -20,6 +20,7 @@ class_name EventChoise
 
 @export_category("Fight")
 @export var enemy: EnemyResource
+@export var fight_overwrite: bool
 
 @export_category("Get Piece")
 @export var piece_res: R_Piece
