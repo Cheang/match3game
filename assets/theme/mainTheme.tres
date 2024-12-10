@@ -1,9 +1,9 @@
 [gd_resource type="Theme" load_steps=8 format=3 uid="uid://t0ar7qhxkey"]
 
 [ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="1_6dsyy"]
-[ext_resource type="FontFile" uid="uid://cff1fooc327rc" path="res://assets/theme/alagard.ttf" id="1_p6mby"]
 [ext_resource type="Texture2D" uid="uid://lteoa6saiosg" path="res://assets/level_ui/button_hover.png" id="2_sce0y"]
 [ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="2_y3e2i"]
+[ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_ax2lw"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h7t2y"]
 texture = ExtResource("1_6dsyy")
@@ -32,10 +32,11 @@ shadow_offset = Vector2(0, 9)
 anti_aliasing = false
 
 [resource]
-default_font = ExtResource("1_p6mby")
+default_font = ExtResource("5_ax2lw")
 Button/colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
 Button/styles/disabled = SubResource("StyleBoxTexture_h7t2y")
 Button/styles/hover = SubResource("StyleBoxTexture_3p4xp")
 Button/styles/normal = ExtResource("2_y3e2i")
 Button/styles/pressed = null
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_1jxyf")
+RichTextLabel/fonts/normal_font = ExtResource("5_ax2lw")

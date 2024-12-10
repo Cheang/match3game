@@ -32,6 +32,8 @@ class_name EventChoise
 @export var gold_cost: int
 
 @export_category("Requirements")
+@export var fail_state: EventChoise
+@export var failable: bool = false
 @export var req_stat: String = "None"
 @export var req_value: float = 0
 @export var req_piece_remove: bool = false

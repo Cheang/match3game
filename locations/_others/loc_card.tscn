@@ -44,19 +44,15 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
 theme_override_font_sizes/font_size = 32
 text = "Location Name"
 
-[node name="devider3" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 2)
-layout_mode = 2
-color = Color(0.572549, 0.662745, 0.517647, 1)
-
 [node name="loc_decription" type="RichTextLabel" parent="HBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 2
-theme_override_colors/table_border = Color(0, 0, 0, 1)
 theme_override_colors/default_color = Color(0.329412, 0.494118, 0.392157, 1)
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
 fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
 
 [node name="devider" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 2)

@@ -29,8 +29,6 @@ func _on_selection_btn_pressed() -> void:
 				loc_res.next_scene = "res://game_window.tscn"
 		if loc_res.event_encounter and loc_res.event_resource:
 			Global.cur_event = loc_res.event_resource
-			loc_res.name = "Event"
-			loc_res.description = "You see something happening in the distance, would you go in and investigate."
 			loc_res.next_scene = "res://event_screen.tscn"
 		Global.current_wave += 1
 		selected = true

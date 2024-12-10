@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=5 format=3 uid="uid://b0elnudfkd65c"]
 
+[ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="1_wxsog"]
 [ext_resource type="Texture2D" uid="uid://cp7kncqhp30p4" path="res://other/icon.svg" id="2_n2rxv"]
 
@@ -13,6 +14,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_drcth")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -21,18 +24,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 75
+theme_override_constants/margin_top = 60
 theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 75
+theme_override_constants/margin_bottom = 60
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+mouse_filter = 2
 theme_override_constants/separation = 20
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="pause_btn" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -44,7 +50,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="spacer3" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
+custom_minimum_size = Vector2(300, 46)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -58,6 +64,7 @@ custom_minimum_size = Vector2(61, 61)
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/Control"]
+visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -119,3 +126,8 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
 theme_override_font_sizes/font_size = 32
 text = "Main Menu"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

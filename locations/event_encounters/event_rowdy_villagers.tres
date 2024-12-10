@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("1_ixxj8")
 name = "Event"
-description = "You see something happening in the distance, would you go in and investigate"
+description = "You see something happening in the distance, would you go in and investigate."
 next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = false

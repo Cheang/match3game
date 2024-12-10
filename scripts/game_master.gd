@@ -8,9 +8,8 @@ signal enemy_health_change
 @onready var grd: Node2D = $grd
 @onready var enemy: Enemy = $enemy
 @onready var player: Player = $player
-@onready var defeat_overlay: PanelContainer = $defeat_overlay
-@onready var pause_overlay: PanelContainer = $pause_overlay
 @onready var trun_changer: Control = $trun_changer
+@onready var defeat_overlay: PanelContainer = $CanvasLayer/defeat_overlay
 
 var last_player_health: float
 var last_enemy_health: float
@@ -19,7 +18,6 @@ var enemy_attacked_once: bool = false
 func _ready() -> void:
 	
 	defeat_overlay.visible = false
-	pause_overlay.visible = false
 	load_player()
 	load_enemie()
 	grd.on_startup()
@@ -94,17 +92,3 @@ func load_enemie():
 	enemy.enemy_name.text = EnemyData.enemy.name
 	enemy.attack.text = EnemyData.next_attack.tooltip
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
-
-func _on_back_to_mm_pressed() -> void:
-	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
-
-func _on_pause_btn_pressed() -> void:
-	if Global.game_is_played == true:
-		grd.state = grd.wait
-		Global.game_is_played = false
-		pause_overlay.visible = true
-
-func _on_resume_pressed() -> void:
-	grd.state = grd.move
-	Global.game_is_played = true
-	pause_overlay.visible = false

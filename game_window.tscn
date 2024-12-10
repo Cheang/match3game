@@ -17,8 +17,8 @@
 [ext_resource type="Texture2D" uid="uid://bmulmclix0w0" path="res://assets/level_ui/player_health_panel.png" id="13_fditc"]
 [ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
-[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="18_thmtv"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
 [ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 
@@ -282,14 +282,11 @@ text = "Health : "
 texture = ExtResource("7_238bl")
 centered = false
 
-[node name="pause_btn" type="TextureButton" parent="."]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 85.0
-offset_bottom = 85.0
-texture_normal = ExtResource("18_thmtv")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="pause_overlay" type="PanelContainer" parent="."]
+[node name="pause" parent="CanvasLayer" instance=ExtResource("19_ryfr5")]
+
+[node name="defeat_overlay" type="PanelContainer" parent="CanvasLayer"]
 visible = false
 offset_right = 576.0
 offset_bottom = 1024.0
@@ -297,81 +294,28 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
 
-[node name="MarginContainer" type="MarginContainer" parent="pause_overlay"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/defeat_overlay"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="CenterContainer" type="CenterContainer" parent="pause_overlay/MarginContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/defeat_overlay/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="pause_overlay/MarginContainer/CenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Label" type="Label" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "The game is paused"
-horizontal_alignment = 1
-
-[node name="resume" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-text = "Resume"
-
-[node name="options" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-disabled = true
-text = "Options"
-
-[node name="back_to_mm" type="Button" parent="pause_overlay/MarginContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
-text = "Main Menu"
-
-[node name="defeat_overlay" type="PanelContainer" parent="."]
-visible = false
-offset_right = 576.0
-offset_bottom = 1024.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
-
-[node name="MarginContainer" type="MarginContainer" parent="defeat_overlay"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="CenterContainer" type="CenterContainer" parent="defeat_overlay/MarginContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="defeat_overlay/MarginContainer/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("18_xnkws")
 
-[node name="Label" type="Label" parent="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.909804, 0.231373, 0.231373, 1)
 theme_override_font_sizes/font_size = 32
@@ -379,7 +323,7 @@ text = "You have
 been defeated"
 horizontal_alignment = 1
 
-[node name="back_to_mm" type="Button" parent="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="back_to_mm" type="Button" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -415,7 +359,4 @@ grow_vertical = 0
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
-[connection signal="pressed" from="pause_btn" to="." method="_on_pause_btn_pressed"]
-[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="pause_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
-[connection signal="pressed" from="defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]
+[connection signal="pressed" from="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

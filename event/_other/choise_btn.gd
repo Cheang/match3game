@@ -1,16 +1,28 @@
-extends Button
+extends PanelContainer
 
-@onready var choise_btn: Button = $"."
+const ENEMY_HEALTH_BACK = preload("res://assets/level_ui/enemy_health_back.png")
+const BUTTON = preload("res://assets/level_ui/button.png")
+
+@onready var btn: Button = $btn
+@onready var texture: TextureRect = $TextureRect
+@onready var description: RichTextLabel = $MarginContainer/VBoxContainer/description
+@onready var title: Label = $MarginContainer/VBoxContainer/title
+
 var resource: EventChoise
 
 func set_btn():
 	if resource != null:
-		choise_btn.text = resource.text
+		description.visible = false
+		title.text = resource.text
 		if resource.gold_cost > 0:
 			if resource.gold_cost > Global.cur_char.gold:
-				choise_btn.disabled = true
+				btn.disabled = true
+				texture.texture = ENEMY_HEALTH_BACK
+			else: 
+				btn.disabled = false
+				texture.texture = BUTTON
 
-func _on_pressed() -> void:
+func _on_btn_pressed() -> void:
 	if Global.game_is_played == true:
 		if resource.gold_cost > 0:
 			Global.cur_char.gold -= resource.gold_cost
@@ -20,6 +32,11 @@ func _on_pressed() -> void:
 					var index = Global.cur_char.deck_in_game.find(piece)
 					Global.cur_char.deck_in_game.pop_at(index)
 					break
+		if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
+			var stat_to_check = Global.cur_char.get(resource.req_stat)
+			if stat_to_check < resource.req_value:
+				var new_resource: EventChoise = resource.fail_state
+				resource = new_resource
 		match resource.type:
 			0: #go to locations
 				Global.game_is_played = false
@@ -38,6 +55,8 @@ func _on_pressed() -> void:
 				SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 			4: #get piece
 				Global.game_is_played = false
+				get_parent().get_parent().get_parent().get_parent().get_parent().get_reward(resource.piece_res.base, resource.piece_res.name, resource.piece_res.icon, resource.piece_res.description)
+				await get_tree().create_timer(1.5).timeout
 				resource.piece_res.activate()
 				resource.piece_res.boost()
 				if resource.fight_overwrite:
