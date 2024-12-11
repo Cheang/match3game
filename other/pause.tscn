@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=6 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="1_wxsog"]
 [ext_resource type="Texture2D" uid="uid://cp7kncqhp30p4" path="res://other/icon.svg" id="2_n2rxv"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_5o83o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rde5b"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
@@ -97,34 +98,24 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="pause_overlay/CenterContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 32
 text = "The game is paused"
 horizontal_alignment = 1
 
-[node name="resume" type="Button" parent="pause_overlay/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
+[node name="resume" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
 text = "Resume"
 
-[node name="options" type="Button" parent="pause_overlay/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
+[node name="options" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
 disabled = true
-text = "Options"
+text = "Settings"
 
-[node name="back_to_mm" type="Button" parent="pause_overlay/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(285, 46)
+[node name="back_to_mm" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
-theme_override_font_sizes/font_size = 32
 text = "Main Menu"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]

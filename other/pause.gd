@@ -14,6 +14,7 @@ func _on_pause_btn_pressed() -> void:
 		pause_overlay.visible = true
 
 func _on_resume_pressed() -> void:
+	await get_tree().create_timer(.4).timeout
 	Global.game_is_played = true
 	var grd = get_parent().get_node("grd")
 	if grd != null:
@@ -21,7 +22,9 @@ func _on_resume_pressed() -> void:
 	pause_overlay.visible = false
 
 func _on_options_pressed() -> void:
+	await get_tree().create_timer(.4).timeout
 	pass # Replace with function body.
 
 func _on_back_to_mm_pressed() -> void:
+	await get_tree().create_timer(.4).timeout
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })

@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7ut720c0esco"]
+
+[ext_resource type="Script" path="res://other/btn_general.gd" id="1_8wasw"]
+[ext_resource type="AudioStream" uid="uid://sndgjxubmqo7" path="res://sounds/click (1).wav" id="2_luumr"]
+[ext_resource type="Material" uid="uid://cet3jo74qbt3r" path="res://assets/shaders/fire_process_material.tres" id="3_d56o8"]
+
+[node name="btn" type="Button"]
+z_index = 5
+custom_minimum_size = Vector2(0, 46)
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "Lorem ipsum"
+script = ExtResource("1_8wasw")
+
+[node name="sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_luumr")
+volume_db = -20.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+visible = false
+position = Vector2(109, 52)
+amount = 1500
+process_material = ExtResource("3_d56o8")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

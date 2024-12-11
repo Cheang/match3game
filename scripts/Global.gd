@@ -28,6 +28,9 @@ var boss_beaten: bool = false
 var bosses_killed_needed = 1
 var bosses_killed = 0 
 
+#setting
+var music_plaing: bool = true
+
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 
 #_________________________________________________________#

@@ -7,17 +7,17 @@
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h7t2y"]
 texture = ExtResource("1_6dsyy")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3p4xp"]
 texture = ExtResource("2_sce0y")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1jxyf"]
 bg_color = Color(0.384314, 0.333333, 0.396078, 1)
@@ -33,7 +33,8 @@ anti_aliasing = false
 
 [resource]
 default_font = ExtResource("5_ax2lw")
-Button/colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+Button/colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+Button/colors/font_disabled_color = Color(0.384314, 0.333333, 0.396078, 1)
 Button/styles/disabled = SubResource("StyleBoxTexture_h7t2y")
 Button/styles/hover = SubResource("StyleBoxTexture_3p4xp")
 Button/styles/normal = ExtResource("2_y3e2i")

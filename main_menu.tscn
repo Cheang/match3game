@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://857yjlwtnl4h"]
+[gd_scene load_steps=6 format=3 uid="uid://857yjlwtnl4h"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m0wtd"]
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/level_ui/main_menu_n_bg.png" id="3_3j6ne"]
 [ext_resource type="Texture2D" uid="uid://bahgdocqkjnq6" path="res://assets/level_ui/logo.png" id="3_jb5a2"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_ah0x7"]
+[ext_resource type="AudioStream" uid="uid://dmt444sc2vr82" path="res://sounds/songs/main_menu_song.wav" id="4_xkaj6"]
 
 [node name="main_menu" type="Control"]
 layout_mode = 3
@@ -57,51 +59,40 @@ texture = ExtResource("3_jb5a2")
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 
-[node name="start" type="Button" parent="VBoxContainer"]
-z_index = 5
-custom_minimum_size = Vector2(0, 46)
+[node name="start" parent="VBoxContainer" instance=ExtResource("4_ah0x7")]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
 text = "Start Game"
 
-[node name="load" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 46)
+[node name="load" parent="VBoxContainer" instance=ExtResource("4_ah0x7")]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
 disabled = true
 text = "Load Game"
 
-[node name="char_select" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 46)
+[node name="char_select" parent="VBoxContainer" instance=ExtResource("4_ah0x7")]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
 disabled = true
 text = "Character Select"
 
-[node name="settings" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 46)
+[node name="settings" parent="VBoxContainer" instance=ExtResource("4_ah0x7")]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
 disabled = true
 text = "Settings"
 
-[node name="quit" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 46)
+[node name="quit" parent="VBoxContainer" instance=ExtResource("4_ah0x7")]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
 text = "Quit"
 
 [node name="Control3" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
+[node name="main" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_xkaj6")
+volume_db = -45.0
+autoplay = true
+
 [connection signal="pressed" from="VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="VBoxContainer/char_select" to="." method="_on_char_select_pressed"]
 [connection signal="pressed" from="VBoxContainer/settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_settings_pressed"]
