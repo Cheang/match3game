@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Song" load_steps=5 format=3 uid="uid://ck1i63f4apfby"]
+
+[ext_resource type="AudioStream" uid="uid://wo1f64a1k156" path="res://sounds/songs/horo_1/main_menu_acent.wav" id="1_andc3"]
+[ext_resource type="Script" path="res://sounds/songs/song.gd" id="1_o451o"]
+[ext_resource type="AudioStream" uid="uid://ctoig5cwc0yda" path="res://sounds/songs/horo_1/main_menu_beging.wav" id="2_d7ts3"]
+[ext_resource type="AudioStream" uid="uid://bi6bprex8sykp" path="res://sounds/songs/horo_1/main_menu_loop.wav" id="3_qxten"]
+
+[resource]
+script = ExtResource("1_o451o")
+intro = ExtResource("2_d7ts3")
+main_loop = ExtResource("3_qxten")
+accents = Array[AudioStreamWAV]([ExtResource("1_andc3")])

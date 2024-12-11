@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
 [ext_resource type="Script" path="res://scripts/game_master.gd" id="1_q6hof"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd.gd" id="2_i4bg5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_audio.gd" id="4_6newg"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd_ice.gd" id="4_a7uqp"]
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy.gd" id="5_7ysvn"]
@@ -21,7 +22,6 @@
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
 [ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
-[ext_resource type="AudioStream" uid="uid://8gnlelp0ml2" path="res://sounds/songs/fight_song_1.wav" id="22_vstif"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -100,6 +100,11 @@ one_shot = true
 wait_time = 0.2
 one_shot = true
 
+[node name="audioPlayer" type="AudioStreamPlayer" parent="grd"]
+volume_db = -20.0
+bus = &"SFX"
+script = ExtResource("4_6newg")
+
 [node name="grd_ice" type="Node2D" parent="."]
 script = ExtResource("4_a7uqp")
 
@@ -169,6 +174,9 @@ offset_right = 112.0
 offset_bottom = 155.0
 theme_override_font_sizes/font_size = 32
 text = "Name"
+
+[node name="enemy_audio" type="AudioStreamPlayer" parent="enemy"]
+bus = &"SFX"
 
 [node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 script = ExtResource("11_ghvty")
@@ -360,11 +368,6 @@ grow_horizontal = 0
 grow_vertical = 0
 
 [node name="cam" parent="." instance=ExtResource("20_sxuy2")]
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("22_vstif")
-volume_db = -10.0
-autoplay = true
 
 [connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]

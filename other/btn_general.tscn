@@ -14,7 +14,7 @@ script = ExtResource("1_8wasw")
 
 [node name="sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_luumr")
-volume_db = -20.0
+bus = &"SFX"
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 visible = false

@@ -16,7 +16,6 @@ var last_enemy_health: float
 var enemy_attacked_once: bool = false
 
 func _ready() -> void:
-	
 	defeat_overlay.visible = false
 	load_player()
 	load_enemie()

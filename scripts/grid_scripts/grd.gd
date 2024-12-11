@@ -261,6 +261,7 @@ func destroy_matched():
 						deck_to_dest.push_back(all_pieces[i][j])
 					was_matched = true
 					all_pieces[i][j].position = Vector2(0,0)
+					get_node("audioPlayer").play_on_destruction()
 					remove_child(all_pieces[i][j])
 					if all_pieces[i][j].type == 0:
 						all_pieces[i][j].queue_free()

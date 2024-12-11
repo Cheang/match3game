@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://ducm1foh1dpl2"]
+
+[ext_resource type="Script" path="res://sounds/audio_bg_music.gd" id="2_3talj"]
+
+[node name="audio_bg_music" type="AudioStreamPlayer"]
+autoplay = true
+bus = &"bgMusic"
+script = ExtResource("2_3talj")
+
+[connection signal="finished" from="." to="." method="_on_finished"]

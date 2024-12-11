@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Basic_Attack" load_steps=2 format=3 uid="uid://c71adaipqow8y"]
+[gd_resource type="Resource" script_class="Basic_Attack" load_steps=3 format=3 uid="uid://c71adaipqow8y"]
 
 [ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="1_ohal1"]
+[ext_resource type="AudioStream" uid="uid://bfyeq52qeuolx" path="res://sounds/slash_1.wav" id="2_csha3"]
 
 [resource]
 script = ExtResource("1_ohal1")
@@ -9,3 +10,4 @@ attacks = 1
 tooltip = "Strong Attack"
 animation = "attack_1"
 animation_time = 0.8
+sound = ExtResource("2_csha3")

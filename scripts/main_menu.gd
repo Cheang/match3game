@@ -1,12 +1,11 @@
 extends Control
 
+const HORO_1 = preload("res://sounds/songs/horo_1/horo_1.tres")
 const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
-@onready var main: AudioStreamPlayer = $main
 var choise_made: bool = false
 
 func _ready() -> void:
-	if Global.audio_plaing:
-		main.playing = Global.music_plaing
+	Global.set_song(HORO_1)
 	choise_made = false
 
 func _on_start_pressed() -> void:

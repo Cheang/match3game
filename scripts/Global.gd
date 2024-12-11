@@ -30,8 +30,11 @@ var bosses_killed = 0
 
 #setting
 #audio
-var audio_plaing: bool = false # all of the sounds
+var audio_plaing: bool = true # all of the sounds
 var music_plaing: bool = true # just the music
+
+var intro_played: bool = false 
+var cur_song: Song
 
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 
@@ -83,3 +86,14 @@ func set_up_player():
 	cur_char.set_stats_at_beging_of_game()
 	reset_variable()
 	
+
+func set_song(song: Song):
+	cur_song = song
+	if cur_song.intro != null:
+		intro_played = false
+		AudioBgMusic.stream = cur_song.intro
+		AudioBgMusic.play()
+		await AudioBgMusic.finished
+	AudioBgMusic.stream = cur_song.main_loop
+	AudioBgMusic.play()
+	intro_played = true

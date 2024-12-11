@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Tile_Destruction_Attack" load_steps=2 format=3 uid="uid://d3cbjkicneo3u"]
+[gd_resource type="Resource" script_class="Tile_Destruction_Attack" load_steps=3 format=3 uid="uid://d3cbjkicneo3u"]
 
 [ext_resource type="Script" path="res://enemies/attacks/bases/tile_destuction_attac.gd" id="1_0q63g"]
+[ext_resource type="AudioStream" uid="uid://c538lmkylcqw1" path="res://sounds/explosion.wav" id="2_dc0cj"]
 
 [resource]
 script = ExtResource("1_0q63g")
@@ -8,3 +9,4 @@ space_to_destroy = Array[Vector2]([Vector2(0, 4), Vector2(1, 4), Vector2(2, 4), 
 tooltip = "Massive swipe"
 animation = "attack_2"
 animation_time = 1.0
+sound = ExtResource("2_dc0cj")

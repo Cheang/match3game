@@ -11,6 +11,7 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var health: Label = $PanelContainer/HBoxContainer/health
 @onready var attack: Label = $PanelContainer/HBoxContainer/attack
 @onready var enemy_name: Label = $enemy_name
+@onready var enemy_audio: AudioStreamPlayer = $enemy_audio
 
 var one_time = false
 
@@ -37,6 +38,9 @@ func move(target, time = .3):
 func _on_game_window_enemy_attacking() -> void:
 	if EnemyData.next_attack.animation != null:
 		art.get_child(0).set_animp(EnemyData.next_attack.animation)
+	if EnemyData.next_attack.sound != null:
+		enemy_audio.stream = EnemyData.next_attack.sound
+		enemy_audio.play()
 	await get_tree().create_timer(EnemyData.next_attack.animation_time).timeout
 	EnemyData.next_attack.attack()
 	art.get_child(0).set_animp("RESET")

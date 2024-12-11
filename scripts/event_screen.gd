@@ -15,6 +15,8 @@ var resource: Event
 func _ready() -> void:
 	Global.game_is_played = true
 	resource = Global.cur_event
+	if resource.music != null:
+		Global.set_song(resource.music)
 	label.text = resource.categorie
 	event_text.get_child(0).text = resource.title
 	event_text.get_child(1).text = resource.description
