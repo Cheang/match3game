@@ -29,7 +29,9 @@ var bosses_killed_needed = 1
 var bosses_killed = 0 
 
 #setting
-var music_plaing: bool = true
+#audio
+var audio_plaing: bool = false # all of the sounds
+var music_plaing: bool = true # just the music
 
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 

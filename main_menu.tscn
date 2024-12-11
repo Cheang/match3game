@@ -88,11 +88,10 @@ layout_mode = 2
 
 [node name="main" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_xkaj6")
-volume_db = -45.0
-autoplay = true
+volume_db = -10.0
 
 [connection signal="pressed" from="VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="VBoxContainer/char_select" to="." method="_on_char_select_pressed"]
 [connection signal="pressed" from="VBoxContainer/settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="VBoxContainer/quit" to="." method="_on_quit_pressed"]

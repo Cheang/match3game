@@ -5,7 +5,8 @@ const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
 var choise_made: bool = false
 
 func _ready() -> void:
-	main.autoplay = Global.music_plaing
+	if Global.audio_plaing:
+		main.playing = Global.music_plaing
 	choise_made = false
 
 func _on_start_pressed() -> void:
@@ -30,8 +31,5 @@ func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
 
-
 func _on_quit_pressed() -> void:
-	if not choise_made:
-		choise_made = true
 		get_tree().quit()

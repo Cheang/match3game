@@ -7,7 +7,8 @@ var btn_pressed:bool = false
 func _on_pressed() -> void:
 	if not btn_pressed: 
 		btn_pressed = true
-		sound.play()
+		if Global.audio_plaing:
+			sound.play()
 		fire.process_material.emission_box_extents.x = self.size.x/2
 		fire.position = Vector2(self.size.x/2, self.size.y)
 		fire.visible = true
