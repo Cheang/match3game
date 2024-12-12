@@ -4,9 +4,9 @@ class_name location_card
 var loc_res: Location
 @export var index: int
 
-@onready var loc_texture: TextureRect = $HBoxContainer/loc_texture
-@onready var loc_name_l: Label = $HBoxContainer/MarginContainer/VBoxContainer/loc_name
-@onready var loc_description_l: RichTextLabel = $HBoxContainer/MarginContainer/VBoxContainer/loc_decription
+@onready var loc_texture: TextureRect = $MarginContainer/HBoxContainer/loc_texture
+@onready var loc_name_l: Label = $MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/loc_name
+@onready var loc_description_l: RichTextLabel = $MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/loc_decription
 
 var selected: bool = false
 
@@ -32,6 +32,7 @@ func _on_selection_btn_pressed() -> void:
 			loc_res.next_scene = "res://event_screen.tscn"
 		Global.current_wave += 1
 		selected = true
+		Global.game_is_played = false
 		if loc_res.next_scene != "":
 			SceneManager.change_scene(loc_res.next_scene, { "pattern": "diagonal", "color": loc_res.transition_color })
 

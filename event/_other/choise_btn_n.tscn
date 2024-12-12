@@ -1,17 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://da2d70sh3okp5"]
+[gd_scene load_steps=3 format=3 uid="uid://c42g6uuhamcrh"]
 
-[ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="1_j1rw0"]
+[ext_resource type="StyleBox" uid="uid://bo7g1egg06o1a" path="res://event/_other/choise_btn_n.tres" id="1_jc7eh"]
 [ext_resource type="Script" path="res://event/_other/choise_btn.gd" id="1_kjg37"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_20ufd"]
-
 [node name="choise_btn_n" type="PanelContainer"]
-theme_override_styles/panel = SubResource("StyleBoxEmpty_20ufd")
+theme_override_styles/panel = ExtResource("1_jc7eh")
 script = ExtResource("1_kjg37")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 2
-texture = ExtResource("1_j1rw0")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -25,10 +19,12 @@ layout_mode = 2
 theme_override_constants/separation = -1
 
 [node name="title" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
 theme_override_font_sizes/font_size = 32
 text = "Title"
+autowrap_mode = 3
 
 [node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

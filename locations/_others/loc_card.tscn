@@ -1,50 +1,62 @@
-[gd_scene load_steps=4 format=3 uid="uid://ccly008m1l4s5"]
+[gd_scene load_steps=5 format=3 uid="uid://ccly008m1l4s5"]
 
-[ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="1_sj7he"]
+[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="1_gngmg"]
 [ext_resource type="Script" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
 [ext_resource type="Texture2D" uid="uid://bbpd48s55of6d" path="res://assets/level_ui/location_pictures/loc_empty.png" id="3_t8ffi"]
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2c2k3"]
+texture = ExtResource("1_gngmg")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
 [node name="loc_card" type="PanelContainer"]
 size_flags_vertical = 6
-theme_override_styles/panel = ExtResource("1_sj7he")
+theme_override_styles/panel = SubResource("StyleBoxTexture_2c2k3")
 script = ExtResource("2_tcvsp")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="loc_texture" type="TextureRect" parent="HBoxContainer"]
+[node name="loc_texture" type="TextureRect" parent="MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("3_t8ffi")
 
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 10
 
-[node name="devider2" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="devider2" type="ColorRect" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 color = Color(0.572549, 0.662745, 0.517647, 1)
 
-[node name="loc_name" type="Label" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="loc_name" type="Label" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
 theme_override_font_sizes/font_size = 32
 text = "Location Name"
 
-[node name="loc_decription" type="RichTextLabel" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="loc_decription" type="RichTextLabel" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 2
@@ -54,7 +66,7 @@ fit_content = true
 scroll_active = false
 shortcut_keys_enabled = false
 
-[node name="devider" type="ColorRect" parent="HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="devider" type="ColorRect" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
 color = Color(0.572549, 0.662745, 0.517647, 1)

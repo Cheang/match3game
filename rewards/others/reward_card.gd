@@ -10,9 +10,10 @@ var index: int
 @onready var reward_decription: RichTextLabel = $HBoxContainer/MarginContainer/VBoxContainer/reward_decription
 
 func _on_choise_btn_pressed() -> void:
+	Global.game_is_played = false
 	reward_res.activate()
 	reward_res.boost()
-	SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	if Global.boss_beaten:
 		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 

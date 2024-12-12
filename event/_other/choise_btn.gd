@@ -1,10 +1,12 @@
 extends PanelContainer
 
-const ENEMY_HEALTH_BACK = preload("res://assets/level_ui/enemy_health_back.png")
 const BUTTON = preload("res://assets/level_ui/button.png")
 
+const CHOISE_BTN_D = preload("res://event/_other/choise_btn_d.tres")
+const CHOISE_BTN_N = preload("res://event/_other/choise_btn_n.tres")
+
 @onready var btn: Button = $btn
-@onready var texture: TextureRect = $TextureRect
+
 @onready var description: RichTextLabel = $MarginContainer/VBoxContainer/description
 @onready var title: Label = $MarginContainer/VBoxContainer/title
 
@@ -12,15 +14,23 @@ var resource: EventChoise
 
 func set_btn():
 	if resource != null:
-		description.visible = false
+		if resource.description == "None":
+			description.visible = false
+		else:
+			description.visible = true
+			description.text = resource.description
 		title.text = resource.text
 		if resource.gold_cost > 0:
 			if resource.gold_cost > Global.cur_char.gold:
 				btn.disabled = true
-				texture.texture = ENEMY_HEALTH_BACK
+				self.add_theme_stylebox_override("panel", CHOISE_BTN_D)
+				title.add_theme_color_override("font_color", Color8(127, 112, 138))
+				description.add_theme_color_override("default_color", Color8(127, 112, 138))
 			else: 
 				btn.disabled = false
-				texture.texture = BUTTON
+				self.add_theme_stylebox_override("panel", CHOISE_BTN_N)
+				title.add_theme_color_override("font_color", Color8(55, 78, 74))
+				description.add_theme_color_override("default_color", Color8(84, 126, 100))
 
 func _on_btn_pressed() -> void:
 	if Global.game_is_played == true:
@@ -40,7 +50,7 @@ func _on_btn_pressed() -> void:
 		match resource.type:
 			0: #go to locations
 				Global.game_is_played = false
-				SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+				SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 			1: #continue event
 				Global.game_is_played = false
 				Global.cur_event = resource.next_event_res
@@ -64,7 +74,7 @@ func _on_btn_pressed() -> void:
 					EnemyData.set_enemie_stats()
 					SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 					return
-				SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+				SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 			5: #get passive
 				Global.game_is_played = false
 				if resource.fight_overwrite:
@@ -82,4 +92,4 @@ func _on_btn_pressed() -> void:
 					EnemyData.set_enemie_stats()
 					SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 					return
-				SceneManager.change_scene("res://next_encounter_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+				SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

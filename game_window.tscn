@@ -303,12 +303,14 @@ theme = ExtResource("12_tovol")
 text = "Health : "
 
 [node name="foreground" type="Node2D" parent="."]
+position = Vector2(0, -163)
 
 [node name="border" type="Sprite2D" parent="foreground"]
 texture = ExtResource("7_238bl")
 centered = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="pause" parent="CanvasLayer" instance=ExtResource("19_ryfr5")]
 
@@ -356,14 +358,14 @@ size_flags_vertical = 4
 theme_override_font_sizes/font_size = 25
 text = "Main Menu"
 
-[node name="trun_changer" parent="." instance=ExtResource("20_gybn7")]
+[node name="trun_changer" parent="CanvasLayer" instance=ExtResource("20_gybn7")]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
-offset_left = 289.0
-offset_top = 558.0
-offset_right = 289.0
-offset_bottom = 558.0
+offset_left = -287.0
+offset_top = -466.0
+offset_right = -287.0
+offset_bottom = -466.0
 grow_horizontal = 0
 grow_vertical = 0
 

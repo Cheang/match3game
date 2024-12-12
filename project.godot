@@ -10,9 +10,11 @@ config_version=5
 
 [application]
 
-config/name="match3"
+config/name="LoreTiles"
+config/version="0.1"
 run/main_scene="res://main_menu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
+boot_splash/bg_color=Color(0.180392, 0.133333, 0.184314, 1)
 config/icon="res://other/icon.svg"
 
 [autoload]

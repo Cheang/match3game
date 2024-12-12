@@ -3,6 +3,7 @@ class_name EventChoise
 
 @export_category("General")
 @export var text: String
+@export var description: String = "None"
 
 @export_category("Type")
 @export_enum(

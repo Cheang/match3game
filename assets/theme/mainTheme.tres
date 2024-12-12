@@ -1,19 +1,19 @@
 [gd_resource type="Theme" load_steps=8 format=3 uid="uid://t0ar7qhxkey"]
 
-[ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="1_6dsyy"]
-[ext_resource type="Texture2D" uid="uid://lteoa6saiosg" path="res://assets/level_ui/button_hover.png" id="2_sce0y"]
+[ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="1_yxpip"]
+[ext_resource type="Texture2D" uid="uid://b1w6ej5ohsgcx" path="res://assets/level_ui/btn/btn_hover.png" id="2_8osr4"]
 [ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="2_y3e2i"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_ax2lw"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h7t2y"]
-texture = ExtResource("1_6dsyy")
-texture_margin_left = 10.0
-texture_margin_top = 10.0
-texture_margin_right = 10.0
-texture_margin_bottom = 10.0
+texture = ExtResource("1_yxpip")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3p4xp"]
-texture = ExtResource("2_sce0y")
+texture = ExtResource("2_8osr4")
 texture_margin_left = 10.0
 texture_margin_top = 10.0
 texture_margin_right = 10.0
@@ -34,8 +34,15 @@ anti_aliasing = false
 [resource]
 default_font = ExtResource("5_ax2lw")
 Button/colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-Button/colors/font_disabled_color = Color(0.384314, 0.333333, 0.396078, 1)
+Button/colors/font_disabled_color = Color(0.498039, 0.439216, 0.541176, 1)
+Button/colors/font_focus_color = Color(0.215686, 0.305882, 0.290196, 1)
+Button/colors/font_hover_color = Color(0.572549, 0.662745, 0.517647, 1)
+Button/colors/font_hover_pressed_color = Color(0.215686, 0.305882, 0.290196, 1)
+Button/colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
+Button/colors/font_pressed_color = Color(0.698039, 0.729412, 0.564706, 1)
+Button/font_sizes/font_size = 32
 Button/styles/disabled = SubResource("StyleBoxTexture_h7t2y")
+Button/styles/focus = null
 Button/styles/hover = SubResource("StyleBoxTexture_3p4xp")
 Button/styles/normal = ExtResource("2_y3e2i")
 Button/styles/pressed = null

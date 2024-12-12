@@ -1,17 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://b14oaurjk3n0q"]
+[gd_scene load_steps=12 format=3 uid="uid://erupfs4b6wm8"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_iwqhq"]
-[ext_resource type="Script" path="res://scripts/reward_screen.gd" id="1_k3umh"]
+[ext_resource type="Script" path="res://scripts/reward_screen.gd" id="1_tc7lg"]
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_owuue"]
 [ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="3_5u0sd"]
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="4_qgy55"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="5_wbtxd"]
-[ext_resource type="Texture2D" uid="uid://cki2gfo038dct" path="res://assets/level_ui/button.png" id="6_0sge2"]
+[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="8_deowl"]
 [ext_resource type="PackedScene" uid="uid://bksjsebs3posk" path="res://rewards/others/reward_card.tscn" id="8_m3h2k"]
-[ext_resource type="PackedScene" uid="uid://bte76kklshdrl" path="res://other/pause_old.tscn" id="8_mmhr7"]
-[ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="10_77pof"]
+[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="9_pgo6q"]
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3tf3b"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gop76"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(288, 1, 1)
@@ -24,126 +23,177 @@ gravity = Vector3(0, 98, 0)
 scale_min = 0.2
 scale_max = 0.4
 
-[node name="reward_screen" type="Node2D"]
-script = ExtResource("1_k3umh")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_torvx"]
+texture = ExtResource("8_deowl")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
-[node name="TextureRect" type="TextureRect" parent="."]
-offset_top = -163.0
-offset_right = 576.0
-offset_bottom = 1187.0
-texture = ExtResource("1_iwqhq")
-stretch_mode = 3
-
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-visible = false
-position = Vector2(288, -181)
-amount = 10
-process_material = SubResource("ParticleProcessMaterial_3tf3b")
-texture = ExtResource("2_owuue")
-lifetime = 3.0
-
-[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
-visible = false
-position = Vector2(288, -181)
-amount = 10
-process_material = SubResource("ParticleProcessMaterial_3tf3b")
-texture = ExtResource("3_5u0sd")
-lifetime = 3.0
-
-[node name="GPUParticles2D3" type="GPUParticles2D" parent="."]
-visible = false
-position = Vector2(288, -181)
-amount = 10
-process_material = SubResource("ParticleProcessMaterial_3tf3b")
-texture = ExtResource("4_qgy55")
-lifetime = 3.0
-
-[node name="GPUParticles2D4" type="GPUParticles2D" parent="."]
-visible = false
-position = Vector2(288, -181)
-amount = 15
-process_material = SubResource("ParticleProcessMaterial_3tf3b")
-texture = ExtResource("5_wbtxd")
-lifetime = 3.0
-
-[node name="Control" type="Control" parent="."]
+[node name="reward_screen_2" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 576.0
-offset_bottom = 1024.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="Control"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 25
-theme_override_constants/margin_top = 45
-theme_override_constants/margin_right = 25
-theme_override_constants/margin_bottom = 45
+script = ExtResource("1_tc7lg")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="TextureRect" type="TextureRect" parent="Control/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
-size_flags_horizontal = 4
-texture = ExtResource("6_0sge2")
-
-[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/TextureRect"]
+[node name="background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -263.0
-offset_top = -15.0
-offset_right = 263.0
-offset_bottom = 15.0
+offset_left = -288.0
+offset_top = -675.0
+offset_right = 288.0
+offset_bottom = 675.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_font_sizes/font_size = 32
-text = "Pick a reward"
-horizontal_alignment = 1
+texture = ExtResource("1_iwqhq")
 
-[node name="reward_card_0" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="background"]
+visible = false
+position = Vector2(288, 0)
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_gop76")
+texture = ExtResource("2_owuue")
+lifetime = 3.0
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="background"]
+visible = false
+position = Vector2(288, 0)
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_gop76")
+texture = ExtResource("3_5u0sd")
+lifetime = 3.0
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="background"]
+visible = false
+position = Vector2(288, 0)
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_gop76")
+texture = ExtResource("4_qgy55")
+lifetime = 3.0
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="background"]
+visible = false
+position = Vector2(288, 0)
+amount = 15
+process_material = SubResource("ParticleProcessMaterial_gop76")
+texture = ExtResource("5_wbtxd")
+lifetime = 3.0
+
+[node name="rewards" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 75
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 75
+
+[node name="VBoxContainer" type="VBoxContainer" parent="rewards"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="Control2" type="Control" parent="rewards/VBoxContainer"]
+custom_minimum_size = Vector2(526, 80)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="rc_" parent="rewards/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
 
-[node name="reward_card_1" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
+[node name="rc_2" parent="rewards/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
 
-[node name="reward_card_2" parent="Control/MarginContainer/VBoxContainer" instance=ExtResource("8_m3h2k")]
+[node name="rc_3" parent="rewards/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="rewards/VBoxContainer"]
+custom_minimum_size = Vector2(0, 15)
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="rewards/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
 theme_override_constants/separation = 20
 
-[node name="skip" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="skip" type="Button" parent="rewards/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 text = "Skip"
 
-[node name="reroll" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="reroll" type="Button" parent="rewards/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 text = "Reroll"
 
-[node name="pause" parent="." instance=ExtResource("8_mmhr7")]
+[node name="title" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 70
 
-[node name="cam" parent="." instance=ExtResource("10_77pof")]
+[node name="VBoxContainer" type="VBoxContainer" parent="title"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/separation = 20
 
-[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
-[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]
+[node name="HBoxContainer" type="HBoxContainer" parent="title/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="spacer" type="Control" parent="title/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="title/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(269, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxTexture_torvx")
+
+[node name="Label" type="Label" parent="title/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Pick a reward"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="spacer2" type="Control" parent="title/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="pause" parent="." instance=ExtResource("9_pgo6q")]
+layout_mode = 1
+
+[connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
+[connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]

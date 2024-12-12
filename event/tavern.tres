@@ -24,7 +24,8 @@ boost_self = false
 
 [sub_resource type="Resource" id="Resource_uid4y"]
 script = ExtResource("1_gykjm")
-text = "Get a drink (Heal 4HP, -6 Gold)"
+text = "Get a drink "
+description = "Heal 4HP, -6 Gold"
 type = 6
 fight_overwrite = false
 stat_res = SubResource("Resource_s108n")
@@ -50,7 +51,8 @@ boost_self = false
 
 [sub_resource type="Resource" id="Resource_tfntl"]
 script = ExtResource("1_gykjm")
-text = "Get a room (Heal 10 HP, -10 Gold)"
+text = "Get a room "
+description = "Heal 10 HP, -10 Gold"
 type = 6
 fight_overwrite = false
 stat_res = SubResource("Resource_pm48m")

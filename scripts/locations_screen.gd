@@ -1,8 +1,8 @@
-extends Node2D
+extends Control
 
-@onready var loc_card_1: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card
-@onready var loc_card_2: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card2
-@onready var loc_card_3: location_card = $loaction_cards/MarginContainer/VBoxContainer/loc_howder/loc_card3
+@onready var loc_card_1: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card
+@onready var loc_card_2: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card2
+@onready var loc_card_3: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card3
 
 const LOC_DEADEND = preload("res://locations/loc_deadend.tres")
 
@@ -13,6 +13,7 @@ func _ready() -> void:
 	Locations.add_boss_to_locations(Global.locations, Global.minions_needed)
 	Global.locations.shuffle()
 	get_locations()
+	Global.game_is_played = true
 
 
 func get_locations():

@@ -8,7 +8,7 @@ signal enemy_health_change
 @onready var grd: Node2D = $grd
 @onready var enemy: Enemy = $enemy
 @onready var player: Player = $player
-@onready var trun_changer: Control = $trun_changer
+@onready var trun_changer: Control = $CanvasLayer/trun_changer
 @onready var defeat_overlay: PanelContainer = $CanvasLayer/defeat_overlay
 
 var last_player_health: float

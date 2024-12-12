@@ -12,5 +12,5 @@
 script = ExtResource("4_kqrmq")
 enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
-event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj"), ExtResource("5_37ayj"), ExtResource("5_37ayj")])
+event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj")])
 boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])

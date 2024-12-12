@@ -196,6 +196,7 @@ _data = {
 }
 
 [node name="karjaliia_cap" type="Node2D"]
+use_parent_material = true
 script = ExtResource("1_frq0b")
 
 [node name="animP" type="AnimationPlayer" parent="."]
@@ -204,23 +205,27 @@ libraries = {
 }
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(264, 73)
 texture = ExtResource("2_gopgf")
 centered = false
 
 [node name="Sprite2D3" type="Sprite2D" parent="."]
 visible = false
+use_parent_material = true
 position = Vector2(268, 88)
 texture = ExtResource("3_7vg55")
 centered = false
 
 [node name="Sprite2D4" type="Sprite2D" parent="."]
 visible = false
+use_parent_material = true
 position = Vector2(304, 91)
 texture = ExtResource("4_4jxj1")
 centered = false
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(363, 9)
 texture = ExtResource("7_l4bud")
 centered = false

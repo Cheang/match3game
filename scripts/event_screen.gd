@@ -4,7 +4,7 @@ const CHOISE_BTN = preload("res://event/_other/choise_btn_n.tscn")
 
 var resource: Event
 
-@onready var label: Label = $MarginContainer/VBoxContainer/HBoxContainer/TextureRect/Label
+@onready var label: Label = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/Label
 
 @onready var event_bg: TextureRect = $event_bg
 @onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/event_text
@@ -42,10 +42,10 @@ func _ready() -> void:
 				continue
 			if stat < choise.req_value:
 				continue
-		var btn = CHOISE_BTN.instantiate()
-		btn.resource = choise
-		choises_holder.add_child(btn)
-		btn.set_btn()
+		var btn1 = CHOISE_BTN.instantiate()
+		btn1.resource = choise
+		choises_holder.add_child(btn1)
+		btn1.set_btn()
 	Global.cur_event = null
 
 func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):

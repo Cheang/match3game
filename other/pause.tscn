@@ -1,9 +1,51 @@
-[gd_scene load_steps=6 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=14 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
-[ext_resource type="Texture2D" uid="uid://72qno4vrg0we" path="res://assets/level_ui/pause_button.png" id="1_wxsog"]
-[ext_resource type="Texture2D" uid="uid://cp7kncqhp30p4" path="res://other/icon.svg" id="2_n2rxv"]
+[ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
+[ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/level_ui/btn/btn_2_hover.png" id="3_hw4hm"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_5o83o"]
+[ext_resource type="Texture2D" uid="uid://cbn51l2fif0f5" path="res://assets/level_ui/btn/btn_2.png" id="4_g3erw"]
+[ext_resource type="Texture2D" uid="uid://bcr8je46e1jtq" path="res://assets/level_ui/icons/settings.png" id="5_h1nck"]
+[ext_resource type="Texture2D" uid="uid://dxclfssfpgodb" path="res://assets/level_ui/icons/gold.png" id="6_gk11h"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
+texture = ExtResource("2_8aufw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ffxwl"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d58vm"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7w8bp"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7tuy4"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rde5b"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
@@ -41,9 +83,14 @@ theme_override_constants/separation = 20
 layout_mode = 2
 mouse_filter = 2
 
-[node name="pause_btn" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="pause_btn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(61, 61)
 layout_mode = 2
-texture_normal = ExtResource("1_wxsog")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_p0rtf")
+theme_override_styles/hover = SubResource("StyleBoxTexture_ffxwl")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_d58vm")
+theme_override_styles/normal = SubResource("StyleBoxTexture_7w8bp")
+icon = ExtResource("5_h1nck")
 
 [node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(25, 0)
@@ -64,19 +111,46 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(61, 61)
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/Control"]
-visible = false
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control"]
 layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -212.0
-offset_right = 136.0
-grow_vertical = 0
-size_flags_horizontal = 8
-size_flags_vertical = 8
-texture = ExtResource("2_n2rxv")
-stretch_mode = 2
+offset_left = -21.0
+offset_right = 21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_7tuy4")
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("6_gk11h")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+
+[node name="gold" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_constants/line_spacing = -13
+theme_override_font_sizes/font_size = 25
+text = "9999"
+horizontal_alignment = 1
+vertical_alignment = 3
+visible_characters = 4
 
 [node name="pause_overlay" type="PanelContainer" parent="."]
 visible = false
