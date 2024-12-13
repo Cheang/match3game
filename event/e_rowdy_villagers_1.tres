@@ -11,6 +11,7 @@
 [sub_resource type="Resource" id="Resource_lpeh0"]
 script = ExtResource("1_iep27")
 text = "Continue"
+description = "None"
 type = 6
 fight_overwrite = false
 stat_res = ExtResource("2_8vgu3")
@@ -32,6 +33,7 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_lpeh0")])
 [sub_resource type="Resource" id="Resource_m882c"]
 script = ExtResource("1_iep27")
 text = "Give him a potion"
+description = "None"
 type = 1
 next_event_res = SubResource("Resource_188xq")
 fight_overwrite = false
@@ -58,6 +60,7 @@ boost_self = false
 [sub_resource type="Resource" id="Resource_q13i1"]
 script = ExtResource("1_iep27")
 text = "Continue..."
+description = "None"
 type = 6
 fight_overwrite = false
 stat_res = SubResource("Resource_58ve7")
@@ -79,6 +82,7 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_q13i1")])
 [sub_resource type="Resource" id="Resource_cre1f"]
 script = ExtResource("1_iep27")
 text = "Make him return the gold"
+description = "None"
 type = 1
 next_event_res = SubResource("Resource_qml3h")
 fight_overwrite = false
@@ -93,6 +97,7 @@ req_class = "None"
 [sub_resource type="Resource" id="Resource_8psiw"]
 script = ExtResource("1_iep27")
 text = "Defend the man, let him keep the gold"
+description = "None"
 type = 2
 enemy = ExtResource("6_eddm6")
 fight_overwrite = false
@@ -114,6 +119,7 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_m882c"), SubResou
 [sub_resource type="Resource" id="Resource_rx8u2"]
 script = ExtResource("1_iep27")
 text = "Try to talk to them"
+description = "None"
 type = 1
 next_event_res = SubResource("Resource_nw6r4")
 fight_overwrite = false
@@ -128,6 +134,7 @@ req_class = "None"
 [sub_resource type="Resource" id="Resource_jaqi7"]
 script = ExtResource("1_iep27")
 text = "Join in the Fight"
+description = "None"
 type = 2
 enemy = ExtResource("6_eddm6")
 fight_overwrite = false
@@ -153,6 +160,7 @@ boost_self = false
 [sub_resource type="Resource" id="Resource_7daes"]
 script = ExtResource("1_iep27")
 text = "Continue"
+description = "None"
 type = 6
 fight_overwrite = false
 stat_res = SubResource("Resource_y7jwi")
@@ -174,6 +182,7 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_7daes")])
 [sub_resource type="Resource" id="Resource_ef558"]
 script = ExtResource("1_iep27")
 text = "Flash you blade to calm them"
+description = "None"
 type = 1
 next_event_res = SubResource("Resource_7byd2")
 fight_overwrite = false
