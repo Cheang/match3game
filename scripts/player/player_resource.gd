@@ -50,6 +50,7 @@ var moves_left: int = 0
 var gold: int = 0
 var rerolls: int = 0
 var hand_combo: int = 0
+var flesh_coruption: bool = false
 
 
 func take_damage(enemy_damage, piercing: bool = false):

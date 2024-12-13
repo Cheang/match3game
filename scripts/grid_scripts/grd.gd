@@ -25,12 +25,29 @@ var all_pieces = []
 var empty_spaces: Array[Vector2]
 var ice_spaces: Array[Vector2]
 var freeze_spaces: Array[Vector2]
+var rock_spaces: Array[Vector2]
+var flesh_spaces: Array[Vector2]
+var damaged_flesh: bool = false
+@onready var grd_flesh: Node2D = $"../grd_flesh"
 
 #obstacles signals
+@warning_ignore("unused_signal")
 signal damage_ice
+@warning_ignore("unused_signal")
 signal make_ice
+@warning_ignore("unused_signal")
 signal damage_freeze
+@warning_ignore("unused_signal")
 signal make_freeze
+@warning_ignore("unused_signal")
+signal damage_rock
+@warning_ignore("unused_signal")
+signal make_rock
+@warning_ignore("unused_signal")
+signal damage_flesh
+@warning_ignore("unused_signal")
+signal make_flesh
+@warning_ignore("unused_signal")
 signal move_made
 
 #slap back
@@ -59,6 +76,8 @@ func on_startup() -> void:
 	spawn_fluf_piece(fluf)
 	spawn_obstacles(ice_spaces, "make_ice")
 	spawn_obstacles(freeze_spaces, "make_freeze")
+	spawn_obstacles(rock_spaces, "make_rock")
+	spawn_obstacles(flesh_spaces, "make_flesh")
 
 func _process(_delta: float) -> void:
 	if state == move:
@@ -66,6 +85,10 @@ func _process(_delta: float) -> void:
 
 func restricted_fill(place: Vector2):
 	if Global.is_in_array(empty_spaces, place):
+			return true
+	if Global.is_in_array(rock_spaces, place):
+			return true
+	if Global.is_in_array(flesh_spaces, place):
 			return true
 	return false
 
@@ -302,8 +325,66 @@ func after_refill():
 	enemy_attacked = false
 	emit_signal("move_made")
 	cooldown_and_refill_deck()
+	if !damaged_flesh:
+		generate_flesh()
+	if flesh_spaces.size() >= 5:
+		Global.cur_char.flesh_coruption = true
+	else: 
+		Global.cur_char.flesh_coruption = false
 	state = move
 	move_checked = false
+	damaged_flesh = false
+
+func generate_flesh():
+	if flesh_spaces.size() > 0:
+		var flesh_made = false
+		var loops = 0
+		while not flesh_made and loops < 100:
+			var rand = floor(randf_range(0, flesh_spaces.size()))
+			var cur_x = flesh_spaces[rand].x
+			var cur_y = flesh_spaces[rand].y
+			var neighbor = find_normal_neighbor(cur_x,cur_y)
+			if neighbor != null:
+				var direction: Vector2 = Vector2(cur_x - neighbor.x, cur_y - neighbor.y)
+				grd_flesh.flesh_pieces[cur_x][cur_y].corupt(direction)
+				await get_tree().create_timer(.8).timeout
+				match all_pieces[neighbor.x][neighbor.y].type:
+					0:
+						all_pieces[neighbor.x][neighbor.y].queue_free()
+						all_pieces[neighbor.x][neighbor.y] = null
+						flesh_spaces.append(Vector2(neighbor.x, neighbor.y))
+						emit_signal(("make_flesh"), Vector2(neighbor.x, neighbor.y))
+						flesh_made = true
+					1:
+						deck_on_cd.push_back(all_pieces[neighbor.x][neighbor.y])
+						remove_child(all_pieces[neighbor.x][neighbor.y])
+						all_pieces[neighbor.x][neighbor.y] = null
+						flesh_spaces.append(Vector2(neighbor.x, neighbor.y))
+						emit_signal(("make_flesh"), Vector2(neighbor.x, neighbor.y))
+						flesh_made = true
+					2:
+						deck_one_per_btl.push_back(all_pieces[neighbor.x][neighbor.y])
+						remove_child(all_pieces[neighbor.x][neighbor.y])
+						all_pieces[neighbor.x][neighbor.y] = null
+						flesh_spaces.append(Vector2(neighbor.x, neighbor.y))
+						emit_signal(("make_flesh"), Vector2(neighbor.x, neighbor.y))
+						flesh_made = true
+				loops += 1
+
+func find_normal_neighbor(col, row):
+	var directions = [
+		Vector2(1, 0),  # Right
+		Vector2(-1, 0), # Left
+		Vector2(0, 1),  # Up
+		Vector2(0, -1)  # Down
+	]
+	directions.shuffle()
+	
+	for direction in directions:
+		var neighbor_pos = Vector2(col, row) + direction
+		if is_in_grd(neighbor_pos) and all_pieces[neighbor_pos.x][neighbor_pos.y] != null:
+			return neighbor_pos
+	return null
 
 func cooldown_and_refill_deck():
 	var pieces_to_remove = []
@@ -319,12 +400,13 @@ func cooldown_and_refill_deck():
 		return piece != null
 		)
 	
-	
 
 #Helper _____________________________________________________
 func damage_specials(col, row):
 	emit_signal("damage_ice", Vector2(col,row))
 	emit_signal("damage_freeze", Vector2(col,row))
+	check_rock(col, row)
+	check_flesh(col, row)
 
 func clear_board():
 	for i in range(grd_width):
@@ -338,7 +420,28 @@ func clear_board():
 func clean_deck_to_dest():
 	for piece in deck_to_dest:
 		piece.queue_free()
-	deck_to_dest.clear()
+	deck_to_dest.clear()	
+
+func check_rock(col, row):
+	if col < Global.grd_width - 1:
+		emit_signal("damage_rock", Vector2(col+1, row))
+	if col > 0:
+		emit_signal("damage_rock", Vector2(col-1, row))
+	if row < Global.grd_height - 1:
+		emit_signal("damage_rock", Vector2(col, row+1))
+	if row > 0:
+		emit_signal("damage_rock", Vector2(col, row-1))
+
+func check_flesh(col, row):
+	if col < Global.grd_width - 1:
+		emit_signal("damage_flesh", Vector2(col+1, row))
+	if col > 0:
+		emit_signal("damage_flesh", Vector2(col-1, row))
+	if row < Global.grd_height - 1:
+		emit_signal("damage_flesh", Vector2(col, row+1))
+	if row > 0:
+		emit_signal("damage_flesh", Vector2(col, row-1))
+
 #On Signal __________________________________________________
 func _on_destroy_timer_timeout() -> void:
 	destroy_matched()
@@ -347,9 +450,12 @@ func _on_collapse_timer_timeout() -> void:
 func _on_refill_timer_timeout() -> void:
 	refill_col()
 func _on_grd_freeze_remove_freeze(place) -> void:
-	for i in range(freeze_spaces.size()-1, -1, -1):
-		if freeze_spaces[i] == place:
-			freeze_spaces.remove_at(i)
+	Global.remove_from_array(freeze_spaces, place)
+func _on_grd_rock_remove_rock(place) -> void:
+	Global.remove_from_array(rock_spaces, place)
+func _on_grd_flesh_remove_flesh(place) -> void:
+	damaged_flesh = true
+	Global.remove_from_array(flesh_spaces, place)
 
 func _on_game_window_enemy_attacking() -> void:
 	

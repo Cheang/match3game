@@ -15,18 +15,18 @@ class_name Player
 const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 
 var one_time = false
-var char = Global.cur_char
+var cur_character = Global.cur_char
 
 func _ready() -> void:
-	health.text = "Health: %d / %d" % [char.cur_health, char.max_health]
-	player_healthbar.value = char.cur_health * 100.0 / char.max_health
+	health.text = "Health: %d / %d" % [cur_character.cur_health, cur_character.max_health]
+	player_healthbar.value = cur_character.cur_health * 100.0 / cur_character.max_health
 	update_buffs()
 
 func _on_player_healthbar_value_changed(value: float) -> void:
 	if not one_time:
 		one_time = true
 		fire.visible = true
-	if char.cur_health == char.max_health and one_time:
+	if cur_character.cur_health == cur_character.max_health and one_time:
 		fire.visible = false
 		one_time = false
 	art.set_material(ATTACKED_GLOW)
@@ -59,13 +59,13 @@ func update_buffs():
 		updete_bool_buff(bool_buff_texture[i], stat)
 
 func update_move_counter():
-	move_remaing.text = "Moves Remaing: %d" % char.moves_left
+	move_remaing.text = "Moves Remaing: %d" % cur_character.moves_left
 
 func _on_grd_move_made() -> void:
 	update_move_counter()
 	update_buffs()
 
 func _on_game_window_player_health_change() -> void:
-	health.text = "Health: %d / %d" % [char.cur_health, char.max_health]
-	player_healthbar.value = char.cur_health * 100.0 / char.max_health
+	health.text = "Health: %d / %d" % [cur_character.cur_health, cur_character.max_health]
+	player_healthbar.value = cur_character.cur_health * 100.0 / cur_character.max_health
 	update_buffs()

@@ -25,6 +25,8 @@ var phase: int = 1
 var empty_spaces: Array[Vector2]
 var ice_spaces: Array[Vector2]
 var freeze_spaces: Array[Vector2]
+var rock_spaces: Array[Vector2]
+var flesh_spaces: Array[Vector2]
 
 func set_enemie_stats():
 	max_health = round(enemy.health + (((health_scaler * Global.current_wave) * Global.current_level)* enemy.health))
@@ -41,7 +43,9 @@ func set_enemie_stats():
 	
 	empty_spaces = enemy.empty_spaces
 	ice_spaces = enemy.ice_spaces
-	freeze_spaces = enemy.freeze_spaces	
+	freeze_spaces = enemy.freeze_spaces
+	rock_spaces = enemy.rock_spaces
+	flesh_spaces = enemy.flesh_spaces
 
 func take_dmg(dmg):
 	cur_health -= dmg
@@ -71,4 +75,3 @@ func pick_next_attack():
 
 func destroy_pieces(space_to_destroy: Array[Vector2]):
 	get_node("/root/game_window/grd").mark_for_destruction(space_to_destroy)
-	

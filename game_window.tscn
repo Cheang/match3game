@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=34 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -9,7 +9,9 @@
 [ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy.gd" id="5_7ysvn"]
 [ext_resource type="Texture2D" uid="uid://bjgsv4h0k734v" path="res://assets/level_ui/grd_border.png" id="7_238bl"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_rock.gd" id="7_hc5va"]
 [ext_resource type="Texture2D" uid="uid://bxumd3prjmw73" path="res://assets/level_ui/enemy_health_panel.png" id="8_3apa5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_flesh.gd" id="8_jpie2"]
 [ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="9_a7vs4"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="10_lbrow"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="11_ghvty"]
@@ -22,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
 [ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="22_kmwuu"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -111,6 +114,12 @@ script = ExtResource("4_a7uqp")
 [node name="grd_freeze" type="Node2D" parent="."]
 script = ExtResource("4_lguch")
 
+[node name="grd_rock" type="Node2D" parent="."]
+script = ExtResource("7_hc5va")
+
+[node name="grd_flesh" type="Node2D" parent="."]
+script = ExtResource("8_jpie2")
+
 [node name="middleground" type="Sprite2D" parent="."]
 texture = ExtResource("1_ioeul")
 centered = false
@@ -168,6 +177,7 @@ text = "15 :Attack"
 horizontal_alignment = 2
 
 [node name="enemy_name" type="Label" parent="enemy"]
+visible = false
 offset_left = 32.0
 offset_top = 125.0
 offset_right = 112.0
@@ -351,23 +361,16 @@ text = "You have
 been defeated"
 horizontal_alignment = 1
 
-[node name="back_to_mm" type="Button" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="back_to_mm" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" instance=ExtResource("22_kmwuu")]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_font_sizes/font_size = 25
 text = "Main Menu"
 
 [node name="trun_changer" parent="CanvasLayer" instance=ExtResource("20_gybn7")]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-offset_left = -287.0
-offset_top = -466.0
-offset_right = -287.0
-offset_bottom = -466.0
-grow_horizontal = 0
-grow_vertical = 0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 
 [node name="cam" parent="." instance=ExtResource("20_sxuy2")]
 
@@ -375,15 +378,21 @@ grow_vertical = 0
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_health_change" from="." to="enemy" method="_on_game_window_enemy_health_change"]
 [connection signal="player_health_change" from="." to="player" method="_on_game_window_player_health_change"]
+[connection signal="damage_flesh" from="grd" to="grd_flesh" method="_on_grd_damage_flesh"]
 [connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
 [connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
+[connection signal="damage_rock" from="grd" to="grd_rock" method="_on_grd_damage_rock"]
+[connection signal="make_flesh" from="grd" to="grd_flesh" method="_on_grd_make_flesh"]
 [connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
 [connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
+[connection signal="make_rock" from="grd" to="grd_rock" method="_on_grd_make_rock"]
 [connection signal="move_made" from="grd" to="player" method="_on_grd_move_made"]
 [connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]
 [connection signal="remove_freeze" from="grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]
+[connection signal="remove_rock" from="grd_rock" to="grd" method="_on_grd_rock_remove_rock"]
+[connection signal="remove_flesh" from="grd_flesh" to="grd" method="_on_grd_flesh_remove_flesh"]
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]

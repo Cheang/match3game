@@ -19,3 +19,5 @@ class_name EnemyResource
 @export var empty_spaces: Array[Vector2]
 @export var ice_spaces: Array[Vector2]
 @export var freeze_spaces: Array[Vector2]
+@export var rock_spaces: Array[Vector2]
+@export var flesh_spaces: Array[Vector2]

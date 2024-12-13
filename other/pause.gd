@@ -1,5 +1,14 @@
 extends Control
 
+@export var gold_counter: bool = true
+@export var pause_btn: bool = true
+@export var title_container: bool = true
+@export var title_text: String
+
+@onready var pausebtn: Button = $MarginContainer/VBoxContainer/HBoxContainer/pause_btn
+@onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
+@onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
+
 @onready var pause_overlay: PanelContainer = $pause_overlay
 @onready var gold: Label = $MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer/gold
 var grd 
@@ -8,6 +17,13 @@ var gold_on_label: int
 func _ready() -> void:
 	grd = get_parent().get_parent().get_node("grd")
 	pause_overlay.visible = false
+	if not gold_counter:
+		goldbox.modulate = Color(1, 1, 1, 0)
+	if not pause_btn:
+		pausebtn.modulate = Color(1, 1, 1, 0)
+	if not title_container:
+		title.modulate = Color(1, 1, 1, 0)
+	set_title(title_text)
 	if Global.cur_char != null:
 		gold_on_label = Global.cur_char.gold
 	gold.text = "%s" % [gold_on_label]
@@ -40,3 +56,7 @@ func _on_options_pressed() -> void:
 func _on_back_to_mm_pressed() -> void:
 	await get_tree().create_timer(.4).timeout
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+
+func set_title(text: String):
+	var titletxt: Label = title.get_child(0)
+	titletxt.text = text

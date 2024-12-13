@@ -4,7 +4,7 @@ const CHOISE_BTN = preload("res://event/_other/choise_btn_n.tscn")
 
 var resource: Event
 
-@onready var label: Label = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/Label
+@onready var pause: Control = $pause
 
 @onready var event_bg: TextureRect = $event_bg
 @onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/event_text
@@ -17,7 +17,7 @@ func _ready() -> void:
 	resource = Global.cur_event
 	if resource.music != null:
 		Global.set_song(resource.music)
-	label.text = resource.categorie
+	pause.set_title(resource.categorie)
 	event_text.get_child(0).text = resource.title
 	event_text.get_child(1).text = resource.description
 	if resource.background != null:

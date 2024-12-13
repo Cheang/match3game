@@ -1,18 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=9 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
-[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="4_ppauc"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="6_4rf35"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d0aym"]
-texture = ExtResource("4_ppauc")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
 
 [sub_resource type="Animation" id="Animation_u0pyg"]
 length = 0.001
@@ -109,31 +101,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(115, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(269, 60)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxTexture_d0aym")
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_font_sizes/font_size = 32
-text = "label"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(115, 0)
+[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -170,6 +139,9 @@ alignment = 2
 [node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+
+[node name="pause" parent="." instance=ExtResource("6_4rf35")]
+layout_mode = 1
 
 [node name="reward" type="Control" parent="."]
 visible = false
@@ -258,6 +230,3 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "title"
 horizontal_alignment = 1
-
-[node name="pause" parent="." instance=ExtResource("6_4rf35")]
-layout_mode = 1

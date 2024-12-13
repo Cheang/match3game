@@ -69,6 +69,11 @@ func is_in_array(array, item):
 			return true
 	return false
 
+func remove_from_array(array, item):
+	for i in range(array.size()-1, -1, -1):
+		if array[i] == item:
+			array.remove_at(i)
+
 func select_character(character: PlayerResource):
 	selected_char = character
 

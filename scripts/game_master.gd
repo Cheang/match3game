@@ -1,8 +1,11 @@
 extends Node2D
 class_name GameMaster
 
+@warning_ignore("unused_signal")
 signal enemy_attacking
+@warning_ignore("unused_signal")
 signal player_health_change
+@warning_ignore("unused_signal")
 signal enemy_health_change
 
 @onready var grd: Node2D = $grd
@@ -10,6 +13,7 @@ signal enemy_health_change
 @onready var player: Player = $player
 @onready var trun_changer: Control = $CanvasLayer/trun_changer
 @onready var defeat_overlay: PanelContainer = $CanvasLayer/defeat_overlay
+@onready var pause: Control = $CanvasLayer/pause
 
 var last_player_health: float
 var last_enemy_health: float
@@ -86,8 +90,16 @@ func load_enemie():
 	grd.empty_spaces = EnemyData.empty_spaces
 	grd.ice_spaces = EnemyData.ice_spaces
 	grd.freeze_spaces = EnemyData.freeze_spaces
+	grd.rock_spaces = EnemyData.rock_spaces
+	grd.flesh_spaces = EnemyData.flesh_spaces
 	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
+	pause.set_title(EnemyData.enemy.name)
 	enemy.enemy_name.text = EnemyData.enemy.name
 	enemy.attack.text = EnemyData.next_attack.tooltip
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
+
+
+func _on_back_to_mm_pressed() -> void:
+	await get_tree().create_timer(.4).timeout
+	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })

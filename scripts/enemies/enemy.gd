@@ -1,6 +1,7 @@
 extends Node2D
 class_name Enemy
 
+@warning_ignore("unused_signal")
 signal enemy_attacked
 
 const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
