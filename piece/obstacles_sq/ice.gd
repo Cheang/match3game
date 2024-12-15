@@ -7,7 +7,6 @@ func take_damage(dmg):
 	health -= dmg
 
 func corupt(directionV: Vector2):
-	print(directionV)
 	if directionV.x == 1:
 		rotate_particles(90)
 	elif directionV.x == -1:

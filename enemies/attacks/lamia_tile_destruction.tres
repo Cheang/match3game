@@ -7,6 +7,6 @@
 script = ExtResource("1_0q63g")
 space_to_destroy = Array[Vector2]([Vector2(0, 4), Vector2(1, 4), Vector2(2, 4), Vector2(3, 4), Vector2(4, 4), Vector2(5, 4), Vector2(6, 4), Vector2(7, 4)])
 tooltip = "Massive swipe"
-animation = "attack_2"
+animation = "tile_destruction"
 animation_time = 1.0
 sound = ExtResource("2_dc0cj")

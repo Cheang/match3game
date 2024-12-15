@@ -95,8 +95,25 @@ tracks/6/keys = {
 "values": [Vector2(304, 91)]
 }
 
+[sub_resource type="Animation" id="Animation_tfvwl"]
+resource_name = "idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(363, 9), Vector2(363, 7), Vector2(363, 9)]
+}
+
 [sub_resource type="Animation" id="Animation_o403m"]
-resource_name = "attack_1"
+resource_name = "basic_attack"
 length = 0.8
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -171,27 +188,10 @@ tracks/5/keys = {
 "values": [Vector2(304, 91), Vector2(304, 91), Vector2(304, 140)]
 }
 
-[sub_resource type="Animation" id="Animation_tfvwl"]
-resource_name = "idle"
-length = 1.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D2:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.8, 1.6),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(363, 9), Vector2(363, 7), Vector2(363, 9)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rnh8k"]
 _data = {
 "RESET": SubResource("Animation_77ds4"),
-"attack_1": SubResource("Animation_o403m"),
+"basic_attack": SubResource("Animation_o403m"),
 "idle": SubResource("Animation_tfvwl")
 }
 

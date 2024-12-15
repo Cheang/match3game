@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=15 format=3 uid="uid://5b2qagjixfgm"]
+[gd_resource type="Resource" script_class="Event" load_steps=12 format=3 uid="uid://5b2qagjixfgm"]
 
 [ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0knlt"]
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_gykjm"]
@@ -7,8 +7,6 @@
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="2_twdd2"]
 [ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/puprle_icon_3.png" id="3_u5k8t"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="4_q28c1"]
-[ext_resource type="AudioStream" uid="uid://bnsumlggn23ep" path="res://sounds/songs/ripni_kalinke.wav" id="7_a03tt"]
-[ext_resource type="Script" path="res://sounds/songs/song.gd" id="8_74g1g"]
 
 [sub_resource type="Resource" id="Resource_s108n"]
 script = ExtResource("4_q28c1")
@@ -64,16 +62,10 @@ req_piece_remove = false
 req_piece = "None"
 req_class = "None"
 
-[sub_resource type="Resource" id="Resource_kgixl"]
-script = ExtResource("8_74g1g")
-main_loop = ExtResource("7_a03tt")
-accents = Array[AudioStreamWAV]([])
-
 [resource]
 script = ExtResource("2_g8liw")
 categorie = "Service"
 title = "Kruchma"
 description = "The dimly lit kruchma is alive with the sound of lively folk music, as a trio of musicians plays a gadulka, tambura, and kaval in the corner, their melodies weaving through the air. Wooden beams stained with smoke support the low ceiling, and the warm glow of an open hearth casts flickering shadows on the rough-hewn walls adorned with woven rugs and copperware. Villagers sit at sturdy wooden tables, sharing stories over clay jugs of rakia and plates of roasted lamb, bread, and fresh cheese"
 background = ExtResource("1_0knlt")
-music = SubResource("Resource_kgixl")
 choises = Array[ExtResource("1_gykjm")]([SubResource("Resource_uid4y"), SubResource("Resource_tfntl"), ExtResource("2_twdd2")])

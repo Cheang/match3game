@@ -5,6 +5,5 @@ class_name Event
 @export var title: String
 @export_multiline var description: String
 @export var background: Texture2D
-@export var music: Song
 
 @export var choises: Array[EventChoise]

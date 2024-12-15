@@ -23,8 +23,8 @@ config/icon="res://assets/icon/icon.png"
 Global="*res://scripts/Global.gd"
 Locations="*res://scripts/Locations.gd"
 EnemyData="*res://scripts/enemies/EnemyData.gd"
-SceneManager="*res://addons/scene_manager/SceneManager.tscn"
 AudioBgMusic="*res://sounds/audio_bg_music.tscn"
+SceneManager="*res://addons/scene_manager/SceneManager.tscn"
 
 [display]
 

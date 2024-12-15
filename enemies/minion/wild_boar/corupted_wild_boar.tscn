@@ -1,0 +1,76 @@
+[gd_scene load_steps=8 format=3 uid="uid://ccew6wt7bxodl"]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_085bk"]
+[ext_resource type="Texture2D" uid="uid://cira8o512ncyq" path="res://assets/enemy/wild_boar/corupted_wild_boar_body.png" id="2_bnrlg"]
+[ext_resource type="Texture2D" uid="uid://bh8w4m20ydqgy" path="res://assets/enemy/wild_boar/corupted_wild_boar_head.png" id="3_sa5v7"]
+
+[sub_resource type="Animation" id="Animation_lvla1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(429, 115)]
+}
+
+[sub_resource type="Animation" id="Animation_rukjo"]
+resource_name = "basic_attack"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.333333, 0.466667, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(429, 115), Vector2(429, 108), Vector2(435, 125), Vector2(429, 115)]
+}
+
+[sub_resource type="Animation" id="Animation_n3oyu"]
+resource_name = "idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(429, 115), Vector2(429, 112), Vector2(429, 115), Vector2(429, 118), Vector2(429, 115)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2lvag"]
+_data = {
+"RESET": SubResource("Animation_lvla1"),
+"basic_attack": SubResource("Animation_rukjo"),
+"idle": SubResource("Animation_n3oyu")
+}
+
+[node name="corupted_wild_boar" type="Node2D"]
+script = ExtResource("1_085bk")
+
+[node name="animP" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_2lvag")
+}
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(398, 128)
+texture = ExtResource("2_bnrlg")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(429, 115)
+texture = ExtResource("3_sa5v7")

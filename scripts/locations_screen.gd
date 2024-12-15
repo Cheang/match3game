@@ -1,5 +1,7 @@
 extends Control
 
+@export var song: String
+
 @onready var loc_card_1: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card
 @onready var loc_card_2: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card2
 @onready var loc_card_3: location_card = $loaction_cards/CenterContainer/VBoxContainer/loc_howder/loc_card3
@@ -11,6 +13,7 @@ var loc_cards: Array[location_card]
 func _ready() -> void:
 	loc_cards = [loc_card_1,loc_card_2,loc_card_3]
 	Locations.add_boss_to_locations(Global.locations, Global.minions_needed)
+	Global.change_music(song)
 	Global.locations.shuffle()
 	get_locations()
 	Global.game_is_played = true

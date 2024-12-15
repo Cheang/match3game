@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=6 format=3 uid="uid://duwwp183j67gq"]
+
+[ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_tjo2k"]
+[ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://enemies/attacks/normal_attack.tres" id="2_tvnfp"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="3_dnakj"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="4_nyvva"]
+[ext_resource type="PackedScene" uid="uid://bcmfqa5aviot1" path="res://enemies/minion/wild_boar/wild_boar.tscn" id="5_bcqb4"]
+
+[resource]
+script = ExtResource("4_nyvva")
+name = "Gligan"
+health = 32.0
+damage = 2.0
+attacks = Array[ExtResource("1_tjo2k")]([ExtResource("2_tvnfp"), ExtResource("2_tvnfp")])
+attacks_p2 = Array[ExtResource("1_tjo2k")]([])
+attacks_p3 = Array[ExtResource("1_tjo2k")]([])
+attacks_p4 = Array[ExtResource("1_tjo2k")]([])
+speed = 1
+type = 0
+has_phases = false
+sprite = ExtResource("5_bcqb4")
+health_bar = ExtResource("3_dnakj")
+empty_spaces = Array[Vector2]([])
+ice_spaces = Array[Vector2]([])
+freeze_spaces = Array[Vector2]([])
+rock_spaces = Array[Vector2]([Vector2(0, 0), Vector2(1, 0), Vector2(2, 0), Vector2(3, 0), Vector2(4, 0), Vector2(5, 0), Vector2(6, 0), Vector2(7, 0), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1), Vector2(5, 1), Vector2(6, 1), Vector2(7, 1), Vector2(0, 2), Vector2(7, 2), Vector2(1, 2), Vector2(6, 2), Vector2(0, 3), Vector2(7, 3)])
+flesh_spaces = Array[Vector2]([])

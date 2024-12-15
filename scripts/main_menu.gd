@@ -1,11 +1,10 @@
 extends Control
 
-const HORO_1 = preload("res://sounds/songs/horo_1/horo_1.tres")
 const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
 var choise_made: bool = false
 
 func _ready() -> void:
-	Global.set_song(HORO_1)
+	Global.change_music("MM_song")
 	choise_made = false
 
 func _on_start_pressed() -> void:

@@ -8,6 +8,6 @@ script = ExtResource("1_hgo81")
 damage = 1.0
 attacks = 1
 tooltip = "Weak Attack"
-animation = "attack_1"
+animation = "basic_attack"
 animation_time = 0.8
 sound = ExtResource("2_40rhp")

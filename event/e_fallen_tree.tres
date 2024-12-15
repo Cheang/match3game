@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Event" load_steps=11 format=3 uid="uid://mpv3rrt7rf3k"]
 
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_g0b7c"]
-[ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="2_w2ghl"]
+[ext_resource type="Resource" uid="uid://d2nis0gpq35ns" path="res://enemies/minion/wild_boar/wild_boar_1.tres" id="2_i41h6"]
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_x4t16"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="3_hynxb"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="3_nht5e"]
@@ -23,7 +23,7 @@ script = ExtResource("1_g0b7c")
 text = "Take the gold"
 description = "None"
 type = 6
-enemy = ExtResource("2_w2ghl")
+enemy = ExtResource("2_i41h6")
 fight_overwrite = true
 stat_res = SubResource("Resource_esyl0")
 gold_cost = 0

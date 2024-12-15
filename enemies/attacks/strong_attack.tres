@@ -8,6 +8,6 @@ script = ExtResource("1_ohal1")
 damage = 2.0
 attacks = 1
 tooltip = "Strong Attack"
-animation = "attack_1"
+animation = "basic_attack"
 animation_time = 0.8
 sound = ExtResource("2_csha3")
