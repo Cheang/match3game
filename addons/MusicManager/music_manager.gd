@@ -63,9 +63,6 @@ func _ready() -> void:
 	pause_music.connect(_on_pause_music)
 	resume_music.connect(_on_resume_music)
 	
-	if bus:
-		music_player.bus = bus
-		music_player_2.bus = bus
 
 
 func _on_play_song(song: MusicTrack, is_looping: bool, is_fading: bool, fade_time: float) -> void:

@@ -1,9 +1,10 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://t0ar7qhxkey"]
+[gd_resource type="Theme" load_steps=13 format=3 uid="uid://t0ar7qhxkey"]
 
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="1_yxpip"]
 [ext_resource type="Texture2D" uid="uid://b1w6ej5ohsgcx" path="res://assets/level_ui/btn/btn_hover.png" id="2_8osr4"]
 [ext_resource type="StyleBox" uid="uid://b2y8harvclqk" path="res://assets/theme/button_texture.tres" id="2_y3e2i"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_ax2lw"]
+[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="5_q4o8d"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h7t2y"]
 texture = ExtResource("1_yxpip")
@@ -31,6 +32,29 @@ shadow_size = 2
 shadow_offset = Vector2(0, 9)
 anti_aliasing = false
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c0ycy"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d5k0g"]
+texture = ExtResource("5_q4o8d")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f5234"]
+texture = ExtResource("2_8osr4")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cal0v"]
+bg_color = Color(0.192157, 0.211765, 0.219608, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+expand_margin_bottom = 50.0
+anti_aliasing = false
+
 [resource]
 default_font = ExtResource("5_ax2lw")
 Button/colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
@@ -48,3 +72,11 @@ Button/styles/normal = ExtResource("2_y3e2i")
 Button/styles/pressed = null
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_1jxyf")
 RichTextLabel/fonts/normal_font = ExtResource("5_ax2lw")
+TabContainer/colors/font_selected_color = Color(0.215686, 0.305882, 0.290196, 1)
+TabContainer/colors/font_unselected_color = Color(0.215686, 0.305882, 0.290196, 1)
+TabContainer/constants/side_margin = 5
+TabContainer/font_sizes/font_size = 32
+TabContainer/styles/panel = SubResource("StyleBoxEmpty_c0ycy")
+TabContainer/styles/tab_selected = SubResource("StyleBoxTexture_d5k0g")
+TabContainer/styles/tab_unselected = SubResource("StyleBoxTexture_f5234")
+TabContainer/styles/tabbar_background = SubResource("StyleBoxFlat_cal0v")
