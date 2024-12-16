@@ -3,6 +3,7 @@ extends Control
 @export var gold_counter: bool = true
 @export var pause_btn: bool = true
 @export var player_stats_btn = true
+@export var panel1 = false
 @export var title_container: bool = true
 @export var title_text: String
 
@@ -10,6 +11,7 @@ extends Control
 @onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
 @onready var player_stats: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer2/Control/player_stats
+@onready var panel: Panel = $MarginContainer/VBoxContainer/HBoxContainer2/spacer3/Panel
 
 @onready var pause_overlay: PanelContainer = $pause_overlay
 @onready var gold: Label = $MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer/gold
@@ -17,7 +19,8 @@ var grd
 var gold_on_label: int
 
 func _ready() -> void:
-	#grd = get_parent().get_parent().get_node("grd")
+	grd = get_parent().get_parent().get_node("grd")
+	panel.visible = panel1
 	pause_overlay.visible = false
 	if not gold_counter:
 		goldbox.modulate = Color(1, 1, 1, 0)

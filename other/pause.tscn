@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=20 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dxclfssfpgodb" path="res://assets/level_ui/icons/gold.png" id="6_gk11h"]
 [ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="6_ly4ro"]
 [ext_resource type="Texture2D" uid="uid://c0q6tki40lk61" path="res://assets/level_ui/btn/inventory_btn_2.png" id="8_l7tfy"]
+[ext_resource type="Texture2D" uid="uid://bnntp8o34eskh" path="res://assets/level_ui/btn/inventory_btn_2_hover.png" id="9_t0hah"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
 texture = ExtResource("2_8aufw")
@@ -190,33 +191,42 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(61, 61)
+custom_minimum_size = Vector2(61, 50)
 layout_mode = 2
 
 [node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(35, 0)
+custom_minimum_size = Vector2(35, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="spacer3" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(269, 60)
+custom_minimum_size = Vector2(269, 91)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/HBoxContainer2/spacer3"]
-layout_mode = 0
-offset_left = -161.0
-offset_right = 503.0
-offset_bottom = 153.0
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -294.5
+offset_top = -14.0
+offset_right = 288.5
+offset_bottom = 123.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_t4jm0")
 
 [node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(35, 0)
+custom_minimum_size = Vector2(35, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(61, 61)
+custom_minimum_size = Vector2(61, 50)
 layout_mode = 2
 
 [node name="player_stats" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/Control"]
@@ -230,6 +240,7 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_aux7v")
 [node name="TextureButton" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer2/Control/player_stats"]
 layout_mode = 2
 texture_normal = ExtResource("8_l7tfy")
+texture_hover = ExtResource("9_t0hah")
 
 [node name="pause_overlay" type="PanelContainer" parent="."]
 visible = false

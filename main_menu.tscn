@@ -1,9 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://857yjlwtnl4h"]
+[gd_scene load_steps=11 format=3 uid="uid://857yjlwtnl4h"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m0wtd"]
+[ext_resource type="Script" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/level_ui/main_menu_n_bg.png" id="3_3j6ne"]
 [ext_resource type="Texture2D" uid="uid://bahgdocqkjnq6" path="res://assets/level_ui/logo.png" id="3_jb5a2"]
+[ext_resource type="AudioStream" uid="uid://cbyp8x25usevd" path="res://sounds/songs/daichovo_horo/daichovo1.wav" id="3_m2mcr"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_ah0x7"]
+[ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://sounds/songs/daichovo_horo/daichovo2.wav" id="4_s20nw"]
+[ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://sounds/songs/daichovo_horo/daichovo3.wav" id="5_hglwg"]
+
+[sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
+fade_time = 0.0
+stream_count = 3
+stream_0 = ExtResource("3_m2mcr")
+stream_1 = ExtResource("4_s20nw")
+stream_2 = ExtResource("5_hglwg")
+
+[sub_resource type="Resource" id="Resource_12eda"]
+script = ExtResource("2_5u2am")
+name = "MM"
+artist = ""
+track = SubResource("AudioStreamPlaylist_gqk43")
 
 [node name="main_menu" type="Control"]
 layout_mode = 3
@@ -15,6 +32,7 @@ grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 script = ExtResource("1_m0wtd")
+song = SubResource("Resource_12eda")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

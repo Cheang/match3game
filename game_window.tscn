@@ -105,7 +105,6 @@ one_shot = true
 
 [node name="audioPlayer" type="AudioStreamPlayer" parent="grd"]
 volume_db = -20.0
-bus = &"SFX"
 script = ExtResource("4_6newg")
 
 [node name="grd_ice" type="Node2D" parent="."]
@@ -186,7 +185,6 @@ theme_override_font_sizes/font_size = 32
 text = "Name"
 
 [node name="enemy_audio" type="AudioStreamPlayer" parent="enemy"]
-bus = &"SFX"
 
 [node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 script = ExtResource("11_ghvty")

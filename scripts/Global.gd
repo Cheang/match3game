@@ -30,6 +30,7 @@ var bosses_killed = 0
 
 #setting
 #audio
+var cur_song: String = ""
 var audio_plaing: bool = true # all of the sounds
 var music_plaing: bool = true # just the music
 
@@ -89,3 +90,14 @@ func set_up_player():
 	cur_char.set_stats_at_beging_of_game()
 	reset_variable()
 	
+func changeSong(new_song: MusicTrack = null, new_playlist: MusicPlaylist = null):
+	if new_song != null:
+		var new_song_name = new_song.name
+		if new_song_name != cur_song:
+			cur_song = new_song_name
+			MusicManager.play_song.emit(new_song, true, true, 1.0)
+	if new_playlist != null:
+		var new_song_name = new_playlist.name
+		if new_song_name != cur_song:
+			cur_song = new_song_name
+			MusicManager.play_playlist.emit(new_playlist, true, true, 1.0)

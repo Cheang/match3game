@@ -12,11 +12,15 @@ config_version=5
 
 config/name="LoreTiles"
 config/version="0.1"
-run/main_scene="res://main_menu.tscn"
+run/main_scene="res://other/start_scene.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 boot_splash/bg_color=Color(0.180392, 0.133333, 0.184314, 1)
 boot_splash/image="res://assets/level_ui/logo.png"
 config/icon="res://assets/icon/icon.png"
+
+[audio]
+
+buses/default_bus_layout=""
 
 [autoload]
 
@@ -24,7 +28,7 @@ Global="*res://scripts/Global.gd"
 Locations="*res://scripts/Locations.gd"
 EnemyData="*res://scripts/enemies/EnemyData.gd"
 SceneManager="*res://addons/scene_manager/SceneManager.tscn"
-AudioManager="*res://sounds/audio_manager.tscn"
+MusicManager="*res://addons/MusicManager/music_manager.tscn"
 
 [display]
 
@@ -37,7 +41,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/scene_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/scene_manager/plugin.cfg")
 
 [gui]
 

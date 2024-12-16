@@ -1,10 +1,13 @@
 extends Control
 
+@export var song: MusicTrack
+
 const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
 var choise_made: bool = false
 
 func _ready() -> void:
 	choise_made = false
+	Global.changeSong(song)
 
 func _on_start_pressed() -> void:
 	if not choise_made:
@@ -28,5 +31,4 @@ func _on_settings_pressed() -> void:
 		choise_made = true
 
 func _on_quit_pressed() -> void:
-	pass
-	# get_tree().quit()
+	get_tree().quit()
