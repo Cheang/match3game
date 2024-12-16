@@ -1,13 +1,15 @@
-[gd_resource type="Resource" script_class="Location" load_steps=4 format=3 uid="uid://br20uh8grxa7c"]
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://br20uh8grxa7c"]
 
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_ixxj8"]
 [ext_resource type="Resource" uid="uid://lalxc0m4oab8" path="res://event/e_rowdy_villagers_1.tres" id="1_tmrh1"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_3glhy"]
+[ext_resource type="Texture2D" uid="uid://74mhbf2c8g0j" path="res://assets/level_ui/location_pictures/loc_event.png" id="2_or7r7"]
 
 [resource]
 script = ExtResource("1_ixxj8")
 name = "Event"
 description = "You see something happening in the distance, would you go in and investigate."
+pic = ExtResource("2_or7r7")
 next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = false

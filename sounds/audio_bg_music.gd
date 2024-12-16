@@ -1,2 +1,0 @@
-extends AudioStreamPlayer
-class_name audioBGMusic

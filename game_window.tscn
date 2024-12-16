@@ -366,11 +366,6 @@ layout_mode = 2
 text = "Main Menu"
 
 [node name="trun_changer" parent="CanvasLayer" instance=ExtResource("20_gybn7")]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
 
 [node name="cam" parent="." instance=ExtResource("20_sxuy2")]
 

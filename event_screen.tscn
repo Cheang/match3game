@@ -137,7 +137,7 @@ theme_override_constants/separation = 10
 alignment = 2
 
 [node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
 [node name="pause" parent="." instance=ExtResource("6_4rf35")]

@@ -134,6 +134,7 @@ text = "Reroll"
 
 [node name="pause" parent="." instance=ExtResource("9_pgo6q")]
 layout_mode = 1
+player_stats_btn = false
 title_text = "Pick a reward"
 
 [connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]

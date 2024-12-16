@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bjivggibceclw"]
+
+[ext_resource type="Script" path="res://sounds/audio_manager.gd" id="1_skicy"]
+
+[node name="AudioManager" type="Node"]
+script = ExtResource("1_skicy")
+
+[node name="bgMusic" type="AudioStreamPlayer" parent="."]
+autoplay = true
+bus = &"bgMusic"
