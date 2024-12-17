@@ -10,6 +10,8 @@ extends Control
 @onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
 @onready var stats_overlay: MarginContainer = $stats_overlay
+@onready var deck_container: HFlowContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/ScrollContainer/deck_container
+const PIECE_CARD = preload("res://inventory/piece_card.tscn")
 var stats_open = false
 
 @onready var pause_overlay: PanelContainer = $pause_overlay
@@ -75,11 +77,20 @@ func _on_texture_button_pressed() -> void:
 	var actual_target 
 	if !stats_open:
 		actual_target = stats_overlay.position + target_1
+		Global.cur_char.deck_in_game.sort_custom(Global.compare_deck_pieces)
+		for piece in Global.cur_char.deck_in_game:
+			var cur_piece = PIECE_CARD.instantiate()
+			deck_container.add_child(cur_piece)
+			cur_piece.set_card(piece)
 		move(actual_target)
 		stats_open = true
 	else:
 		actual_target = stats_overlay.position + target_2
 		move(actual_target, .8)
+		await get_tree().create_timer(.8).timeout
+		var deck_cont_children = deck_container.get_children()
+		for child in deck_cont_children:
+			child.queue_free()
 		stats_open = false
 
 func move(target, time = .3):

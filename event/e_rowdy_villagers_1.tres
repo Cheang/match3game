@@ -2,17 +2,18 @@
 
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_iep27"]
 [ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/strong_body.tres" id="2_8vgu3"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_75m3y"]
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_x30kn"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="4_6gs8v"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="5_1yqpo"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="5_lr1ko"]
-[ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="6_eddm6"]
 
 [sub_resource type="Resource" id="Resource_lpeh0"]
 script = ExtResource("1_iep27")
 text = "Continue"
 description = "None"
 type = 6
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 stat_res = ExtResource("2_8vgu3")
 gold_cost = 0
@@ -36,6 +37,7 @@ text = "Give him a potion"
 description = "None"
 type = 1
 next_event_res = SubResource("Resource_188xq")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 stat_res = ExtResource("2_8vgu3")
 gold_cost = 0
@@ -62,6 +64,7 @@ script = ExtResource("1_iep27")
 text = "Continue..."
 description = "None"
 type = 6
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 stat_res = SubResource("Resource_58ve7")
 gold_cost = 0
@@ -85,6 +88,7 @@ text = "Make him return the gold"
 description = "None"
 type = 1
 next_event_res = SubResource("Resource_qml3h")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -99,7 +103,7 @@ script = ExtResource("1_iep27")
 text = "Defend the man, let him keep the gold"
 description = "None"
 type = 2
-enemy = ExtResource("6_eddm6")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -122,6 +126,7 @@ text = "Try to talk to them"
 description = "None"
 type = 1
 next_event_res = SubResource("Resource_nw6r4")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -136,7 +141,7 @@ script = ExtResource("1_iep27")
 text = "Join in the Fight"
 description = "None"
 type = 2
-enemy = ExtResource("6_eddm6")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -162,6 +167,7 @@ script = ExtResource("1_iep27")
 text = "Continue"
 description = "None"
 type = 6
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 stat_res = SubResource("Resource_y7jwi")
 gold_cost = 0
@@ -185,6 +191,7 @@ text = "Flash you blade to calm them"
 description = "None"
 type = 1
 next_event_res = SubResource("Resource_7byd2")
+enemy = Array[ExtResource("2_75m3y")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -198,5 +205,5 @@ req_class = "None"
 script = ExtResource("2_x30kn")
 categorie = "Event"
 title = "Rowdy Villagers"
-description = "A group of villagers, clad in traditional garb, stand in a dusty village square, their faces flushed with anger as they argue heatedly over a boundary dispute. Nearby, curious onlookers gather around small stone houses. What would you do..."
+description = "A group of villagers, clad in traditional garb, stand in a dusty village square, their faces flushed with anger as they argue heatedly over a boundary dispute. Nearby, curious onlookers gather around small stone houses. What would you do?"
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_rx8u2"), SubResource("Resource_jaqi7"), SubResource("Resource_ef558"), ExtResource("5_1yqpo")])

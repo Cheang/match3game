@@ -145,7 +145,7 @@ func spawn_deck_pieces_random(deck_to_use):
 					piece.move(Global.grd_to_pixel(rand_col,rand_row), .5)
 					all_pieces[rand_col][rand_row] = piece
 		else:
-			break
+			i -= 1
 
 func spawn_deck_pieces_fill(deck_to_use):
 	for i in range(grd_width):

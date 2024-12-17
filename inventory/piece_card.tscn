@@ -1,0 +1,142 @@
+[gd_scene load_steps=6 format=3 uid="uid://cgismxqbub4hr"]
+
+[ext_resource type="Texture2D" uid="uid://c2hlc20v5ghsv" path="res://assets/level_ui/btn/btn_normalt.png" id="1_4w753"]
+[ext_resource type="Script" path="res://inventory/piece_card.gd" id="2_4mj7o"]
+[ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_mjxbr"]
+[ext_resource type="Texture2D" uid="uid://bikml4uccjvo7" path="res://assets/_blue_icons/blue_icon_2.png" id="3_ekyux"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m4nba"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("1_4w753")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[node name="piece_card" type="PanelContainer"]
+custom_minimum_size = Vector2(162, 0)
+theme_override_styles/panel = SubResource("StyleBoxTexture_m4nba")
+script = ExtResource("2_4mj7o")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="base" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_mjxbr")
+stretch_mode = 3
+
+[node name="icon" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/base"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_ekyux")
+stretch_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
+text = "Stars:"
+
+[node name="upgrade_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+text = "00000
+"
+horizontal_alignment = 2
+visible_characters = 4
+visible_ratio = 0.666667
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
+text = "Stat:"
+
+[node name="stat_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+text = "00000
+"
+horizontal_alignment = 2
+visible_characters = 4
+visible_ratio = 0.833333
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
+text = "CD:"
+
+[node name="cd_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+text = "00000
+"
+horizontal_alignment = 2
+visible_characters = 4
+visible_ratio = 0.666667
+
+[node name="name" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 25
+text = "shield of fate
+"
+text_overrun_behavior = 3
+
+[node name="desc" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
+theme_override_font_sizes/font_size = 18
+text = "description fasfa sfasdasd fasfa sf s gdsgsd sd hgf hjj"
+autowrap_mode = 3
+max_lines_visible = 3

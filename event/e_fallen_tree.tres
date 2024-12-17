@@ -1,31 +1,56 @@
-[gd_resource type="Resource" script_class="Event" load_steps=11 format=3 uid="uid://mpv3rrt7rf3k"]
+[gd_resource type="Resource" script_class="Event" load_steps=15 format=3 uid="uid://mpv3rrt7rf3k"]
 
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_g0b7c"]
 [ext_resource type="Resource" uid="uid://d2nis0gpq35ns" path="res://enemies/minion/wild_boar/wild_boar_1.tres" id="2_i41h6"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_tl81x"]
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_x4t16"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="3_hynxb"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="3_nht5e"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="4_1sg0h"]
+[ext_resource type="Resource" uid="uid://duwwp183j67gq" path="res://enemies/minion/wild_boar/wild_boar_2.tres" id="4_jy64e"]
 
-[sub_resource type="Resource" id="Resource_esyl0"]
+[sub_resource type="Resource" id="Resource_63614"]
 script = ExtResource("4_1sg0h")
 stats = Array[String](["gold"])
-increase = [10]
+increase = [5]
 name = "Gold Pouch"
-description = "10 gold"
+description = "Get 5 Gold"
 base = ExtResource("3_nht5e")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
 
+[sub_resource type="Resource" id="Resource_82rjt"]
+script = ExtResource("1_g0b7c")
+text = "Fight"
+description = "None"
+type = 6
+enemy = Array[ExtResource("2_tl81x")]([ExtResource("2_i41h6"), ExtResource("4_jy64e")])
+fight_overwrite = true
+stat_res = SubResource("Resource_63614")
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_y2gd3"]
+script = ExtResource("2_x4t16")
+categorie = "Event"
+title = "Fallen Tree"
+description = "You pick up the gold and hear and angry snort  behind you, looks like you have a fight on your hand..."
+choises = Array[ExtResource("1_g0b7c")]([SubResource("Resource_82rjt")])
+
 [sub_resource type="Resource" id="Resource_5tj02"]
 script = ExtResource("1_g0b7c")
 text = "Take the gold"
 description = "None"
-type = 6
-enemy = ExtResource("2_i41h6")
-fight_overwrite = true
-stat_res = SubResource("Resource_esyl0")
+type = 1
+next_event_res = SubResource("Resource_y2gd3")
+enemy = Array[ExtResource("2_tl81x")]([])
+fight_overwrite = false
 gold_cost = 0
 failable = false
 req_stat = "None"
@@ -47,6 +72,7 @@ text = "Investigate "
 description = "None"
 type = 1
 next_event_res = SubResource("Resource_0gnfk")
+enemy = Array[ExtResource("2_tl81x")]([])
 fight_overwrite = false
 gold_cost = 0
 failable = false

@@ -2,6 +2,7 @@ extends Node2D
 class_name PieceClass
 
 @export var piece_name: String
+@export var descriptio: String
 @export var color: String
 @export var base_texture: Texture
 @export var icon_texture: Texture
@@ -10,6 +11,8 @@ class_name PieceClass
 #@export var scene_location: String
 @export var cooldown: int
 var original_cd: int
+
+var upgrades: int = 0
 
 @export var action: Array[PieceActivation]
 
@@ -74,6 +77,7 @@ func activate_actions(to_activate: Array):
 		for i in to_activate.size():
 			if !Global.is_null(to_activate[i]):
 				to_activate[i].criting = is_criting
+				to_activate[i].upgrade = upgrades
 				to_activate[i].activate()
 
 func lower_cooldown():

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=12 format=3 uid="uid://5b2qagjixfgm"]
+[gd_resource type="Resource" script_class="Event" load_steps=13 format=3 uid="uid://5b2qagjixfgm"]
 
 [ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0knlt"]
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_gykjm"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="2_lyahq"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="2_twdd2"]
 [ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/puprle_icon_3.png" id="3_u5k8t"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="3_ye4l4"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="4_q28c1"]
 
 [sub_resource type="Resource" id="Resource_s108n"]
@@ -25,6 +26,7 @@ script = ExtResource("1_gykjm")
 text = "Get a drink "
 description = "Heal 4HP, -6 Gold"
 type = 6
+enemy = Array[ExtResource("3_ye4l4")]([])
 fight_overwrite = false
 stat_res = SubResource("Resource_s108n")
 gold_cost = 6
@@ -52,6 +54,7 @@ script = ExtResource("1_gykjm")
 text = "Get a room "
 description = "Heal 10 HP, -10 Gold"
 type = 6
+enemy = Array[ExtResource("3_ye4l4")]([])
 fight_overwrite = false
 stat_res = SubResource("Resource_pm48m")
 gold_cost = 10

@@ -57,7 +57,7 @@ func _on_btn_pressed() -> void:
 				SceneManager.change_scene("res://event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true, "skip_fade_in": true })
 			2: #fight
 				Global.game_is_played = false
-				EnemyData.set_minion(resource.enemy)
+				EnemyData.set_minion(resource.enemy.pick_random())
 				EnemyData.set_enemie_stats()
 				SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 			3: #get after fight reward
@@ -70,7 +70,7 @@ func _on_btn_pressed() -> void:
 				resource.piece_res.activate()
 				resource.piece_res.boost()
 				if resource.fight_overwrite:
-					EnemyData.set_minion(resource.enemy)
+					EnemyData.set_minion(resource.enemy.pick_random())
 					EnemyData.set_enemie_stats()
 					SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 					return
@@ -78,7 +78,7 @@ func _on_btn_pressed() -> void:
 			5: #get passive
 				Global.game_is_played = false
 				if resource.fight_overwrite:
-					EnemyData.set_minion(resource.enemy)
+					EnemyData.set_minion(resource.enemy.pick_random())
 					EnemyData.set_enemie_stats()
 					SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 					return
@@ -88,7 +88,7 @@ func _on_btn_pressed() -> void:
 				await get_tree().create_timer(1.5).timeout
 				resource.stat_res.activate()
 				if resource.fight_overwrite:
-					EnemyData.set_minion(resource.enemy)
+					EnemyData.set_minion(resource.enemy.pick_random())
 					EnemyData.set_enemie_stats()
 					SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 					return

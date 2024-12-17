@@ -89,7 +89,12 @@ func set_up_player():
 	cur_char = selected_char.duplicate()
 	cur_char.set_stats_at_beging_of_game()
 	reset_variable()
-	
+
+func compare_deck_pieces(a, b):
+	if a.piece_name == b.piece_name:
+		return a.upgrades - b.upgrades
+	return a.piece_name.to_lower() < b.piece_name.to_lower()
+
 func changeSong(new_song: MusicTrack = null, new_playlist: MusicPlaylist = null):
 	if new_song != null:
 		var new_song_name = new_song.name
