@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://c0qxpkd40er5v"]
+
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_4v6st"]
+[ext_resource type="Resource" uid="uid://ci6vrl8ivs1nj" path="res://event/e_golden_pitka.tres" id="1_ltdvh"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_6ttat"]
+[ext_resource type="Texture2D" uid="uid://74mhbf2c8g0j" path="res://assets/level_ui/location_pictures/loc_event.png" id="2_28jxr"]
+
+[resource]
+script = ExtResource("1_4v6st")
+name = "Event"
+description = "You see something happening in the distance, would you go in and investigate."
+pic = ExtResource("2_28jxr")
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = false
+which_enemy = Array[ExtResource("2_6ttat")]([])
+level = 0
+event_encounter = true
+event_resource = ExtResource("1_ltdvh")

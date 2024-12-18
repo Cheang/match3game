@@ -3,7 +3,7 @@ extends Node
 var enemy: EnemyResource
 
 #health_variables_____________________________________________________________#
-var health_scaler: float = .1
+var health_scaler: float = .05
 var max_health: float
 var cur_health: float
 #damageing_variables__________________________________________________________#

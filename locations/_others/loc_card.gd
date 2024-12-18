@@ -6,7 +6,7 @@ var loc_res: Location
 
 @onready var loc_texture: TextureRect = $MarginContainer/HBoxContainer/loc_texture
 @onready var loc_name_l: Label = $MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/loc_name
-@onready var loc_description_l: RichTextLabel = $MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/loc_decription
+@onready var loc_description_l: Label = $MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/loc_decription
 
 var selected: bool = false
 

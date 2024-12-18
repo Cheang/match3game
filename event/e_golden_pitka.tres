@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="Event" load_steps=9 format=3 uid="uid://ci6vrl8ivs1nj"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_8odv4"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_8x4aj"]
+[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_asj8m"]
+[ext_resource type="Resource" uid="uid://pskmqsygacfk" path="res://enemies/boss/mini_boss/pitka/corupted_pitka_1.tres" id="3_oa1fc"]
+[ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="4_mfqk4"]
+
+[sub_resource type="Resource" id="Resource_jg2fp"]
+script = ExtResource("1_8odv4")
+text = "Kill it"
+description = "None"
+type = 2
+enemy = Array[ExtResource("2_8x4aj")]([ExtResource("3_oa1fc")])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_6dnic"]
+script = ExtResource("2_asj8m")
+categorie = "Event"
+title = "Small Cottage"
+description = "You chase after the loaf of bread and you see it fall next to a rabbit, the creature looks at it and jumps towards it to investigate. As the rabbit gets closer the loaf starts shaking and you see it split apart with what looks like teethe and a mouth. A second later its devouring the rabbit."
+choises = Array[ExtResource("1_8odv4")]([SubResource("Resource_jg2fp"), ExtResource("4_mfqk4")])
+
+[sub_resource type="Resource" id="Resource_k1vq3"]
+script = ExtResource("1_8odv4")
+text = "Chase it"
+description = "None"
+type = 1
+next_event_res = SubResource("Resource_6dnic")
+enemy = Array[ExtResource("2_8x4aj")]([])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[resource]
+script = ExtResource("2_asj8m")
+categorie = "Event"
+title = "Small Cottage"
+description = "You see a small cottage and on the window what looks like very delicious round loaf of bread. In a blink of an eye you see the loaf of bread roll away and start rolling down the hill. What will you do?"
+choises = Array[ExtResource("1_8odv4")]([SubResource("Resource_k1vq3"), ExtResource("4_mfqk4")])

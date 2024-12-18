@@ -16,7 +16,7 @@ var current_level: int = 0
 #for locations
 var locations: Array[Location]
 var enemy_loc_numb: int = 4
-var event_loc_numb: int = 2
+var event_loc_numb: int = 5
 var services_loc_numb: int = 1
 var cur_event: Event
 
