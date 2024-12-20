@@ -5,7 +5,7 @@
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="3_6p5om"]
 [ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://enemies/attacks/enrage+1.tres" id="4_tfsx7"]
 [ext_resource type="Resource" uid="uid://d3cbjkicneo3u" path="res://enemies/attacks/lamia_tile_destruction.tres" id="5_6ib0x"]
-[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="6_b6475"]
+[ext_resource type="Texture2D" uid="uid://cdh1ejimm1oir" path="res://assets/level_ui/enemy_health_green.png" id="6_vvsti"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="7_fkeyq"]
 [ext_resource type="PackedScene" uid="uid://c48fmwq3lbdm2" path="res://enemies/boss/lamia/lamia.tscn" id="8_c4omb"]
 
@@ -22,7 +22,7 @@ speed = 1
 type = 1
 has_phases = false
 sprite = ExtResource("8_c4omb")
-health_bar = ExtResource("6_b6475")
+health_bar = ExtResource("6_vvsti")
 empty_spaces = Array[Vector2]([Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(6, 7), Vector2(7, 7), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1)])
 ice_spaces = Array[Vector2]([])
 freeze_spaces = Array[Vector2]([])

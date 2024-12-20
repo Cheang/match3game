@@ -6,11 +6,11 @@ class_name Player
 @export var buff_texture: Array[TextureRect] 
 @export var buff_stat: Array[String]
 
-@onready var player_healthbar: TextureProgressBar = $player_healthbar
-@onready var fire: GPUParticles2D = $player_healthbar/fire_particles
+@onready var player_healthbar: TextureProgressBar = $health_buffs/player_healthbar
+@onready var fire: GPUParticles2D = $health_buffs/player_healthbar/fire_particles
 @onready var art: Node2D = $art
 @onready var move_remaing: Label = $move_remaing
-@onready var health: Label = $health
+@onready var health: Label = $health_buffs/player_healthbar/health
 
 const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 
@@ -66,6 +66,6 @@ func _on_grd_move_made() -> void:
 	update_buffs()
 
 func _on_game_window_player_health_change() -> void:
-	health.text = "Health: %d / %d" % [cur_character.cur_health, cur_character.max_health]
+	health.text = "HP: %d / %d" % [cur_character.cur_health, cur_character.max_health]
 	player_healthbar.value = cur_character.cur_health * 100.0 / cur_character.max_health
 	update_buffs()

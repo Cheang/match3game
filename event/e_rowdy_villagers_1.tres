@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=23 format=3 uid="uid://lalxc0m4oab8"]
+[gd_resource type="Resource" script_class="Event" load_steps=24 format=3 uid="uid://lalxc0m4oab8"]
 
 [ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_iep27"]
 [ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/strong_body.tres" id="2_8vgu3"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="4_6gs8v"]
 [ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="5_1yqpo"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="5_lr1ko"]
+[ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="7_nqjrd"]
 
 [sub_resource type="Resource" id="Resource_lpeh0"]
 script = ExtResource("1_iep27")
@@ -103,7 +104,7 @@ script = ExtResource("1_iep27")
 text = "Defend the man, let him keep the gold"
 description = "None"
 type = 2
-enemy = Array[ExtResource("2_75m3y")]([])
+enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_nqjrd")])
 fight_overwrite = false
 gold_cost = 0
 failable = false
@@ -141,7 +142,7 @@ script = ExtResource("1_iep27")
 text = "Join in the Fight"
 description = "None"
 type = 2
-enemy = Array[ExtResource("2_75m3y")]([])
+enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_nqjrd")])
 fight_overwrite = false
 gold_cost = 0
 failable = false

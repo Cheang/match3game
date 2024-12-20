@@ -152,6 +152,17 @@ speed_scale = 0.7
 randomness = 1.0
 fixed_fps = 60
 
+[node name="health" type="Label" parent="enemy/enemy_healthbar"]
+layout_mode = 2
+offset_top = 15.0
+offset_right = 285.0
+offset_bottom = 35.0
+size_flags_horizontal = 3
+theme = ExtResource("12_tovol")
+theme_override_font_sizes/font_size = 20
+text = "Health : "
+horizontal_alignment = 1
+
 [node name="PanelContainer" type="PanelContainer" parent="enemy"]
 offset_left = 34.0
 offset_top = 161.0
@@ -162,53 +173,41 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_lxi5x")
 [node name="HBoxContainer" type="HBoxContainer" parent="enemy/PanelContainer"]
 layout_mode = 2
 
-[node name="health" type="Label" parent="enemy/PanelContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme = ExtResource("12_tovol")
-text = "Health : "
-
 [node name="attack" type="Label" parent="enemy/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("12_tovol")
 text = "15 :Attack"
-horizontal_alignment = 2
-
-[node name="enemy_name" type="Label" parent="enemy"]
-visible = false
-offset_left = 32.0
-offset_top = 125.0
-offset_right = 112.0
-offset_bottom = 155.0
-theme_override_font_sizes/font_size = 32
-text = "Name"
 
 [node name="enemy_audio" type="AudioStreamPlayer" parent="enemy"]
 
 [node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 script = ExtResource("11_ghvty")
-bool_buff_texture = [NodePath("buff_container/dodging")]
+bool_buff_texture = [NodePath("health_buffs/buff_container/dodging")]
 bool_buff_stat = Array[String](["dodging"])
-buff_texture = [NodePath("buff_container/armor"), NodePath("buff_container/marmor"), NodePath("buff_container/hndcombo")]
+buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_buffs/buff_container/marmor"), NodePath("health_buffs/buff_container/hndcombo")]
 buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
 [node name="art" type="Node2D" parent="player"]
 
 [node name="border3" type="Sprite2D" parent="player"]
+visible = false
 texture = ExtResource("13_fditc")
 centered = false
 
-[node name="player_healthbar" type="TextureProgressBar" parent="player"]
-offset_left = 34.0
+[node name="health_buffs" type="VBoxContainer" parent="player"]
+offset_left = 256.0
 offset_top = 845.0
-offset_right = 319.0
-offset_bottom = 891.0
+offset_right = 541.0
+offset_bottom = 922.0
+
+[node name="player_healthbar" type="TextureProgressBar" parent="player/health_buffs"]
+layout_mode = 2
 value = 100.0
 texture_under = ExtResource("9_a7vs4")
 texture_progress = ExtResource("12_88ip3")
 
-[node name="fire_particles" type="GPUParticles2D" parent="player/player_healthbar"]
+[node name="fire_particles" type="GPUParticles2D" parent="player/health_buffs/player_healthbar"]
 visible = false
 position = Vector2(285, 23)
 amount = 150
@@ -218,17 +217,25 @@ speed_scale = 0.7
 randomness = 1.0
 fixed_fps = 60
 
-[node name="buff_container" type="HFlowContainer" parent="player"]
-offset_left = 322.0
-offset_top = 845.0
-offset_right = 538.0
-offset_bottom = 885.0
+[node name="health" type="Label" parent="player/health_buffs/player_healthbar"]
+layout_mode = 2
+offset_top = 15.0
+offset_right = 285.0
+offset_bottom = 47.0
+theme = ExtResource("12_tovol")
+theme_override_font_sizes/font_size = 20
+text = "Health : "
+horizontal_alignment = 1
 
-[node name="armor" type="TextureRect" parent="player/buff_container"]
+[node name="buff_container" type="HFlowContainer" parent="player/health_buffs"]
+layout_mode = 2
+alignment = 2
+
+[node name="armor" type="TextureRect" parent="player/health_buffs/buff_container"]
 layout_mode = 2
 texture = ExtResource("15_pubo4")
 
-[node name="armorlabel" type="Label" parent="player/buff_container/armor"]
+[node name="armorlabel" type="Label" parent="player/health_buffs/buff_container/armor"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -239,12 +246,12 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="marmor" type="TextureRect" parent="player/buff_container"]
+[node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container"]
 self_modulate = Color(0.17, 0.571167, 1, 1)
 layout_mode = 2
 texture = ExtResource("15_pubo4")
 
-[node name="marmorlabel" type="Label" parent="player/buff_container/marmor"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -255,12 +262,12 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="hndcombo" type="TextureRect" parent="player/buff_container"]
+[node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container"]
 self_modulate = Color(0.965138, 0.251231, 0.510355, 1)
 layout_mode = 2
 texture = ExtResource("15_pubo4")
 
-[node name="marmorlabel" type="Label" parent="player/buff_container/hndcombo"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -271,12 +278,12 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="dodging" type="TextureRect" parent="player/buff_container"]
+[node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container"]
 self_modulate = Color(0, 0.870821, 0.172243, 1)
 layout_mode = 2
 texture = ExtResource("15_pubo4")
 
-[node name="marmorlabel" type="Label" parent="player/buff_container/dodging"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging"]
 visible = false
 layout_mode = 0
 offset_right = 28.0
@@ -288,27 +295,19 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="border2" type="Sprite2D" parent="player"]
+[node name="moves_border" type="Sprite2D" parent="player"]
 texture = ExtResource("14_bu8h0")
 centered = false
 
 [node name="move_remaing" type="Label" parent="player"]
-offset_top = 233.0
+offset_top = 232.0
 offset_right = 576.0
-offset_bottom = 255.0
+offset_bottom = 254.0
 theme = ExtResource("12_tovol")
 theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "Moves Remaing: 2"
 horizontal_alignment = 1
-
-[node name="health" type="Label" parent="player"]
-offset_left = 323.0
-offset_top = 877.0
-offset_right = 431.0
-offset_bottom = 900.0
-theme = ExtResource("12_tovol")
-text = "Health : "
 
 [node name="foreground" type="Node2D" parent="."]
 position = Vector2(0, -163)
@@ -388,5 +387,5 @@ text = "Main Menu"
 [connection signal="remove_flesh" from="grd_flesh" to="grd" method="_on_grd_flesh_remove_flesh"]
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
-[connection signal="value_changed" from="player/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
+[connection signal="value_changed" from="player/health_buffs/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
 [connection signal="pressed" from="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

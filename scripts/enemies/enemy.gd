@@ -9,15 +9,14 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var enemy_healthbar: TextureProgressBar = $enemy_healthbar
 @onready var fire: GPUParticles2D = $enemy_healthbar/fire_particles
 @onready var art: Node2D = $art
-@onready var health: Label = $PanelContainer/HBoxContainer/health
+@onready var health: Label = $enemy_healthbar/health
 @onready var attack: Label = $PanelContainer/HBoxContainer/attack
-@onready var enemy_name: Label = $enemy_name
 @onready var enemy_audio: AudioStreamPlayer = $enemy_audio
 
 var one_time = false
 
 func _ready() -> void:
-	health.text = "Health: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
+	health.text = "HP: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
 	enemy_healthbar.value = EnemyData.cur_health * 100.0 / EnemyData.max_health
 
 func _on_enemy_healthbar_value_changed(value: float) -> void:

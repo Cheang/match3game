@@ -95,7 +95,6 @@ func load_enemie():
 	var enemy_sprite = EnemyData.sprite.instantiate()
 	enemy.enemy_healthbar.texture_progress = EnemyData.health_bar
 	pause.set_title(EnemyData.enemy.name)
-	enemy.enemy_name.text = EnemyData.enemy.name
 	enemy.attack.text = EnemyData.next_attack.tooltip
 	get_node("enemy").get_child(0).add_child(enemy_sprite)
 
