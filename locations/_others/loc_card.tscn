@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://ccly008m1l4s5"]
+[gd_scene load_steps=6 format=3 uid="uid://ccly008m1l4s5"]
 
 [ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="1_gngmg"]
 [ext_resource type="Script" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
 [ext_resource type="Texture2D" uid="uid://bbpd48s55of6d" path="res://assets/level_ui/location_pictures/loc_empty.png" id="3_t8ffi"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_x23jn"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2c2k3"]
 texture = ExtResource("1_gngmg")
@@ -51,8 +52,7 @@ color = Color(0.572549, 0.662745, 0.517647, 1)
 
 [node name="loc_name" type="Label" parent="MarginContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
 theme_override_font_sizes/font_size = 32
 text = "Location Name"
 
@@ -60,7 +60,8 @@ text = "Location Name"
 custom_minimum_size = Vector2(0, 114)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_fonts/font = ExtResource("4_x23jn")
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially u"
 autowrap_mode = 3
 text_overrun_behavior = 4

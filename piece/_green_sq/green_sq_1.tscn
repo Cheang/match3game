@@ -7,7 +7,9 @@
 
 [node name="green_sq_1" instance=ExtResource("1_i3y0o")]
 piece_name = "Rush"
+description = "Gives 1 Move"
 icon_texture = ExtResource("2_nt4eg")
 type = 1
 cooldown = 2
+can_upgrade = false
 action = Array[ExtResource("3_eufvj")]([ExtResource("4_nabjh")])

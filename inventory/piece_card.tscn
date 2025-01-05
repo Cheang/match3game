@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cgismxqbub4hr"]
+[gd_scene load_steps=7 format=3 uid="uid://cgismxqbub4hr"]
 
 [ext_resource type="Texture2D" uid="uid://c2hlc20v5ghsv" path="res://assets/level_ui/btn/btn_normalt.png" id="1_4w753"]
 [ext_resource type="Script" path="res://inventory/piece_card.gd" id="2_4mj7o"]
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_mjxbr"]
 [ext_resource type="Texture2D" uid="uid://bikml4uccjvo7" path="res://assets/_blue_icons/blue_icon_2.png" id="3_ekyux"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="5_hosdu"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m4nba"]
 content_margin_left = 0.0
@@ -17,19 +18,30 @@ texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
 [node name="piece_card" type="PanelContainer"]
-custom_minimum_size = Vector2(162, 0)
+custom_minimum_size = Vector2(494, 0)
+size_flags_horizontal = 3
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxTexture_m4nba")
 script = ExtResource("2_4mj7o")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="name" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "shield of fate
+"
+text_overrun_behavior = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -71,72 +83,105 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
-text = "Stars:"
-
-[node name="upgrade_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0431373, 0.368627, 0.396078, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "Stars:"
+
+[node name="upgrade_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0431373, 0.541176, 0.560784, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
 text = "00000
 "
 horizontal_alignment = 2
 visible_characters = 4
+visible_ratio = 0.666667
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0431373, 0.368627, 0.396078, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "Gold  Multiplier:"
+
+[node name="upgrade_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0431373, 0.541176, 0.560784, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "0
+"
+horizontal_alignment = 2
+visible_characters = 1
 visible_ratio = 0.666667
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
-text = "Stat:"
-
-[node name="stat_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-text = "00000
-"
-horizontal_alignment = 2
-visible_characters = 4
-visible_ratio = 0.833333
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/HBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0431373, 0.368627, 0.396078, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "Cooldown:"
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="cd_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/HBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
-text = "CD:"
-
-[node name="cd_numb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.0431373, 0.541176, 0.560784, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
 text = "00000
 "
 horizontal_alignment = 2
 visible_characters = 4
 visible_ratio = 0.666667
 
-[node name="name" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_font_sizes/font_size = 25
-text = "shield of fate
-"
-text_overrun_behavior = 3
+size_flags_horizontal = 3
 
-[node name="desc" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0431373, 0.368627, 0.396078, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "Type:"
+
+[node name="piece_type" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.0431373, 0.541176, 0.560784, 1)
+theme_override_fonts/font = ExtResource("5_hosdu")
+text = "Normal
+"
+text_overrun_behavior = 1
+visible_ratio = -0.142857
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="desc" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.329412, 0.494118, 0.392157, 1)
-theme_override_font_sizes/font_size = 18
+mouse_filter = 1
+theme_override_colors/default_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_constants/line_separation = 3
+theme_override_fonts/normal_font = ExtResource("5_hosdu")
+bbcode_enabled = true
 text = "description fasfa sfasdasd fasfa sf s gdsgsd sd hgf hjj"
-autowrap_mode = 3
-max_lines_visible = 3
+fit_content = true

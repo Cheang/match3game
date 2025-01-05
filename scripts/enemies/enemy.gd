@@ -50,5 +50,5 @@ func _on_game_window_enemy_attacking() -> void:
 	emit_signal("enemy_attacked")
 
 func _on_game_window_enemy_health_change() -> void:
-	health.text = "Health: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
+	health.text = "HP: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
 	enemy_healthbar.value = EnemyData.cur_health * 100.0 / EnemyData.max_health

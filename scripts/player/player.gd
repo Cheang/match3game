@@ -18,7 +18,7 @@ var one_time = false
 var cur_character = Global.cur_char
 
 func _ready() -> void:
-	health.text = "Health: %d / %d" % [cur_character.cur_health, cur_character.max_health]
+	health.text = "HP: %d / %d" % [cur_character.cur_health, cur_character.max_health]
 	player_healthbar.value = cur_character.cur_health * 100.0 / cur_character.max_health
 	update_buffs()
 

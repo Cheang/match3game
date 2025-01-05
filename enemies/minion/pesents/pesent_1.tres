@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=13 format=3 uid="uid://8koqx7511051"]
+
+[ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_lkmlp"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_6orxw"]
+[ext_resource type="Script" path="res://enemies/attacks/bases/enrage_attack.gd" id="2_xas1u"]
+[ext_resource type="AudioStream" uid="uid://cfubttrbhtnld" path="res://sounds/scream_1.wav" id="3_x3tvr"]
+[ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="4_jb7cx"]
+[ext_resource type="AudioStream" uid="uid://bfyeq52qeuolx" path="res://sounds/slash_1.wav" id="5_xnje7"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="6_ykc4h"]
+[ext_resource type="PackedScene" uid="uid://edbwrl52wbsb" path="res://enemies/minion/pesents/pesent_1.tscn" id="8_3ygr2"]
+
+[sub_resource type="Resource" id="Resource_uao6c"]
+script = ExtResource("2_xas1u")
+damage = 2.0
+tooltip = "Enrage: + 2 DMG"
+animation = ""
+animation_time = 0.0
+sound = ExtResource("3_x3tvr")
+
+[sub_resource type="Resource" id="Resource_0cb8h"]
+script = ExtResource("2_xas1u")
+damage = 2.0
+tooltip = "Enrage: + 2 DMG"
+animation = ""
+animation_time = 0.0
+sound = ExtResource("3_x3tvr")
+
+[sub_resource type="Resource" id="Resource_7efn5"]
+script = ExtResource("4_jb7cx")
+damage = 1.0
+attacks = 1
+tooltip = "Weak Attack"
+animation = ""
+animation_time = 0.0
+sound = ExtResource("5_xnje7")
+
+[sub_resource type="Resource" id="Resource_n8rpl"]
+script = ExtResource("4_jb7cx")
+damage = 2.0
+attacks = 1
+tooltip = "Strong Attack"
+animation = ""
+animation_time = 0.0
+sound = ExtResource("5_xnje7")
+
+[resource]
+script = ExtResource("2_6orxw")
+name = "Villager"
+health = 15.0
+damage = 1.0
+attacks = Array[ExtResource("1_lkmlp")]([SubResource("Resource_uao6c")])
+attacks_p2 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_0cb8h")])
+attacks_p3 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_7efn5")])
+attacks_p4 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_n8rpl")])
+speed = 1
+type = 0
+has_phases = true
+sprite = ExtResource("8_3ygr2")
+health_bar = ExtResource("6_ykc4h")
+empty_spaces = Array[Vector2]([])
+ice_spaces = Array[Vector2]([])
+freeze_spaces = Array[Vector2]([])
+rock_spaces = Array[Vector2]([])
+flesh_spaces = Array[Vector2]([])

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=21 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="6_ly4ro"]
 [ext_resource type="Texture2D" uid="uid://bm7gbwqth4aa2" path="res://assets/level_ui/icons/backpack.png" id="8_cxg1n"]
 [ext_resource type="Texture2D" uid="uid://c4nol0lsxhees" path="res://assets/level_ui/icons/backpack_p.png" id="9_iv3av"]
+[ext_resource type="Script" path="res://inventory/stats.gd" id="10_rk6m7"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="11_flpho"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
 texture = ExtResource("2_8aufw")
@@ -189,7 +191,6 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="stats_overlay" type="MarginContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -242,19 +243,22 @@ theme_override_constants/margin_right = 15
 layout_mode = 2
 size_flags_vertical = 3
 tab_alignment = 2
-current_tab = 1
+current_tab = 0
 tabs_position = 1
-
-[node name="Spells" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 0
 
 [node name="Deck" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
 layout_mode = 2
-metadata/_tab_index = 1
+metadata/_tab_index = 0
+
+[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_font_sizes/font_size = 22
+text = "Player Class"
+horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
@@ -268,7 +272,331 @@ size_flags_vertical = 3
 [node name="Stats" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 2
+script = ExtResource("10_rk6m7")
+metadata/_tab_index = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="stat_container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_font_sizes/font_size = 22
+text = "Player Class"
+horizontal_alignment = 1
+
+[node name="health_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_health" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Health"
+
+[node name="cat_health_max" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Max Health"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_health_cur" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Current Health"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_health_lifesteal" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Life Steal"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="defence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_defence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Defence"
+
+[node name="cat_defence_startarmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Starting Armor"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_defence_startmagearmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Starting Magic Armor"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_defence_dmgreduction" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Damage Reducion"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="offence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_offence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Offence"
+
+[node name="cat_offence_dmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Damage"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_dmgfluf" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Empty Tile Damge"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_crit" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Critical Strike Chance"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="cat_offence_critdmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Critical Strike Damage"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="magic_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_magic" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Mysticism"
+
+[node name="cat_magic_mana" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Energy"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="utility_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_utility" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_font_sizes/font_size = 32
+text = "Utility"
+
+[node name="cat_utility_spd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Speed"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_rerolls" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Rerolls"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_cd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Cooldown Reduction"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
 
 [node name="pause_overlay" type="PanelContainer" parent="."]
 visible = false

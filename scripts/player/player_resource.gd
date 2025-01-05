@@ -5,6 +5,8 @@ class_name PlayerResource
 @export_group("Health")
 @export var max_health: float
 @export var life_steal: float
+
+@export_group("Defence")
 @export var dmg_reduction: float
 @export var start_armor: float = 0
 @export var start_mage_armor: float = 0
@@ -24,7 +26,7 @@ class_name PlayerResource
 #Damage
 @export_group("Damage")
 @export var dmg: float 
-@export var fluf_dmg: float 
+@export var fluf_dmg: float
 @export_range(0, 100) var crit_chanse: int 
 @export var crit_dmg: float 
 

@@ -6,8 +6,7 @@ var btn_pressed:bool = false
 func _on_pressed() -> void:
 	if not btn_pressed: 
 		btn_pressed = true
-		if Global.audio_plaing:
-			sound.play()
+		sound.play()
 		self.disabled = true
 		await get_tree().create_timer(.8).timeout
 		reset()

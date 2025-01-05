@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://biyewp5jf4ta7" path="res://piece/active effect/armor+3.tres" id="4_l3bkk"]
 
 [node name="blue_sq_1" instance=ExtResource("1_vpbq8")]
-piece_name = "Round Shileds"
+piece_name = "Round Shiled"
 icon_texture = ExtResource("2_w4d5a")
 type = 1
 cooldown = 2

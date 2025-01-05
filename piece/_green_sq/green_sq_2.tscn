@@ -10,4 +10,5 @@ piece_name = "Dodge"
 icon_texture = ExtResource("2_xey7w")
 type = 1
 cooldown = 4
+can_upgrade = false
 action = Array[ExtResource("3_c1jwc")]([ExtResource("4_l14ob")])

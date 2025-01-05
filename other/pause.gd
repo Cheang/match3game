@@ -6,6 +6,8 @@ extends Control
 @export var title_container: bool = true
 @export var title_text: String
 
+@onready var player_class: Label = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/player_class
+@onready var stats: VBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats
 @onready var pausebtn: Button = $MarginContainer/VBoxContainer/HBoxContainer/pause_btn
 @onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
@@ -76,6 +78,8 @@ func _on_texture_button_pressed() -> void:
 	var target_2 = Vector2(0,(stats_overlay.size.y - 200))
 	var actual_target 
 	if !stats_open:
+		player_class.text = str(Global.cur_char.player_class)
+		stats.expand()
 		actual_target = stats_overlay.position + target_1
 		Global.cur_char.deck_in_game.sort_custom(Global.compare_deck_pieces)
 		for piece in Global.cur_char.deck_in_game:

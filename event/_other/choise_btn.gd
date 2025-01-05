@@ -6,6 +6,7 @@ const CHOISE_BTN_D = preload("res://event/_other/choise_btn_d.tres")
 const CHOISE_BTN_N = preload("res://event/_other/choise_btn_n.tres")
 
 @onready var btn: Button = $btn
+@onready var sound: AudioStreamPlayer = $sound
 
 @onready var description: RichTextLabel = $MarginContainer/VBoxContainer/description
 @onready var title: Label = $MarginContainer/VBoxContainer/title
@@ -47,6 +48,10 @@ func _on_btn_pressed() -> void:
 			if stat_to_check < resource.req_value:
 				var new_resource: EventChoise = resource.fail_state
 				resource = new_resource
+		
+		sound.play()
+		await get_tree().create_timer(.4).timeout
+		
 		match resource.type:
 			0: #go to locations
 				Global.game_is_played = false

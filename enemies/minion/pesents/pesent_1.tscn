@@ -1,0 +1,97 @@
+[gd_scene load_steps=12 format=3 uid="uid://edbwrl52wbsb"]
+
+[ext_resource type="Texture2D" uid="uid://8wam2i0b2jt3" path="res://assets/enemy/pesent/pesent_body.png" id="1_abqht"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_ohmbd"]
+[ext_resource type="Texture2D" uid="uid://cdenb1xsdpnng" path="res://assets/enemy/pesent/pesent_hand.png" id="2_tfpq2"]
+[ext_resource type="Texture2D" uid="uid://bvtyd5gl5qe4s" path="res://assets/enemy/pesent/pesent_head.png" id="3_osu17"]
+[ext_resource type="Texture2D" uid="uid://bhpda0xe87gxm" path="res://assets/enemy/pesent/pesent_body_2.png" id="4_6yn1d"]
+[ext_resource type="Script" path="res://scripts/enemies/sprite_randomiser.gd" id="5_nyw7f"]
+[ext_resource type="Texture2D" uid="uid://brl5r74n8wpog" path="res://assets/enemy/pesent/pesent_head_2.png" id="6_sd7bp"]
+[ext_resource type="Texture2D" uid="uid://t3tvcem6j11c" path="res://assets/enemy/pesent/pesent_head_3.png" id="7_nwrq7"]
+
+[sub_resource type="Animation" id="Animation_464xt"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D/Sprite2D3:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(16, -59)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D/Sprite2D2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-93, -4)]
+}
+
+[sub_resource type="Animation" id="Animation_bousy"]
+resource_name = "idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D/Sprite2D3:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(16, -57), Vector2(16, -60), Vector2(16, -57)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D/Sprite2D2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(-93, -6), Vector2(-93, -4), Vector2(-93, -6)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tbrop"]
+_data = {
+"RESET": SubResource("Animation_464xt"),
+"idle": SubResource("Animation_bousy")
+}
+
+[node name="pesent_1" type="Node2D"]
+script = ExtResource("1_ohmbd")
+
+[node name="animP" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_tbrop")
+}
+autoplay = "idle"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(385, 121)
+texture = ExtResource("1_abqht")
+script = ExtResource("5_nyw7f")
+textures = Array[Texture2D]([ExtResource("1_abqht"), ExtResource("4_6yn1d")])
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-93, -4)
+texture = ExtResource("2_tfpq2")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(16, -59)
+texture = ExtResource("3_osu17")
+script = ExtResource("5_nyw7f")
+textures = Array[Texture2D]([ExtResource("3_osu17"), ExtResource("6_sd7bp"), ExtResource("7_nwrq7")])

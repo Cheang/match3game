@@ -2,7 +2,7 @@ extends Node2D
 class_name PieceClass
 
 @export var piece_name: String
-@export var descriptio: String
+@export var description: String
 @export var color: String
 @export var base_texture: Texture
 @export var icon_texture: Texture
@@ -13,6 +13,8 @@ class_name PieceClass
 var original_cd: int
 
 var upgrades: int = 0
+@export var upgrades_to_increse_cd: int = 3
+@export var can_upgrade: bool = true
 
 @export var action: Array[PieceActivation]
 
