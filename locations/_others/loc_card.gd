@@ -30,7 +30,6 @@ func _on_selection_btn_pressed() -> void:
 		if loc_res.event_encounter and loc_res.event_resource:
 			Global.cur_event = loc_res.event_resource
 			loc_res.next_scene = "res://event_screen.tscn"
-		Global.current_wave += 1
 		selected = true
 		Global.game_is_played = false
 		if loc_res.next_scene != "":

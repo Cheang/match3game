@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://4nre8u1ei118"]
+
+[ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_lt3wk"]
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="2_nlg6v"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="3_td8i3"]
+[ext_resource type="Resource" uid="uid://m53lsh1gxodu" path="res://enemies/minion/wild_boar/corupted_wild_boar_1.tres" id="4_yvij2"]
+
+[resource]
+script = ExtResource("2_nlg6v")
+name = "Corupted Gligan"
+description = "You hear movement in the bushes next to you on the road..."
+pic = ExtResource("1_lt3wk")
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = true
+which_enemy = Array[ExtResource("3_td8i3")]([ExtResource("4_yvij2")])
+level = 0
+event_encounter = false

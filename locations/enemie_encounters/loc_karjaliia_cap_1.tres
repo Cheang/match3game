@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://csp37q5bepa8w"]
 
-[ext_resource type="Texture2D" uid="uid://daaddg5n2oty7" path="res://assets/level_ui/location_pictures/loc_dark_figure_fight.png" id="1_817no"]
+[ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_6nn03"]
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_mhrhg"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_0gdu8"]
 [ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="4_wxd0i"]
 
 [resource]
 script = ExtResource("1_mhrhg")
-name = "Drak Figure"
+name = "Kardzaliia C."
 description = "Dark figure of a man standing by the road infront of you. Looks like he is waiting for something."
-pic = ExtResource("1_817no")
+pic = ExtResource("1_6nn03")
 next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = true

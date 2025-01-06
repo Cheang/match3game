@@ -9,8 +9,8 @@
 
 [resource]
 script = ExtResource("4_6m2dk")
-name = "Gligan"
-health = 40.0
+name = "Corupted Gligan"
+health = 30.0
 damage = 1.0
 attacks = Array[ExtResource("1_im0rw")]([ExtResource("2_pem77"), ExtResource("2_pem77"), ExtResource("3_jnh2n")])
 attacks_p2 = Array[ExtResource("1_im0rw")]([])

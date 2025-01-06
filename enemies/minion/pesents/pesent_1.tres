@@ -46,7 +46,7 @@ sound = ExtResource("5_xnje7")
 [resource]
 script = ExtResource("2_6orxw")
 name = "Villager"
-health = 15.0
+health = 18.0
 damage = 1.0
 attacks = Array[ExtResource("1_lkmlp")]([SubResource("Resource_uao6c")])
 attacks_p2 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_0cb8h")])

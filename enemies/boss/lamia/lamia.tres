@@ -12,7 +12,7 @@
 [resource]
 script = ExtResource("7_fkeyq")
 name = "Lamia"
-health = 40.0
+health = 64.0
 damage = 2.0
 attacks = Array[ExtResource("1_j17yo")]([ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("3_6p5om"), ExtResource("4_tfsx7"), ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("5_6ib0x")])
 attacks_p2 = Array[ExtResource("1_j17yo")]([])

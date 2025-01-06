@@ -3,11 +3,9 @@ extends Node
 var enemy: EnemyResource
 
 #health_variables_____________________________________________________________#
-var health_scaler: float = .05
 var max_health: float
 var cur_health: float
 #damageing_variables__________________________________________________________#
-var damage_scaler: float = .1
 var damage: float
 var attacks_p1: Array[EnemyAttackBase]
 var attacks_p2: Array[EnemyAttackBase]
@@ -29,9 +27,9 @@ var rock_spaces: Array[Vector2]
 var flesh_spaces: Array[Vector2]
 
 func set_enemie_stats():
-	max_health = round(enemy.health + (((health_scaler * Global.current_wave) * Global.current_level)* enemy.health))
-	cur_health = round(enemy.health + (((health_scaler * Global.current_wave) * Global.current_level) * enemy.health))
-	damage = round(enemy.damage + (damage_scaler * Global.current_wave))
+	max_health = enemy.health
+	cur_health = enemy.health
+	damage = enemy.damage
 	attacks_p1 = enemy.attacks
 	attacks_p2 = enemy.attacks_p2
 	attacks_p3 = enemy.attacks_p3
