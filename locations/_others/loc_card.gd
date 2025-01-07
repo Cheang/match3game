@@ -28,7 +28,7 @@ func _on_selection_btn_pressed() -> void:
 				Global.minions_killed += 1
 				loc_res.next_scene = "res://game_window.tscn"
 		if loc_res.event_encounter and loc_res.event_resource:
-			Global.cur_event = loc_res.event_resource
+			Global.area_cur_event = loc_res.event_resource
 			loc_res.next_scene = "res://event_screen.tscn"
 		selected = true
 		Global.game_is_played = false
@@ -37,4 +37,4 @@ func _on_selection_btn_pressed() -> void:
 
 func _on_tree_exiting() -> void:
 	if selected:
-		Global.locations.pop_at(index)
+		Global.area_locations.pop_at(index)

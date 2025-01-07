@@ -3,6 +3,7 @@ extends Control
 @export var song: MusicTrack
 
 const AREA_1 = preload("res://locations/_loc_loaders/area_1.tres")
+var area_to_load = AREA_1
 var choise_made: bool = false
 
 func _ready() -> void:
@@ -13,9 +14,10 @@ func _on_start_pressed() -> void:
 	if not choise_made:
 		choise_made = true
 		Global.set_up_player()
-		Locations.load_locations_from_directory(AREA_1)
-		Locations.pick_locations(Global.locations, Global.enemy_loc_numb, Global.event_loc_numb, Global.services_loc_numb)
-		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		Locations.load_locations_from_directory(area_to_load)
+		Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
+		Global.cur_cutscene = Global.area_cur_boss.cut_scene
+		SceneManager.change_scene("res://cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_load_pressed() -> void:
 	if not choise_made:

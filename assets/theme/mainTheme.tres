@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=15 format=3 uid="uid://t0ar7qhxkey"]
+[gd_resource type="Theme" load_steps=18 format=3 uid="uid://t0ar7qhxkey"]
 
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="1_yxpip"]
 [ext_resource type="Texture2D" uid="uid://b1w6ej5ohsgcx" path="res://assets/level_ui/btn/btn_hover.png" id="2_8osr4"]
@@ -14,12 +14,28 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dn2r0"]
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3p4xp"]
 texture = ExtResource("2_8osr4")
 texture_margin_left = 10.0
 texture_margin_top = 10.0
 texture_margin_right = 10.0
 texture_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_iueej"]
+texture = ExtResource("4_6vlby")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6tdrs"]
+texture = ExtResource("5_q4o8d")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ay7ml"]
 texture = ExtResource("4_6vlby")
@@ -66,13 +82,14 @@ Button/colors/font_focus_color = Color(0.215686, 0.305882, 0.290196, 1)
 Button/colors/font_hover_color = Color(0.572549, 0.662745, 0.517647, 1)
 Button/colors/font_hover_pressed_color = Color(0.215686, 0.305882, 0.290196, 1)
 Button/colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
-Button/colors/font_pressed_color = Color(0.698039, 0.729412, 0.564706, 1)
+Button/colors/font_pressed_color = Color(0.329412, 0.494118, 0.392157, 1)
 Button/font_sizes/font_size = 32
 Button/styles/disabled = SubResource("StyleBoxTexture_h7t2y")
-Button/styles/focus = null
+Button/styles/focus = SubResource("StyleBoxEmpty_dn2r0")
 Button/styles/hover = SubResource("StyleBoxTexture_3p4xp")
+Button/styles/hover_pressed = SubResource("StyleBoxTexture_iueej")
 Button/styles/normal = ExtResource("2_y3e2i")
-Button/styles/pressed = null
+Button/styles/pressed = SubResource("StyleBoxTexture_6tdrs")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_ay7ml")
 RichTextLabel/fonts/normal_font = ExtResource("5_ax2lw")
 TabContainer/colors/font_hovered_color = Color(0.215686, 0.305882, 0.290196, 1)

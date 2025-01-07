@@ -10,6 +10,7 @@ class_name Location
 
 @export_category("Enemy")
 @export var enemy_encounter: bool
+@export var cut_scene: CutScene
 @export var which_enemy: Array[EnemyResource]
 @export var level: int
 

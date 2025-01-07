@@ -14,7 +14,7 @@ var resource: Event
 
 func _ready() -> void:
 	Global.game_is_played = true
-	resource = Global.cur_event
+	resource = Global.area_cur_event
 	pause.set_title(resource.categorie)
 	event_text.get_child(0).text = resource.title
 	event_text.get_child(1).text = resource.description
@@ -44,7 +44,7 @@ func _ready() -> void:
 		btn1.resource = choise
 		choises_holder.add_child(btn1)
 		btn1.set_btn()
-	Global.cur_event = null
+	Global.area_cur_event = null
 
 func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):
 	reward.get_child(2).get_child(0).get_child(0).get_child(0).texture = texture

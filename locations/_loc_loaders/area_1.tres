@@ -13,6 +13,9 @@
 
 [resource]
 script = ExtResource("4_kqrmq")
+enemy_loc_numb = 4
+event_loc_numb = 5
+services_loc_numb = 1
 enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
 event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj"), ExtResource("7_65xj8")])

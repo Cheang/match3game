@@ -10,19 +10,17 @@ var grd_height: int = 9
 var grd_offset: int = 64
 
 var game_is_played: bool = false
+var cur_cutscene: CutScene
 var current_wave: int = 0
 var current_level: int = 0
 
 #for locations
-var locations: Array[Location]
-var enemy_loc_numb: int = 4
-var event_loc_numb: int = 5
-var services_loc_numb: int = 1
-var cur_event: Event
+var area_locations: Array[Location]
+var area_cur_boss: Location
+var area_cur_event: Event
 
 #for boss spawning
 var minions_killed: int = 0
-var minions_needed: int = 4
 var boss_added: bool = false
 var boss_beaten: bool = false
 var bosses_killed_needed = 1

@@ -1,0 +1,192 @@
+[gd_scene load_steps=13 format=3 uid="uid://dxdqwb08tp1i4"]
+
+[ext_resource type="Script" path="res://scripts/cut_scene.gd" id="1_6c3w6"]
+[ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="1_a3d4r"]
+[ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_o1tve"]
+[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="4_4oiqt"]
+[ext_resource type="Texture2D" uid="uid://gyx6asv6mijb" path="res://assets/level_ui/event/cutscent_npc_empty.png" id="4_k8dlh"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_motxn"]
+
+[sub_resource type="Animation" id="Animation_2663v"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MarginContainer/VBoxContainer/description/MarginContainer/label:visible_ratio")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_0ppqf"]
+resource_name = "show_text"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MarginContainer/VBoxContainer/description/MarginContainer/label:visible_ratio")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1.93187),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_evr1a"]
+_data = {
+"RESET": SubResource("Animation_2663v"),
+"show_text": SubResource("Animation_0ppqf")
+}
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jkbsw"]
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_bvol0"]
+line_spacing = 0.0
+font_size = 32
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mrf80"]
+texture = ExtResource("4_4oiqt")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[node name="cut_scene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_6c3w6")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_evr1a")
+}
+
+[node name="background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_a3d4r")
+
+[node name="shadow" type="TextureRect" parent="background"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -575.0
+offset_right = 288.0
+offset_bottom = 775.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_o1tve")
+
+[node name="npc" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -675.0
+offset_right = 288.0
+offset_bottom = 675.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_k8dlh")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 75
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 2
+
+[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(510, 0)
+layout_mode = 2
+
+[node name="title" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_jkbsw")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/title"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+
+[node name="label" type="Label" parent="MarginContainer/VBoxContainer/title/MarginContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+text = "Ttile"
+label_settings = SubResource("LabelSettings_bvol0")
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="description" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_mrf80")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/description"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="label" type="Label" parent="MarginContainer/VBoxContainer/description/MarginContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_fonts/font = ExtResource("4_motxn")
+text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to m"
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

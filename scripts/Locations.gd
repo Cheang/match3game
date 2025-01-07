@@ -26,16 +26,16 @@ func pick_locations(target: Array[Location], enemies_numb: int = 4, event_numb: 
 		for i in services_numb:
 			var loc: Location = Locations.services_loc_cards.pick_random()
 			target.append(loc)
+	if !Locations.boss_loc_cards.is_empty():
+		var loc: Location = Locations.boss_loc_cards.pick_random()
+		Global.area_cur_boss = loc
 	target.shuffle()
 
 func add_boss_to_locations(target: Array[Location], req: int = 4):
 	if !Global.boss_added:
 		if Global.minions_killed >= req:
-			if !Global.is_null(boss_loc_cards):
-				var pick: Location = boss_loc_cards.pick_random()
-				if pick.level != 0:
-					while pick.level != null and pick.level <= Global.current_level:
-						randomize()
-						pick = boss_loc_cards.pick_random()
+			if Global.area_cur_boss != null:
+				var pick: Location = Global.area_cur_boss
 				target.append(pick)
+				Global.area_cur_boss = null
 				Global.boss_added = true

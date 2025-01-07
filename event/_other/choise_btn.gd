@@ -58,7 +58,7 @@ func _on_btn_pressed() -> void:
 				SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 			1: #continue event
 				Global.game_is_played = false
-				Global.cur_event = resource.next_event_res
+				Global.area_cur_event = resource.next_event_res
 				SceneManager.change_scene("res://event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true, "skip_fade_in": true })
 			2: #fight
 				Global.game_is_played = false
