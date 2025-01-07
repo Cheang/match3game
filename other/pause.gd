@@ -12,6 +12,8 @@ extends Control
 @onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
 @onready var stats_overlay: MarginContainer = $stats_overlay
+@onready var texture_button: TextureButton = $stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton
+
 @onready var deck_container: HFlowContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/ScrollContainer/deck_container
 const PIECE_CARD = preload("res://inventory/piece_card.tscn")
 var stats_open = false
@@ -33,6 +35,9 @@ func _ready() -> void:
 		pausebtn.disabled = true
 	if not title_container:
 		title.modulate = Color(1, 1, 1, 0)
+	if not player_stats_btn:
+		stats_overlay.modulate = Color(1, 1, 1, 0)
+		texture_button.disabled = true
 	set_title(title_text)
 	if Global.cur_char != null:
 		gold_on_label = Global.cur_char.gold
