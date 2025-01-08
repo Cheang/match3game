@@ -25,6 +25,7 @@
 script = ExtResource("10_ljvcx")
 max_health = 20.0
 life_steal = 0.0
+toughness = 0.0
 dmg_reduction = 0.0
 start_armor = 0.0
 start_mage_armor = 0.0
@@ -34,6 +35,7 @@ start_gold = 10
 gold_chanse = 1
 start_reroll = 3
 mana = 0.0
+faith = 0.0
 dmg = 1.0
 fluf_dmg = 0.0
 crit_chanse = 5
