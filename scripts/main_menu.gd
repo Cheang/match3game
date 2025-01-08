@@ -16,9 +16,11 @@ func _on_start_pressed() -> void:
 		Global.set_up_player()
 		Locations.load_locations_from_directory(area_to_load)
 		Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
-		Global.cur_cutscene = Global.area_cur_boss.cut_scene
-		SceneManager.change_scene("res://cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-
+		if Global.area_cur_boss.cut_scene:
+			Global.cur_cutscene = Global.area_cur_boss.cut_scene
+			SceneManager.change_scene("res://cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		else:
+			SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_load_pressed() -> void:
 	if not choise_made:
 		choise_made = true

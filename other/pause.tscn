@@ -7,9 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://cbn51l2fif0f5" path="res://assets/level_ui/btn/btn_2.png" id="4_g3erw"]
 [ext_resource type="Texture2D" uid="uid://bcr8je46e1jtq" path="res://assets/level_ui/icons/settings.png" id="5_h1nck"]
 [ext_resource type="Texture2D" uid="uid://dxclfssfpgodb" path="res://assets/level_ui/icons/gold.png" id="6_gk11h"]
-[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="6_ly4ro"]
 [ext_resource type="Texture2D" uid="uid://bm7gbwqth4aa2" path="res://assets/level_ui/icons/backpack.png" id="8_cxg1n"]
 [ext_resource type="Texture2D" uid="uid://c4nol0lsxhees" path="res://assets/level_ui/icons/backpack_p.png" id="9_iv3av"]
+[ext_resource type="StyleBox" uid="uid://ixohy6piondu" path="res://assets/level_ui/btn/new_style_box_texture.tres" id="10_h3k5d"]
 [ext_resource type="Script" path="res://inventory/stats.gd" id="10_rk6m7"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="11_flpho"]
 
@@ -42,7 +42,7 @@ texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_udpcd"]
-texture = ExtResource("6_ly4ro")
+texture = ExtResource("4_g3erw")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
@@ -64,7 +64,7 @@ content_margin_left = 0.0
 content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource("6_ly4ro")
+texture = ExtResource("4_g3erw")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
@@ -129,7 +129,9 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_udpcd")
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
 layout_mode = 2
 size_flags_vertical = 1
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_outline_color = Color(0.384314, 0.333333, 0.396078, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 32
 text = "text"
 horizontal_alignment = 1
@@ -178,7 +180,9 @@ layout_mode = 2
 [node name="gold" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_outline_color = Color(0.384314, 0.333333, 0.396078, 1)
 theme_override_constants/line_spacing = -13
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 25
 text = "9999"
 horizontal_alignment = 1
@@ -244,16 +248,17 @@ theme_override_constants/margin_right = 15
 layout_mode = 2
 size_flags_vertical = 3
 tab_alignment = 2
-current_tab = 0
+current_tab = 1
 tabs_position = 1
 
 [node name="Deck" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
 theme_override_font_sizes/font_size = 22
 text = "Player Class"
 horizontal_alignment = 1
@@ -271,7 +276,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Stats" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("10_rk6m7")
 metadata/_tab_index = 1
@@ -287,13 +291,14 @@ size_flags_horizontal = 3
 
 [node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
 theme_override_font_sizes/font_size = 22
 text = "Player Class"
 horizontal_alignment = 1
 
 [node name="health_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part"]
 layout_mode = 2
@@ -301,7 +306,7 @@ theme_override_constants/separation = 2
 
 [node name="cat_health" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Health"
 
@@ -311,13 +316,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Max Health"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -327,13 +332,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Current Health"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -343,18 +348,19 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Life Steal"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
 [node name="defence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part"]
 layout_mode = 2
@@ -362,7 +368,7 @@ theme_override_constants/separation = 2
 
 [node name="cat_defence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Defence"
 
@@ -372,13 +378,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Starting Armor"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -388,13 +394,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Starting Magic Armor"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -404,24 +410,25 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Damage Reducion"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
 [node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
 [node name="offence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part"]
 layout_mode = 2
@@ -429,7 +436,7 @@ theme_override_constants/separation = 2
 
 [node name="cat_offence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Offence"
 
@@ -439,13 +446,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Damage"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -455,13 +462,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Empty Tile Damge"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -471,19 +478,19 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Critical Strike Chance"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
 [node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
@@ -493,24 +500,25 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Critical Strike Damage"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
 [node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
 [node name="magic_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part"]
 layout_mode = 2
@@ -518,7 +526,7 @@ theme_override_constants/separation = 2
 
 [node name="cat_magic" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Mysticism"
 
@@ -528,18 +536,19 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Energy"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
 [node name="utility_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part"]
 layout_mode = 2
@@ -547,7 +556,7 @@ theme_override_constants/separation = 2
 
 [node name="cat_utility" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Utility"
 
@@ -557,13 +566,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Speed"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -573,13 +582,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Rerolls"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
@@ -589,13 +598,13 @@ layout_mode = 2
 [node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Cooldown Reduction"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 

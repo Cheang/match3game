@@ -7,6 +7,7 @@ class_name PlayerResource
 @export var life_steal: float
 
 @export_group("Defence")
+@export var toughness: float
 @export var dmg_reduction: float
 @export var start_armor: float = 0
 @export var start_mage_armor: float = 0
@@ -22,6 +23,7 @@ class_name PlayerResource
 #Magic
 @export_group("Magic")
 @export var mana: float 
+@export var faith: float
 
 #Damage
 @export_group("Damage")

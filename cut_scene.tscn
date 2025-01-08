@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://scripts/cut_scene.gd" id="1_6c3w6"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/level_ui/event/cutscene_bg_kruchma_outside.png" id="2_lpdc2"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_o1tve"]
-[ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="4_4oiqt"]
 [ext_resource type="Texture2D" uid="uid://gyx6asv6mijb" path="res://assets/level_ui/event/cutscent_npc_empty.png" id="4_k8dlh"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_motxn"]
-[ext_resource type="Texture2D" uid="uid://c2hlc20v5ghsv" path="res://assets/level_ui/btn/btn_normalt.png" id="6_hf8ld"]
+[ext_resource type="Texture2D" uid="uid://bqdo3lceknedg" path="res://assets/level_ui/btn/btn_disabled_2.png" id="5_bsk47"]
+[ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="6_aq4i2"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="8_pj72e"]
 
 [sub_resource type="Animation" id="Animation_2663v"]
@@ -47,7 +47,7 @@ _data = {
 }
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jkbsw"]
-texture = ExtResource("4_4oiqt")
+texture = ExtResource("5_bsk47")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
@@ -55,11 +55,11 @@ texture_margin_bottom = 8.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_bvol0"]
 line_spacing = 0.0
-font_size = 32
-font_color = Color(0.215686, 0.305882, 0.290196, 1)
+font_size = 42
+font_color = Color(0.780392, 0.862745, 0.815686, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mrf80"]
-texture = ExtResource("6_hf8ld")
+texture = ExtResource("6_aq4i2")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
@@ -88,27 +88,12 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -288.0
-offset_top = -825.0
+offset_top = -838.0
 offset_right = 288.0
-offset_bottom = 525.0
+offset_bottom = 512.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_lpdc2")
-
-[node name="shadow" type="TextureRect" parent="background"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -288.0
-offset_top = -446.0
-offset_right = 288.0
-offset_bottom = 904.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_o1tve")
 
 [node name="npc" type="TextureRect" parent="."]
 layout_mode = 1
@@ -124,6 +109,21 @@ offset_bottom = 675.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_k8dlh")
+
+[node name="shadow" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -512.0
+offset_right = 288.0
+offset_bottom = 838.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_o1tve")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -174,14 +174,18 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="label" type="Label" parent="MarginContainer/VBoxContainer/description/MarginContainer"]
+[node name="label" type="RichTextLabel" parent="MarginContainer/VBoxContainer/description/MarginContainer"]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.192157, 0.211765, 0.219608, 1)
-theme_override_fonts/font = ExtResource("4_motxn")
-text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to m"
-vertical_alignment = 1
-autowrap_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_constants/line_separation = 8
+theme_override_fonts/normal_font = ExtResource("4_motxn")
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "Lorem Ipsum is simply dummy text of the printing and typesetting in dustry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to m"
+fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1

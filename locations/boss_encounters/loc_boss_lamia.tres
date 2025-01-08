@@ -9,15 +9,19 @@
 
 [sub_resource type="Resource" id="Resource_30f5c"]
 script = ExtResource("1_75siy")
-title = "Tale of a Snake"
-description = Array[String](["Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It w", "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various v"])
-npc = Array[Texture2D]([null, null])
+title = "Tale of the Lamia"
+description = Array[String](["You are sitting at a table, outside of the local kruchma in a village called Chenger, sipping from a wooden cup. Your outfit and mask drawing a lot of attention to yourself.", "[color=#91db69]\"Ah, I see a Kuker has graced our humble village. It's been many years since I've seen one of your kind.” [/color]
+The old man approaches the table, leaning heavily on his cane. His eyes are sharp and filled with stories of the past.", "[color=#91db69]\"I couldn't help but notice your attire. You must be here to rid us of the dark creatures that plague our land.” [/color]
+You nod solemnly, setting your cup down. 
+[color=#91db69]\"There is one beast in particular that haunts these parts... a Lamia, a monstrous serpent that dwells in the wilds. Many have tried to slay it, but none have returned.”[/color]", "[color=#91db69]\"They say its eyes can hypnotize and its venom is deadly. If anyone can defeat it, it would be a Kuker like you. Please, rid us of this terror.”[/color]
+You promise the old man to look into this creature a put it down for good."])
+npc = Array[Texture2D]([null, null, null, null])
 background = ExtResource("1_ykgu2")
 next_location = "res://locations_screen.tscn"
 
 [resource]
 script = ExtResource("1_pkour")
-name = "Great Snake Creature"
+name = "The Great Snake"
 description = "Lorem Ipsum"
 pic = ExtResource("1_avet4")
 next_scene = "res://main_menu.tscn"

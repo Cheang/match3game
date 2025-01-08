@@ -7,7 +7,7 @@
 
 [node name="green_sq_1" instance=ExtResource("1_i3y0o")]
 piece_name = "Rush"
-description = "Gives 1 Move"
+description = "Gives [color=#165a4c]1[/color] Move"
 icon_texture = ExtResource("2_nt4eg")
 type = 1
 cooldown = 2

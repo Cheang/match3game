@@ -16,8 +16,8 @@ func _ready() -> void:
 	Global.game_is_played = true
 	resource = Global.area_cur_event
 	pause.set_title(resource.categorie)
-	event_text.get_child(0).text = resource.title
-	event_text.get_child(1).text = resource.description
+	event_text.get_child(0).get_child(0).get_child(0).text = resource.title
+	event_text.get_child(1).get_child(0).get_child(0).text = resource.description
 	if resource.background != null:
 		event_bg.texture = resource.background
 	for choise in resource.choises:

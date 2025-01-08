@@ -1,10 +1,27 @@
-[gd_scene load_steps=9 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=14 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
+[ext_resource type="Texture2D" uid="uid://bqdo3lceknedg" path="res://assets/level_ui/btn/btn_disabled_2.png" id="4_b22pl"]
+[ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="5_biyog"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="6_4rf35"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="6_xmift"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sf7oc"]
+texture = ExtResource("4_b22pl")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mhvcm"]
+texture = ExtResource("5_biyog")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [sub_resource type="Animation" id="Animation_u0pyg"]
 length = 0.001
@@ -118,15 +135,38 @@ size_flags_vertical = 3
 [node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="title" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_sf7oc")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+
+[node name="title" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_font_sizes/font_size = 32
 text = "Title"
 
-[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
 layout_mode = 2
-theme_override_constants/line_separation = 5
-theme_override_font_sizes/normal_font_size = 18
+theme_override_styles/panel = SubResource("StyleBoxTexture_mhvcm")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 0
+
+[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer2/MarginContainer"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_constants/line_separation = 8
+theme_override_fonts/normal_font = ExtResource("6_xmift")
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
 fit_content = true
 
