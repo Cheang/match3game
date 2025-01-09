@@ -8,7 +8,7 @@ func activate():
 	for i in atk_numb:
 		var final_dmg: float
 		if criting:
-			final_dmg = (atk_dmg + Global.cur_char.dmg) * (1 + Global.cur_char.crit_dmg / 100)
+			final_dmg = (atk_dmg + Global.cur_char.proficiency) * (1 + Global.cur_char.crit_mutly / 100)
 		else:
-			final_dmg = atk_dmg + Global.cur_char.dmg
+			final_dmg = atk_dmg + Global.cur_char.proficiency
 		EnemyData.take_dmg(final_dmg)

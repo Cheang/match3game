@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=22 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
@@ -12,6 +12,7 @@
 [ext_resource type="StyleBox" uid="uid://ixohy6piondu" path="res://assets/level_ui/btn/new_style_box_texture.tres" id="10_h3k5d"]
 [ext_resource type="Script" path="res://inventory/stats.gd" id="10_rk6m7"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="11_flpho"]
+[ext_resource type="Texture2D" uid="uid://demwyq5vri1pv" path="res://assets/level_ui/pause_bg.png" id="12_xej0p"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
 texture = ExtResource("2_8aufw")
@@ -70,8 +71,16 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rde5b"]
-bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qwfgh"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("12_xej0p")
+texture_margin_left = 120.0
+texture_margin_top = 120.0
+texture_margin_right = 120.0
+texture_margin_bottom = 120.0
 
 [node name="pause" type="Control"]
 layout_mode = 3
@@ -440,17 +449,33 @@ theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Offence"
 
-[node name="cat_offence_dmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_str" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
-text = "Damage"
+text = "Strength"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_prof" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Proficiency"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
@@ -618,7 +643,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_rde5b")
+theme_override_styles/panel = SubResource("StyleBoxTexture_qwfgh")
 
 [node name="CenterContainer" type="CenterContainer" parent="pause_overlay"]
 layout_mode = 2
@@ -639,6 +664,11 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Resume"
 
+[node name="help" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
+layout_mode = 2
+disabled = true
+text = "Guide"
+
 [node name="options" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
 disabled = true
@@ -651,5 +681,6 @@ text = "Main Menu"
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]
 [connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/help" to="." method="_on_help_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

@@ -36,7 +36,7 @@ func _ready() -> void:
 	if not title_container:
 		title.modulate = Color(1, 1, 1, 0)
 	if not player_stats_btn:
-		stats_overlay.modulate = Color(1, 1, 1, 0)
+		stats_overlay.visible = false
 		texture_button.disabled = true
 	set_title(title_text)
 	if Global.cur_char != null:
@@ -76,8 +76,6 @@ func set_title(text: String):
 	var titletxt: Label = title.get_child(0)
 	titletxt.text = text
 
-
-
 func _on_texture_button_pressed() -> void:
 	var target_1 = Vector2(0,-(stats_overlay.size.y - 200))
 	var target_2 = Vector2(0,(stats_overlay.size.y - 200))
@@ -105,3 +103,6 @@ func _on_texture_button_pressed() -> void:
 func move(target, time = .3):
 	var tween: Tween = create_tween()
 	tween.tween_property(stats_overlay,"position",target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
+func _on_help_pressed() -> void:
+	pass # Replace with function body.

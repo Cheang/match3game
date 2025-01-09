@@ -16,14 +16,15 @@ func _ready() -> void:
 func _initialize_scene():
 	Global.game_is_played = true
 	cur_scene = Global.cur_cutscene
+	if cur_scene.npc.size() != cur_scene.description.size():
+		cur_scene.npc.resize(cur_scene.description.size())
 	if cur_scene.background:
 		background.texture = cur_scene.background
 	if cur_scene.title != "None":
 		title.text = cur_scene.title
 	else: 
 		title.visible = false
-	if cur_scene.npc[cur_page]:
-		npc.texture = cur_scene.npc[cur_page]
+	npc.texture = cur_scene.npc[cur_page]
 	label.text = cur_scene.description[cur_page]
 	await get_tree().create_timer(.1).timeout
 	anim_player.current_animation = "show_text"
@@ -44,8 +45,7 @@ func _on_button_pressed() -> void:
 			return
 		label.visible_ratio = 0
 		label.text = cur_scene.description[cur_page]
-		if cur_scene.npc[cur_page]:
-			npc.texture = cur_scene.npc[cur_page]
+		npc.texture = cur_scene.npc[cur_page]
 		await get_tree().create_timer(.1).timeout
 		anim_player.current_animation = "show_text"
 		anim_runing = true

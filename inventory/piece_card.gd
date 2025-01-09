@@ -29,7 +29,7 @@ func set_card(piece: PieceClass):
 	
 	match piece.piece_name:
 		"Short Sword":
-			p_desc.text = "Deals: [color=#ae2334]%s[/color] DMG" % [1+Global.cur_char.dmg+piece.upgrades]
+			p_desc.text = "Deals: [color=#ae2334]%s[/color] DMG" % [1+Global.cur_char.proficiency+piece.upgrades]
 		"Round Shiled":
 			p_desc.text = "Gives: [color=#4d65b4]%s[/color] Armor" % [3+piece.upgrades]
 		"Holy Shiled":

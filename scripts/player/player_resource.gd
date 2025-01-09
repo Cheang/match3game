@@ -27,10 +27,11 @@ class_name PlayerResource
 
 #Damage
 @export_group("Damage")
-@export var dmg: float 
-@export var fluf_dmg: float
+@export var strength: float
+@export var proficiency: float 
+@export var fluf_damage: float
 @export_range(0, 100) var crit_chanse: int 
-@export var crit_dmg: float 
+@export var crit_mutly: float 
 
 #Decks
 @export_group("Decks")

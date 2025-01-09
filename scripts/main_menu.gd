@@ -28,7 +28,7 @@ func _on_load_pressed() -> void:
 func _on_char_select_pressed() -> void:
 	if not choise_made:
 		choise_made = true
-		SceneManager.change_scene("res://hero_select_screen.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+		SceneManager.change_scene(" ", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_settings_pressed() -> void:
 	if not choise_made:

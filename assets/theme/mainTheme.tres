@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3 uid="uid://t0ar7qhxkey"]
+[gd_resource type="Theme" load_steps=23 format=3 uid="uid://t0ar7qhxkey"]
 
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="1_yxpip"]
 [ext_resource type="Texture2D" uid="uid://b1w6ej5ohsgcx" path="res://assets/level_ui/btn/btn_hover.png" id="2_8osr4"]
@@ -6,6 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://c2hlc20v5ghsv" path="res://assets/level_ui/btn/btn_normalt.png" id="4_6vlby"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_ax2lw"]
 [ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="5_q4o8d"]
+[ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/level_ui/btn/btn_2_hover.png" id="7_wf8rg"]
+[ext_resource type="Texture2D" uid="uid://ccnv4q1dqhdo2" path="res://assets/level_ui/btn/btn_2_light.png" id="8_ccob8"]
+[ext_resource type="Texture2D" uid="uid://cbn51l2fif0f5" path="res://assets/level_ui/btn/btn_2.png" id="9_2gk6l"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h7t2y"]
 texture = ExtResource("1_yxpip")
@@ -46,33 +49,45 @@ texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c0ycy"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_grdk7"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_etlji"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lrxu1"]
-texture = ExtResource("4_6vlby")
+texture = ExtResource("7_wf8rg")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d5k0g"]
-texture = ExtResource("5_q4o8d")
+texture = ExtResource("8_ccob8")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f5234"]
-texture = ExtResource("2_8osr4")
+texture = ExtResource("9_2gk6l")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cal0v"]
-bg_color = Color(0.192157, 0.211765, 0.219608, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
+bg_color = Color(0.180392, 0.133333, 0.184314, 1)
+expand_margin_top = 4.0
 expand_margin_bottom = 50.0
 anti_aliasing = false
+anti_aliasing_size = 0.01
 
 [resource]
 default_font = ExtResource("5_ax2lw")
@@ -92,12 +107,14 @@ Button/styles/normal = ExtResource("2_y3e2i")
 Button/styles/pressed = SubResource("StyleBoxTexture_6tdrs")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_ay7ml")
 RichTextLabel/fonts/normal_font = ExtResource("5_ax2lw")
-TabContainer/colors/font_hovered_color = Color(0.215686, 0.305882, 0.290196, 1)
-TabContainer/colors/font_selected_color = Color(0.215686, 0.305882, 0.290196, 1)
-TabContainer/colors/font_unselected_color = Color(0.215686, 0.305882, 0.290196, 1)
+TabContainer/colors/font_hovered_color = Color(0.588235, 0.423529, 0.423529, 1)
+TabContainer/colors/font_selected_color = Color(0.180392, 0.133333, 0.184314, 1)
+TabContainer/colors/font_unselected_color = Color(0.411765, 0.309804, 0.384314, 1)
 TabContainer/constants/side_margin = 5
 TabContainer/font_sizes/font_size = 32
 TabContainer/styles/panel = SubResource("StyleBoxEmpty_c0ycy")
+TabContainer/styles/tab_disabled = SubResource("StyleBoxEmpty_grdk7")
+TabContainer/styles/tab_focus = SubResource("StyleBoxEmpty_etlji")
 TabContainer/styles/tab_hovered = SubResource("StyleBoxTexture_lrxu1")
 TabContainer/styles/tab_selected = SubResource("StyleBoxTexture_d5k0g")
 TabContainer/styles/tab_unselected = SubResource("StyleBoxTexture_f5234")

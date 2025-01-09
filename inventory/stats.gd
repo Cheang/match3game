@@ -12,7 +12,8 @@ extends VBoxContainer
 @onready var cat_defence_startmagearmor: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor
 @onready var cat_defence_dmgreduction: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction
 
-@onready var cat_offence_dmg: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmg
+@onready var cat_offence_prof: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof
+@onready var cat_offence_str: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str
 @onready var cat_offence_dmgfluf: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf
 @onready var cat_offence_crit: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit
 @onready var cat_offence_critdmg: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg
@@ -34,10 +35,11 @@ func expand():
 	get_stat_and_set(Global.cur_char.start_mage_armor, cat_defence_startmagearmor)
 	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction, true)
 	
-	get_stat_and_set(Global.cur_char.dmg, cat_offence_dmg)
-	get_stat_and_set(Global.cur_char.fluf_dmg, cat_offence_dmgfluf, true)
+	get_stat_and_set(Global.cur_char.proficiency, cat_offence_prof)
+	get_stat_and_set(Global.cur_char.strength, cat_offence_str)
+	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true)
 	get_stat_and_set(Global.cur_char.crit_chanse, cat_offence_crit)
-	get_stat_and_set(Global.cur_char.crit_dmg, cat_offence_critdmg)
+	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg)
 	
 	get_stat_and_set(Global.cur_char.mana, cat_magic_mana)
 	

@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="Location" load_steps=8 format=3 uid="uid://cqehju5d485x1"]
+[gd_resource type="Resource" script_class="Location" load_steps=9 format=3 uid="uid://cqehju5d485x1"]
 
 [ext_resource type="Script" path="res://scripts/cur_scene_resource.gd" id="1_75siy"]
 [ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/level_ui/location_pictures/loc_lamia_boss.png" id="1_avet4"]
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_pkour"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/level_ui/event/cutscene_bg_kruchma_outside.png" id="1_ykgu2"]
+[ext_resource type="Texture2D" uid="uid://1ump0g3idn7g" path="res://assets/level_ui/event/cutscent_npc_test2.png" id="2_6q0eh"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_kevmu"]
 [ext_resource type="Resource" uid="uid://cyl7kv84j6vky" path="res://enemies/boss/lamia/lamia.tres" id="3_kdd54"]
 
@@ -15,7 +16,7 @@ The old man approaches the table, leaning heavily on his cane. His eyes are shar
 You nod solemnly, setting your cup down. 
 [color=#91db69]\"There is one beast in particular that haunts these parts... a Lamia, a monstrous serpent that dwells in the wilds. Many have tried to slay it, but none have returned.”[/color]", "[color=#91db69]\"They say its eyes can hypnotize and its venom is deadly. If anyone can defeat it, it would be a Kuker like you. Please, rid us of this terror.”[/color]
 You promise the old man to look into this creature a put it down for good."])
-npc = Array[Texture2D]([null, null, null, null])
+npc = Array[Texture2D]([null, ExtResource("2_6q0eh"), ExtResource("2_6q0eh"), ExtResource("2_6q0eh")])
 background = ExtResource("1_ykgu2")
 next_location = "res://locations_screen.tscn"
 
