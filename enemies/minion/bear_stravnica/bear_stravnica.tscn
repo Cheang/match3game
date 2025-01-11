@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://dhauif6v32uf3"]
+
+[ext_resource type="Texture2D" uid="uid://bsta236iitoqw" path="res://assets/enemy/bear_stravnica/bear_stravnica_body.png" id="1_1umo8"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_t4bc8"]
+[ext_resource type="Texture2D" uid="uid://ihsoiu5hp70q" path="res://assets/enemy/bear_stravnica/bear_stravnica_head.png" id="2_ba757"]
+
+[sub_resource type="Animation" id="Animation_mxdx1"]
+resource_name = "idle"
+length = 1.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BearStravnicaBody/BearStravnicaHead:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(86, -59), Vector2(86, -61)]
+}
+
+[sub_resource type="Animation" id="Animation_sp36c"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BearStravnicaBody/BearStravnicaHead:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(86, -60)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vtmp1"]
+_data = {
+"RESET": SubResource("Animation_sp36c"),
+"idle": SubResource("Animation_mxdx1")
+}
+
+[node name="bear_stravnica" type="Node2D"]
+script = ExtResource("1_t4bc8")
+
+[node name="animP" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_vtmp1")
+}
+autoplay = "idle"
+
+[node name="BearStravnicaBody" type="Sprite2D" parent="."]
+position = Vector2(390, 142)
+texture = ExtResource("1_1umo8")
+
+[node name="BearStravnicaHead" type="Sprite2D" parent="BearStravnicaBody"]
+position = Vector2(86, -60)
+texture = ExtResource("2_ba757")

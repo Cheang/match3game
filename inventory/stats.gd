@@ -21,6 +21,7 @@ extends VBoxContainer
 @onready var cat_magic_mana: HBoxContainer = $ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana
 
 @onready var cat_utility_spd: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd
+@onready var cat_utility_agility: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility
 @onready var cat_utility_rerolls: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls
 @onready var cat_utility_cd: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd
 
@@ -44,6 +45,7 @@ func expand():
 	get_stat_and_set(Global.cur_char.mana, cat_magic_mana)
 	
 	get_stat_and_set(Global.cur_char.speed, cat_utility_spd)
+	get_stat_and_set(Global.cur_char.agility, cat_utility_agility)
 	get_stat_and_set(Global.cur_char.rerolls, cat_utility_rerolls)
 	get_stat_and_set(Global.cur_char.cooldown_reduction, cat_utility_cd, true)
 	

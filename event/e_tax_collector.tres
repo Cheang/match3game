@@ -1,0 +1,174 @@
+[gd_resource type="Resource" script_class="Event" load_steps=23 format=3 uid="uid://cftnx7yuq7c7d"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_swuau"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_cf3eu"]
+[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_lg513"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_o1m3v"]
+[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/red_sq_0.tscn" id="5_8chvt"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="5_qn67d"]
+[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="6_isglo"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="7_qfimf"]
+[ext_resource type="Resource" uid="uid://t1q3a7d18m50" path="res://piece/active effect/attack+1.tres" id="8_fcojc"]
+[ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="11_on8bi"]
+
+[sub_resource type="PackedScene" id="PackedScene_0nf2p"]
+_bundled = {
+"base_scene": 0,
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("red_sq_1", "piece_name", "icon_texture", "type", "cooldown", "upgrades", "action", "base", "icon", "gold_border"),
+"node_count": 1,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2147483647, 0, -1, 6, 1, 1, 2, 2, 3, 3, 4, 3, 5, 4, 6, 5, 0),
+"variants": [ExtResource("5_8chvt"), "Short Sword", ExtResource("6_isglo"), 1, 2, Array[ExtResource("7_qfimf")]([ExtResource("8_fcojc")])],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_fb4f0"]
+script = ExtResource("5_qn67d")
+piece_to_add = Array[PackedScene]([SubResource("PackedScene_0nf2p")])
+name = "Old Sword"
+description = ""
+base = ExtResource("3_o1m3v")
+icon = ExtResource("6_isglo")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = true
+
+[sub_resource type="Resource" id="Resource_4026b"]
+script = ExtResource("1_swuau")
+text = "Thank him"
+description = "None"
+type = 4
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+piece_res = SubResource("Resource_fb4f0")
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_c715f"]
+script = ExtResource("2_lg513")
+categorie = "Event"
+title = "Taxes"
+description = "You hand the man a pouch filled with a few gold coins. \"This should cover whatever he's asking and leave you some to get through the winter.\" The big man's eyes well up with tears as he thanks you profusely. In gratitude, he hands you a sword."
+choises = Array[ExtResource("1_swuau")]([SubResource("Resource_4026b")])
+
+[sub_resource type="Resource" id="Resource_7dim2"]
+script = ExtResource("1_swuau")
+text = "Give them coin"
+description = "Lose 20 gold"
+type = 1
+next_event_res = SubResource("Resource_c715f")
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+gold_cost = 20
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_sxnet"]
+script = ExtResource("1_swuau")
+text = "Kill them"
+description = "None"
+type = 2
+enemy = Array[ExtResource("2_cf3eu")]([ExtResource("11_on8bi")])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_g8tmp"]
+script = ExtResource("2_lg513")
+categorie = "Event"
+title = "Taxes"
+description = "You spot the Ottomans in the village square, holding a boy hostage and awaiting their payment. Determined to teach them a lesson about taking children as hostages, you unsheathe your sword and stride towards them. The villagers watch in silent anticipation, their hopes pinned on your courage and strength. It's time to fight."
+choises = Array[ExtResource("1_swuau")]([SubResource("Resource_sxnet")])
+
+[sub_resource type="Resource" id="Resource_pwauw"]
+script = ExtResource("1_swuau")
+text = "Go find the ottomans"
+description = "None"
+type = 1
+next_event_res = SubResource("Resource_g8tmp")
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_snrnj"]
+script = ExtResource("1_swuau")
+text = "You kill monsters not ottomans"
+description = "None"
+type = 0
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_1v3ce"]
+script = ExtResource("2_lg513")
+categorie = "Event"
+title = "Taxes"
+description = "You reach the bar and order a drink. Almost immediately, a big, burly man approaches, his face etched with worry. \"You're a Kuker, right? Supposed to help people? Well, we could sure use your help right now. The Ottoman tax collector is here, demanding far more than we can afford. Can you help this village?\""
+choises = Array[ExtResource("1_swuau")]([SubResource("Resource_7dim2"), SubResource("Resource_pwauw"), SubResource("Resource_snrnj")])
+
+[sub_resource type="Resource" id="Resource_gxcch"]
+script = ExtResource("1_swuau")
+text = "Go to the bar"
+description = "None"
+type = 1
+next_event_res = SubResource("Resource_1v3ce")
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_1w743"]
+script = ExtResource("1_swuau")
+text = "Turn around and leave"
+description = "None"
+type = 0
+enemy = Array[ExtResource("2_cf3eu")]([])
+fight_overwrite = false
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[resource]
+script = ExtResource("2_lg513")
+categorie = "Event"
+title = "Taxes"
+description = "As you travel the road, a few Ottomans ride past you. Hours later, you reach a village and head to the kruchma. As you step inside, the air is thick with tension, villagers are in a state of panic, their conversations hurried and anxious. The moment they notice you, silence falls over the room."
+choises = Array[ExtResource("1_swuau")]([SubResource("Resource_gxcch"), SubResource("Resource_1w743")])

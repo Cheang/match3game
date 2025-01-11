@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LocationLoader" load_steps=11 format=3 uid="uid://beq8vfn2nxrdo"]
+[gd_resource type="Resource" script_class="LocationLoader" load_steps=14 format=3 uid="uid://beq8vfn2nxrdo"]
 
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_wcv6m"]
 [ext_resource type="Resource" uid="uid://cqehju5d485x1" path="res://locations/boss_encounters/loc_boss_lamia.tres" id="2_vg4qu"]
@@ -8,15 +8,18 @@
 [ext_resource type="Script" path="res://locations/_others/locations_loader.gd" id="4_kqrmq"]
 [ext_resource type="Resource" uid="uid://dw3ch66xefnv6" path="res://locations/event_encounters/event_fallen_tree.tres" id="5_37ayj"]
 [ext_resource type="Resource" uid="uid://4nre8u1ei118" path="res://locations/enemie_encounters/loc_corupted_wild_boar_1.tres" id="5_ygnyx"]
+[ext_resource type="Resource" uid="uid://d3yfpmo8s6ytm" path="res://locations/enemie_encounters/loc_bear_stravnica_1.tres" id="6_bpw8g"]
 [ext_resource type="Resource" uid="uid://ccc1sbv8dne52" path="res://locations/services_encounters/loc_tavern.tres" id="6_o68wa"]
+[ext_resource type="Resource" uid="uid://boq4f5pqkwn2t" path="res://locations/enemie_encounters/loc_vila_1.tres" id="7_0c727"]
 [ext_resource type="Resource" uid="uid://c0qxpkd40er5v" path="res://locations/event_encounters/event_golden_pitka.tres" id="7_65xj8"]
+[ext_resource type="Resource" uid="uid://bibl4pbiwfsfv" path="res://locations/event_encounters/event_tax_collector.tres" id="11_bklaq"]
 
 [resource]
 script = ExtResource("4_kqrmq")
 enemy_loc_numb = 4
 event_loc_numb = 5
 services_loc_numb = 1
-enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx")])
+enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx"), ExtResource("6_bpw8g"), ExtResource("7_0c727")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
-event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj"), ExtResource("7_65xj8")])
+event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj"), ExtResource("7_65xj8"), ExtResource("11_bklaq")])
 boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])

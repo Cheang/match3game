@@ -12,7 +12,7 @@ class_name PieceClass
 @export var cooldown: int
 var original_cd: int
 
-var upgrades: int = 0
+@export var upgrades: int = 0
 @export var upgrades_to_increse_cd: int = 3
 @export var can_upgrade: bool = true
 

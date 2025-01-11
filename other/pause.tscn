@@ -204,7 +204,6 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="stats_overlay" type="MarginContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -596,6 +595,22 @@ theme_override_fonts/font = ExtResource("11_flpho")
 text = "Speed"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_agility" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Agility"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")

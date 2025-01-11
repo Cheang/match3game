@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://d3yfpmo8s6ytm"]
+
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_ccysr"]
+[ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_ik8te"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_r3ofw"]
+[ext_resource type="Resource" uid="uid://b8md2nvxu2oee" path="res://enemies/minion/bear_stravnica/bear_stravnica.tres" id="4_bl5ue"]
+
+[resource]
+script = ExtResource("1_ccysr")
+name = "Stravnica Bear"
+description = "You hear a loud roar followed by a thumping sound, like something is running toward you..."
+pic = ExtResource("1_ik8te")
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = true
+which_enemy = Array[ExtResource("2_r3ofw")]([ExtResource("4_bl5ue")])
+level = 0
+event_encounter = false

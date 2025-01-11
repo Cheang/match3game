@@ -1,0 +1,171 @@
+[gd_scene load_steps=22 format=3 uid="uid://bpjsthpyvd7uh"]
+
+[ext_resource type="Texture2D" uid="uid://eeus51yti0gh" path="res://assets/enemy/vila/vila_body.png" id="1_p5epb"]
+[ext_resource type="Texture2D" uid="uid://dsq81mnt6x276" path="res://assets/enemy/vila/vila_bow.png" id="2_xyfhg"]
+[ext_resource type="Texture2D" uid="uid://fv84rs7n2xxw" path="res://assets/enemy/vila/_57x70px.png" id="3_posao"]
+
+[sub_resource type="Animation" id="Animation_edlc8"]
+resource_name = "new_animation"
+
+[sub_resource type="Animation" id="Animation_3knvu"]
+resource_name = "idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VilaBody/VilaBow:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(65, 0), Vector2(64, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_0a2x4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VilaBody/VilaBow:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(65, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a0v16"]
+_data = {
+"RESET": SubResource("Animation_0a2x4"),
+"idle": SubResource("Animation_3knvu"),
+"new_animation": SubResource("Animation_edlc8")
+}
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mig41"]
+atlas = ExtResource("3_posao")
+region = Rect2(0, 0, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat1p"]
+atlas = ExtResource("3_posao")
+region = Rect2(360, 0, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rb83"]
+atlas = ExtResource("3_posao")
+region = Rect2(720, 0, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jxebx"]
+atlas = ExtResource("3_posao")
+region = Rect2(1080, 0, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a788g"]
+atlas = ExtResource("3_posao")
+region = Rect2(0, 360, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qrgih"]
+atlas = ExtResource("3_posao")
+region = Rect2(360, 360, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tqcsj"]
+atlas = ExtResource("3_posao")
+region = Rect2(720, 360, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uvo1b"]
+atlas = ExtResource("3_posao")
+region = Rect2(1080, 360, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fw38y"]
+atlas = ExtResource("3_posao")
+region = Rect2(0, 720, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w65es"]
+atlas = ExtResource("3_posao")
+region = Rect2(360, 720, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lec8i"]
+atlas = ExtResource("3_posao")
+region = Rect2(720, 720, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fl6ge"]
+atlas = ExtResource("3_posao")
+region = Rect2(1080, 720, 360, 360)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bflen"]
+atlas = ExtResource("3_posao")
+region = Rect2(0, 1080, 360, 360)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gns0x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mig41")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rb83")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jxebx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a788g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qrgih")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tqcsj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uvo1b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fw38y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w65es")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lec8i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fl6ge")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bflen")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="vila" type="Node2D"]
+
+[node name="animP" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_a0v16")
+}
+autoplay = "idle"
+
+[node name="VilaBody" type="Sprite2D" parent="."]
+position = Vector2(425, 126)
+texture = ExtResource("1_p5epb")
+
+[node name="VilaBow" type="Sprite2D" parent="VilaBody"]
+position = Vector2(65, 0)
+texture = ExtResource("2_xyfhg")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VilaBody/VilaBow"]
+show_behind_parent = true
+position = Vector2(46.1391, -11)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_gns0x")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.885507

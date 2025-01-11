@@ -8,7 +8,7 @@
 [resource]
 script = ExtResource("1_mhrhg")
 name = "Kardzaliia C."
-description = "Dark figure of a man standing by the road infront of you. Looks like he is waiting for something."
+description = "Dark figure of a man standing by the road infront of you. Looks like he is waiting for something..."
 pic = ExtResource("1_6nn03")
 next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)

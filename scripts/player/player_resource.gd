@@ -15,6 +15,7 @@ class_name PlayerResource
 #Utility
 @export_group("Utility")
 @export var speed: int
+@export var agility: float
 @export var cooldown_reduction: int
 @export var start_gold: int
 @export_range(0, 100) var gold_chanse: int

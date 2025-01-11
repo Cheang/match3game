@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://boq4f5pqkwn2t"]
+
+[ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_jsf1m"]
+[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_l3twy"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_6lel8"]
+[ext_resource type="Resource" uid="uid://bk5sqcp28vayd" path="res://enemies/minion/vila/vila.tres" id="4_hf4ml"]
+
+[resource]
+script = ExtResource("1_l3twy")
+name = "Vila"
+description = "It's getting dark, and you notice something moving among the trees. Suddenly, a ghostly arrow flies just centimeters past your head..."
+pic = ExtResource("1_jsf1m")
+next_scene = "res://main_menu.tscn"
+transition_color = Color(0.180392, 0.133333, 0.184314, 1)
+enemy_encounter = true
+which_enemy = Array[ExtResource("2_6lel8")]([ExtResource("4_hf4ml")])
+level = 0
+event_encounter = false
