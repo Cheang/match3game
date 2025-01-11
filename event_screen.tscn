@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=16 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="6_4rf35"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="6_xmift"]
+[ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/level_ui/btn/btn_2_hover.png" id="8_qp4wt"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sf7oc"]
 texture = ExtResource("4_b22pl")
@@ -59,6 +60,13 @@ _data = {
 "RESET": SubResource("Animation_u0pyg"),
 "drop_down": SubResource("Animation_t1iey")
 }
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ki286"]
+texture = ExtResource("8_qp4wt")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [node name="event_screen" type="Control"]
 layout_mode = 3
@@ -177,7 +185,6 @@ theme_override_constants/separation = 10
 alignment = 2
 
 [node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
 [node name="pause" parent="." instance=ExtResource("6_4rf35")]
@@ -225,6 +232,7 @@ offset_left = -125.0
 offset_right = 125.0
 offset_bottom = 190.0
 grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ki286")
 
 [node name="MarginContainer" type="MarginContainer" parent="reward/PanelContainer"]
 layout_mode = 2
@@ -260,6 +268,7 @@ stretch_mode = 5
 
 [node name="Label" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
 theme_override_font_sizes/font_size = 32
 text = "title"
 horizontal_alignment = 1
@@ -267,6 +276,7 @@ horizontal_alignment = 1
 [node name="Label2" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.670588, 0.580392, 0.478431, 1)
+theme_override_fonts/font = ExtResource("6_xmift")
 text = "title"
 horizontal_alignment = 1

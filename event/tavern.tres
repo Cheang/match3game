@@ -1,34 +1,34 @@
-[gd_resource type="Resource" script_class="Event" load_steps=13 format=3 uid="uid://5b2qagjixfgm"]
+[gd_resource type="Resource" script_class="Event" load_steps=15 format=3 uid="uid://5b2qagjixfgm"]
 
 [ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0knlt"]
-[ext_resource type="Script" path="res://event/_other/event_choise_resource.gd" id="1_gykjm"]
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_g8liw"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="2_l2lwo"]
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="2_lyahq"]
-[ext_resource type="Resource" uid="uid://clkjvmfvparwq" path="res://event/choises/leave.tres" id="2_twdd2"]
 [ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/puprle_icon_3.png" id="3_u5k8t"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="3_ye4l4"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="4_q28c1"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="7_lyp7t"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="8_kdhdn"]
 
-[sub_resource type="Resource" id="Resource_s108n"]
+[sub_resource type="Resource" id="Resource_yw150"]
 script = ExtResource("4_q28c1")
 stats = Array[String](["cur_health"])
 increase = [4.0]
-name = "Drink"
-description = "Heal 4 HP"
+name = "Heal"
+description = "+4 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
 
-[sub_resource type="Resource" id="Resource_uid4y"]
-script = ExtResource("1_gykjm")
-text = "Get a drink "
-description = "Heal 4HP, -6 Gold"
-type = 6
-enemy = Array[ExtResource("3_ye4l4")]([])
+[sub_resource type="Resource" id="Resource_vwydy"]
+script = ExtResource("7_lyp7t")
+reward = SubResource("Resource_yw150")
 fight_overwrite = false
-stat_res = SubResource("Resource_s108n")
+enemy = Array[ExtResource("3_ye4l4")]([])
+text = "Get a drink"
+description = "Heal 4HP, -6Gold"
 gold_cost = 6
 failable = false
 req_stat = "None"
@@ -37,27 +37,39 @@ req_piece_remove = false
 req_piece = "None"
 req_class = "None"
 
-[sub_resource type="Resource" id="Resource_pm48m"]
+[sub_resource type="Resource" id="Resource_8av5t"]
 script = ExtResource("4_q28c1")
 stats = Array[String](["cur_health"])
 increase = [10.0]
-name = "Have a rest"
-description = "Heal 10 HP"
+name = "Heal"
+description = "+10 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
 
-[sub_resource type="Resource" id="Resource_tfntl"]
-script = ExtResource("1_gykjm")
-text = "Get a room "
-description = "Heal 10 HP, -10 Gold"
-type = 6
-enemy = Array[ExtResource("3_ye4l4")]([])
+[sub_resource type="Resource" id="Resource_q5121"]
+script = ExtResource("7_lyp7t")
+reward = SubResource("Resource_8av5t")
 fight_overwrite = false
-stat_res = SubResource("Resource_pm48m")
+enemy = Array[ExtResource("3_ye4l4")]([])
+text = "Drink and meal"
+description = "Heal 10HP, - 10Gold"
 gold_cost = 10
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece = "None"
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_2kdv4"]
+script = ExtResource("8_kdhdn")
+next_scene = "res://locations_screen.tscn"
+text = "Leave"
+description = "None"
+gold_cost = 0
 failable = false
 req_stat = "None"
 req_value = 0.0
@@ -69,6 +81,6 @@ req_class = "None"
 script = ExtResource("2_g8liw")
 categorie = "Service"
 title = "Kruchma"
-description = "The dimly lit kruchma is alive with the sound of lively folk music, as a trio of musicians plays a gadulka, tambura, and kaval in the corner, their melodies weaving through the air. Wooden beams stained with smoke support the low ceiling, and the warm glow of an open hearth casts flickering shadows on the rough-hewn walls adorned with woven rugs and copperware. Villagers sit at sturdy wooden tables, sharing stories over clay jugs of rakia and plates of roasted lamb, bread, and fresh cheese"
+description = "The dimly lit kruchma is alive with lively folk music from a gadulka, tambura, and kaval trio. Smoke-stained beams support the low ceiling, and the warm glow of an open hearth casts flickering shadows on the rough-hewn walls adorned with rugs and copperware. Villagers share stories at wooden tables over rakia, roasted lamb, bread, and fresh cheese."
 background = ExtResource("1_0knlt")
-choises = Array[ExtResource("1_gykjm")]([SubResource("Resource_uid4y"), SubResource("Resource_tfntl"), ExtResource("2_twdd2")])
+choises = Array[ExtResource("2_l2lwo")]([SubResource("Resource_vwydy"), SubResource("Resource_q5121"), SubResource("Resource_2kdv4")])

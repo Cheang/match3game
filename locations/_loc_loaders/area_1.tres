@@ -21,5 +21,5 @@ event_loc_numb = 5
 services_loc_numb = 1
 enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx"), ExtResource("6_bpw8g"), ExtResource("7_0c727")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
-event = Array[ExtResource("1_wcv6m")]([ExtResource("4_hnthf"), ExtResource("5_37ayj"), ExtResource("7_65xj8"), ExtResource("11_bklaq")])
+event = Array[ExtResource("1_wcv6m")]([ExtResource("5_37ayj"), ExtResource("11_bklaq"), ExtResource("7_65xj8"), ExtResource("4_hnthf")])
 boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])

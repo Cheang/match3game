@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("3_6sr2k")
-name = "Event1"
+name = "Event"
 description = "You see something happening in the distance, would you go in and investigate."
 pic = ExtResource("2_g0crq")
 next_scene = "res://main_menu.tscn"

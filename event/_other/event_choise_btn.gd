@@ -1,0 +1,59 @@
+extends PanelContainer
+
+const CHOISE_BTN_D = preload("res://event/_other/choise_btn_d.tres")
+const CHOISE_BTN_N = preload("res://event/_other/choise_btn_n.tres")
+
+@onready var btn: Button = $btn
+@onready var sound: AudioStreamPlayer = $sound
+
+@onready var description: RichTextLabel = $MarginContainer/VBoxContainer/description
+@onready var title: Label = $MarginContainer/VBoxContainer/title
+
+var resource: EventChoise
+
+func set_btn():
+	if resource != null:
+		if resource.description == "None":
+			description.visible = false
+		else:
+			description.visible = true
+			description.text = resource.description
+		title.text = resource.text
+		if resource.gold_cost > 0:
+			if resource.gold_cost > Global.cur_char.gold:
+				btn.disabled = true
+				self.add_theme_stylebox_override("panel", CHOISE_BTN_D)
+				title.add_theme_color_override("font_color", Color8(127, 112, 138))
+				description.add_theme_color_override("default_color", Color8(127, 112, 138))
+			else: 
+				btn.disabled = false
+				self.add_theme_stylebox_override("panel", CHOISE_BTN_N)
+				title.add_theme_color_override("font_color", Color8(55, 78, 74))
+				description.add_theme_color_override("default_color", Color8(84, 126, 100))
+
+func _on_btn_pressed() -> void:
+	if Global.game_is_played == true:
+		if resource.gold_cost > 0:
+			Global.cur_char.gold -= resource.gold_cost
+		if resource.req_piece_remove:
+			for piece in Global.cur_char.deck_in_game:
+				if piece.piece_name == resource.req_piece:
+					var index = Global.cur_char.deck_in_game.find(piece)
+					Global.cur_char.deck_in_game.pop_at(index)
+					break
+		if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
+			var stat_to_check = Global.cur_char.get(resource.req_stat)
+			if stat_to_check < resource.req_value:
+				var new_resource: EventChoise = resource.fail_state
+				resource = new_resource
+		match resource.type:
+			1:
+				pass
+			2:
+				pass
+			3:
+				get_parent().get_parent().get_parent().get_parent().get_parent().get_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
+				await get_tree().create_timer(1.5).timeout
+			4:
+				pass
+		resource.activate()
