@@ -5,3 +5,4 @@
 [resource]
 script = ExtResource("1_j8rqe")
 atk_dmg = 1.0
+hand_combo_points_to_give = 1

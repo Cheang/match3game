@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://d1o3yceg846g3"]
+
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_8o62a"]
+[ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="1_sq7wl"]
+[ext_resource type="Texture2D" uid="uid://c63xr5f160uv2" path="res://assets/_blue_icons/blue_icon_6.png" id="2_s42c0"]
+[ext_resource type="PackedScene" uid="uid://bjvtjnwmq714f" path="res://piece/_blue_sq/blue_sq_4.tscn" id="3_5cloo"]
+
+[resource]
+script = ExtResource("1_8o62a")
+piece_to_add = Array[PackedScene]([ExtResource("3_5cloo"), ExtResource("3_5cloo")])
+name = "Block"
+description = "Gain 2 Block"
+base = ExtResource("1_sq7wl")
+icon = ExtResource("2_s42c0")
+passive_boost = Array[String](["strong_body", "way_of_the_fist", "crushing_fist"])
+piece_boost = Array[String]([])
+boost_self = true

@@ -6,7 +6,8 @@
 [ext_resource type="Resource" uid="uid://c6rre6wcakobg" path="res://piece/active effect/hand+1.tres" id="4_b0n2l"]
 
 [node name="red_sq_2" instance=ExtResource("1_j5vma")]
-piece_name = "Fist"
+piece_name = "Punch"
+family = "fists"
 icon_texture = ExtResource("2_imm5c")
 type = 1
 cooldown = 2

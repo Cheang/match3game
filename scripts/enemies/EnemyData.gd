@@ -5,6 +5,7 @@ var enemy: EnemyResource
 #health_variables_____________________________________________________________#
 var max_health: float
 var cur_health: float
+var physical_dmg_reduction: float
 #damageing_variables__________________________________________________________#
 var damage: float
 var attacks_p1: Array[EnemyAttackBase]
@@ -29,6 +30,7 @@ var flesh_spaces: Array[Vector2]
 func set_enemie_stats():
 	max_health = enemy.health
 	cur_health = enemy.health
+	physical_dmg_reduction = enemy.physical_dmg_reduction
 	damage = enemy.damage
 	attacks_p1 = enemy.attacks
 	attacks_p2 = enemy.attacks_p2
@@ -45,11 +47,17 @@ func set_enemie_stats():
 	rock_spaces = enemy.rock_spaces
 	flesh_spaces = enemy.flesh_spaces
 
-func take_dmg(dmg):
+func take_dmg(dmg, dmg_type = 0):
+	
+	if physical_dmg_reduction > 0 and dmg_type == 0:
+		dmg = round(dmg * (1 - physical_dmg_reduction / 100.0))
 	cur_health -= dmg
+	
+	#get this out of here
 	if Global.cur_char.life_steal > 0:
 		var value = round(dmg * Global.cur_char.life_steal)
 		Global.cur_char.set_cur_health(Global.cur_char.cur_health + value)
+	
 	if cur_health <= max_health * .75 and has_phases and phase == 1:
 		phase = 2
 	elif cur_health <= max_health * .5 and has_phases and phase == 2:

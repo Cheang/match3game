@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://cif7a86vr7k3c"]
+
+[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/red_sq_0.tscn" id="1_crt1g"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="2_6dwx7"]
+[ext_resource type="Texture2D" uid="uid://crambqr7imicy" path="res://assets/_red_icons/red_icon_7.png" id="2_32dex"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceHandAttack.gd" id="3_yckvh"]
+
+[sub_resource type="Resource" id="Resource_vdnt5"]
+script = ExtResource("3_yckvh")
+atk_dmg = 1.0
+hand_combo_multy = 3.0
+to_give_before = false
+hand_combo_points_to_give = 1
+
+[node name="red_sq_3" instance=ExtResource("1_crt1g")]
+piece_name = "Uppercut"
+family = "fists"
+icon_texture = ExtResource("2_32dex")
+type = 1
+cooldown = 5
+upgrades_to_increse_cd = 5
+action = Array[ExtResource("2_6dwx7")]([SubResource("Resource_vdnt5")])

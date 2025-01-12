@@ -16,6 +16,7 @@
 
 [resource]
 script = ExtResource("4_kqrmq")
+enemy_needed = 4
 enemy_loc_numb = 4
 event_loc_numb = 5
 services_loc_numb = 1

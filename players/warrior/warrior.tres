@@ -30,6 +30,7 @@ dmg_reduction = 0.0
 start_armor = 0.0
 start_mage_armor = 0.0
 speed = 2
+agility = 0.0
 cooldown_reduction = 0
 start_gold = 10
 gold_chanse = 1

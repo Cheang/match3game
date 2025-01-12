@@ -4,6 +4,7 @@ class_name PieceClass
 @export var piece_name: String
 @export var description: String
 @export var color: String
+@export var family: String
 @export var base_texture: Texture
 @export var icon_texture: Texture
 @export_enum("fluf","normal","one_per_battle","glass") var type: int

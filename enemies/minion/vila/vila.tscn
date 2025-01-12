@@ -147,6 +147,7 @@ animations = [{
 }]
 
 [node name="vila" type="Node2D"]
+use_parent_material = true
 script = ExtResource("1_xyick")
 
 [node name="animP" type="AnimationPlayer" parent="."]
@@ -156,15 +157,18 @@ libraries = {
 autoplay = "idle"
 
 [node name="VilaBody" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(425, 126)
 texture = ExtResource("1_p5epb")
 
 [node name="VilaBow" type="Sprite2D" parent="VilaBody"]
+use_parent_material = true
 position = Vector2(65, 0)
 texture = ExtResource("2_xyfhg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VilaBody/VilaBow"]
 show_behind_parent = true
+use_parent_material = true
 position = Vector2(46.1391, -11)
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_gns0x")

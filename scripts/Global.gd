@@ -20,6 +20,7 @@ var area_cur_boss: Location
 var area_cur_event: Event
 
 #for boss spawning
+var minions_needed: int = 0
 var minions_killed: int = 0
 var boss_added: bool = false
 var boss_beaten: bool = false

@@ -15,5 +15,5 @@ Each punch deals 1 DMG * the amount of Combo Points you have.
 base = ExtResource("1_sqn1k")
 icon = ExtResource("2_xlt1w")
 passive_boost = Array[String]([])
-piece_boost = Array[String](["strong_body"])
+piece_boost = Array[String](["strong_body", "crushing_fist", "block"])
 boost_self = false

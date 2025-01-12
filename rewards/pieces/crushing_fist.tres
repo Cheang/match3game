@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://e3ubvoc776jk"]
+
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_glgu2"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_oqp1a"]
+[ext_resource type="Texture2D" uid="uid://crambqr7imicy" path="res://assets/_red_icons/red_icon_7.png" id="2_ql2mj"]
+[ext_resource type="PackedScene" uid="uid://cif7a86vr7k3c" path="res://piece/_red_sq/red_sq_3.tscn" id="3_3u8cx"]
+
+[resource]
+script = ExtResource("1_glgu2")
+piece_to_add = Array[PackedScene]([ExtResource("3_3u8cx")])
+name = "Crushing Fist"
+description = ""
+base = ExtResource("1_oqp1a")
+icon = ExtResource("2_ql2mj")
+passive_boost = Array[String]([])
+piece_boost = Array[String](["way_of_the_fist", "block"])
+boost_self = true

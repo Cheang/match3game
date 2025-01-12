@@ -3,6 +3,7 @@ class_name EnemyResource
 
 @export var name: String
 @export var health: float
+@export var physical_dmg_reduction: float = 0
 @export var damage: float
 @export var attacks: Array[EnemyAttackBase]
 @export_group("attacks")

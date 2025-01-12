@@ -13,12 +13,12 @@ var resource: EventChoise
 
 func set_btn():
 	if resource != null:
+		title.text = resource.text
 		if resource.description == "None":
 			description.visible = false
 		else:
 			description.visible = true
 			description.text = resource.description
-		title.text = resource.text
 		if resource.gold_cost > 0:
 			if resource.gold_cost > Global.cur_char.gold:
 				btn.disabled = true

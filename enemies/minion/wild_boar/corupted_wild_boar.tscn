@@ -60,6 +60,7 @@ _data = {
 }
 
 [node name="corupted_wild_boar" type="Node2D"]
+use_parent_material = true
 script = ExtResource("1_085bk")
 
 [node name="animP" type="AnimationPlayer" parent="."]
@@ -68,9 +69,11 @@ libraries = {
 }
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(398, 128)
 texture = ExtResource("2_bnrlg")
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(429, 115)
 texture = ExtResource("3_sa5v7")

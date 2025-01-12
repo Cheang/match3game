@@ -60,6 +60,7 @@ _data = {
 }
 
 [node name="wild_boar" type="Node2D"]
+use_parent_material = true
 script = ExtResource("1_encii")
 
 [node name="animP" type="AnimationPlayer" parent="."]
@@ -68,9 +69,11 @@ libraries = {
 }
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(386, 128)
 texture = ExtResource("1_yk3ve")
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
+use_parent_material = true
 position = Vector2(425, 115)
 texture = ExtResource("2_ns8j6")

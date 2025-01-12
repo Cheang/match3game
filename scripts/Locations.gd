@@ -7,6 +7,7 @@ var event_loc_cards: Array[Location]
 var boss_loc_cards: Array[Location] 
 
 func load_locations_from_directory(locations: LocationLoader) -> void:
+	Global.minions_needed = locations.enemy_needed
 	enemy_loc_cards = locations.enemy.duplicate(true)
 	services_loc_cards = locations.services.duplicate(true)
 	event_loc_cards = locations.event.duplicate(true)

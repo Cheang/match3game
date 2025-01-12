@@ -1,13 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://dm1qou102ne4"]
+[gd_scene load_steps=6 format=3 uid="uid://dm1qou102ne4"]
 
 [ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/blue_sq_0.tscn" id="1_acdpg"]
 [ext_resource type="Texture2D" uid="uid://ckfmmrlppmvuc" path="res://assets/_blue_icons/blue_icon_4.png" id="2_niia6"]
 [ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_dvwm1"]
-[ext_resource type="Resource" uid="uid://b2m8wq0s3eg1n" path="res://piece/active effect/mgArmor+3.tres" id="4_35ewf"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseMagicArmor.gd" id="4_n8msk"]
+
+[sub_resource type="Resource" id="Resource_g6use"]
+script = ExtResource("4_n8msk")
+faith_mult = true
+hand_combo_mult = false
+mage_armor = 2
+hand_combo_points_to_give = 0
 
 [node name="blue_sq_3" instance=ExtResource("1_acdpg")]
 piece_name = "Magic Shield"
 icon_texture = ExtResource("2_niia6")
 type = 1
 cooldown = 4
-action = Array[ExtResource("3_dvwm1")]([ExtResource("4_35ewf")])
+action = Array[ExtResource("3_dvwm1")]([SubResource("Resource_g6use")])
