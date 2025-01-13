@@ -17,6 +17,7 @@ var next_attack: EnemyAttackBase
 var type: int
 var has_phases: bool
 var sprite: PackedScene
+var shader: ShaderMaterial
 var health_bar: Texture2D
 
 var phase: int = 1
@@ -39,6 +40,7 @@ func set_enemie_stats():
 	type = enemy.type
 	has_phases = enemy.has_phases
 	sprite = enemy.sprite
+	shader = enemy.shader
 	health_bar = enemy.health_bar
 	
 	empty_spaces = enemy.empty_spaces

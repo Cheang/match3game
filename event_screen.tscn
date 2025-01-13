@@ -156,7 +156,7 @@ theme_override_constants/margin_right = 4
 [node name="title" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer/MarginContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 text = "Title"
 
 [node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
@@ -175,6 +175,7 @@ layout_mode = 2
 theme_override_colors/default_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_constants/line_separation = 8
 theme_override_fonts/normal_font = ExtResource("6_xmift")
+theme_override_font_sizes/normal_font_size = 20
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
 fit_content = true
 

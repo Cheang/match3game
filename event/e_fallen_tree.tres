@@ -21,6 +21,7 @@ base = ExtResource("3_nht5e")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_s7dvr"]
 script = ExtResource("7_5ffkd")

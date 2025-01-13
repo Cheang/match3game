@@ -13,6 +13,7 @@ extends Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
 @onready var stats_overlay: MarginContainer = $stats_overlay
 @onready var texture_button: TextureButton = $stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton
+@onready var texture_button2: Button = $MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/TextureButton
 
 @onready var deck_container: HFlowContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/ScrollContainer/deck_container
 const PIECE_CARD = preload("res://inventory/piece_card.tscn")
@@ -77,10 +78,15 @@ func set_title(text: String):
 	titletxt.text = text
 
 func _on_texture_button_pressed() -> void:
+	var anim_speed = .3
 	var target_1 = Vector2(0,-(stats_overlay.size.y - 200))
 	var target_2 = Vector2(0,(stats_overlay.size.y - 200))
 	var actual_target 
 	if !stats_open:
+		stats_open = true
+		texture_button.disabled = true
+		texture_button2.disabled = true
+		texture_button.button_pressed = true
 		player_class.text = str(Global.cur_char.player_class)
 		stats.expand()
 		actual_target = stats_overlay.position + target_1
@@ -89,20 +95,27 @@ func _on_texture_button_pressed() -> void:
 			var cur_piece = PIECE_CARD.instantiate()
 			deck_container.add_child(cur_piece)
 			cur_piece.set_card(piece)
-		move(actual_target)
-		stats_open = true
+		move(actual_target, anim_speed)
+		await get_tree().create_timer(anim_speed).timeout
+		texture_button.disabled = false
+		texture_button2.disabled = false
 	else:
+		stats_open = false
+		texture_button.disabled = true
+		texture_button2.disabled = true
+		texture_button.button_pressed = false
 		actual_target = stats_overlay.position + target_2
-		move(actual_target, .8)
-		await get_tree().create_timer(.8).timeout
+		move(actual_target, anim_speed)
+		await get_tree().create_timer(anim_speed).timeout
 		var deck_cont_children = deck_container.get_children()
 		for child in deck_cont_children:
 			child.queue_free()
-		stats_open = false
+		texture_button.disabled = false
+		texture_button2.disabled = false
 
 func move(target, time = .3):
 	var tween: Tween = create_tween()
-	tween.tween_property(stats_overlay,"position",target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween.tween_property(stats_overlay,"position",target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN_OUT)
 
 func _on_help_pressed() -> void:
 	pass # Replace with function body.

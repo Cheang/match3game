@@ -2,6 +2,7 @@ extends Control
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var background: TextureRect = $background
+@onready var foreground: TextureRect = $foreground
 @onready var title: Label = $MarginContainer/VBoxContainer/title/MarginContainer/label
 @onready var label: RichTextLabel = $MarginContainer/VBoxContainer/description/MarginContainer/label
 @onready var npc: TextureRect = $npc
@@ -20,6 +21,8 @@ func _initialize_scene():
 		cur_scene.npc.resize(cur_scene.description.size())
 	if cur_scene.background:
 		background.texture = cur_scene.background
+	if cur_scene.foreground:
+		foreground.texture = cur_scene.foreground
 	if cur_scene.title != "None":
 		title.text = cur_scene.title
 	else: 

@@ -154,6 +154,7 @@ size_flags_horizontal = 3
 [node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(61, 61)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control"]
 layout_mode = 1
@@ -197,6 +198,10 @@ text = "9999"
 horizontal_alignment = 1
 vertical_alignment = 3
 visible_characters = 4
+
+[node name="TextureButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer"]
+layout_mode = 2
+flat = true
 
 [node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -683,7 +688,7 @@ text = "Resume"
 [node name="help" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
 disabled = true
-text = "Guide"
+text = "Almanac"
 
 [node name="options" parent="pause_overlay/CenterContainer/VBoxContainer" instance=ExtResource("4_5o83o")]
 layout_mode = 2
@@ -695,6 +700,7 @@ layout_mode = 2
 text = "Main Menu"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/help" to="." method="_on_help_pressed"]

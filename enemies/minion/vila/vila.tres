@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=8 format=3 uid="uid://bk5sqcp28vayd"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://bk5sqcp28vayd"]
 
 [ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_kjfkh"]
 [ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="2_vagb6"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="3_08ell"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="3_kh8ag"]
+[ext_resource type="Material" uid="uid://clq4bt10v4f3t" path="res://assets/shaders/ghost_effect2.tres" id="5_2m358"]
 [ext_resource type="PackedScene" uid="uid://bpjsthpyvd7uh" path="res://enemies/minion/vila/vila.tscn" id="5_svqro"]
 
 [sub_resource type="Resource" id="Resource_li333"]
@@ -36,6 +37,7 @@ speed = 0
 type = 0
 has_phases = false
 sprite = ExtResource("5_svqro")
+shader = ExtResource("5_2m358")
 health_bar = ExtResource("3_08ell")
 empty_spaces = Array[Vector2]([])
 ice_spaces = Array[Vector2]([])

@@ -17,3 +17,4 @@ icon = ExtResource("2_xlt1w")
 passive_boost = Array[String]([])
 piece_boost = Array[String](["strong_body", "crushing_fist", "block"])
 boost_self = false
+rearity = "COMMON"

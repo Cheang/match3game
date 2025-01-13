@@ -21,6 +21,7 @@ icon = ExtResource("3_u5k8t")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_vwydy"]
 script = ExtResource("7_lyp7t")
@@ -48,6 +49,7 @@ icon = ExtResource("3_u5k8t")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_q5121"]
 script = ExtResource("7_lyp7t")

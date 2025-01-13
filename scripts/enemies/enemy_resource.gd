@@ -15,6 +15,7 @@ class_name EnemyResource
 @export_enum("minion", "boss") var type: int
 @export var has_phases: bool
 @export var sprite: PackedScene
+@export var shader: ShaderMaterial
 @export var health_bar: Texture2D
 
 @export var empty_spaces: Array[Vector2]

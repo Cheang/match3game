@@ -18,6 +18,7 @@ var one_time = false
 func _ready() -> void:
 	health.text = "HP: %d / %d" % [EnemyData.cur_health, EnemyData.max_health]
 	enemy_healthbar.value = EnemyData.cur_health * 100.0 / EnemyData.max_health
+	art.set_material(EnemyData.shader)
 
 func _on_enemy_healthbar_value_changed(value: float) -> void:
 	if !one_time:
@@ -29,7 +30,7 @@ func _on_enemy_healthbar_value_changed(value: float) -> void:
 	art.set_material(ATTACKED_GLOW)
 	move(Vector2((value * 2.85), fire.position.y), .5)
 	await get_tree().create_timer(.3).timeout
-	art.set_material(null)
+	art.set_material(EnemyData.shader)
 
 func move(target, time = .3):
 	var tween: Tween = create_tween()

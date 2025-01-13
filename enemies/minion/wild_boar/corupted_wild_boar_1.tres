@@ -11,6 +11,7 @@
 script = ExtResource("4_6m2dk")
 name = "Corupted Gligan"
 health = 30.0
+physical_dmg_reduction = 0.0
 damage = 1.0
 attacks = Array[ExtResource("1_im0rw")]([ExtResource("2_pem77"), ExtResource("2_pem77"), ExtResource("3_jnh2n")])
 attacks_p2 = Array[ExtResource("1_im0rw")]([])

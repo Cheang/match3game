@@ -1,5 +1,6 @@
-[gd_scene load_steps=23 format=3 uid="uid://bpjsthpyvd7uh"]
+[gd_scene load_steps=24 format=3 uid="uid://bpjsthpyvd7uh"]
 
+[ext_resource type="Material" uid="uid://clq4bt10v4f3t" path="res://assets/shaders/ghost_effect2.tres" id="1_35j8m"]
 [ext_resource type="Texture2D" uid="uid://eeus51yti0gh" path="res://assets/enemy/vila/vila_body.png" id="1_p5epb"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_xyick"]
 [ext_resource type="Texture2D" uid="uid://dsq81mnt6x276" path="res://assets/enemy/vila/vila_bow.png" id="2_xyfhg"]
@@ -147,6 +148,7 @@ animations = [{
 }]
 
 [node name="vila" type="Node2D"]
+material = ExtResource("1_35j8m")
 use_parent_material = true
 script = ExtResource("1_xyick")
 

@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://clq4bt10v4f3t"]
+
+[ext_resource type="Shader" path="res://assets/shaders/ghost2.gdshader" id="1_cb6wx"]
+
+[resource]
+shader = ExtResource("1_cb6wx")
+shader_parameter/waveAmplitude = 0.009
+shader_parameter/correctVertex = true
+shader_parameter/waveFrequency = 17.407
+shader_parameter/verticalWave = true
+shader_parameter/keepTransparency = true
+shader_parameter/useTime = true
+shader_parameter/waveSpeed = 5.0
+shader_parameter/progress = 0.0
+shader_parameter/firstHalf = 0.5
+shader_parameter/secondHalf = 0.5
+shader_parameter/freezeFirstHalf = false
+shader_parameter/freezeSecondHalf = false

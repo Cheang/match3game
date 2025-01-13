@@ -21,6 +21,7 @@ base = ExtResource("4_6gs8v")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_olbvy"]
 script = ExtResource("5_drwhw")
@@ -133,6 +134,7 @@ base = ExtResource("4_6gs8v")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_6tjg4"]
 script = ExtResource("5_drwhw")

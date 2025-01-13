@@ -39,6 +39,7 @@ icon = ExtResource("6_isglo")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = false
+rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_cb017"]
 script = ExtResource("6_r32wb")
