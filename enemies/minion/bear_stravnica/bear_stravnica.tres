@@ -42,6 +42,7 @@ animation_time = 0.0
 script = ExtResource("2_idlbb")
 name = "Stravnica Bear"
 health = 42.0
+physical_dmg_reduction = 0.0
 damage = 2.0
 attacks = Array[ExtResource("1_uqo0m")]([SubResource("Resource_po0pf"), SubResource("Resource_vlli0"), SubResource("Resource_iiu06"), SubResource("Resource_xxduf")])
 attacks_p2 = Array[ExtResource("1_uqo0m")]([])

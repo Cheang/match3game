@@ -16,3 +16,4 @@ icon = ExtResource("2_pus3p")
 passive_boost = Array[String]([])
 piece_boost = Array[String](["smoke_screen"])
 boost_self = false
+rearity = "LEGENDARY"

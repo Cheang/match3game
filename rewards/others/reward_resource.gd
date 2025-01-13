@@ -12,6 +12,9 @@ class_name Reward
 @export var piece_boost: Array[String]
 @export var boost_self: bool = false
 
+@export_category("Rarity")
+@export_enum("COMMON", "UNCOMMON", "RARE", "LEGENDARY") var rearity: String = "COMMON"
+
 func activate():
 	pass
 

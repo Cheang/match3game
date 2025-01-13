@@ -16,3 +16,4 @@ icon = ExtResource("3_6c4ai")
 passive_boost = Array[String]([])
 piece_boost = Array[String]([])
 boost_self = true
+rearity = "UNCOMMON"

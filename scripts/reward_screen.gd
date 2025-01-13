@@ -13,6 +13,7 @@ extends Control
 @onready var reroll: Button = $rewards/VBoxContainer/HBoxContainer/reroll
 
 var reward_cards: Array[reward_card]
+var rewards: Array[Reward]
 
 func _ready() -> void:
 	Global.game_is_played = true
@@ -26,34 +27,59 @@ func _process(_delta: float) -> void:
 	reroll.text = "Reroll X" + str(Global.cur_char.rerolls)
 
 func get_rewards():
-	var rewards: Array[Reward]
 	var picked_rewards: Array[Reward]
+	
 	if Global.boss_beaten == true:
 		rewards = Global.cur_char.rewards_passive.duplicate()
 		Global.boss_beaten = false
 	else:
 		rewards = Global.cur_char.rewards_piece.duplicate()
+	
 	for i in range(3):
-		rewards.shuffle()
-		picked_rewards.append(rewards[-1])
+		picked_rewards.append(choose_reward())
 		if i == 1 and picked_rewards[i] == picked_rewards[i-1]:
 			var loops = 0
 			while picked_rewards[i] == picked_rewards[i-1] and loops < 50:
 				picked_rewards.pop_back()
-				rewards.shuffle()
-				picked_rewards.append(rewards[-1])
+				picked_rewards.append(choose_reward())
 				loops += 1
 		if i == 2:
 			if picked_rewards[i] == picked_rewards[i-1] or picked_rewards[i] == picked_rewards[i-2]:
 				var loops = 0
 				while picked_rewards[i] == picked_rewards[i-1] or picked_rewards[i] == picked_rewards[i-2] and loops < 50:
 					picked_rewards.pop_back()
-					rewards.shuffle()
-					picked_rewards.append(rewards[-1])
+					picked_rewards.append(choose_reward())
 					loops += 1
-		reward_cards[i].reward_res = picked_rewards[i]
-		rewards.pop_back()
+		reward_cards[i].reward_resource = picked_rewards[i]
 		reward_cards[i].load_btn()
+
+func choose_reward():
+	var common_rewards = [] 
+	var uncommon_rewards = [] 
+	var rare_rewards = [] 
+	var legendary_rewards = []
+	
+	for rew in rewards:
+		match rew.rearity:
+			"COMMON":
+				common_rewards.append(rew)
+			"UNCOMMON":
+				uncommon_rewards.append(rew)
+			"RARE":
+				rare_rewards.append(rew)
+			"LEGENDARY":
+				legendary_rewards.append(rew)
+	var random_number = randi() % 100
+	if random_number < 50:
+		return common_rewards[randi() % common_rewards.size()]
+	elif random_number < 80 and random_number >= 50 and uncommon_rewards.size() > 0:
+		return uncommon_rewards[randi() % uncommon_rewards.size()]
+	elif random_number < 95 and random_number >= 80 and rare_rewards.size() > 0:
+		return rare_rewards[randi() % rare_rewards.size()]
+	elif random_number <= 100 and random_number >= 95 and legendary_rewards.size() > 0:
+		return legendary_rewards[randi() % legendary_rewards.size()]
+	else:
+		return common_rewards[randi() % common_rewards.size()]
 
 func particles(value: bool):
 	pratic1.visible = value

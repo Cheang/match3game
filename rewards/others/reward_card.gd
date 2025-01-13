@@ -1,7 +1,7 @@
 extends PanelContainer
 class_name reward_card
 
-var reward_res: Reward
+var reward_resource: Reward
 var index: int
 
 @onready var reward_base: TextureRect = $HBoxContainer/reward_texture/reward_base
@@ -11,19 +11,19 @@ var index: int
 
 func _on_choise_btn_pressed() -> void:
 	Global.game_is_played = false
-	reward_res.activate()
-	reward_res.boost()
+	reward_resource.activate()
+	reward_resource.boost()
 	SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	if Global.boss_beaten:
 		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 
 func load_btn():
-	if reward_res.base != null:
-		reward_base.texture = reward_res.base
-	if reward_res.icon != null:
-		reward_icon.texture = reward_res.icon
-	if reward_res.name != null:
-		reward_name.text = reward_res.name
-	if reward_res.description != null:
-		reward_decription.text = reward_res.description
+	if reward_resource.base != null:
+		reward_base.texture = reward_resource.base
+	if reward_resource.icon != null:
+		reward_icon.texture = reward_resource.icon
+	if reward_resource.name != null:
+		reward_name.text = reward_resource.name
+	if reward_resource.description != null:
+		reward_decription.text = reward_resource.description
