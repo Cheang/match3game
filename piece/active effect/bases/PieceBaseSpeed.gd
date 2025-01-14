@@ -5,6 +5,6 @@ class_name PieceBaseSpeed
 
 func activate():
 	if criting:
-		Global.cur_char.moves_left += moves_to_give * 2
+		Global.cur_char.add_stat("moves_left", moves_to_give * 2)
 	else:
-		Global.cur_char.moves_left += moves_to_give
+		Global.cur_char.add_stat("moves_left", moves_to_give)

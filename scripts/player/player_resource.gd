@@ -8,7 +8,9 @@ class_name PlayerResource
 
 @export_group("Defence")
 @export var toughness: float
-@export var dmg_reduction: float
+@export var dmg_reduction_flat: float
+@export var dmg_reduction: float = 0
+@export var max_dmg_reduction: float = 90
 @export var start_armor: float = 0
 @export var start_mage_armor: float = 0
 
@@ -33,6 +35,7 @@ class_name PlayerResource
 @export var fluf_damage: float
 @export_range(0, 100) var crit_chanse: int 
 @export var crit_mutly: float 
+@export var start_hand_combo: float = 0
 
 #Decks
 @export_group("Decks")
@@ -58,33 +61,59 @@ var rerolls: int = 0
 var hand_combo: int = 0
 var flesh_coruption: bool = false
 
+#Signals
+signal updateUI(stat: String)
 
-func take_damage(enemy_damage, piercing: bool = false):
-	enemy_damage -= dmg_reduction
-	if dodging:
+func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
+	if dmg_reduction_flat > 0:
+		enemy_damage -= clamp(dmg_reduction_flat, 0, enemy_damage - 1)
+	if dmg_reduction > 0:
+		enemy_damage = round(enemy_damage * (1 - clamp(dmg_reduction, 0, max_dmg_reduction) / 100.0))
+	if dodging and type == 0:
 		dodging = false
-		return
-	if !piercing:
-		var temp
-		temp = cur_mage_armor - enemy_damage 
-		if temp >= 0:
-			cur_mage_armor = temp
+		enemy_damage = 0
+	if cur_mage_armor > 0 and enemy_damage > 0 and !piercing:
+		var temp_dmg
+		temp_dmg = cur_mage_armor - enemy_damage
+		if temp_dmg >= 0:
+			cur_mage_armor = temp_dmg
+			enemy_damage = 0
 		else:
 			cur_mage_armor = 0
-			temp = cur_armor + temp
-			if temp >= 0:
-				cur_armor = temp
-			else:
-				cur_armor = 0
-				cur_health += temp
-	else:
-		var temp
-		temp = cur_mage_armor - enemy_damage
-		if temp >= 0:
-			cur_mage_armor = temp
+			enemy_damage = abs(temp_dmg)
+	if cur_armor > 0 and enemy_damage > 0:
+		var temp_dmg
+		temp_dmg = cur_armor - enemy_damage
+		if temp_dmg >= 0:
+			cur_armor = temp_dmg
+			enemy_damage = 0
 		else:
-			cur_mage_armor = 0
-			cur_health += temp
+			cur_armor = 0
+			enemy_damage = abs(temp_dmg)
+	if enemy_damage > 0:
+		Global.cur_char.add_stat("cur_health",enemy_damage*-1)
+
+func add_stat(stat: String, value):
+	if stat in self:
+		if stat == "cur_health":
+			set(stat, clamp(get(stat)+value, 0, max_health))
+			updateUI.emit(str(stat))
+			return
+		set(stat, get(stat)+value)
+		updateUI.emit(str(stat))
+	else: 
+		print("Stat does not exist: ", stat)
+
+func set_stat(stat: String, value):
+	if stat in self:
+		if stat == "cur_health":
+			set(stat, clamp(value, 0, max_health))
+			updateUI.emit(str(stat))
+			return
+		set(stat, value)
+		updateUI.emit(str(stat))
+	else: 
+		print("Stat does not exist: ", stat)
 
 func add_piece(deck_to_add, pieces):
 	if deck_to_add and pieces:
@@ -99,23 +128,20 @@ func unpack_deck(deck_to_unpack, target):
 				target.append(instance)
 
 func reset_stats_at_beging_of_fight():
-	dodging = false
-	moves_left = speed
-	hand_combo = 0
-	cur_armor = start_armor
-	cur_mage_armor = start_mage_armor
+	set_stat("dodging", false)
+	set_stat("moves_left", speed)
+	set_stat("hand_combo", start_hand_combo)
+	set_stat("cur_armor", start_armor)
+	set_stat("cur_mage_armor", start_mage_armor)
 
 func reset_stats_at_the_beging_of_turn():
-	cur_armor = 0
-	hand_combo = 0
-	moves_left = speed
+	set_stat("cur_armor", 0)
+	set_stat("hand_combo", start_hand_combo)
+	set_stat("moves_left", speed)
 
 func set_stats_at_beging_of_game():
 	deck_in_game.clear()
 	unpack_deck(deck, deck_in_game)
-	set_cur_health(max_health)
-	gold = start_gold
-	rerolls = start_reroll
-
-func set_cur_health(value: float):
-	cur_health = clamp(value, 0, max_health)
+	set_stat("cur_health", max_health)
+	set_stat("gold", start_gold)
+	set_stat("rerolls", start_reroll)

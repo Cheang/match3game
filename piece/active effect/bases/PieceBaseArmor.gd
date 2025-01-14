@@ -16,4 +16,4 @@ func activate():
 	if criting:
 		f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
 
-	Global.cur_char.cur_armor += f_value
+	Global.cur_char.add_stat("cur_armor", f_value)

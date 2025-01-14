@@ -58,7 +58,7 @@ func take_dmg(dmg, dmg_type = 0):
 	#get this out of here
 	if Global.cur_char.life_steal > 0:
 		var value = round(dmg * Global.cur_char.life_steal)
-		Global.cur_char.set_cur_health(Global.cur_char.cur_health + value)
+		Global.cur_char.add_stat("cur_health",value)
 	
 	if cur_health <= max_health * .75 and has_phases and phase == 1:
 		phase = 2

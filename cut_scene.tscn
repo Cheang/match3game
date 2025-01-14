@@ -1,11 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://dxdqwb08tp1i4"]
+[gd_scene load_steps=14 format=3 uid="uid://dxdqwb08tp1i4"]
 
 [ext_resource type="Script" path="res://scripts/cut_scene.gd" id="1_6c3w6"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/level_ui/event/cutscene_bg_kruchma_outside.png" id="2_lpdc2"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_o1tve"]
 [ext_resource type="Texture2D" uid="uid://gyx6asv6mijb" path="res://assets/level_ui/event/cutscent_npc_empty.png" id="4_k8dlh"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_motxn"]
-[ext_resource type="Texture2D" uid="uid://bqdo3lceknedg" path="res://assets/level_ui/btn/btn_disabled_2.png" id="5_bsk47"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="6_aq4i2"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="8_pj72e"]
 
@@ -46,12 +45,7 @@ _data = {
 "show_text": SubResource("Animation_0ppqf")
 }
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jkbsw"]
-texture = ExtResource("5_bsk47")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gkynj"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bvol0"]
 line_spacing = 0.0
@@ -161,7 +155,7 @@ layout_mode = 2
 
 [node name="title" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_jkbsw")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gkynj")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/title"]
 layout_mode = 2
@@ -170,6 +164,7 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 
 [node name="label" type="Label" parent="MarginContainer/VBoxContainer/title/MarginContainer"]
+visible = false
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "Ttile"

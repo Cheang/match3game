@@ -1,21 +1,15 @@
-[gd_scene load_steps=16 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene load_steps=15 format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
-[ext_resource type="Texture2D" uid="uid://bqdo3lceknedg" path="res://assets/level_ui/btn/btn_disabled_2.png" id="4_b22pl"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="5_biyog"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="6_4rf35"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="6_wnyme"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="6_xmift"]
 [ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/level_ui/btn/btn_2_hover.png" id="8_qp4wt"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sf7oc"]
-texture = ExtResource("4_b22pl")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cn658"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mhvcm"]
 texture = ExtResource("5_biyog")
@@ -145,7 +139,7 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_sf7oc")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_cn658")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer"]
 layout_mode = 2

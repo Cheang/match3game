@@ -47,8 +47,6 @@ signal make_rock
 signal damage_flesh
 @warning_ignore("unused_signal")
 signal make_flesh
-@warning_ignore("unused_signal")
-signal move_made
 
 #slap back
 var piece_one = null
@@ -100,6 +98,9 @@ func restricted_move(place: Vector2):
 func spawn_obstacles(ob_spaces, signal_str: String):
 	for i in ob_spaces.size():
 		emit_signal(signal_str, ob_spaces[i])
+
+func overwrite_obstacles():
+	pass
 
 func spawn_fluf_piece(deck_to_use):
 	for i in range(grd_width):
@@ -321,9 +322,8 @@ func after_refill():
 					find_matches()
 					return
 	if enemy_attacked == false:
-		Global.cur_char.moves_left -= 1
+		Global.cur_char.add_stat("moves_left", -1)
 	enemy_attacked = false
-	emit_signal("move_made")
 	cooldown_and_refill_deck()
 	if !damaged_flesh:
 		generate_flesh()
@@ -441,6 +441,8 @@ func check_flesh(col, row):
 		emit_signal("damage_flesh", Vector2(col, row+1))
 	if row > 0:
 		emit_signal("damage_flesh", Vector2(col, row-1))
+
+
 
 #On Signal __________________________________________________
 func _on_destroy_timer_timeout() -> void:
