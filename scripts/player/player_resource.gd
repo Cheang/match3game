@@ -1,64 +1,64 @@
 extends Resource
 class_name PlayerResource
-
-#Health & Armor
+#------------------------------------------------------------------------------#
+@export_category("Player Stats")
+@export var player_class: String
+#------------------------------------------------------------------------------#
 @export_group("Health")
 @export var max_health: float
+var cur_health: float 
 @export var life_steal: float
-
+#------------------------------------------------------------------------------#
 @export_group("Defence")
 @export var toughness: float
+@export var start_armor: float = 0
+@export var start_mage_armor: float = 0
+var cur_armor: float = 0
+var cur_mage_armor: float = 0
+@export_subgroup("Damage Rediction")
 @export var dmg_reduction_flat: float
 @export var dmg_reduction: float = 0
 @export var max_dmg_reduction: float = 90
-@export var start_armor: float = 0
-@export var start_mage_armor: float = 0
-
-#Utility
+#------------------------------------------------------------------------------#
 @export_group("Utility")
 @export var speed: int
+var moves_left: int = 0
 @export var agility: float
+var dodging: bool = false
 @export var cooldown_reduction: int
-@export var start_gold: int
-@export_range(0, 100) var gold_chanse: int
 @export var start_reroll: int
-
-#Magic
+var rerolls: int = 0
+@export_subgroup("Gold")
+@export var start_gold: int
+var gold: int = 0
+@export_range(0, 100) var gold_chanse: int
+#------------------------------------------------------------------------------#
 @export_group("Magic")
 @export var mana: float 
 @export var faith: float
-
-#Damage
+#------------------------------------------------------------------------------#
 @export_group("Damage")
 @export var strength: float
 @export var proficiency: float 
 @export var fluf_damage: float
+@export_subgroup("Critical")
 @export_range(0, 100) var crit_chanse: int 
 @export var crit_mutly: float 
+@export_subgroup("")
 @export var start_hand_combo: float = 0
-
-#Decks
-@export_group("Decks")
+var hand_combo: int = 0
+#------------------------------------------------------------------------------#
+@export_category("Art")
+@export var sprite: PackedScene
+#------------------------------------------------------------------------------#
+@export_category("Decks")
 @export var deck: Array[PackedScene]
+var deck_in_game: Array[PieceClass]
 @export var fluf: Array[PackedScene]
 @export var rewards_piece: Array[Reward]
 @export var rewards_passive: Array[Reward]
 
-#Art
-@export_group("Art")
-@export var player_class: String
-@export var sprite: PackedScene
-
-#Stats that change in-game
-var deck_in_game: Array[PieceClass]
-var cur_health: float 
-var dodging: bool = false
-var cur_armor: float = 0
-var cur_mage_armor: float = 0
-var moves_left: int = 0
-var gold: int = 0
-var rerolls: int = 0
-var hand_combo: int = 0
+#Flags
 var flesh_coruption: bool = false
 
 #Signals

@@ -9,16 +9,16 @@
 [resource]
 script = ExtResource("4_nyvva")
 name = "Gligan"
+type = 0
 max_health = 25.0
 physical_dmg_reduction = 0.0
 damage = 2.0
+has_phases = false
 attacks = Array[ExtResource("1_tjo2k")]([ExtResource("2_tvnfp"), ExtResource("2_tvnfp")])
 attacks_p2 = Array[ExtResource("1_tjo2k")]([])
 attacks_p3 = Array[ExtResource("1_tjo2k")]([])
 attacks_p4 = Array[ExtResource("1_tjo2k")]([])
 speed = 1
-type = 0
-has_phases = false
 sprite = ExtResource("5_bcqb4")
 health_bar = ExtResource("3_dnakj")
 empty_spaces = Array[Vector2]([])

@@ -10,10 +10,12 @@ class_name PieceBaseAttack
 @export var atk_numb: int
 
 func activate():
+	var cur_char = Global.cur_char
+	var cur_enemy = Global.cur_enemy
+	
 	for i in atk_numb:
-		var f_value: float
-		f_value = atk_dmg + Global.cur_char.proficiency
+		var f_value: float = atk_dmg + cur_char.proficiency
 		if criting:
-			f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
+			f_value *= (1 + cur_char.crit_mutly / 100)
 
-		Global.cur_enemy.take_dmg(f_value, type)
+		cur_enemy.take_dmg(f_value, type)

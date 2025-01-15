@@ -52,7 +52,7 @@ func _on_btn_pressed() -> void:
 			2:
 				pass
 			3:
-				get_parent().get_parent().get_parent().get_parent().get_parent().get_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
+				get_parent().get_parent().get_parent().get_parent().get_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
 				await get_tree().create_timer(1.5).timeout
 			4:
 				pass

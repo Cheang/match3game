@@ -3,17 +3,19 @@ class_name PieceBaseMagicArmor
 
 @export var faith_mult: bool = true
 @export var hand_combo_mult: bool = false
-
 @export var mage_armor: int
 
 func activate():
-	var f_value
+	var cur_char = Global.cur_char
 	
-	f_value = mage_armor + upgrade + Global.cur_char.faith*float(faith_mult)
+	#Calculate base mage armor
+	var f_value: float = mage_armor + upgrade + cur_char.faith*float(faith_mult)
+	#Apply combo multypler
 	if hand_combo_mult:
-		Global.cur_char.hand_combo += hand_combo_points_to_give
-		f_value = f_value * Global.cur_char.hand_combo
+		cur_char.hand_combo += hand_combo_points_to_give
+		f_value *= cur_char.hand_combo
+	#Apply crit
 	if criting:
-		f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
-
-	Global.cur_char.add_stat("cur_mage_armor", f_value)
+		f_value *= (1 + cur_char.crit_mutly / 100)
+	#Apply mage armor
+	cur_char.add_stat("cur_mage_armor", f_value)

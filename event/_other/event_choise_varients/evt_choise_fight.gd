@@ -7,6 +7,6 @@ var type: int = 2
 
 func activate():
 	Global.game_is_played = false
-	Global.cur_enemy.set_up_enemy(enemy.pick_random())
+	Global.set_up_enemy(enemy.pick_random())
 
 	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

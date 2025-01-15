@@ -7,8 +7,8 @@ var resource: Event
 @onready var pause: Control = $pause
 
 @onready var event_bg: TextureRect = $event_bg
-@onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/event_text
-@onready var choises_holder: VBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/choises_holder
+@onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/event_text
+@onready var choises_holder: VBoxContainer = $MarginContainer/VBoxContainer/choises_holder
 
 @onready var reward: Control = $reward
 

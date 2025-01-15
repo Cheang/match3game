@@ -53,6 +53,7 @@ amount = 10
 process_material = SubResource("ParticleProcessMaterial_gop76")
 texture = ExtResource("2_owuue")
 lifetime = 3.0
+visibility_rect = Rect2(-283, -36, 567, 338)
 
 [node name="GPUParticles2D2" type="GPUParticles2D" parent="background"]
 visible = false
@@ -61,6 +62,7 @@ amount = 10
 process_material = SubResource("ParticleProcessMaterial_gop76")
 texture = ExtResource("3_5u0sd")
 lifetime = 3.0
+visibility_rect = Rect2(-283, -36, 567, 338)
 
 [node name="GPUParticles2D3" type="GPUParticles2D" parent="background"]
 visible = false
@@ -69,6 +71,7 @@ amount = 10
 process_material = SubResource("ParticleProcessMaterial_gop76")
 texture = ExtResource("4_qgy55")
 lifetime = 3.0
+visibility_rect = Rect2(-283, -36, 567, 338)
 
 [node name="GPUParticles2D4" type="GPUParticles2D" parent="background"]
 visible = false
@@ -77,6 +80,7 @@ amount = 15
 process_material = SubResource("ParticleProcessMaterial_gop76")
 texture = ExtResource("5_wbtxd")
 lifetime = 3.0
+visibility_rect = Rect2(-283, -36, 567, 338)
 
 [node name="rewards" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -125,13 +129,14 @@ theme_override_font_sizes/font_size = 22
 text = "Reroll"
 
 [node name="Control" type="Control" parent="rewards/VBoxContainer"]
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="pause" parent="." instance=ExtResource("9_pgo6q")]
 layout_mode = 1
 player_stats_btn = false
 title_text = "Pick a reward"
 
+[connection signal="child_entered_tree" from="background" to="." method="_on_background_child_entered_tree"]
 [connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
 [connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]

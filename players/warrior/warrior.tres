@@ -23,20 +23,21 @@
 
 [resource]
 script = ExtResource("10_ljvcx")
+player_class = "Warrior"
 max_health = 20.0
 life_steal = 0.0
 toughness = 0.0
+start_armor = 0.0
+start_mage_armor = 0.0
 dmg_reduction_flat = 0.0
 dmg_reduction = 0.0
 max_dmg_reduction = 90.0
-start_armor = 0.0
-start_mage_armor = 0.0
 speed = 2
 agility = 0.0
 cooldown_reduction = 0
+start_reroll = 3
 start_gold = 10
 gold_chanse = 1
-start_reroll = 3
 mana = 0.0
 faith = 0.0
 strength = 0.0
@@ -45,9 +46,8 @@ fluf_damage = 0.0
 crit_chanse = 5
 crit_mutly = 100.0
 start_hand_combo = 0.0
+sprite = ExtResource("11_pi64o")
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
 rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("16_5drnh"), ExtResource("16_6rpfp")])
 rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("16_5drnh"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
-player_class = "Warrior"
-sprite = ExtResource("11_pi64o")

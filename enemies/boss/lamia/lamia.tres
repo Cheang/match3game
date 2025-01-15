@@ -12,16 +12,16 @@
 [resource]
 script = ExtResource("7_fkeyq")
 name = "Lamia"
+type = 1
 max_health = 65.0
 physical_dmg_reduction = 0.0
 damage = 2.0
+has_phases = false
 attacks = Array[ExtResource("1_j17yo")]([ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("3_6p5om"), ExtResource("4_tfsx7"), ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("5_6ib0x")])
 attacks_p2 = Array[ExtResource("1_j17yo")]([])
 attacks_p3 = Array[ExtResource("1_j17yo")]([])
 attacks_p4 = Array[ExtResource("1_j17yo")]([])
 speed = 1
-type = 1
-has_phases = false
 sprite = ExtResource("8_c4omb")
 health_bar = ExtResource("6_vvsti")
 empty_spaces = Array[Vector2]([Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(6, 7), Vector2(7, 7), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1)])

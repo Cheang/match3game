@@ -28,7 +28,7 @@ var freeze_spaces: Array[Vector2]
 var rock_spaces: Array[Vector2]
 var flesh_spaces: Array[Vector2]
 var damaged_flesh: bool = false
-@onready var grd_flesh: Node2D = $"../grd_flesh"
+@onready var grd_flesh: Node2D = $grd_flesh
 
 #obstacles signals
 @warning_ignore("unused_signal")
@@ -100,6 +100,7 @@ func spawn_obstacles(ob_spaces, signal_str: String):
 	for i in ob_spaces.size():
 		emit_signal(signal_str, ob_spaces[i])
 
+#add this
 func overwrite_obstacles():
 	pass
 
@@ -270,7 +271,7 @@ func mark_for_destruction(space_to_destroy: Array[Vector2]):
 		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(false)
 	get_node("destroy_timer").start()
 
-func destroy_matched():
+func destroy_matched(should_collapse: bool = true):
 	var was_matched = false
 	for i in grd_width:
 		for j in grd_height:
@@ -292,7 +293,7 @@ func destroy_matched():
 						all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
 	move_checked = true
-	if was_matched:
+	if was_matched and should_collapse:
 		get_node("collapse_timer").start()
 	else:
 		swap_back()
@@ -322,17 +323,17 @@ func after_refill():
 				if match_at(i,j,all_pieces[i][j].color):
 					find_matches()
 					return
-	if enemy_attacked == false:
-		Global.cur_char.add_stat("moves_left", -1)
 	enemy_attacked = false
 	cooldown_and_refill_deck()
+	state = move
+	if enemy_attacked == false:
+		Global.cur_char.add_stat("moves_left", -1)
 	if !damaged_flesh:
 		generate_flesh()
 	if flesh_spaces.size() >= 5:
-		Global.cur_char.flesh_coruption = true
+		Global.cur_char.set_stat("flesh_coruption", true)
 	else: 
-		Global.cur_char.flesh_coruption = false
-	state = move
+		Global.cur_char.set_stat("flesh_coruption", false)
 	move_checked = false
 	damaged_flesh = false
 

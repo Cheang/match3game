@@ -7,13 +7,15 @@ class_name PieceBaseArmor
 @export var armor: float
 
 func activate():
-	var f_value
-	
-	f_value = armor + upgrade + Global.cur_char.toughness*float(toughness_mult)
+	var cur_char = Global.cur_char
+	#Calculate base armor
+	var f_value: float = armor + upgrade + cur_char.toughness*float(toughness_mult)
+	#Apply combo multypler
 	if hand_combo_mult:
-		Global.cur_char.hand_combo += hand_combo_points_to_give
-		f_value = f_value * Global.cur_char.hand_combo
+		cur_char.hand_combo += hand_combo_points_to_give
+		f_value *= cur_char.hand_combo
+	#Apply crit
 	if criting:
-		f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
-
-	Global.cur_char.add_stat("cur_armor", f_value)
+		f_value *= (1 + cur_char.crit_mutly / 100)
+	#Apply armor
+	cur_char.add_stat("cur_armor", f_value)

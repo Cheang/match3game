@@ -108,15 +108,19 @@ bus = &"SFX"
 script = ExtResource("4_6newg")
 
 [node name="grd_ice" type="Node2D" parent="grd"]
+z_index = 1
 script = ExtResource("4_a7uqp")
 
 [node name="grd_freeze" type="Node2D" parent="grd"]
+z_index = 1
 script = ExtResource("4_lguch")
 
 [node name="grd_rock" type="Node2D" parent="grd"]
+z_index = 1
 script = ExtResource("7_hc5va")
 
 [node name="grd_flesh" type="Node2D" parent="grd"]
+z_index = 1
 script = ExtResource("8_jpie2")
 
 [node name="middleground" type="Sprite2D" parent="."]

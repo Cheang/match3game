@@ -1,36 +1,42 @@
 extends Resource
 class_name EnemyResource
-
+#------------------------------------------------------------------------------#
+@export_category("Enemy Stats")
 @export var name: String
+@export_enum("minion", "boss", "miniboss") var type: int
+#------------------------------------------------------------------------------#
+@export_group("Defence")
 @export var max_health: float
 var cur_health: float
 
 @export var physical_dmg_reduction: float = 0
-
+#------------------------------------------------------------------------------#
+@export_group("Offence")
 @export var damage: float
+@export var has_phases: bool = false
+var phase: int = 1
 @export var attacks: Array[EnemyAttackBase]
-@export_group("attacks")
+@export_subgroup("Phase Attacks ")
 @export var attacks_p2: Array[EnemyAttackBase]
 @export var attacks_p3: Array[EnemyAttackBase]
 @export var attacks_p4: Array[EnemyAttackBase]
 var next_attack: EnemyAttackBase
-
-@export_group("")
-@export var speed: int
-@export_enum("minion", "boss") var type: int
-@export var has_phases: bool
+#------------------------------------------------------------------------------#
+@export_group("Utility")
+@export var speed: int = 1
+#------------------------------------------------------------------------------#
+@export_category("Art")
 @export var sprite: PackedScene
+@export var health_bar: Texture2D = preload("res://assets/level_ui/enemy_health.png")
 @export var shader: ShaderMaterial
-@export var health_bar: Texture2D
-
+#------------------------------------------------------------------------------#
+@export_category("Obstacles")
 @export var empty_spaces: Array[Vector2]
 @export var ice_spaces: Array[Vector2]
 @export var freeze_spaces: Array[Vector2]
 @export var rock_spaces: Array[Vector2]
 @export var flesh_spaces: Array[Vector2]
-
-var phase: int = 1
-
+#------------------------------------------------------------------------------#
 
 #signals
 signal destroyPieces(space_to_destroy: Array[Vector2])

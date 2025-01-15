@@ -22,7 +22,6 @@ func _ready() -> void:
 	grd.state = grd.move
 
 func _on_enemy_enemy_attacked() -> void:
-	await get_tree().create_timer(.5).timeout
 	Global.cur_char.reset_stats_at_the_beging_of_turn()
 	enemy_attacked_once = false
 	trun_changer.change_turn(0)

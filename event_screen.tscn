@@ -111,7 +111,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 75
+theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 75
 
@@ -124,47 +124,39 @@ theme_override_constants/separation = 20
 custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 15
-
-[node name="separator" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
 size_flags_vertical = 3
 
-[node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_cn658")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 
-[node name="title" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer/MarginContainer"]
+[node name="title" type="Label" parent="MarginContainer/VBoxContainer/event_text/PanelContainer/MarginContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_font_sizes/font_size = 42
 text = "Title"
 
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_mhvcm")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer2"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 0
 
-[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/event_text/PanelContainer2/MarginContainer"]
+[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2/MarginContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_constants/line_separation = 8
@@ -173,14 +165,11 @@ theme_override_font_sizes/normal_font_size = 20
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
 fit_content = true
 
-[node name="choises_holder" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="choises_holder" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 2
-
-[node name="separator2" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
 
 [node name="pause" parent="." instance=ExtResource("6_4rf35")]
 layout_mode = 1

@@ -3,8 +3,12 @@ class_name PieceBaseSpeed
 
 @export var moves_to_give: int
 
+
+
 func activate():
+	var cur_char = Global.cur_char
+	
 	if criting:
-		Global.cur_char.add_stat("moves_left", moves_to_give * 2)
+		cur_char.add_stat("moves_left", moves_to_give * 2)
 	else:
-		Global.cur_char.add_stat("moves_left", moves_to_give)
+		cur_char.add_stat("moves_left", moves_to_give)
