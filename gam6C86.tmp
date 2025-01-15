@@ -1,0 +1,393 @@
+[gd_scene load_steps=34 format=3 uid="uid://fkwi6d3pn4c4"]
+
+[ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
+[ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
+[ext_resource type="Script" path="res://scripts/game_master.gd" id="1_q6hof"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd.gd" id="2_i4bg5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_audio.gd" id="4_6newg"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_ice.gd" id="4_a7uqp"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_freeze.gd" id="4_lguch"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy.gd" id="5_7ysvn"]
+[ext_resource type="Texture2D" uid="uid://bjgsv4h0k734v" path="res://assets/level_ui/grd_border.png" id="7_238bl"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_rock.gd" id="7_hc5va"]
+[ext_resource type="Texture2D" uid="uid://bxumd3prjmw73" path="res://assets/level_ui/enemy_health_panel.png" id="8_3apa5"]
+[ext_resource type="Script" path="res://scripts/grid_scripts/grd_flesh.gd" id="8_jpie2"]
+[ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="9_a7vs4"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="10_lbrow"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="11_ghvty"]
+[ext_resource type="Texture2D" uid="uid://dbg7s86dsv7pt" path="res://assets/level_ui/player_health.png" id="12_88ip3"]
+[ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="12_tovol"]
+[ext_resource type="Texture2D" uid="uid://bmulmclix0w0" path="res://assets/level_ui/player_health_panel.png" id="13_fditc"]
+[ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
+[ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
+[ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
+[ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
+[ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="22_kmwuu"]
+
+[sub_resource type="Gradient" id="Gradient_0drn5"]
+offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
+colors = PackedColorArray(0.976471, 0.760784, 0.168627, 1, 0.960784, 0.490196, 0.290196, 1, 0.917647, 0.309804, 0.211765, 1, 0.701961, 0.219608, 0.192157, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fxgpp"]
+gradient = SubResource("Gradient_0drn5")
+
+[sub_resource type="Curve" id="Curve_i0e58"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.208791), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_raivq"]
+curve = SubResource("Curve_i0e58")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4x0u5"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(-2, 26, 1)
+direction = Vector3(0, -1, 0)
+spread = 30.0
+initial_velocity_min = 90.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_raivq")
+color_ramp = SubResource("GradientTexture1D_fxgpp")
+turbulence_enabled = true
+turbulence_noise_strength = 0.88
+turbulence_noise_scale = 2.825
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxi5x"]
+bg_color = Color(0.180392, 0.133333, 0.184314, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_im0vd"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(-2, 26, 1)
+direction = Vector3(0, -1, 0)
+spread = 30.0
+initial_velocity_min = 90.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_raivq")
+color_ramp = SubResource("GradientTexture1D_fxgpp")
+turbulence_enabled = true
+turbulence_noise_strength = 0.88
+turbulence_noise_scale = 2.825
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]
+bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
+
+[node name="game_window" type="Node2D"]
+script = ExtResource("1_q6hof")
+
+[node name="background" type="Sprite2D" parent="."]
+texture = ExtResource("1_h0vfo")
+centered = false
+offset = Vector2(0, -163)
+
+[node name="grd" type="Node2D" parent="."]
+script = ExtResource("2_i4bg5")
+
+[node name="destroy_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="collapse_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="refill_timer" type="Timer" parent="grd"]
+wait_time = 0.2
+one_shot = true
+
+[node name="audioPlayer" type="AudioStreamPlayer" parent="grd"]
+volume_db = -20.0
+script = ExtResource("4_6newg")
+
+[node name="grd_ice" type="Node2D" parent="."]
+script = ExtResource("4_a7uqp")
+
+[node name="grd_freeze" type="Node2D" parent="."]
+script = ExtResource("4_lguch")
+
+[node name="grd_rock" type="Node2D" parent="."]
+script = ExtResource("7_hc5va")
+
+[node name="grd_flesh" type="Node2D" parent="."]
+script = ExtResource("8_jpie2")
+
+[node name="middleground" type="Sprite2D" parent="."]
+texture = ExtResource("1_ioeul")
+centered = false
+offset = Vector2(0, -163)
+
+[node name="enemy" type="Node2D" parent="."]
+script = ExtResource("5_7ysvn")
+
+[node name="art" type="Node2D" parent="enemy"]
+
+[node name="border3" type="Sprite2D" parent="enemy"]
+texture = ExtResource("8_3apa5")
+centered = false
+
+[node name="enemy_healthbar" type="TextureProgressBar" parent="enemy"]
+offset_left = 34.0
+offset_top = 179.0
+offset_right = 319.0
+offset_bottom = 225.0
+value = 100.0
+texture_under = ExtResource("9_a7vs4")
+texture_progress = ExtResource("10_lbrow")
+
+[node name="fire_particles" type="GPUParticles2D" parent="enemy/enemy_healthbar"]
+visible = false
+position = Vector2(285, 23)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_4x0u5")
+lifetime = 0.5
+speed_scale = 0.7
+randomness = 1.0
+fixed_fps = 60
+
+[node name="health" type="Label" parent="enemy/enemy_healthbar"]
+layout_mode = 2
+offset_top = 15.0
+offset_right = 285.0
+offset_bottom = 35.0
+size_flags_horizontal = 3
+theme = ExtResource("12_tovol")
+theme_override_font_sizes/font_size = 20
+text = "Health : "
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="enemy"]
+offset_left = 34.0
+offset_top = 161.0
+offset_right = 319.0
+offset_bottom = 176.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lxi5x")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="enemy/PanelContainer"]
+layout_mode = 2
+
+[node name="attack" type="Label" parent="enemy/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("12_tovol")
+text = "15 :Attack"
+
+[node name="enemy_audio" type="AudioStreamPlayer" parent="enemy"]
+
+[node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
+script = ExtResource("11_ghvty")
+bool_buff_texture = [NodePath("health_buffs/buff_container/dodging")]
+bool_buff_stat = Array[String](["dodging"])
+buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_buffs/buff_container/marmor"), NodePath("health_buffs/buff_container/hndcombo")]
+buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
+
+[node name="art" type="Node2D" parent="player"]
+
+[node name="border3" type="Sprite2D" parent="player"]
+visible = false
+texture = ExtResource("13_fditc")
+centered = false
+
+[node name="health_buffs" type="VBoxContainer" parent="player"]
+offset_left = 256.0
+offset_top = 845.0
+offset_right = 541.0
+offset_bottom = 922.0
+
+[node name="player_healthbar" type="TextureProgressBar" parent="player/health_buffs"]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("9_a7vs4")
+texture_progress = ExtResource("12_88ip3")
+
+[node name="fire_particles" type="GPUParticles2D" parent="player/health_buffs/player_healthbar"]
+visible = false
+position = Vector2(285, 23)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_im0vd")
+lifetime = 0.5
+speed_scale = 0.7
+randomness = 1.0
+fixed_fps = 60
+
+[node name="health" type="Label" parent="player/health_buffs/player_healthbar"]
+layout_mode = 2
+offset_top = 15.0
+offset_right = 285.0
+offset_bottom = 47.0
+theme = ExtResource("12_tovol")
+theme_override_font_sizes/font_size = 20
+text = "Health : "
+horizontal_alignment = 1
+
+[node name="buff_container" type="HFlowContainer" parent="player/health_buffs"]
+layout_mode = 2
+alignment = 2
+
+[node name="armor" type="TextureRect" parent="player/health_buffs/buff_container"]
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="armorlabel" type="Label" parent="player/health_buffs/buff_container/armor"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container"]
+self_modulate = Color(0.17, 0.571167, 1, 1)
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container"]
+self_modulate = Color(0.965138, 0.251231, 0.510355, 1)
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo"]
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container"]
+self_modulate = Color(0, 0.870821, 0.172243, 1)
+layout_mode = 2
+texture = ExtResource("15_pubo4")
+
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging"]
+visible = false
+layout_mode = 0
+offset_right = 28.0
+offset_bottom = 30.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+text = "12"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="moves_border" type="Sprite2D" parent="player"]
+texture = ExtResource("14_bu8h0")
+centered = false
+
+[node name="move_remaing" type="Label" parent="player"]
+offset_top = 232.0
+offset_right = 576.0
+offset_bottom = 254.0
+theme = ExtResource("12_tovol")
+theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_font_sizes/font_size = 22
+text = "Moves Remaing: 2"
+horizontal_alignment = 1
+
+[node name="foreground" type="Node2D" parent="."]
+position = Vector2(0, -163)
+
+[node name="border" type="Sprite2D" parent="foreground"]
+texture = ExtResource("7_238bl")
+centered = false
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="pause" parent="CanvasLayer" instance=ExtResource("19_ryfr5")]
+
+[node name="defeat_overlay" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+offset_right = 576.0
+offset_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/defeat_overlay"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/defeat_overlay/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("18_xnkws")
+
+[node name="Label" type="Label" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.909804, 0.231373, 0.231373, 1)
+theme_override_font_sizes/font_size = 32
+text = "You have 
+been defeated"
+horizontal_alignment = 1
+
+[node name="back_to_mm" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" instance=ExtResource("22_kmwuu")]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="trun_changer" parent="CanvasLayer" instance=ExtResource("20_gybn7")]
+
+[node name="cam" parent="." instance=ExtResource("20_sxuy2")]
+
+[connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
+[connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
+[connection signal="enemy_health_change" from="." to="enemy" method="_on_game_window_enemy_health_change"]
+[connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
+[connection signal="tree_exited" from="." to="." method="_on_tree_exited"]
+[connection signal="damage_flesh" from="grd" to="grd_flesh" method="_on_grd_damage_flesh"]
+[connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
+[connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
+[connection signal="damage_rock" from="grd" to="grd_rock" method="_on_grd_damage_rock"]
+[connection signal="make_flesh" from="grd" to="grd_flesh" method="_on_grd_make_flesh"]
+[connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
+[connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
+[connection signal="make_rock" from="grd" to="grd_rock" method="_on_grd_make_rock"]
+[connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
+[connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
+[connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]
+[connection signal="remove_freeze" from="grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]
+[connection signal="remove_rock" from="grd_rock" to="grd" method="_on_grd_rock_remove_rock"]
+[connection signal="remove_flesh" from="grd_flesh" to="grd" method="_on_grd_flesh_remove_flesh"]
+[connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
+[connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
+[connection signal="tree_entered" from="player" to="player" method="_on_tree_entered"]
+[connection signal="tree_exited" from="player" to="player" method="_on_tree_exited"]
+[connection signal="value_changed" from="player/health_buffs/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
+[connection signal="pressed" from="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

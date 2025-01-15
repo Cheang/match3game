@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://857yjlwtnl4h"]
+[gd_scene load_steps=12 format=3 uid="uid://857yjlwtnl4h"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m0wtd"]
 [ext_resource type="Script" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_ah0x7"]
 [ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://sounds/songs/daichovo_horo/daichovo2.wav" id="4_s20nw"]
 [ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://sounds/songs/daichovo_horo/daichovo3.wav" id="5_hglwg"]
+[ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://locations/_loc_loaders/area_1.tres" id="6_h344n"]
 
 [sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
 fade_time = 0.0
@@ -33,6 +34,7 @@ size_flags_horizontal = 6
 size_flags_vertical = 6
 script = ExtResource("1_m0wtd")
 song = SubResource("Resource_12eda")
+def_area = ExtResource("6_h344n")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

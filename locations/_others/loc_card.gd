@@ -23,8 +23,7 @@ func _on_selection_btn_pressed() -> void:
 		if loc_res.enemy_encounter and !loc_res.which_enemy.is_empty():
 			var enemy_chosen = loc_res.which_enemy.pick_random()
 			if !Global.is_null(enemy_chosen):
-				EnemyData.set_minion(enemy_chosen)
-				EnemyData.set_enemie_stats()
+				Global.set_up_enemy(enemy_chosen)
 				Global.minions_killed += 1
 				loc_res.next_scene = "res://game_window.tscn"
 		if loc_res.event_encounter and loc_res.event_resource:

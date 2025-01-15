@@ -26,7 +26,7 @@ animation_time = 0.0
 [resource]
 script = ExtResource("3_kh8ag")
 name = "Vila"
-health = 20.0
+max_health = 20.0
 physical_dmg_reduction = 50.0
 damage = 3.0
 attacks = Array[ExtResource("1_kjfkh")]([SubResource("Resource_li333"), SubResource("Resource_c4817")])

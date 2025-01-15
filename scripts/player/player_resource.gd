@@ -62,8 +62,12 @@ var hand_combo: int = 0
 var flesh_coruption: bool = false
 
 #Signals
-signal updateUI(stat: String)
+signal updateUIPlayer(stat: String)
+signal playerDied
+signal playerFinishedTurn
 
+#Functions_____________________________________________________________________#
+#Player_functions --------------------------------------------------------------
 func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
 	if dmg_reduction_flat > 0:
 		enemy_damage -= clamp(dmg_reduction_flat, 0, enemy_damage - 1)
@@ -97,10 +101,16 @@ func add_stat(stat: String, value):
 	if stat in self:
 		if stat == "cur_health":
 			set(stat, clamp(get(stat)+value, 0, max_health))
-			updateUI.emit(str(stat))
+			if get(stat) == 0:
+				playerDied.emit()
+			updateUIPlayer.emit(str(stat))
 			return
+		
 		set(stat, get(stat)+value)
-		updateUI.emit(str(stat))
+		
+		if stat == "moves_left" and get(stat) <= 0:
+			playerFinishedTurn.emit()
+		updateUIPlayer.emit(str(stat))
 	else: 
 		print("Stat does not exist: ", stat)
 
@@ -108,10 +118,14 @@ func set_stat(stat: String, value):
 	if stat in self:
 		if stat == "cur_health":
 			set(stat, clamp(value, 0, max_health))
-			updateUI.emit(str(stat))
+			updateUIPlayer.emit(str(stat))
 			return
+		
 		set(stat, value)
-		updateUI.emit(str(stat))
+		
+		if stat == "moves_left" and get(stat) <= 0:
+			playerFinishedTurn.emit()
+		updateUIPlayer.emit(str(stat))
 	else: 
 		print("Stat does not exist: ", stat)
 

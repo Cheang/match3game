@@ -29,31 +29,13 @@ var rock_spaces: Array[Vector2]
 var flesh_spaces: Array[Vector2]
 
 func set_enemie_stats():
-	max_health = enemy.health
-	cur_health = enemy.health
-	physical_dmg_reduction = enemy.physical_dmg_reduction
-	damage = enemy.damage
-	attacks_p1 = enemy.attacks
-	attacks_p2 = enemy.attacks_p2
-	attacks_p3 = enemy.attacks_p3
-	attacks_p4 = enemy.attacks_p4
-	type = enemy.type
-	has_phases = enemy.has_phases
-	sprite = enemy.sprite
-	shader = enemy.shader
-	health_bar = enemy.health_bar
-	
-	empty_spaces = enemy.empty_spaces
-	ice_spaces = enemy.ice_spaces
-	freeze_spaces = enemy.freeze_spaces
-	rock_spaces = enemy.rock_spaces
-	flesh_spaces = enemy.flesh_spaces
+	pass
 
 func take_dmg(dmg, dmg_type = 0):
 	
 	if physical_dmg_reduction > 0 and dmg_type == 0:
 		dmg = round(dmg * (1 - physical_dmg_reduction / 100.0))
-	cur_health -= dmg
+	cur_health = clamp(cur_health-dmg, 0, max_health)
 	
 	#get this out of here
 	if Global.cur_char.life_steal > 0:

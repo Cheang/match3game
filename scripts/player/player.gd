@@ -1,6 +1,8 @@
 extends Node2D
 class_name Player
 
+const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
+
 @export var bool_buff_texture: Array[TextureRect] 
 @export var bool_buff_stat: Array[String]
 @export var buff_texture: Array[TextureRect] 
@@ -11,8 +13,6 @@ class_name Player
 @onready var art: Node2D = $art
 @onready var move_remaing: Label = $move_remaing
 @onready var health: Label = $health_buffs/player_healthbar/health
-
-const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 
 var one_time_fire = false
 var cur_character = Global.cur_char
@@ -54,11 +54,9 @@ func _on_player_healthbar_value_changed(value: float) -> void:
 	art.set_material(null)
 
 func _on_tree_entered() -> void:
-	Global.cur_char.updateUI.connect(update_ui)
-func _on_tree_exited() -> void:
-	Global.cur_char.updateUI.disconnect(update_ui)
-
-
+	Global.cur_char.updateUIPlayer.connect(update_ui)
+func _on_tree_exiting() -> void:
+	Global.cur_char.updateUIPlayer.disconnect(update_ui)
 
 #Helper functions --------------------------------------------------------------
 func update_buffs():

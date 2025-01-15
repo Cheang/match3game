@@ -12,8 +12,7 @@ func activate():
 	Global.game_is_played = false
 	reward.activate()
 	if fight_overwrite:
-		EnemyData.set_minion(enemy.pick_random())
-		EnemyData.set_enemie_stats()
+		Global.set_up_enemy(enemy.pick_random())
 		SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 		return
 	SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

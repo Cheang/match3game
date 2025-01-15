@@ -8,7 +8,6 @@ var flesh = preload("res://piece/obstacles_sq/flesh.tscn")
 
 func _ready() -> void:
 	flesh_pieces = Global.make_2d_array(Global.grd_width, Global.grd_height)
-	pass
 
 func _on_grd_make_flesh(grd_cord) -> void:
 	if flesh_pieces.size() == 0:

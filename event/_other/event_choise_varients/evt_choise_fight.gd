@@ -7,6 +7,6 @@ var type: int = 2
 
 func activate():
 	Global.game_is_played = false
-	EnemyData.set_minion(enemy.pick_random())
-	EnemyData.set_enemie_stats()
+	Global.cur_enemy.set_up_enemy(enemy.pick_random())
+
 	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

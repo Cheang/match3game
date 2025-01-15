@@ -18,7 +18,7 @@ func activate():
 	f_value = (atk_dmg+Global.cur_char.strength) * (Global.cur_char.hand_combo*hand_combo_multy)
 	if criting:
 		f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
-	EnemyData.take_dmg(f_value, type)
+	Global.cur_enemy.take_dmg(f_value, type)
 	
 	if not to_give_before:
 		Global.cur_char.add_stat("hand_combo", hand_combo_points_to_give)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=33 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -17,7 +17,6 @@
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="11_ghvty"]
 [ext_resource type="Texture2D" uid="uid://dbg7s86dsv7pt" path="res://assets/level_ui/player_health.png" id="12_88ip3"]
 [ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="12_tovol"]
-[ext_resource type="Texture2D" uid="uid://bmulmclix0w0" path="res://assets/level_ui/player_health_panel.png" id="13_fditc"]
 [ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
@@ -105,18 +104,19 @@ one_shot = true
 
 [node name="audioPlayer" type="AudioStreamPlayer" parent="grd"]
 volume_db = -20.0
+bus = &"SFX"
 script = ExtResource("4_6newg")
 
-[node name="grd_ice" type="Node2D" parent="."]
+[node name="grd_ice" type="Node2D" parent="grd"]
 script = ExtResource("4_a7uqp")
 
-[node name="grd_freeze" type="Node2D" parent="."]
+[node name="grd_freeze" type="Node2D" parent="grd"]
 script = ExtResource("4_lguch")
 
-[node name="grd_rock" type="Node2D" parent="."]
+[node name="grd_rock" type="Node2D" parent="grd"]
 script = ExtResource("7_hc5va")
 
-[node name="grd_flesh" type="Node2D" parent="."]
+[node name="grd_flesh" type="Node2D" parent="grd"]
 script = ExtResource("8_jpie2")
 
 [node name="middleground" type="Sprite2D" parent="."]
@@ -189,11 +189,6 @@ buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_
 buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
 [node name="art" type="Node2D" parent="player"]
-
-[node name="border3" type="Sprite2D" parent="player"]
-visible = false
-texture = ExtResource("13_fditc")
-centered = false
 
 [node name="health_buffs" type="VBoxContainer" parent="player"]
 offset_left = 256.0
@@ -366,26 +361,28 @@ text = "Main Menu"
 
 [node name="cam" parent="." instance=ExtResource("20_sxuy2")]
 
-[connection signal="enemy_attacking" from="." to="grd" method="_on_game_window_enemy_attacking"]
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
-[connection signal="enemy_health_change" from="." to="enemy" method="_on_game_window_enemy_health_change"]
-[connection signal="damage_flesh" from="grd" to="grd_flesh" method="_on_grd_damage_flesh"]
-[connection signal="damage_freeze" from="grd" to="grd_freeze" method="_on_grd_damage_freeze"]
-[connection signal="damage_ice" from="grd" to="grd_ice" method="_on_grd_damage_ice"]
-[connection signal="damage_rock" from="grd" to="grd_rock" method="_on_grd_damage_rock"]
-[connection signal="make_flesh" from="grd" to="grd_flesh" method="_on_grd_make_flesh"]
-[connection signal="make_freeze" from="grd" to="grd_freeze" method="_on_grd_make_freeze"]
-[connection signal="make_ice" from="grd" to="grd_ice" method="_on_grd_make_ice"]
-[connection signal="make_rock" from="grd" to="grd_rock" method="_on_grd_make_rock"]
+[connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
+[connection signal="damage_flesh" from="grd" to="grd/grd_flesh" method="_on_grd_damage_flesh"]
+[connection signal="damage_freeze" from="grd" to="grd/grd_freeze" method="_on_grd_damage_freeze"]
+[connection signal="damage_ice" from="grd" to="grd/grd_ice" method="_on_grd_damage_ice"]
+[connection signal="damage_rock" from="grd" to="grd/grd_rock" method="_on_grd_damage_rock"]
+[connection signal="make_flesh" from="grd" to="grd/grd_flesh" method="_on_grd_make_flesh"]
+[connection signal="make_freeze" from="grd" to="grd/grd_freeze" method="_on_grd_make_freeze"]
+[connection signal="make_ice" from="grd" to="grd/grd_ice" method="_on_grd_make_ice"]
+[connection signal="make_rock" from="grd" to="grd/grd_rock" method="_on_grd_make_rock"]
 [connection signal="timeout" from="grd/destroy_timer" to="grd" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="grd/collapse_timer" to="grd" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="grd/refill_timer" to="grd" method="_on_refill_timer_timeout"]
-[connection signal="remove_freeze" from="grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]
-[connection signal="remove_rock" from="grd_rock" to="grd" method="_on_grd_rock_remove_rock"]
-[connection signal="remove_flesh" from="grd_flesh" to="grd" method="_on_grd_flesh_remove_flesh"]
+[connection signal="remove_freeze" from="grd/grd_freeze" to="grd" method="_on_grd_freeze_remove_freeze"]
+[connection signal="remove_rock" from="grd/grd_rock" to="grd" method="_on_grd_rock_remove_rock"]
+[connection signal="remove_flesh" from="grd/grd_flesh" to="grd" method="_on_grd_flesh_remove_flesh"]
 [connection signal="enemy_attacked" from="enemy" to="." method="_on_enemy_enemy_attacked"]
+[connection signal="tree_entered" from="enemy" to="enemy" method="_on_tree_entered"]
+[connection signal="tree_exiting" from="enemy" to="enemy" method="_on_tree_exiting"]
 [connection signal="value_changed" from="enemy/enemy_healthbar" to="enemy" method="_on_enemy_healthbar_value_changed"]
 [connection signal="tree_entered" from="player" to="player" method="_on_tree_entered"]
-[connection signal="tree_exited" from="player" to="player" method="_on_tree_exited"]
+[connection signal="tree_exiting" from="player" to="player" method="_on_tree_exiting"]
 [connection signal="value_changed" from="player/health_buffs/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
 [connection signal="pressed" from="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

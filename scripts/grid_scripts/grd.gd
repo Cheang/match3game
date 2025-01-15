@@ -65,6 +65,7 @@ var enemy_attacked: bool = false
 func on_startup() -> void:
 	deck = Global.cur_char.deck_in_game.duplicate()
 	fluf = Global.cur_char.fluf.duplicate()
+	get_obstacles(Global.cur_enemy)
 	randomize()
 	deck.shuffle()
 	fluf.shuffle()
@@ -399,9 +400,8 @@ func cooldown_and_refill_deck():
 	deck_on_cd = deck_on_cd.filter(func(piece):
 		return piece != null
 		)
-	
 
-#Helper _____________________________________________________
+#Helper_functions --------------------------------------------------------------
 func damage_specials(col, row):
 	emit_signal("damage_ice", Vector2(col,row))
 	emit_signal("damage_freeze", Vector2(col,row))
@@ -442,6 +442,13 @@ func check_flesh(col, row):
 	if row > 0:
 		emit_signal("damage_flesh", Vector2(col, row-1))
 
+func get_obstacles(target):
+	empty_spaces = target.empty_spaces
+	ice_spaces = target.ice_spaces
+	freeze_spaces = target.freeze_spaces
+	rock_spaces = target.rock_spaces
+	flesh_spaces = target.flesh_spaces
+	
 
 
 #On Signal __________________________________________________
@@ -458,7 +465,3 @@ func _on_grd_rock_remove_rock(place) -> void:
 func _on_grd_flesh_remove_flesh(place) -> void:
 	damaged_flesh = true
 	Global.remove_from_array(flesh_spaces, place)
-
-func _on_game_window_enemy_attacking() -> void:
-	
-	pass # Replace with function body.

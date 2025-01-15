@@ -9,7 +9,7 @@
 [resource]
 script = ExtResource("4_nyvva")
 name = "Gligan"
-health = 25.0
+max_health = 25.0
 physical_dmg_reduction = 0.0
 damage = 2.0
 attacks = Array[ExtResource("1_tjo2k")]([ExtResource("2_tvnfp"), ExtResource("2_tvnfp")])

@@ -9,7 +9,7 @@
 [resource]
 script = ExtResource("2_wmcb6")
 name = "Golden Pitka"
-health = 35.0
+max_health = 45.0
 physical_dmg_reduction = 0.0
 damage = 3.0
 attacks = Array[ExtResource("1_ku04d")]([ExtResource("2_wk0ks")])

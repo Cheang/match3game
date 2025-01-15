@@ -1,6 +1,5 @@
 extends Node
 
-
 var enemy_loc_cards: Array[Location] 
 var services_loc_cards: Array[Location] 
 var event_loc_cards: Array[Location] 

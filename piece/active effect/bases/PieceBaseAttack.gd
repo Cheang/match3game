@@ -16,4 +16,4 @@ func activate():
 		if criting:
 			f_value = f_value * (1 + Global.cur_char.crit_mutly / 100)
 
-		EnemyData.take_dmg(f_value, type)
+		Global.cur_enemy.take_dmg(f_value, type)

@@ -11,7 +11,8 @@
 [resource]
 script = ExtResource("2_3jfvh")
 name = "Kardzaliia Capitan"
-health = 20.0
+max_health = 27.0
+physical_dmg_reduction = 0.0
 damage = 1.0
 attacks = Array[ExtResource("1_mu0b4")]([ExtResource("3_tuo2f"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("4_pdeom")])
 attacks_p2 = Array[ExtResource("1_mu0b4")]([])

@@ -22,7 +22,6 @@ config/icon="res://assets/icon/icon.png"
 
 Global="*res://scripts/Global.gd"
 Locations="*res://scripts/Locations.gd"
-EnemyData="*res://scripts/enemies/EnemyData.gd"
 SceneManager="*res://addons/scene_manager/SceneManager.tscn"
 MusicManager="*res://addons/MusicManager/music_manager.tscn"
 
