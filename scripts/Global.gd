@@ -35,6 +35,10 @@ var bosses_killed = 0
 var cur_song: String = ""
 var audio_plaing: bool = true # all of the sounds
 var music_plaing: bool = true # just the music
+var sfx_playing: bool = true # just the sfx
+var audio_lvl: float = 75.0
+var music_lvl: float = 100
+var sfx_lvl: float = 100
 
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 

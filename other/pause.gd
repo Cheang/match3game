@@ -6,16 +6,25 @@ extends Control
 @export var title_container: bool = true
 @export var title_text: String
 
-@onready var player_class: Label = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/player_class
-@onready var stats: VBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats
+@onready var player_class: Label = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/player_class
+
+
+@onready var stats_overlay: MarginContainer = $stats_overlay
+@onready var texture_button: TextureButton = $stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton
+@onready var tabs: HBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs
+@onready var infocontainer: VBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer
+@onready var deck: VBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck
+@onready var deck_btn: Button = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/deck_btn
+@onready var deck_container: HFlowContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck/ScrollContainer/deck_container
+@onready var stats: VBoxContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats
+@onready var stats_btn: Button = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/stats_btn
+
 @onready var pausebtn: Button = $MarginContainer/VBoxContainer/HBoxContainer/pause_btn
 @onready var goldbox: Control = $MarginContainer/VBoxContainer/HBoxContainer/Control
 @onready var title: PanelContainer = $MarginContainer/VBoxContainer/HBoxContainer/PanelContainer
-@onready var stats_overlay: MarginContainer = $stats_overlay
-@onready var texture_button: TextureButton = $stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton
 @onready var texture_button2: Button = $MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/TextureButton
 
-@onready var deck_container: HFlowContainer = $stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/ScrollContainer/deck_container
+
 const PIECE_CARD = preload("res://inventory/piece_card.tscn")
 var stats_open = false
 
@@ -29,6 +38,7 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	stats_overlay.position = Vector2(stats_overlay.position.x, (stats_overlay.position.y + (stats_overlay.size.y - 200)))
 	stats_overlay.visible = true
+	_on_deck_btn_pressed()
 	if not gold_counter:
 		goldbox.modulate = Color(1, 1, 1, 0)
 	if not pause_btn:
@@ -119,3 +129,25 @@ func move(target, time = .3):
 
 func _on_help_pressed() -> void:
 	pass # Replace with function body.
+
+func _on_deck_btn_pressed() -> void:
+	if deck_btn.button_pressed:
+		var btns = tabs.get_children()
+		for button: Button in btns:
+			button.button_pressed = false
+		deck_btn.button_pressed = true
+		var infoscreens = infocontainer.get_children()
+		for screen in infoscreens:
+			screen.visible = false
+		deck.visible = true
+
+func _on_stats_btn_pressed() -> void:
+	if stats_btn.button_pressed:
+		var btns = tabs.get_children()
+		for button: Button in btns:
+			button.button_pressed = false
+		stats_btn.button_pressed = true
+		var infoscreens = infocontainer.get_children()
+		for screen in infoscreens:
+			screen.visible = false
+		stats.visible = true

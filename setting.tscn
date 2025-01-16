@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://dn3mm84rkti5b"]
+
+[node name="setting" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 88
+theme_override_constants/margin_top = 75
+theme_override_constants/margin_right = 88
+theme_override_constants/margin_bottom = 75
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Setting"
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Music"
+
+[node name="audio_master" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_master"]
+layout_mode = 2
+text = "Master"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_master"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_master/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_master/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 75.0
+scrollable = false
+
+[node name="audio_music" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_music"]
+layout_mode = 2
+text = "Music
+"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_music"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_music/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_music/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 75.0
+scrollable = false
+
+[node name="audio_sfx" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_sfx"]
+layout_mode = 2
+text = "SFX"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_sfx"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_sfx/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="MarginContainer/ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer2/audio_sfx/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 75.0
+scrollable = false

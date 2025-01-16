@@ -2,8 +2,6 @@ extends VBoxContainer
 
 @onready var stat_container: VBoxContainer = $ScrollContainer/stat_container
 
-@onready var player_class: Label = $ScrollContainer/stat_container/player_class
-
 @onready var cat_health_max: HBoxContainer = $ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max
 @onready var cat_health_cur: HBoxContainer = $ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur
 @onready var cat_health_lifesteal: HBoxContainer = $ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal
@@ -26,7 +24,6 @@ extends VBoxContainer
 @onready var cat_utility_cd: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd
 
 func expand():
-	player_class.text = Global.cur_char.player_class
 	
 	get_stat_and_set(Global.cur_char.max_health, cat_health_max)
 	get_stat_and_set(Global.cur_char.cur_health, cat_health_cur)

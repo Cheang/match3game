@@ -35,7 +35,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
 req_piece_numb = 1
 req_class = "None"
 
@@ -64,7 +65,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
 req_piece_numb = 1
 req_class = "None"
 
@@ -78,7 +80,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
 req_piece_numb = 1
 req_class = "None"
 

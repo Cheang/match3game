@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b0elnudfkd65c"]
+[gd_scene load_steps=28 format=3 uid="uid://b0elnudfkd65c"]
 
 [ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://inventory/stats.gd" id="10_rk6m7"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="11_flpho"]
 [ext_resource type="Texture2D" uid="uid://demwyq5vri1pv" path="res://assets/level_ui/pause_bg.png" id="12_xej0p"]
+[ext_resource type="Texture2D" uid="uid://ccnv4q1dqhdo2" path="res://assets/level_ui/btn/btn_2_light.png" id="12_xyn8i"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
 texture = ExtResource("2_8aufw")
@@ -65,6 +66,41 @@ content_margin_left = 0.0
 content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d54e2"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8gdkv"]
+texture = ExtResource("12_xyn8i")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pawyc"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8adbt"]
+texture = ExtResource("12_xyn8i")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4ggku"]
 texture = ExtResource("4_g3erw")
 texture_margin_left = 8.0
 texture_margin_top = 8.0
@@ -210,10 +246,14 @@ mouse_filter = 2
 
 [node name="stats_overlay" type="MarginContainer" parent="."]
 visible = false
+custom_minimum_size = Vector2(576, 1024)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -288.0
+offset_right = 288.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -229,7 +269,7 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_gg176")
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
+theme_override_constants/margin_top = 7
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 50
 
@@ -256,403 +296,441 @@ stretch_mode = 3
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 0
 
-[node name="TabContainer" type="TabContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer"]
+[node name="Panel" type="Panel" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-tab_alignment = 2
-current_tab = 0
-tabs_position = 1
+theme_override_styles/panel = SubResource("StyleBoxTexture_d54e2")
 
-[node name="Deck" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer"]
 layout_mode = 2
-metadata/_tab_index = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck"]
+[node name="container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
 theme_override_font_sizes/font_size = 22
 text = "Player Class"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck"]
+[node name="infocontainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Deck" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="deck_container" type="HFlowContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Deck/ScrollContainer"]
+[node name="deck_container" type="HFlowContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Stats" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer"]
-visible = false
+[node name="Stats" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer"]
 layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("10_rk6m7")
-metadata/_tab_index = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats"]
+[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="stat_container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer"]
+[node name="stat_container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
-theme_override_font_sizes/font_size = 22
-text = "Player Class"
-horizontal_alignment = 1
-
-[node name="health_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+[node name="health_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("10_h3k5d")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part"]
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="cat_health" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+[node name="cat_health" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Health"
 
-[node name="cat_health_max" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+[node name="cat_health_max" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Max Health"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_health_cur" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+[node name="cat_health_cur" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Current Health"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_health_lifesteal" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
+[node name="cat_health_lifesteal" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Life Steal"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="defence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+[node name="defence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("10_h3k5d")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part"]
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="cat_defence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+[node name="cat_defence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Defence"
 
-[node name="cat_defence_startarmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+[node name="cat_defence_startarmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Starting Armor"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_defence_startmagearmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+[node name="cat_defence_startmagearmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Starting Magic Armor"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_defence_dmgreduction" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+[node name="cat_defence_dmgreduction" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Damage Reducion"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
-[node name="offence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+[node name="offence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("10_h3k5d")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part"]
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="cat_offence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Offence"
 
-[node name="cat_offence_str" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_str" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Strength"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_offence_prof" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_prof" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Proficiency"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_offence_dmgfluf" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_dmgfluf" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Empty Tile Damge"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_offence_crit" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_crit" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Critical Strike Chance"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
-[node name="cat_offence_critdmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
+[node name="cat_offence_critdmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Critical Strike Damage"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "%"
 
-[node name="magic_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+[node name="magic_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("10_h3k5d")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part"]
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="cat_magic" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
+[node name="cat_magic" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Mysticism"
 
-[node name="cat_magic_mana" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
+[node name="cat_magic_mana" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Energy"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="utility_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container"]
+[node name="utility_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container"]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("10_h3k5d")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part"]
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="cat_utility" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+[node name="cat_utility" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Utility"
 
-[node name="cat_utility_spd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+[node name="cat_utility_spd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Speed"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_utility_agility" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+[node name="cat_utility_agility" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Agility"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_utility_rerolls" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+[node name="cat_utility_rerolls" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Rerolls"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="cat_utility_cd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
+[node name="cat_utility_cd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer"]
 layout_mode = 2
 
-[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "Cooldown Reduction"
 
-[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/TabContainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
+
+[node name="tabs" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container"]
+layout_mode = 2
+
+[node name="deck_btn" type="Button" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_hover_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_8gdkv")
+theme_override_styles/hover = SubResource("StyleBoxTexture_pawyc")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8adbt")
+theme_override_styles/normal = SubResource("StyleBoxTexture_4ggku")
+toggle_mode = true
+button_pressed = true
+text = "Deck"
+
+[node name="stats_btn" type="Button" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_hover_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_hover_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_8gdkv")
+theme_override_styles/hover = SubResource("StyleBoxTexture_pawyc")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8adbt")
+theme_override_styles/normal = SubResource("StyleBoxTexture_4ggku")
+toggle_mode = true
+text = "Stats"
 
 [node name="pause_overlay" type="PanelContainer" parent="."]
 visible = false
@@ -702,6 +780,8 @@ text = "Main Menu"
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/deck_btn" to="." method="_on_deck_btn_pressed"]
+[connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/stats_btn" to="." method="_on_stats_btn_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/help" to="." method="_on_help_pressed"]
 [connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/options" to="." method="_on_options_pressed"]
