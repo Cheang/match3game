@@ -36,11 +36,17 @@ func _on_btn_pressed() -> void:
 		if resource.gold_cost > 0:
 			Global.cur_char.gold -= resource.gold_cost
 		if resource.req_piece_remove:
-			for piece in Global.cur_char.deck_in_game:
-				if piece.piece_name == resource.req_piece:
-					var index = Global.cur_char.deck_in_game.find(piece)
-					Global.cur_char.deck_in_game.pop_at(index)
-					break
+			var i = 0
+			var numb = 0
+			while i < Global.cur_char.deck_in_game.size():
+				if (Global.cur_char.deck_in_game[i].piece_name == resource.req_piece_name or Global.cur_char.deck_in_game[i].color == resource.req_piece_name) and Global.cur_char.deck_in_game[i].piece_name != resource.req_piece_remove_blacklist:
+					Global.cur_char.deck_in_game.remove_at(i)
+					numb += 1
+					if resource.req_piece_numb != 0 and numb == resource.req_piece_numb:
+						break
+				else:
+					i += 1
+			Global.event_pieces_removed = numb
 		if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
 			var stat_to_check = Global.cur_char.get(resource.req_stat)
 			if stat_to_check < resource.req_value:

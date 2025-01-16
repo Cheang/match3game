@@ -35,7 +35,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_gahxv"]
@@ -55,7 +57,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_5vsuj"]
@@ -68,7 +72,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_6fph1"]
@@ -88,7 +94,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_wv72e"]
@@ -108,7 +116,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_yhnc8"]
@@ -121,7 +131,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_0qer2"]
@@ -148,7 +160,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_qolxl"]
@@ -161,7 +175,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_alwvk"]
@@ -181,7 +197,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "Short Sword"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_dudp6"]
@@ -194,7 +212,9 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [resource]

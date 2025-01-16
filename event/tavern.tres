@@ -36,6 +36,7 @@ req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
 req_piece = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_8av5t"]
@@ -64,6 +65,7 @@ req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
 req_piece = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_2kdv4"]
@@ -77,6 +79,7 @@ req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
 req_piece = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [resource]

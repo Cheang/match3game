@@ -13,25 +13,24 @@ var resource: Event
 @onready var reward: Control = $reward
 
 func _ready() -> void:
-	Global.game_is_played = true
+	var cur_char = Global.cur_char
+	var title_label = event_text.get_child(0).get_child(0).get_child(0)
+	var description_label = event_text.get_child(1).get_child(0).get_child(0)
+	
 	resource = Global.area_cur_event
 	pause.set_title(resource.categorie)
-	event_text.get_child(0).get_child(0).get_child(0).text = resource.title
-	event_text.get_child(1).get_child(0).get_child(0).text = resource.description
+	
+	title_label.text = resource.title
+	description_label.text = resource.description
+	
 	if resource.background != null:
 		event_bg.texture = resource.background
+		
 	for choise in resource.choises:
-		if choise.req_class != "None" and choise.req_class != Global.cur_char.player_class:
+		if (choise.req_class != "None" and choise.req_class != cur_char.player_class) or (choise.req_piece_name != "None" and not has_enough_pieces(choise.req_piece_name, choise.req_piece_numb)):
 			continue
-		if choise.req_piece != "None":
-			var match_found: bool
-			for piece in Global.cur_char.deck_in_game:
-				if piece.piece_name == choise.req_piece:
-					match_found = true
-			if not match_found:
-				continue
 		if choise.req_stat != "None" and choise.req_value != 0:
-			var stat = Global.cur_char.get(choise.req_stat)
+			var stat = cur_char.get(choise.req_stat)
 			if choise.failable and choise.fail_state:
 				var btn = CHOISE_BTN.instantiate()
 				btn.resource = choise
@@ -44,15 +43,38 @@ func _ready() -> void:
 		btn1.resource = choise
 		choises_holder.add_child(btn1)
 		btn1.set_btn()
+	
 	Global.area_cur_event = null
+	Global.game_is_played = true
+
+func has_enough_pieces(piece_name: String, req: int) -> bool:
+	var numb = 0
+	if req <= 0:
+		return true
+	for piece in Global.cur_char.deck_in_game:
+		if piece.color == piece_name:
+			numb += 1
+		if piece.piece_name == piece_name:
+			numb += 1
+	if numb >= req:
+		return true
+	return false
+
 
 func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):
-	reward.get_child(2).get_child(0).get_child(0).get_child(0).texture = texture
-	reward.get_child(2).get_child(0).get_child(0).get_child(0).get_child(0).texture = icon
-	reward.get_child(2).get_child(0).get_child(0).get_child(1).text = text
+	var reward_texture = reward.get_child(2).get_child(0).get_child(0).get_child(0)
+	var reward_icon = reward_texture.get_child(0)
+	var reward_text = reward.get_child(2).get_child(0).get_child(0).get_child(1)
+	var reward_description = reward.get_child(2).get_child(0).get_child(0).get_child(2)
+	var reward_animator = reward.get_child(0)
+	
+	reward_texture.texture = texture
+	reward_icon.texture = icon
+	reward_text.text = text
+	
 	if description != "":
-		reward.get_child(2).get_child(0).get_child(0).get_child(2).visible = true
-		reward.get_child(2).get_child(0).get_child(0).get_child(2).text = description
-	reward.get_child(0).current_animation = "drop_down"
+		reward_description.text = description
+		reward_description.visible = true
+	
+	reward_animator.current_animation = "drop_down"
 	reward.visible = true
-	pass

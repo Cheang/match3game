@@ -1,0 +1,86 @@
+[gd_resource type="Resource" script_class="Event" load_steps=16 format=3 uid="uid://usrhyg526xx"]
+
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_o3v2p"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_2ekwh"]
+[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_coahw"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_2vumd"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="3_5k0ji"]
+[ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/red_sq_2.tscn" id="3_wd4vi"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="4_3e2a6"]
+[ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/_red_icons/red_icon_2.png" id="4_5mejo"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="6_vaaq1"]
+[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="7_jw8hl"]
+
+[sub_resource type="Resource" id="Resource_gv3y7"]
+script = ExtResource("3_5k0ji")
+piece_to_add = Array[PackedScene]([ExtResource("3_wd4vi")])
+use_previous_event_data = true
+name = "Punch"
+description = ""
+base = ExtResource("3_2vumd")
+icon = ExtResource("4_5mejo")
+passive_boost = Array[String]([])
+piece_boost = Array[String]([])
+boost_self = false
+rearity = "COMMON"
+
+[sub_resource type="Resource" id="Resource_bajvr"]
+script = ExtResource("4_3e2a6")
+reward = SubResource("Resource_gv3y7")
+fight_overwrite = false
+enemy = Array[ExtResource("2_2ekwh")]([])
+text = "Continue"
+description = "None"
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_t0w50"]
+script = ExtResource("2_coahw")
+categorie = "Event"
+title = "Strange Altar"
+description = "You place your weapons on the altar and immediately feel a weight in your fist, as if you could punch with newfound strength."
+choises = Array[ExtResource("1_o3v2p")]([SubResource("Resource_bajvr")])
+
+[sub_resource type="Resource" id="Resource_6cb7k"]
+script = ExtResource("6_vaaq1")
+next_event = SubResource("Resource_t0w50")
+text = "Make a sacrifice"
+description = "None"
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = true
+req_piece_remove_blacklist = "Punch"
+req_piece_name = "red"
+req_piece_numb = 0
+req_class = "None"
+
+[sub_resource type="Resource" id="Resource_ipwer"]
+script = ExtResource("7_jw8hl")
+next_scene = "res://locations_screen.tscn"
+text = "Leave"
+description = "None"
+gold_cost = 0
+failable = false
+req_stat = "None"
+req_value = 0.0
+req_piece_remove = false
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
+req_class = "None"
+
+[resource]
+script = ExtResource("2_coahw")
+categorie = "Event"
+title = "Strange Altar"
+description = "Before you stands a rock adorned with intricate carvings and decorations. At its center, a carving reminiscent of a fist catches your eye, and beneath your feet, the ground bears an altar-like structure."
+choises = Array[ExtResource("1_o3v2p")]([SubResource("Resource_6cb7k"), SubResource("Resource_ipwer")])

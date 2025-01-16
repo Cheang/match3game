@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LocationLoader" load_steps=14 format=3 uid="uid://beq8vfn2nxrdo"]
+[gd_resource type="Resource" script_class="LocationLoader" load_steps=15 format=3 uid="uid://beq8vfn2nxrdo"]
 
 [ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_wcv6m"]
 [ext_resource type="Resource" uid="uid://cqehju5d485x1" path="res://locations/boss_encounters/loc_boss_lamia.tres" id="2_vg4qu"]
@@ -13,6 +13,7 @@
 [ext_resource type="Resource" uid="uid://boq4f5pqkwn2t" path="res://locations/enemie_encounters/loc_vila_1.tres" id="7_0c727"]
 [ext_resource type="Resource" uid="uid://c0qxpkd40er5v" path="res://locations/event_encounters/event_golden_pitka.tres" id="7_65xj8"]
 [ext_resource type="Resource" uid="uid://bibl4pbiwfsfv" path="res://locations/event_encounters/event_tax_collector.tres" id="11_bklaq"]
+[ext_resource type="Resource" uid="uid://bkps4u1c1mljl" path="res://locations/event_encounters/event_punch_rock.tres" id="12_qfmch"]
 
 [resource]
 script = ExtResource("4_kqrmq")
@@ -22,5 +23,5 @@ event_loc_numb = 5
 services_loc_numb = 1
 enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx"), ExtResource("6_bpw8g"), ExtResource("7_0c727")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
-event = Array[ExtResource("1_wcv6m")]([ExtResource("5_37ayj"), ExtResource("11_bklaq"), ExtResource("7_65xj8"), ExtResource("4_hnthf")])
+event = Array[ExtResource("1_wcv6m")]([ExtResource("5_37ayj"), ExtResource("11_bklaq"), ExtResource("7_65xj8"), ExtResource("4_hnthf"), ExtResource("12_qfmch")])
 boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])

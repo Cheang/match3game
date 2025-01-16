@@ -20,6 +20,7 @@ var current_level: int = 0
 var area_locations: Array[Location]
 var area_cur_boss: Location
 var area_cur_event: Event
+var event_pieces_removed: int
 
 #for boss spawning
 var minions_needed: int = 0

@@ -8,17 +8,17 @@
 
 [resource]
 script = ExtResource("2_wmcb6")
-name = "Golden Pitka"
+name = "Wheat Pitka"
+type = 0
 max_health = 45.0
 physical_dmg_reduction = 0.0
 damage = 3.0
+has_phases = false
 attacks = Array[ExtResource("1_ku04d")]([ExtResource("2_wk0ks")])
 attacks_p2 = Array[ExtResource("1_ku04d")]([])
 attacks_p3 = Array[ExtResource("1_ku04d")]([])
 attacks_p4 = Array[ExtResource("1_ku04d")]([])
 speed = 1
-type = 0
-has_phases = false
 sprite = ExtResource("5_hy2v4")
 health_bar = ExtResource("3_am7uk")
 empty_spaces = Array[Vector2]([])

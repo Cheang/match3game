@@ -32,14 +32,15 @@ _bundled = {
 [sub_resource type="Resource" id="Resource_h7tar"]
 script = ExtResource("5_qn67d")
 piece_to_add = Array[PackedScene]([SubResource("PackedScene_4k5rq")])
+use_privious_event_data = null
 name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"
 base = ExtResource("3_o1m3v")
 icon = ExtResource("6_isglo")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
-rearity = "COMMON"
+passive_boost = null
+piece_boost = null
+boost_self = null
+rearity = null
 
 [sub_resource type="Resource" id="Resource_cb017"]
 script = ExtResource("6_r32wb")
@@ -53,7 +54,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_m1ib8"]
@@ -73,7 +75,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_d7jas"]
@@ -86,7 +89,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_lkqdy"]
@@ -106,7 +110,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_osfo5"]
@@ -119,7 +124,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_j437d"]
@@ -139,7 +145,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [sub_resource type="Resource" id="Resource_jncf0"]
@@ -152,7 +159,8 @@ failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"
 
 [resource]
