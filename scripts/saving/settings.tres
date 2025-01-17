@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SettingsResource" load_steps=2 format=3 uid="uid://ntq4yg0d5vsp"]
+
+[ext_resource type="Script" path="res://scripts/saving/setting_save_res.gd" id="1_x510o"]
+
+[resource]
+script = ExtResource("1_x510o")
+set_audio_audio_playing = false
+set_audio_music_playing = false
+set_audio_sfx_playing = false
+set_audio_audio_lvl = 1.0
+set_audio_music_lvl = 1.0
+set_audio_sfx_lvl = 1.0

@@ -80,6 +80,7 @@ func _on_options_pressed() -> void:
 	pass # Replace with function body.
 
 func _on_back_to_mm_pressed() -> void:
+	Global.save()
 	await get_tree().create_timer(.1).timeout
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 

@@ -44,6 +44,7 @@ func _on_button_pressed() -> void:
 		if cur_page >= cur_scene.description.size():
 			Global.cur_cutscene = null
 			Global.game_is_played = false
+			Global.cur_scene = cur_scene.next_location
 			SceneManager.change_scene(cur_scene.next_location, { "pattern": "diagonal", "color": Color('#2e222f') })
 			return
 		label.visible_ratio = 0

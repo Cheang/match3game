@@ -2,8 +2,8 @@ extends Node
 
 var cur_char: PlayerResource
 var selected_char: PlayerResource
-
 var cur_enemy: EnemyResource
+var cur_scene: String
 
 var grd_x_start: int = 64
 var grd_y_start: int = 800
@@ -31,14 +31,10 @@ var bosses_killed_needed = 1
 var bosses_killed = 0 
 
 #setting
+var save_path = "user://save1.tres"
 #audio
 var cur_song: String = ""
-var audio_plaing: bool = true # all of the sounds
-var music_plaing: bool = true # just the music
-var sfx_playing: bool = true # just the sfx
-var audio_lvl: float = 75.0
-var music_lvl: float = 100
-var sfx_lvl: float = 100
+var setting_res: Resource 
 
 var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 
@@ -46,8 +42,6 @@ var def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
 #Functions_____________________________________________________________________#
 #Player_functions --------------------------------------------------------------
 func set_up_player():
-	if is_null(selected_char):
-		selected_char = def_char
 	cur_char = selected_char.duplicate()
 	cur_char.set_stats_at_beging_of_game()
 	reset_variable()
@@ -117,3 +111,28 @@ func remove_from_array(array, item):
 	for i in range(array.size()-1, -1, -1):
 		if array[i] == item:
 			array.remove_at(i)
+
+func save():
+	var save_file = Serializer.new()
+	save_file.settings = setting_res
+	save_file.selected_char = selected_char
+	save_file.cur_scene = cur_scene
+	save_file.cur_char = cur_char
+	
+	save_file.save_data()
+
+func load_data():
+	var save_file = Serializer.new()
+	if FileAccess.file_exists(save_path):
+		save_file.load_data()
+		if save_file.settings:
+			setting_res = save_file.settings
+		if save_file.selected_char:
+			selected_char = save_file.selected_char
+		if save_file.cur_scene:
+			cur_scene = save_file.cur_scene
+		if save_file.cur_char:
+			cur_char = save_file.cur_char
+	else:
+		setting_res = SettingsResource.new()
+		selected_char = def_char
