@@ -100,6 +100,8 @@ func _process(_delta: float) -> void:
 func change_scene(path: Variant, setted_options: Dictionary = {}) -> void:
 	assert(path == null or path is String or path is PackedScene, 'Path must be a string or a PackedScene')
 	var options = _get_final_options(setted_options)
+	if path:
+		Global.cur_scene = path
 	if not options["skip_fade_out"]:
 		await fade_out(setted_options)
 	if not options["skip_scene_change"]:

@@ -14,6 +14,7 @@ func _ready() -> void:
 	
 func _initialize_scene():
 	choise_made = false
+	Global.cur_enemy = null
 	Global.changeSong(song)
 	if Global.cur_char and Global.cur_scene:
 		load_btn.disabled = false
@@ -36,6 +37,8 @@ func _on_start_pressed() -> void:
 func _on_load_pressed() -> void:
 	if not choise_made:
 		choise_made = true
+		Global.load_data()
+		SceneManager.change_scene(Global.cur_scene, { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_char_select_pressed() -> void:
 	if not choise_made:
 		choise_made = true
@@ -45,5 +48,4 @@ func _on_settings_pressed() -> void:
 		choise_made = true
 		SceneManager.change_scene("res://setting.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_quit_pressed() -> void:
-	Global.save()
 	get_tree().quit()

@@ -1,6 +1,8 @@
 extends Node2D
 class_name PieceClass
 
+@export var location: String
+
 @export var piece_name: String
 @export var description: String
 @export var color: String
@@ -85,3 +87,11 @@ func activate_actions(to_activate: Array):
 
 func lower_cooldown():
 	cooldown -= 1
+
+func set_node_values(): 
+	var node_values = { 
+	"scene_path": location,
+	 "cooldown": cooldown,
+	 "upgrades": upgrades 
+	} 
+	return node_values

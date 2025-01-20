@@ -15,6 +15,7 @@ func _ready() -> void:
 	call_deferred("_initialize_scene")
 
 func _initialize_scene():
+	Global.save()
 	Global.game_is_played = true
 	cur_scene = Global.cur_cutscene
 	if cur_scene.npc.size() != cur_scene.description.size():

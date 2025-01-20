@@ -6,15 +6,15 @@ class_name PlayerResource
 #------------------------------------------------------------------------------#
 @export_group("Health")
 @export var max_health: float
-var cur_health: float 
+@export var cur_health: float 
 @export var life_steal: float
 #------------------------------------------------------------------------------#
 @export_group("Defence")
 @export var toughness: float
 @export var start_armor: float = 0
 @export var start_mage_armor: float = 0
-var cur_armor: float = 0
-var cur_mage_armor: float = 0
+@export var cur_armor: float = 0
+@export var cur_mage_armor: float = 0
 @export_subgroup("Damage Rediction")
 @export var dmg_reduction_flat: float
 @export var dmg_reduction: float = 0
@@ -22,15 +22,15 @@ var cur_mage_armor: float = 0
 #------------------------------------------------------------------------------#
 @export_group("Utility")
 @export var speed: int
-var moves_left: int = 0
+@export var moves_left: int = 0
 @export var agility: float
-var dodging: bool = false
+@export var dodging: bool = false
 @export var cooldown_reduction: int
 @export var start_reroll: int
-var rerolls: int = 0
+@export var rerolls: int = 0
 @export_subgroup("Gold")
 @export var start_gold: int
-var gold: int = 0
+@export var gold: int = 0
 @export_range(0, 100) var gold_chanse: int
 #------------------------------------------------------------------------------#
 @export_group("Magic")
@@ -46,7 +46,7 @@ var gold: int = 0
 @export var crit_mutly: float 
 @export_subgroup("")
 @export var start_hand_combo: float = 0
-var hand_combo: int = 0
+@export var hand_combo: int = 0
 #------------------------------------------------------------------------------#
 @export_category("Art")
 @export var sprite: PackedScene
@@ -59,7 +59,7 @@ var deck_in_game: Array[PieceClass]
 @export var rewards_passive: Array[Reward]
 
 #Flags
-var flesh_coruption: bool = false
+@export var flesh_coruption: bool = false
 
 #Signals
 signal updateUIPlayer(stat: String)
@@ -137,8 +137,11 @@ func add_piece(deck_to_add, pieces):
 func unpack_deck(deck_to_unpack, target):
 	for scene in deck_to_unpack:
 		if scene and scene is PackedScene:
+			var file_path = ResourceLoader.exists(scene.resource_path)
 			var instance = scene.instantiate()
 			if instance and instance is Node2D:
+				if file_path:
+					instance.location = scene.resource_path
 				target.append(instance)
 
 func reset_stats_at_beging_of_fight():

@@ -7,20 +7,20 @@ class_name EnemyResource
 #------------------------------------------------------------------------------#
 @export_group("Defence")
 @export var max_health: float
-var cur_health: float
+@export var cur_health: float
 
 @export var physical_dmg_reduction: float = 0
 #------------------------------------------------------------------------------#
 @export_group("Offence")
 @export var damage: float
 @export var has_phases: bool = false
-var phase: int = 1
+@export var phase: int = 1
 @export var attacks: Array[EnemyAttackBase]
 @export_subgroup("Phase Attacks ")
 @export var attacks_p2: Array[EnemyAttackBase]
 @export var attacks_p3: Array[EnemyAttackBase]
 @export var attacks_p4: Array[EnemyAttackBase]
-var next_attack: EnemyAttackBase
+@export var next_attack: EnemyAttackBase
 #------------------------------------------------------------------------------#
 @export_group("Utility")
 @export var speed: int = 1

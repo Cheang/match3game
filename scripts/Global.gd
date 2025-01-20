@@ -114,10 +114,28 @@ func remove_from_array(array, item):
 
 func save():
 	var save_file = Serializer.new()
+	save_file.cur_char = cur_char.duplicate(true)
+	save_file.cur_char_deck = get_tiles_from_player()
+	save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
-	save_file.selected_char = selected_char
 	save_file.cur_scene = cur_scene
-	save_file.cur_char = cur_char
+	if cur_enemy:
+		save_file.cur_enemy = cur_enemy.duplicate(true)
+	
+	save_file.cur_cutscene = cur_cutscene
+	save_file.current_wave = current_wave
+	save_file.current_level = current_level
+	
+	save_file.area_locations = area_locations.duplicate(true)
+	save_file.area_cur_boss = area_cur_boss.duplicate(true)
+	save_file.area_cur_event = area_cur_event
+	
+	save_file.minions_needed = minions_needed
+	save_file.minions_killed = minions_killed
+	save_file.boss_added = boss_added
+	save_file.boss_beaten = boss_beaten
+	save_file.bosses_killed_needed = bosses_killed_needed
+	save_file.bosses_killed = bosses_killed
 	
 	save_file.save_data()
 
@@ -125,14 +143,44 @@ func load_data():
 	var save_file = Serializer.new()
 	if FileAccess.file_exists(save_path):
 		save_file.load_data()
-		if save_file.settings:
-			setting_res = save_file.settings
-		if save_file.selected_char:
-			selected_char = save_file.selected_char
-		if save_file.cur_scene:
-			cur_scene = save_file.cur_scene
-		if save_file.cur_char:
-			cur_char = save_file.cur_char
+		cur_char = save_file.cur_char.duplicate(true)
+		selected_char = save_file.selected_char.duplicate(true)
+		setting_res = save_file.settings
+		cur_scene = save_file.cur_scene
+		if cur_char and cur_scene:
+			if save_file.cur_char_deck:
+				for scene in save_file.cur_char_deck:
+					if scene:
+						var scene_resource = load(scene["scene_path"])
+						var instance = scene_resource.instantiate()
+						if instance and instance is Node2D:
+							instance.location = scene["scene_path"]
+							instance.upgrades = scene["upgrades"]
+							instance.cooldown = scene["cooldown"]
+							cur_char.deck_in_game.append(instance)
+			if save_file.cur_enemy:
+				cur_enemy = save_file.cur_enemy.duplicate(true)
+			cur_cutscene = save_file.cur_cutscene
+			current_wave = save_file.current_wave
+			current_level = save_file.current_level
+			
+			area_locations = save_file.area_locations.duplicate(true)
+			area_cur_boss = save_file.area_cur_boss.duplicate(true)
+			area_cur_event = save_file.area_cur_event
+			
+			minions_needed = save_file.minions_needed
+			minions_killed = save_file.minions_killed
+			boss_added = save_file.boss_added
+			boss_beaten = save_file.boss_beaten
+			bosses_killed_needed = save_file.bosses_killed_needed
+			bosses_killed = save_file.bosses_killed
+			
 	else:
 		setting_res = SettingsResource.new()
 		selected_char = def_char
+
+func get_tiles_from_player(): 
+	var array_to_return: Array = []
+	for tile in cur_char.deck_in_game:
+		array_to_return.append(tile.set_node_values())
+	return array_to_return

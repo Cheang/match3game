@@ -14,12 +14,20 @@ var last_enemy_health: float
 var enemy_attacked_once: bool = false
 
 func _ready() -> void:
+	Global.save()
 	defeat_overlay.visible = false
 	pause.set_title(Global.cur_enemy.name)
 	grd.on_startup()
 	last_enemy_health = Global.cur_enemy.cur_health
 	Global.game_is_played = true
 	grd.state = grd.move
+
+func _process(_delta: float) -> void:
+	if Global.cur_enemy.cur_health <= 0:
+		enemy_died()
+	if Global.cur_char.cur_health <= 0:
+		player_died()
+	
 
 func _on_enemy_enemy_attacked() -> void:
 	Global.cur_char.reset_stats_at_the_beging_of_turn()
