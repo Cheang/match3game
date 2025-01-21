@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_yl784")
 piece_to_add = Array[PackedScene]([ExtResource("3_6une1")])
+use_previous_event_data = false
 name = "Rush (Week)"
 description = "Adds 1 Rush.
 Rush gives you 1 more move."

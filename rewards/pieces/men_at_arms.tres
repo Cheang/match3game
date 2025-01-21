@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_r6fm7")
 piece_to_add = Array[PackedScene]([ExtResource("1_uys6j")])
+use_previous_event_data = false
 name = "Men at Arms"
 description = "Adds 1 Sword.
 Swords deal 1 DMG + your DMG"

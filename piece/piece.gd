@@ -1,6 +1,7 @@
 extends Node2D
 class_name PieceClass
 
+#Location of the origina Scene
 @export var location: String
 
 @export var piece_name: String
@@ -14,7 +15,6 @@ class_name PieceClass
 @export var adj_teture: Texture2D
 @export_enum("fluf","normal","one_per_battle","glass") var type: int
 @export var crit_shader: Resource
-#@export var scene_location: String
 @export var cooldown: int
 var original_cd: int
 
@@ -86,7 +86,7 @@ func activate_actions(to_activate: Array):
 	if not matched:
 		if is_gold:
 			Global.cur_char.gold += 1
-		if !to_activate.is_empty():
+		if !to_activate.is_empty() and !is_row_bomb and !is_col_bomb and !is_adj_bomb:
 			for i in to_activate.size():
 				if !Global.is_null(to_activate[i]):
 					to_activate[i].criting = is_criting

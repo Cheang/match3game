@@ -37,5 +37,5 @@ func dmg_enemy_if_all_destroied():
 		if not is_empty:
 			break
 	if is_empty and one_time:
-		Global.cur_enemy.take_dmg(round(Global.cur_enemy.cur_health / 2))
+		Global.cur_enemy.take_dmg(round(Global.cur_enemy.cur_health / 2), -1)
 		one_time = false

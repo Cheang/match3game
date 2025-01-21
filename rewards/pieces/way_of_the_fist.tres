@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("2_1tce8")
 piece_to_add = Array[PackedScene]([ExtResource("4_4whi7"), ExtResource("4_4whi7"), ExtResource("4_4whi7")])
+use_previous_event_data = false
 name = "Way of the Fist"
 description = "Get 3 punches.
 Each punch deals 1 DMG * the amount of Combo Points you have.

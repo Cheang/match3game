@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("4_dc87c")
 piece_to_add = Array[PackedScene]([ExtResource("5_rslfx"), ExtResource("5_rslfx"), ExtResource("5_rslfx")])
+use_previous_event_data = false
 name = "Healing Potion"
 description = "Adds 3 Healing Potion that heals 5 HP and brakes after use."
 base = ExtResource("3_cpc11")

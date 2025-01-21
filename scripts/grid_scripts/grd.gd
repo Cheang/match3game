@@ -282,6 +282,8 @@ func get_bombed_pieces():
 						match_all_in_col(i)
 					elif all_pieces[i][j].is_row_bomb:
 						match_all_in_row(j)
+					elif all_pieces[i][j].is_adj_bomb:
+						match_all_adj(i,j)
 
 func mark_for_destruction(space_to_destroy: Array[Vector2], activate_piece = false):
 	enemy_attacked = true
@@ -303,13 +305,13 @@ func find_bombs():
 		if col_matched == 5 or row_matched == 5:
 			print("color bomb")
 			return
-		if col_matched == 3 and row_matched == 3:
+		elif col_matched >= 3 and row_matched >= 3:
 			make_bomb(0, cur_color)
 			return
-		if col_matched == 4:
+		elif col_matched == 4:
 			make_bomb(1, cur_color)
 			return
-		if row_matched == 4:
+		elif row_matched == 4:
 			make_bomb(2, cur_color)
 			return
 
@@ -527,6 +529,13 @@ func match_all_in_row(row):
 	for i in grd_width:
 		if all_pieces[i][row] != null:
 			all_pieces[i][row].mark()
+
+func match_all_adj(col, row):
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			if is_in_grd(Vector2(col+i, row+j)):
+				if all_pieces[col+i][row+j] != null:
+					all_pieces[col+i][row+j].mark()
 
 #On Signal __________________________________________________
 func _on_destroy_timer_timeout() -> void:
