@@ -20,6 +20,7 @@ var fluf : Array[PackedScene]
 
 #the current pieces in the game
 var all_pieces = []
+var cur_matches = []
 
 #obstacles
 var empty_spaces: Array[Vector2]
@@ -257,21 +258,63 @@ func find_matches():
 							all_pieces[i-1][j].mark()
 							all_pieces[i][j].mark()
 							all_pieces[i+1][j].mark()
+							add_to_array(Vector2(i,j), cur_matches)
+							add_to_array(Vector2(i+1,j), cur_matches)
+							add_to_array(Vector2(i-1,j), cur_matches)
 				if j > 0 and j < grd_height - 1:
 					if !Global.is_null(all_pieces[i][j-1]) and !Global.is_null(all_pieces[i][j+1]):
 						if all_pieces[i][j-1].color == cur_color and all_pieces[i][j+1].color == cur_color:
 							all_pieces[i][j-1].mark()
 							all_pieces[i][j].mark()
 							all_pieces[i][j+1].mark()
+							add_to_array(Vector2(i,j), cur_matches)
+							add_to_array(Vector2(i,j+1), cur_matches)
+							add_to_array(Vector2(i,j-1), cur_matches)
+		get_bombed_pieces()
 		get_node("destroy_timer").start()
 
-func mark_for_destruction(space_to_destroy: Array[Vector2]):
+func get_bombed_pieces():
+	for i in grd_width:
+		for j in grd_height:
+			if all_pieces[i][j] != null:
+				if all_pieces[i][j].matched:
+					if all_pieces[i][j].is_col_bomb:
+						match_all_in_col(i)
+					elif all_pieces[i][j].is_row_bomb:
+						match_all_in_row(j)
+
+func mark_for_destruction(space_to_destroy: Array[Vector2], activate_piece = false):
 	enemy_attacked = true
 	for i in space_to_destroy.size():
-		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(false)
+		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(activate_piece)
 	get_node("destroy_timer").start()
 
+func find_bombs():
+	for c_match in cur_matches:
+		var cur_color = all_pieces[c_match.x][c_match.y].color
+		var col_matched = 0
+		var row_matched = 0
+		for b_match in cur_matches:
+			var this_color = all_pieces[b_match.x][b_match.y].color
+			if b_match.x == c_match.x and this_color == cur_color:
+				col_matched += 1
+			if b_match.y == c_match.y and this_color == cur_color:
+				row_matched += 1
+		if col_matched == 5 or row_matched == 5:
+			print("color bomb")
+			return
+		if col_matched == 3 and row_matched == 3:
+			make_bomb(0, cur_color)
+			return
+		if col_matched == 4:
+			make_bomb(1, cur_color)
+			return
+		if row_matched == 4:
+			make_bomb(2, cur_color)
+			return
+
 func destroy_matched(should_collapse: bool = true):
+	find_bombs()
 	var was_matched = false
 	for i in grd_width:
 		for j in grd_height:
@@ -297,6 +340,7 @@ func destroy_matched(should_collapse: bool = true):
 		get_node("collapse_timer").start()
 	else:
 		swap_back()
+	cur_matches.clear()
 
 func collapse_col():
 	for i in range(grd_width):
@@ -449,8 +493,40 @@ func get_obstacles(target):
 	freeze_spaces = target.freeze_spaces
 	rock_spaces = target.rock_spaces
 	flesh_spaces = target.flesh_spaces
-	
 
+func add_to_array(value, array_to_add):
+	if not array_to_add.has(value):
+		array_to_add.append(value)
+
+func make_bomb(bomb_type, color):
+	for c_match in cur_matches:
+		var cur_col = c_match.x
+		var cur_row = c_match.y
+		if all_pieces[cur_col][cur_row] == piece_one and piece_one.color == color:
+			piece_one.unmark()
+			change_bomb(bomb_type, piece_one)
+		if all_pieces[cur_col][cur_row] == piece_two and piece_two.color == color:
+			piece_two.unmark()
+			change_bomb(bomb_type, piece_two)
+
+func change_bomb(bomb_type, piece):
+	match bomb_type:
+		0:
+			piece.make_adj_bomb()
+		1:
+			piece.make_row_bomb()
+		2:
+			piece.make_col_bomb()
+
+func match_all_in_col(col):
+	for i in grd_height:
+		if all_pieces[col][i] != null:
+			all_pieces[col][i].mark()
+
+func match_all_in_row(row):
+	for i in grd_width:
+		if all_pieces[i][row] != null:
+			all_pieces[i][row].mark()
 
 #On Signal __________________________________________________
 func _on_destroy_timer_timeout() -> void:

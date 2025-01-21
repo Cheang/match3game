@@ -9,6 +9,9 @@ class_name PieceClass
 @export var family: String
 @export var base_texture: Texture
 @export var icon_texture: Texture
+@export var row_teture: Texture2D
+@export var col_teture: Texture2D
+@export var adj_teture: Texture2D
 @export_enum("fluf","normal","one_per_battle","glass") var type: int
 @export var crit_shader: Resource
 #@export var scene_location: String
@@ -29,6 +32,10 @@ var matched: bool = false
 var is_criting: bool = false
 var is_gold: bool = false
 
+var is_row_bomb: bool = false
+var is_col_bomb: bool = false
+var is_adj_bomb: bool = false
+
 func _ready() -> void:
 	original_cd = cooldown
 	if icon_texture != null:
@@ -44,9 +51,9 @@ func move(target, time = .3):
 
 func mark(activate: bool = true):
 	base.modulate = Color(1, 1, 1, .5)
-	matched = true
 	if activate:
 		activate_actions(action)
+	matched = true
 
 func unmark():
 	base.modulate = Color(1, 1, 1, 1)
@@ -76,14 +83,15 @@ func will_gold():
 		gold_border.visible = false
 
 func activate_actions(to_activate: Array):
-	if is_gold:
-		Global.cur_char.gold += 1
-	if !to_activate.is_empty():
-		for i in to_activate.size():
-			if !Global.is_null(to_activate[i]):
-				to_activate[i].criting = is_criting
-				to_activate[i].upgrade = upgrades
-				to_activate[i].activate()
+	if not matched:
+		if is_gold:
+			Global.cur_char.gold += 1
+		if !to_activate.is_empty():
+			for i in to_activate.size():
+				if !Global.is_null(to_activate[i]):
+					to_activate[i].criting = is_criting
+					to_activate[i].upgrade = upgrades
+					to_activate[i].activate()
 
 func lower_cooldown():
 	cooldown -= 1
@@ -95,3 +103,18 @@ func set_node_values():
 	 "upgrades": upgrades 
 	} 
 	return node_values
+
+func make_col_bomb():
+	is_col_bomb = true
+	icon.texture = col_teture
+	base.modulate = Color(1, 1, 1, 1)
+
+func make_row_bomb():
+	is_row_bomb = true
+	icon.texture = row_teture
+	base.modulate = Color(1, 1, 1, 1)
+
+func make_adj_bomb():
+	is_adj_bomb = true
+	icon.texture = adj_teture
+	base.modulate = Color(1, 1, 1, 1)
