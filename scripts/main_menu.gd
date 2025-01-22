@@ -15,6 +15,12 @@ func _ready() -> void:
 func _initialize_scene():
 	choise_made = false
 	Global.cur_enemy = null
+	if Global.game_is_over:
+		Global.cur_char = null
+		Global.cur_scene = ""
+		Global.game_is_over = false
+		Global.save()
+		
 	Global.changeSong(song)
 	if Global.cur_char and Global.cur_scene:
 		load_btn.disabled = false

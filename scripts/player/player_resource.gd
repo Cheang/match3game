@@ -5,8 +5,16 @@ class_name PlayerResource
 @export var player_class: String
 #------------------------------------------------------------------------------#
 @export_group("Health")
-@export var max_health: float
-@export var cur_health: float 
+@export var max_health: float:
+	set(new_max_health):
+		var diff = new_max_health - max_health
+		max_health = new_max_health
+		cur_health += diff
+@export var cur_health: float:
+	set(new_cur_health):
+		cur_health = clamp(new_cur_health, 0, max_health)
+		if cur_health <= 0:
+			playerDied.emit()
 @export var life_steal: float
 #------------------------------------------------------------------------------#
 @export_group("Defence")
@@ -42,7 +50,9 @@ class_name PlayerResource
 @export var proficiency: float 
 @export var fluf_damage: float
 @export_subgroup("Critical")
-@export_range(0, 100) var crit_chanse: int 
+@export_range(0, 100) var crit_chanse: int:
+	set(new_value):
+		crit_chanse = clamp(new_value, 0, 100) 
 @export var crit_mutly: float 
 @export_subgroup("")
 @export var start_hand_combo: float = 0
@@ -58,8 +68,12 @@ var deck_in_game: Array[PieceClass]
 @export var rewards_piece: Array[Reward]
 @export var rewards_passive: Array[Reward]
 
-#Flags
-@export var flesh_coruption: bool = false
+@export_category("Flags")
+@export var flg_flesh_coruption: bool = false
+@export var flg_can_spawn_col_bombs: bool = false
+@export var flg_can_spawn_row_bombs: bool = false
+@export var flg_can_spawn_adj_bombs: bool = false
+@export var flg_can_spawn_clr_bombs: bool = false
 
 #Signals
 signal updateUIPlayer(stat: String)
@@ -99,15 +113,7 @@ func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
 
 func add_stat(stat: String, value):
 	if stat in self:
-		if stat == "cur_health":
-			set(stat, clamp(get(stat)+value, 0, max_health))
-			if get(stat) == 0:
-				playerDied.emit()
-			updateUIPlayer.emit(str(stat))
-			return
-		
 		set(stat, get(stat)+value)
-		
 		if stat == "moves_left" and get(stat) <= 0:
 			playerFinishedTurn.emit()
 		updateUIPlayer.emit(str(stat))
@@ -116,13 +122,7 @@ func add_stat(stat: String, value):
 
 func set_stat(stat: String, value):
 	if stat in self:
-		if stat == "cur_health":
-			set(stat, clamp(value, 0, max_health))
-			updateUIPlayer.emit(str(stat))
-			return
-		
 		set(stat, value)
-		
 		if stat == "moves_left" and get(stat) <= 0:
 			playerFinishedTurn.emit()
 		updateUIPlayer.emit(str(stat))

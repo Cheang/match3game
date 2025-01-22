@@ -305,13 +305,13 @@ func find_bombs():
 		if col_matched == 5 or row_matched == 5:
 			print("color bomb")
 			return
-		elif col_matched >= 3 and row_matched >= 3:
+		elif col_matched >= 3 and row_matched >= 3 and Global.cur_char.flg_can_spawn_adj_bombs:
 			make_bomb(0, cur_color)
 			return
-		elif col_matched == 4:
+		elif col_matched == 4 and Global.cur_char.flg_can_spawn_row_bombs:
 			make_bomb(1, cur_color)
 			return
-		elif row_matched == 4:
+		elif row_matched == 4 and Global.cur_char.flg_can_spawn_col_bombs:
 			make_bomb(2, cur_color)
 			return
 
@@ -377,9 +377,9 @@ func after_refill():
 	if !damaged_flesh:
 		generate_flesh()
 	if flesh_spaces.size() >= 5:
-		Global.cur_char.set_stat("flesh_coruption", true)
+		Global.cur_char.set_stat("flg_flesh_coruption", true)
 	else: 
-		Global.cur_char.set_stat("flesh_coruption", false)
+		Global.cur_char.set_stat("flg_flesh_coruption", false)
 	move_checked = false
 	damaged_flesh = false
 

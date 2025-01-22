@@ -57,12 +57,18 @@ func mark(activate: bool = true):
 
 func unmark():
 	base.modulate = Color(1, 1, 1, 1)
+	if icon_texture != null:
+		icon.texture = icon_texture
 	cooldown = original_cd
 	matched = false
 	is_criting = false
 	is_gold = false
 	will_gold()
 	will_crit()
+	if is_row_bomb or is_col_bomb or is_adj_bomb:
+		is_row_bomb = false
+		is_col_bomb = false
+		is_adj_bomb = false
 
 func will_crit():
 	randomize()

@@ -6,10 +6,10 @@
 
 [resource]
 script = ExtResource("1_wrsmf")
-stats = Array[String](["max_health", "cur_health"])
-increase = [10.0, 10.0]
+stats = Array[String](["max_health"])
+increase = [10.0]
 name = "Strong Body"
-description = "Max Health and Current Health +10"
+description = "Max Health +10"
 base = ExtResource("2_t8ptp")
 icon = ExtResource("3_84fiw")
 passive_boost = Array[String]([])

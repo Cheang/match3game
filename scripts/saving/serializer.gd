@@ -10,6 +10,7 @@ var save_path = "user://save1.tres"
 @export var cur_scene: String
 @export var cur_enemy: EnemyResource
 
+@export var game_is_over: bool = false
 @export var cur_cutscene: CutScene
 @export var current_wave: int = 0
 @export var current_level: int = 0
@@ -30,15 +31,16 @@ func save_data():
 
 func load_data():
 	var data = ResourceLoader.load(save_path, "")
-	
-	cur_char = data.cur_char.duplicate(true)
-	cur_char_deck = data.cur_char_deck.duplicate()
+	if data.cur_char:
+		cur_char = data.cur_char.duplicate(true)
+		cur_char_deck = data.cur_char_deck.duplicate()
 	selected_char = data.selected_char.duplicate(true)
 	settings = data.settings
 	cur_scene = data.cur_scene
 	if data.cur_enemy:
 		cur_enemy = data.cur_enemy.duplicate(true)
 	
+	game_is_over = data.game_is_over
 	cur_cutscene = data.cur_cutscene
 	current_wave = data.current_wave
 	current_level = data.current_level

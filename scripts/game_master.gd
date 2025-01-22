@@ -25,9 +25,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Global.cur_enemy.cur_health <= 0:
 		enemy_died()
-	if Global.cur_char.cur_health <= 0:
-		player_died()
-	
+
 
 func _on_enemy_enemy_attacked() -> void:
 	Global.cur_char.reset_stats_at_the_beging_of_turn()
@@ -37,7 +35,6 @@ func _on_enemy_enemy_attacked() -> void:
 	grd.state = grd.move
 
 func _on_back_to_mm_pressed() -> void:
-	Global.cur_char = null
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_tree_entered() -> void:
@@ -65,6 +62,8 @@ func player_died():
 	grd.state = grd.wait
 	defeat_overlay.visible = true
 	Global.game_is_played = false
+	Global.game_is_over = true
+	Global.save()
 
 func enemy_died():
 	if Global.game_is_played:
