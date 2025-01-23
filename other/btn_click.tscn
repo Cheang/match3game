@@ -1,7 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://eplsgda067uc"]
+[gd_scene load_steps=2 format=3 uid="uid://b87buk2t5cluu"]
 
-[ext_resource type="AudioStream" uid="uid://dn4hun5wrr6ai" path="res://sounds/click (2).wav" id="1_o03hj"]
+[ext_resource type="AudioStream" uid="uid://dn4hun5wrr6ai" path="res://sounds/click (2).wav" id="1_2r5aa"]
 
 [node name="sound" type="AudioStreamPlayer"]
-stream = ExtResource("1_o03hj")
+stream = ExtResource("1_2r5aa")
 bus = &"SFX"

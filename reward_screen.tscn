@@ -109,6 +109,11 @@ layout_mode = 2
 [node name="rc_3" parent="rewards/VBoxContainer" instance=ExtResource("8_m3h2k")]
 layout_mode = 2
 
+[node name="Control3" type="Control" parent="rewards/VBoxContainer"]
+custom_minimum_size = Vector2(510, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="HBoxContainer" type="HBoxContainer" parent="rewards/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 8

@@ -9,7 +9,6 @@ extends Control
 
 var reward_cards: Array[reward_card]
 
-
 func _ready() -> void:
 	reward_cards = [rc_, rc_2, rc_3]
 	update_reroll_btn()

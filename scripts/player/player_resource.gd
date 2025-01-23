@@ -51,8 +51,8 @@ class_name PlayerResource
 @export var fluf_damage: float
 @export_subgroup("Critical")
 @export_range(0, 100) var crit_chanse: int:
-	set(new_value):
-		crit_chanse = clamp(new_value, 0, 100) 
+	set(new_crit_chanse):
+		crit_chanse = clamp(new_crit_chanse, 0, 100) 
 @export var crit_mutly: float 
 @export_subgroup("")
 @export var start_hand_combo: float = 0
@@ -144,6 +144,13 @@ func unpack_deck(deck_to_unpack, target):
 					instance.location = scene.resource_path
 				target.append(instance)
 
+func reset_stats_at_beging_of_game():
+	deck_in_game.clear()
+	unpack_deck(deck, deck_in_game)
+	set_stat("cur_health", max_health)
+	set_stat("gold", start_gold)
+	set_stat("rerolls", start_reroll)
+
 func reset_stats_at_beging_of_fight():
 	set_stat("dodging", false)
 	set_stat("moves_left", speed)
@@ -151,14 +158,7 @@ func reset_stats_at_beging_of_fight():
 	set_stat("cur_armor", start_armor)
 	set_stat("cur_mage_armor", start_mage_armor)
 
-func reset_stats_at_the_beging_of_turn():
+func reset_stats_at_beging_of_turn():
 	set_stat("cur_armor", 0)
 	set_stat("hand_combo", start_hand_combo)
 	set_stat("moves_left", speed)
-
-func set_stats_at_beging_of_game():
-	deck_in_game.clear()
-	unpack_deck(deck, deck_in_game)
-	set_stat("cur_health", max_health)
-	set_stat("gold", start_gold)
-	set_stat("rerolls", start_reroll)

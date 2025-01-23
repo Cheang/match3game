@@ -46,7 +46,7 @@ var setting_res: Resource
 #Player_functions --------------------------------------------------------------
 func set_up_player():
 	cur_char = selected_char.duplicate()
-	cur_char.set_stats_at_beging_of_game()
+	cur_char.reset_stats_at_beging_of_game()
 	reset_variable()
 func select_character(character: PlayerResource):
 	selected_char = character

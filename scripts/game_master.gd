@@ -28,7 +28,7 @@ func _process(_delta: float) -> void:
 
 
 func _on_enemy_enemy_attacked() -> void:
-	Global.cur_char.reset_stats_at_the_beging_of_turn()
+	Global.cur_char.reset_stats_at_beging_of_turn()
 	enemy_attacked_once = false
 	trun_changer.change_turn(0)
 	await get_tree().create_timer(.8).timeout
