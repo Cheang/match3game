@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="3_cpc11"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_dc87c"]
 [ext_resource type="Texture2D" uid="uid://dggy03bhnk1i5" path="res://assets/_purple_icons/puprle_icon_2.png" id="4_roxoj"]
-[ext_resource type="PackedScene" uid="uid://duuv7ras2jq0o" path="res://piece/_purple_sq/purple_sq_1.tscn" id="5_rslfx"]
+[ext_resource type="PackedScene" uid="uid://duuv7ras2jq0o" path="res://piece/_purple_sq/p_healing_potion_1.tscn" id="5_rslfx"]
 
 [resource]
 script = ExtResource("4_dc87c")
@@ -16,4 +16,4 @@ icon = ExtResource("4_roxoj")
 passive_boost = Array[String]([])
 piece_boost = Array[String](["strong_body"])
 boost_self = false
-rearity = "COMMON"
+rearity = "EPIC"

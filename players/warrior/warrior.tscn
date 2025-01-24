@@ -81,13 +81,16 @@ use_parent_material = true
 position = Vector2(13, 838)
 texture = ExtResource("2_g76ys")
 centered = false
+flip_h = true
 
 [node name="warrior_main2" type="Sprite2D" parent="warrior_main"]
 use_parent_material = true
 texture = ExtResource("3_1qemf")
 centered = false
+flip_h = true
 
 [node name="warrior_main3" type="Sprite2D" parent="warrior_main"]
 use_parent_material = true
 texture = ExtResource("4_txyqo")
 centered = false
+flip_h = true

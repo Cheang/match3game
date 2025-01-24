@@ -11,10 +11,13 @@ const LOC_DEADEND = preload("res://locations/loc_deadend.tres")
 func _ready() -> void:
 	call_deferred("_initialize_scene")
 func _initialize_scene() -> void:
-	Global.save()
 	Locations.add_boss_to_locations(Global.area_locations, Global.minions_needed)
-	Global.area_locations.shuffle()
+	if !Global.flg_game_is_loaded:
+		Global.area_locations.shuffle()
+	else:
+		Global.flg_game_is_loaded = false
 	_set_locations()
+	Global.save()
 	Global.game_is_played = true
 
 func _set_locations() -> void:

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://dbkv21dn6mkqs"]
 
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_r6fm7"]
-[ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/red_sq_1.tscn" id="1_uys6j"]
+[ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/r_shor_sword.tscn" id="1_uys6j"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_vs6gy"]
 [ext_resource type="Texture2D" uid="uid://53gy6aagisa8" path="res://assets/_red_icons/red_icon_5.png" id="5_dv0wt"]
 

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://ba0s3qgm8su2y"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_aas5n"]
+[ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/_red_icons/red_icon_2.png" id="2_e1kit"]
+[ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/r_punch.tscn" id="3_3oaqe"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_0qqvf"]
+
+[resource]
+script = ExtResource("4_0qqvf")
+piece_to_add = Array[PackedScene]([ExtResource("3_3oaqe"), ExtResource("3_3oaqe"), ExtResource("3_3oaqe")])
+use_previous_event_data = false
+name = "Way of the Fist"
+description = "Get 3 Punches"
+base = ExtResource("1_aas5n")
+icon = ExtResource("2_e1kit")
+flags = Array[String](["flg_rew_fists_lvl_1"])
+rearity = "UNCOMMON"

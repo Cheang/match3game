@@ -46,7 +46,7 @@ func load_data():
 	current_level = data.current_level
 	
 	area_locations = data.area_locations.duplicate(true)
-	if area_cur_boss:
+	if data.area_cur_boss != null:
 		area_cur_boss = data.area_cur_boss.duplicate(true)
 	area_cur_event = data.area_cur_event
 	

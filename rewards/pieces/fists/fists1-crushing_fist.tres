@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://e3ubvoc776jk"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_kxdv0"]
+[ext_resource type="Texture2D" uid="uid://crambqr7imicy" path="res://assets/_red_icons/red_icon_7.png" id="2_dx1o0"]
+[ext_resource type="PackedScene" uid="uid://cif7a86vr7k3c" path="res://piece/_red_sq/r_uppercut.tscn" id="3_m8gsn"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_03bea"]
+
+[resource]
+script = ExtResource("4_03bea")
+piece_to_add = Array[PackedScene]([ExtResource("3_m8gsn")])
+use_previous_event_data = false
+name = "Crushing Fist"
+description = "Gain 1 Uppercut"
+base = ExtResource("1_kxdv0")
+icon = ExtResource("2_dx1o0")
+flags = Array[String](["flg_rew_fists_lvl_2", "flg_rew_fists_lvl_1_5"])
+rearity = "EPIC"

@@ -24,6 +24,7 @@ func _initialize_scene():
 	Global.changeSong(song)
 	if Global.cur_char and Global.cur_scene:
 		load_btn.disabled = false
+		load_btn.visible = true
 
 func _on_start_pressed() -> void:
 	if not choise_made:
@@ -43,6 +44,7 @@ func _on_start_pressed() -> void:
 func _on_load_pressed() -> void:
 	if not choise_made:
 		choise_made = true
+		Global.flg_game_is_loaded = true
 		Global.load_data()
 		SceneManager.change_scene(Global.cur_scene, { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_char_select_pressed() -> void:

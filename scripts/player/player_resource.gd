@@ -74,6 +74,36 @@ var deck_in_game: Array[PieceClass]
 @export var flg_can_spawn_row_bombs: bool = false
 @export var flg_can_spawn_adj_bombs: bool = false
 @export var flg_can_spawn_clr_bombs: bool = false
+@export_group("Rewards")
+@export_subgroup("General")
+@export var flg_rew_rush: bool = false:
+	set(value):
+		const SMOKE_SCREEN = "res://rewards/pieces/general_rush_smoke_screen.tres"
+		flag_setter(flg_rew_rush, value, [], [SMOKE_SCREEN])
+@export_subgroup("Fists")
+@export var flg_rew_fists_lvl_1: bool = false:
+	set(value):
+		const CRUSHING_FIST = "res://rewards/pieces/fists/fists1-crushing_fist.tres"
+		const BLOCK = "res://rewards/pieces/fists/fists1-block.tres"
+		const PUNCH = "res://rewards/pieces/fists/fists1-punch.tres"
+		const WAY_OF_THE_FISTS = "res://rewards/pieces/fists/fists1-way_of_the_fists.tres"
+		
+		const WAY_OF_THE_FIST = "res://rewards/pieces/fists/fists0-way_of_the_fist.tres"
+		
+		flag_setter(flg_rew_fists_lvl_1, value, [CRUSHING_FIST, BLOCK, PUNCH, WAY_OF_THE_FISTS], [WAY_OF_THE_FIST])
+@export var flg_rew_fists_lvl_1_5: bool = false:
+	set(value):
+		const IRON_MUSCILES = "res://rewards/pieces/fists/fists1_5-iron_musciles.tres"
+		const IRON_WILL = "res://rewards/pieces/fists/fists1_5-iron_will.tres"
+		
+		flag_setter(flg_rew_fists_lvl_1_5, value, [IRON_MUSCILES, IRON_WILL], [])
+@export var flg_rew_fists_lvl_2: bool = false:
+	set(value):
+		
+		const SMALL_SWORD = "res://rewards/pieces/sword/sword0_small_sword.tres"
+		const SWORD_PRACTICE = "res://rewards/pieces/sword/sword0-sword_practice.tres"
+		
+		flag_setter(flg_rew_fists_lvl_2, value, [], [SMALL_SWORD, SWORD_PRACTICE])
 
 #Signals
 signal updateUIPlayer(stat: String)
@@ -109,7 +139,7 @@ func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
 			cur_armor = 0
 			enemy_damage = abs(temp_dmg)
 	if enemy_damage > 0:
-		Global.cur_char.add_stat("cur_health",enemy_damage*-1)
+		add_stat("cur_health",enemy_damage*-1)
 
 func add_stat(stat: String, value):
 	if stat in self:
@@ -129,10 +159,44 @@ func set_stat(stat: String, value):
 	else: 
 		print("Stat does not exist: ", stat)
 
+func set_flag(flag: String, value = true):
+	if flag in self:
+		set(flag, value)
+	else: 
+		print("Flag does not exists: ", flag)
+
+func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array):
+	if flag != value:
+		flag = value
+		if flag:
+			if not array_to_add.is_empty():
+				add_to_array(rewards_piece, array_to_add)
+			if not array_to_remove.is_empty():
+				remove_from_array(rewards_piece, array_to_remove)
+
 func add_piece(deck_to_add, pieces):
 	if deck_to_add and pieces:
 		for piece in pieces:
 			deck_to_add.append(piece)
+
+func add_to_array(array_to_add_to: Array, items: Array):
+	for item in items:
+		var exists = false
+		var reward_piece = load(item)
+		for existing_item in array_to_add_to:
+			if existing_item.name == reward_piece.name:
+				exists = true
+				break
+		if not exists:
+			array_to_add_to.append(reward_piece)
+
+func remove_from_array(array_to_remove: Array, items: Array):
+	for item in items:
+		var reward_piece = load(item)
+		for i in array_to_remove.size():
+			if array_to_remove[i].name == reward_piece.name:
+				array_to_remove.pop_at(i)
+				break
 
 func unpack_deck(deck_to_unpack, target):
 	for scene in deck_to_unpack:

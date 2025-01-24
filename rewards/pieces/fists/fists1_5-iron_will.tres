@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://kuo61b4y6l5q"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_pkpu0"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="2_l2t4t"]
+[ext_resource type="Texture2D" uid="uid://doo5kw02eiju" path="res://assets/_red_icons/red_icon_3.png" id="2_lyc6c"]
+
+[resource]
+script = ExtResource("2_l2t4t")
+stats = Array[String](["dmg_reduction"])
+increase = [5.0]
+name = "Iron Will"
+description = "Increase damage reduction +5"
+base = ExtResource("1_pkpu0")
+icon = ExtResource("2_lyc6c")
+flags = Array[String]([])
+rearity = "RARE"

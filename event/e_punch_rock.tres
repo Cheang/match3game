@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_coahw"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_2vumd"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="3_5k0ji"]
-[ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/red_sq_2.tscn" id="3_wd4vi"]
+[ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/r_punch.tscn" id="3_wd4vi"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="4_3e2a6"]
 [ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/_red_icons/red_icon_2.png" id="4_5mejo"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="6_vaaq1"]

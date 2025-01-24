@@ -1,0 +1,20 @@
+[gd_scene load_steps=6 format=3 uid="uid://cd0nyvfnjstgb"]
+
+[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/_blue_fluf.tscn" id="1_pmqti"]
+[ext_resource type="Texture2D" uid="uid://l16w0n5oght0" path="res://assets/_blue_icons/blue_icon_1.png" id="2_xr5al"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_1uqw6"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="4_7phcw"]
+
+[sub_resource type="Resource" id="Resource_1a1bj"]
+script = ExtResource("4_7phcw")
+toughness_mult = true
+hand_combo_mult = false
+armor = 3.0
+hand_combo_points_to_give = 0
+
+[node name="blue_sq_1" instance=ExtResource("1_pmqti")]
+piece_name = "Round Shield"
+icon_texture = ExtResource("2_xr5al")
+type = 1
+cooldown = 2
+action = Array[ExtResource("3_1uqw6")]([SubResource("Resource_1a1bj")])

@@ -6,15 +6,22 @@ var cur_char: PlayerResource
 var selected_char: PlayerResource
 var cur_enemy: EnemyResource
 var cur_scene: String
+var actual_cur_scene: String:
+	set(new_scene):
+		if new_scene == "res://setting.tscn" or new_scene == "res://main_menu.tscn" or new_scene == "res://reward_screen.tscn" or new_scene == "res://event_screen.tscn":
+			actual_cur_scene = new_scene
+		else:
+			cur_scene = new_scene
+			actual_cur_scene = new_scene
 
 var grd_x_start: int = 64
 var grd_y_start: int = 800
 var grd_width: int = 8
 var grd_height: int = 9
 var grd_offset: int = 64
-
 var game_is_played: bool = false
 var game_is_over: bool = false
+
 var cur_cutscene: CutScene
 var current_wave: int = 0
 var current_level: int = 0
@@ -39,8 +46,8 @@ var save_path = "user://save1.tres"
 var cur_song: String = ""
 var setting_res: Resource 
 
-
-
+#flags
+var flg_game_is_loaded: bool = false
 
 #Functions_____________________________________________________________________#
 #Player_functions --------------------------------------------------------------
@@ -122,10 +129,7 @@ func save():
 		save_file.cur_char_deck = get_tiles_from_player()
 	save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
-	if cur_scene == "res://setting.tscn":
-		pass
-	else:
-		save_file.cur_scene = cur_scene
+	save_file.cur_scene = cur_scene
 	if cur_enemy:
 		save_file.cur_enemy = cur_enemy.duplicate(true)
 	
@@ -152,12 +156,12 @@ func load_data():
 	var save_file = Serializer.new()
 	if FileAccess.file_exists(save_path):
 		save_file.load_data()
-		if save_file.cur_char:
-			cur_char = save_file.cur_char.duplicate(true)
 		selected_char = save_file.selected_char.duplicate(true)
 		setting_res = save_file.settings
-		cur_scene = save_file.cur_scene
-		if cur_char and cur_scene:
+		
+		if save_file.cur_char and save_file.cur_scene:
+			cur_char = save_file.cur_char.duplicate(true)
+			cur_scene = save_file.cur_scene
 			if save_file.cur_char_deck:
 				for scene in save_file.cur_char_deck:
 					if scene:
@@ -176,7 +180,7 @@ func load_data():
 			current_level = save_file.current_level
 			
 			area_locations = save_file.area_locations.duplicate(true)
-			if area_cur_boss:
+			if save_file.area_cur_boss != null:
 				area_cur_boss = save_file.area_cur_boss.duplicate(true)
 			area_cur_event = save_file.area_cur_event
 			

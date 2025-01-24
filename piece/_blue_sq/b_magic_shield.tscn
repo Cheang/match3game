@@ -1,0 +1,20 @@
+[gd_scene load_steps=6 format=3 uid="uid://dm1qou102ne4"]
+
+[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/_blue_fluf.tscn" id="1_x3ivg"]
+[ext_resource type="Texture2D" uid="uid://ckfmmrlppmvuc" path="res://assets/_blue_icons/blue_icon_4.png" id="2_ubncu"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_2xldi"]
+[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseMagicArmor.gd" id="4_vmkna"]
+
+[sub_resource type="Resource" id="Resource_g6use"]
+script = ExtResource("4_vmkna")
+faith_mult = true
+hand_combo_mult = false
+mage_armor = 2
+hand_combo_points_to_give = 0
+
+[node name="blue_sq_3" instance=ExtResource("1_x3ivg")]
+piece_name = "Magic Shield"
+icon_texture = ExtResource("2_ubncu")
+type = 1
+cooldown = 4
+action = Array[ExtResource("3_2xldi")]([SubResource("Resource_g6use")])

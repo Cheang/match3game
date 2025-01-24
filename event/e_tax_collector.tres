@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="3_aj5pr"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_o1m3v"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="4_qxlvy"]
-[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/red_sq_0.tscn" id="5_8chvt"]
+[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/_red_fluf.tscn" id="5_8chvt"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="5_qn67d"]
 [ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="6_isglo"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="6_r32wb"]

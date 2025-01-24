@@ -49,7 +49,9 @@ func choose_reward(target):
 	var common_rewards = [] 
 	var uncommon_rewards = [] 
 	var rare_rewards = [] 
+	var epic_rewards = []
 	var legendary_rewards = []
+	var godly_rewards = []
 	
 	for rew in target:
 		match rew.rearity:
@@ -59,20 +61,37 @@ func choose_reward(target):
 				uncommon_rewards.append(rew)
 			"RARE":
 				rare_rewards.append(rew)
+			"EPIC":
+				epic_rewards.append(rew)
 			"LEGENDARY":
 				legendary_rewards.append(rew)
+			"GODLY":
+				godly_rewards.append(rew)
 				
 	var random_number = randi() % 100
-	if random_number < 50:
-		return common_rewards[randi() % common_rewards.size()]
-	elif random_number < 80 and random_number >= 50 and uncommon_rewards.size() > 0:
-		return uncommon_rewards[randi() % uncommon_rewards.size()]
-	elif random_number < 95 and random_number >= 80 and rare_rewards.size() > 0:
-		return rare_rewards[randi() % rare_rewards.size()]
-	elif random_number <= 100 and random_number >= 95 and legendary_rewards.size() > 0:
+	if random_number >= 110 and godly_rewards.size() > 0:
+		return godly_rewards[randi() % godly_rewards.size()]
+	elif random_number >= 97 and legendary_rewards.size() > 0: 
 		return legendary_rewards[randi() % legendary_rewards.size()]
+	elif random_number >= 90 and epic_rewards.size() > 0:
+		return epic_rewards[randi() % epic_rewards.size()]
+	elif random_number >= 75 and rare_rewards.size() > 0:
+		return rare_rewards[randi() % rare_rewards.size()]
+	elif random_number >= 50 and uncommon_rewards.size() > 0:
+		return uncommon_rewards[randi() % uncommon_rewards.size()]
 	else:
-		return common_rewards[randi() % common_rewards.size()]
+		if common_rewards.size() > 0: 
+			return common_rewards[randi() % common_rewards.size()]
+		elif uncommon_rewards.size() > 0:
+			return uncommon_rewards[randi() % uncommon_rewards.size()]
+		elif rare_rewards.size() > 0:
+			return rare_rewards[randi() % rare_rewards.size()]
+		elif epic_rewards.size() > 0:
+			return epic_rewards[randi() % epic_rewards.size()]
+		elif legendary_rewards.size() > 0:
+			return legendary_rewards[randi() % legendary_rewards.size()]
+		elif godly_rewards.size() > 0:
+			return godly_rewards[randi() % godly_rewards.size()]
 
 func update_reroll_btn():
 	if Global.cur_char:

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="R_Stat" load_steps=3 format=3 uid="uid://dudi6vely75po"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_golvc"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="1_q1kym"]
+
+[resource]
+script = ExtResource("1_q1kym")
+stats = Array[String](["strength"])
+increase = [1.0]
+name = "Iron Muscles"
+description = "Increase strength +1"
+base = ExtResource("1_golvc")
+flags = Array[String]([])
+rearity = "UNCOMMON"
