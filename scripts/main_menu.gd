@@ -54,4 +54,5 @@ func _on_settings_pressed() -> void:
 		choise_made = true
 		SceneManager.change_scene("res://setting.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_quit_pressed() -> void:
+	Global.save()
 	get_tree().quit()

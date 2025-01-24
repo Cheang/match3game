@@ -77,6 +77,7 @@ func enemy_died():
 			Global.boss_beaten = true
 			Global.bosses_killed += 1
 			if Global.bosses_killed >= Global.bosses_killed_needed:
+				Global.game_is_over = true
 				SceneManager.change_scene("res://thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 				return
 		SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })

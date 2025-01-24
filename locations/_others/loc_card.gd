@@ -32,7 +32,6 @@ func _on_selection_btn_pressed() -> void:
 		selected = true
 		Global.game_is_played = false
 		if loc_res.next_scene != "":
-			Global.cur_scene = loc_res.next_scene
 			SceneManager.change_scene(loc_res.next_scene, { "pattern": "diagonal", "color": loc_res.transition_color })
 
 func _on_tree_exiting() -> void:

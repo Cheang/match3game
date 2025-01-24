@@ -122,7 +122,10 @@ func save():
 		save_file.cur_char_deck = get_tiles_from_player()
 	save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
-	save_file.cur_scene = cur_scene
+	if cur_scene == "res://setting.tscn":
+		pass
+	else:
+		save_file.cur_scene = cur_scene
 	if cur_enemy:
 		save_file.cur_enemy = cur_enemy.duplicate(true)
 	
@@ -132,7 +135,8 @@ func save():
 	save_file.current_level = current_level
 	
 	save_file.area_locations = area_locations.duplicate(true)
-	save_file.area_cur_boss = area_cur_boss.duplicate(true)
+	if area_cur_boss:
+		save_file.area_cur_boss = area_cur_boss.duplicate(true)
 	save_file.area_cur_event = area_cur_event
 	
 	save_file.minions_needed = minions_needed
@@ -172,7 +176,8 @@ func load_data():
 			current_level = save_file.current_level
 			
 			area_locations = save_file.area_locations.duplicate(true)
-			area_cur_boss = save_file.area_cur_boss.duplicate(true)
+			if area_cur_boss:
+				area_cur_boss = save_file.area_cur_boss.duplicate(true)
 			area_cur_event = save_file.area_cur_event
 			
 			minions_needed = save_file.minions_needed

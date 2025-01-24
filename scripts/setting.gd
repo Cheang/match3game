@@ -55,6 +55,5 @@ func _on_sfx_mute_toggled(toggled_on: bool) -> void:
 	AudioServer.set_bus_mute(2,Global.setting_res.set_audio_sfx_playing)
 
 func _on_back_pressed() -> void:
-	Global.save()
 	await get_tree().create_timer(.1).timeout
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })

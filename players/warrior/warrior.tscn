@@ -1,15 +1,65 @@
-[gd_scene load_steps=6 format=3 uid="uid://du6ruvncrt5c4"]
+[gd_scene load_steps=8 format=3 uid="uid://du6ruvncrt5c4"]
 
 [ext_resource type="Script" path="res://scripts/player/player_anim.gd" id="1_58pmd"]
-[ext_resource type="Texture2D" uid="uid://bwluyqkn374p1" path="res://assets/player/warrior_1.png" id="2_1erxu"]
+[ext_resource type="Texture2D" uid="uid://bxxfurbr4amco" path="res://assets/player/warrior_body.png" id="2_g76ys"]
+[ext_resource type="Texture2D" uid="uid://cc4ilttpxyuer" path="res://assets/player/warrior_head.png" id="3_1qemf"]
+[ext_resource type="Texture2D" uid="uid://cbkt4gbb4hh2b" path="res://assets/player/warrior_sword.png" id="4_txyqo"]
 
 [sub_resource type="Animation" id="Animation_kh76w"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("warrior_main/warrior_main2:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("warrior_main/warrior_main3:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_quum1"]
 resource_name = "idle"
 length = 2.0
 loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("warrior_main/warrior_main2:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 1), Vector2(0, -1), Vector2(0, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("warrior_main/warrior_main3:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, -1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5ydne"]
 _data = {
@@ -28,6 +78,16 @@ libraries = {
 
 [node name="warrior_main" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(0, 838)
-texture = ExtResource("2_1erxu")
+position = Vector2(13, 838)
+texture = ExtResource("2_g76ys")
+centered = false
+
+[node name="warrior_main2" type="Sprite2D" parent="warrior_main"]
+use_parent_material = true
+texture = ExtResource("3_1qemf")
+centered = false
+
+[node name="warrior_main3" type="Sprite2D" parent="warrior_main"]
+use_parent_material = true
+texture = ExtResource("4_txyqo")
 centered = false
