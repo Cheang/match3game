@@ -14,7 +14,5 @@ description = "Adds 2 Round Shileds.
 Round Shileds give 3 Armor, which is removed at the end of each turn."
 base = ExtResource("2_qnwio")
 icon = ExtResource("3_gn8db")
-passive_boost = Array[String]([])
-piece_boost = Array[String](["iron_wall"])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"

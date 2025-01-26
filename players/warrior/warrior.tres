@@ -64,3 +64,7 @@ flg_can_spawn_col_bombs = false
 flg_can_spawn_row_bombs = false
 flg_can_spawn_adj_bombs = false
 flg_can_spawn_clr_bombs = false
+flg_rew_rush = false
+flg_rew_fists_lvl_1 = false
+flg_rew_fists_lvl_1_5 = false
+flg_rew_fists_lvl_2 = false

@@ -18,9 +18,7 @@ name = "Heal"
 description = "+4 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_vwydy"]
@@ -48,9 +46,7 @@ name = "Heal"
 description = "+10 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_q5121"]

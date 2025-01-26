@@ -37,9 +37,7 @@ name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"
 base = ExtResource("3_o1m3v")
 icon = ExtResource("6_isglo")
-passive_boost = null
-piece_boost = null
-boost_self = null
+flags = Array[String]([])
 rearity = null
 
 [sub_resource type="Resource" id="Resource_cb017"]

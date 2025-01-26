@@ -18,9 +18,7 @@ increase = [5]
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("3_nht5e")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_s7dvr"]

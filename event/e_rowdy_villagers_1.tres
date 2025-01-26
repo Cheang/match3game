@@ -18,9 +18,7 @@ increase = [2]
 name = "Gold Pieces"
 description = "Get 2 Gold"
 base = ExtResource("4_6gs8v")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_olbvy"]
@@ -143,9 +141,7 @@ increase = [5]
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("4_6gs8v")
-passive_boost = Array[String]([])
-piece_boost = Array[String]([])
-boost_self = false
+flags = Array[String]([])
 rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_6tjg4"]
