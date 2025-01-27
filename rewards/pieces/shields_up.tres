@@ -7,10 +7,10 @@
 
 [resource]
 script = ExtResource("2_csnps")
-piece_to_add = Array[PackedScene]([ExtResource("4_ipd64"), ExtResource("4_ipd64")])
+piece_to_add = Array[PackedScene]([ExtResource("4_ipd64")])
 use_previous_event_data = false
 name = "Shields up!"
-description = "Adds 2 Round Shileds.
+description = "Adds 1 Round Shields.
 Round Shileds give 3 Armor, which is removed at the end of each turn."
 base = ExtResource("2_qnwio")
 icon = ExtResource("3_gn8db")
