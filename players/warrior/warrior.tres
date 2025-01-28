@@ -12,13 +12,13 @@
 [ext_resource type="Script" path="res://rewards/others/reward_resource.gd" id="10_k67pm"]
 [ext_resource type="Script" path="res://scripts/player/player_resource.gd" id="10_ljvcx"]
 [ext_resource type="Resource" uid="uid://b3dxyym36disw" path="res://rewards/pieces/faith_weak.tres" id="11_edbyt"]
+[ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/body0_strong_body_1.tres" id="11_ljkgp"]
 [ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://players/warrior/warrior.tscn" id="11_pi64o"]
 [ext_resource type="Resource" uid="uid://buvd4ertan8e7" path="res://rewards/pieces/healing_potion.tres" id="12_3y1ki"]
 [ext_resource type="Resource" uid="uid://bi6fgd2okm80j" path="res://rewards/pieces/sword/sword0-sword_practice.tres" id="12_4wp5o"]
 [ext_resource type="Resource" uid="uid://c7cawpgd1yofl" path="res://rewards/pieces/general_rush.tres" id="13_6tq0m"]
 [ext_resource type="Resource" uid="uid://dbkv21dn6mkqs" path="res://rewards/pieces/sword/sword0_small_sword.tres" id="13_ef1xv"]
 [ext_resource type="Resource" uid="uid://bgcd0ocbytryg" path="res://rewards/pieces/shields_up.tres" id="15_4a05a"]
-[ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/strong_body.tres" id="16_5drnh"]
 [ext_resource type="Resource" uid="uid://ba0s3qgm8su2y" path="res://rewards/pieces/fists/fists0-way_of_the_fist.tres" id="16_6rpfp"]
 
 [resource]
@@ -40,15 +40,15 @@ moves_left = 0
 agility = 0.0
 dodging = false
 cooldown_reduction = 0
-start_reroll = 3
+start_reroll = 999
 rerolls = 0
 start_gold = 10
 gold = 0
 gold_chanse = 1
 mana = 0.0
 faith = 0.0
-strength = 0.0
-proficiency = 1.0
+strength = 100.0
+proficiency = 100.0
 fluf_damage = 0.0
 crit_chanse = 5
 crit_mutly = 100.0
@@ -57,14 +57,17 @@ hand_combo = 0
 sprite = ExtResource("11_pi64o")
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
-rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("16_5drnh"), ExtResource("16_6rpfp")])
-rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("16_5drnh"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
+rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("11_ljkgp"), ExtResource("16_6rpfp")])
+rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("11_ljkgp"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
 flg_flesh_coruption = false
 flg_can_spawn_col_bombs = false
 flg_can_spawn_row_bombs = false
 flg_can_spawn_adj_bombs = false
 flg_can_spawn_clr_bombs = false
+flg_rew_body_1 = false
 flg_rew_rush = false
 flg_rew_fists_lvl_1 = false
 flg_rew_fists_lvl_1_5 = false
+flg_rew_fists_lvl_1_5_picked = false
 flg_rew_fists_lvl_2 = false
+flg_rew_fists_irn_body = false

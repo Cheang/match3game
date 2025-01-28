@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://bj1mhtcobfe2p"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_8l85s"]
+[ext_resource type="Texture2D" uid="uid://nte32mtvp6xd" path="res://assets/_red_icons/red_icon_3_4.png" id="2_veflw"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="3_j2844"]
+
+[resource]
+script = ExtResource("3_j2844")
+stats = Array[String](["max_health"])
+increase = [7.0]
+name = "Iron Body"
+description = "Max Health +7"
+base = ExtResource("1_8l85s")
+icon = ExtResource("2_veflw")
+flags = Array[String]([])
+rearity = "RARE"

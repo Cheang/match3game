@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://ldlqvl7fepqa"]
+
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_pt80e"]
+[ext_resource type="Texture2D" uid="uid://c4ac2pcormkus" path="res://assets/_red_icons/red_icon_3_2.png" id="2_vfxp3"]
+[ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="3_tqr8v"]
+
+[resource]
+script = ExtResource("3_tqr8v")
+stats = Array[String](["max_health"])
+increase = [4.0]
+name = "Stronger Body"
+description = "Max Health +4
+"
+base = ExtResource("1_pt80e")
+icon = ExtResource("2_vfxp3")
+flags = Array[String](["flg_rew_body_2"])
+rearity = "UNCOMMON"

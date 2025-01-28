@@ -76,10 +76,20 @@ var deck_in_game: Array[PieceClass]
 @export var flg_can_spawn_clr_bombs: bool = false
 @export_group("Rewards")
 @export_subgroup("General")
+@export var flg_rew_body_1: bool = false:
+	set(value):
+		const BODY_1_STRONG_BODY_2 = "res://rewards/pieces/body1_strong_body_2.tres"
+		const BODY_1_STRONG_BODY_3 = "res://rewards/pieces/body1_strong_body_3.tres"
+		flg_rew_body_1 = flag_setter(flg_rew_body_1, value, [BODY_1_STRONG_BODY_2, BODY_1_STRONG_BODY_3], [])
+		flg_rew_fists_irn_body = true
+@export var flg_rew_body_2: bool = false:
+	set(value):
+		const BODY_3_STRONG_BODY_5 = "res://rewards/pieces/body3_strong_body_5.tres"
+		flg_rew_body_2 = flag_setter(flg_rew_body_2, value, [BODY_3_STRONG_BODY_5], [])
 @export var flg_rew_rush: bool = false:
 	set(value):
 		const SMOKE_SCREEN = "res://rewards/pieces/general_rush_smoke_screen.tres"
-		flag_setter(flg_rew_rush, value, [], [SMOKE_SCREEN])
+		flg_rew_rush = flag_setter(flg_rew_rush, value, [SMOKE_SCREEN], [])
 @export_subgroup("Fists")
 @export var flg_rew_fists_lvl_1: bool = false:
 	set(value):
@@ -90,20 +100,26 @@ var deck_in_game: Array[PieceClass]
 		
 		const WAY_OF_THE_FIST = "res://rewards/pieces/fists/fists0-way_of_the_fist.tres"
 		
-		flag_setter(flg_rew_fists_lvl_1, value, [CRUSHING_FIST, BLOCK, PUNCH, WAY_OF_THE_FISTS], [WAY_OF_THE_FIST])
+		flg_rew_fists_lvl_1 = flag_setter(flg_rew_fists_lvl_1, value, [CRUSHING_FIST, BLOCK, PUNCH, WAY_OF_THE_FISTS], [WAY_OF_THE_FIST])
 @export var flg_rew_fists_lvl_1_5: bool = false:
 	set(value):
 		const IRON_MUSCILES = "res://rewards/pieces/fists/fists1_5-iron_musciles.tres"
 		const IRON_WILL = "res://rewards/pieces/fists/fists1_5-iron_will.tres"
 		
-		flag_setter(flg_rew_fists_lvl_1_5, value, [IRON_MUSCILES, IRON_WILL], [])
+		flg_rew_fists_lvl_1_5 = flag_setter(flg_rew_fists_lvl_1_5, value, [IRON_MUSCILES, IRON_WILL], [])
+@export var flg_rew_fists_lvl_1_5_picked: bool = false:
+	set(value):
+		flg_rew_fists_lvl_1_5_picked = value
+		flg_rew_fists_irn_body = true
 @export var flg_rew_fists_lvl_2: bool = false:
 	set(value):
-		
 		const SMALL_SWORD = "res://rewards/pieces/sword/sword0_small_sword.tres"
 		const SWORD_PRACTICE = "res://rewards/pieces/sword/sword0-sword_practice.tres"
-		
-		flag_setter(flg_rew_fists_lvl_2, value, [], [SMALL_SWORD, SWORD_PRACTICE])
+		flg_rew_fists_lvl_2 = flag_setter(flg_rew_fists_lvl_2, value, [], [SMALL_SWORD, SWORD_PRACTICE])
+@export var flg_rew_fists_irn_body: bool = false:
+	set(value):
+		const BODY_2_STRONG_BODY_4 = "res://rewards/pieces/body2_strong_body_4.tres"
+		flg_rew_fists_irn_body = flag_setter(flg_rew_fists_irn_body, value, [BODY_2_STRONG_BODY_4], [], [flg_rew_fists_lvl_1_5_picked,flg_rew_body_1])
 
 #Signals
 signal updateUIPlayer(stat: String)
@@ -165,14 +181,24 @@ func set_flag(flag: String, value = true):
 	else: 
 		print("Flag does not exists: ", flag)
 
-func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array):
+func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array, req:Array = []) -> bool: 
 	if flag != value:
-		flag = value
+		var req_test = 0
+		if req.is_empty():
+			flag = value
+		else:
+			for item in req:
+				if item == true:
+					req_test += 1
+			if req_test >= req.size():
+				flag = value
 		if flag:
 			if not array_to_add.is_empty():
 				add_to_array(rewards_piece, array_to_add)
 			if not array_to_remove.is_empty():
 				remove_from_array(rewards_piece, array_to_remove)
+		return flag
+	return flag
 
 func add_piece(deck_to_add, pieces):
 	if deck_to_add and pieces:

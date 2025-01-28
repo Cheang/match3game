@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="R_Stat" load_steps=3 format=3 uid="uid://dudi6vely75po"]
+[gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://dudi6vely75po"]
 
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_golvc"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="1_q1kym"]
+[ext_resource type="Texture2D" uid="uid://cgpvrcxfrbrfr" path="res://assets/_red_icons/red_icon_8.png" id="2_2kqw0"]
 
 [resource]
 script = ExtResource("1_q1kym")
@@ -10,5 +11,6 @@ increase = [1.0]
 name = "Iron Muscles"
 description = "Increase strength +1"
 base = ExtResource("1_golvc")
-flags = Array[String]([])
+icon = ExtResource("2_2kqw0")
+flags = Array[String](["flg_rew_fists_lvl_1_5_picked"])
 rearity = "UNCOMMON"
