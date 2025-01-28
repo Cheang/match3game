@@ -1,28 +1,32 @@
 extends Node2D
 class_name PieceClass
 
-#Location of the origina Scene
-@export var location: String
 
+@export_category("Main")
+@export var id: int
 @export var piece_name: String
 @export var description: String
 @export var color: String
 @export var family: String
+@export_enum("fluf","normal","one_per_battle","glass") var type: int
+@export var action: Array[PieceActivation]
+@export_category("Art")
 @export var base_texture: Texture
 @export var icon_texture: Texture
 @export var row_teture: Texture2D
 @export var col_teture: Texture2D
 @export var adj_teture: Texture2D
-@export_enum("fluf","normal","one_per_battle","glass") var type: int
-@export var crit_shader: Resource
+@export_category("Other")
 @export var cooldown: int
 var original_cd: int
-
-@export var upgrades: int = 0
-@export var upgrades_to_increse_cd: int = 3
 @export var can_upgrade: bool = true
-
-@export var action: Array[PieceActivation]
+@export var upgrades_to_increse_cd: int = 3
+@export_group("Other")
+@export var crit_shader: Resource
+@export var upgrades: int = 0
+@export_group("Autofill")
+#Location of the origina Scene and is autofillied on creation
+@export var location: String
 
 @onready var icon: Sprite2D = $icon
 @onready var base: Sprite2D = $base

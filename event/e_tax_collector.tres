@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=27 format=3 uid="uid://cftnx7yuq7c7d"]
+[gd_resource type="Resource" script_class="Event" load_steps=24 format=3 uid="uid://cftnx7yuq7c7d"]
 
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_swuau"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_cf3eu"]
@@ -6,32 +6,16 @@
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="3_aj5pr"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_o1m3v"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="4_qxlvy"]
-[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/_red_fluf.tscn" id="5_8chvt"]
+[ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/r_shor_sword.tscn" id="5_bfl87"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="5_qn67d"]
 [ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="6_isglo"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="6_r32wb"]
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="7_qfimf"]
-[ext_resource type="Resource" uid="uid://t1q3a7d18m50" path="res://piece/active effect/attack+1.tres" id="8_fcojc"]
 [ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="11_on8bi"]
 [ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_fight.gd" id="13_cajp3"]
 
-[sub_resource type="PackedScene" id="PackedScene_4k5rq"]
-_bundled = {
-"base_scene": 0,
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("red_sq_1", "piece_name", "icon_texture", "type", "cooldown", "upgrades", "action", "base", "icon", "gold_border"),
-"node_count": 1,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 2147483647, 0, -1, 6, 1, 1, 2, 2, 3, 3, 4, 3, 5, 4, 6, 5, 0),
-"variants": [ExtResource("5_8chvt"), "Short Sword", ExtResource("6_isglo"), 1, 2, Array[ExtResource("7_qfimf")]([ExtResource("8_fcojc")])],
-"version": 3
-}
-
 [sub_resource type="Resource" id="Resource_h7tar"]
 script = ExtResource("5_qn67d")
-piece_to_add = Array[PackedScene]([SubResource("PackedScene_4k5rq")])
+piece_to_add = Array[PackedScene]([ExtResource("5_bfl87")])
 use_previous_event_data = false
 name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"

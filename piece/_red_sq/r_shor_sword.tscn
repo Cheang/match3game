@@ -6,8 +6,9 @@
 [ext_resource type="Resource" uid="uid://t1q3a7d18m50" path="res://piece/active effect/attack+1.tres" id="4_g2hja"]
 
 [node name="red_sq_1" instance=ExtResource("1_lihev")]
+id = 101
 piece_name = "Short Sword"
-icon_texture = ExtResource("2_lcw48")
 type = 1
-cooldown = 1
 action = Array[ExtResource("3_0kro2")]([ExtResource("4_g2hja")])
+icon_texture = ExtResource("2_lcw48")
+cooldown = 1

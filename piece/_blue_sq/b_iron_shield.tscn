@@ -20,8 +20,9 @@ armor = 3.0
 hand_combo_points_to_give = 0
 
 [node name="blue_sq_2" instance=ExtResource("1_ylodr")]
+id = 202
 piece_name = "Iron Shield"
-icon_texture = ExtResource("2_qdh3i")
 type = 1
-cooldown = 3
 action = Array[ExtResource("3_ne2nl")]([SubResource("Resource_m6prh"), SubResource("Resource_qd871")])
+icon_texture = ExtResource("2_qdh3i")
+cooldown = 3

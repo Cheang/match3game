@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://bgcd0ocbytryg"]
 
+[ext_resource type="Texture2D" uid="uid://c34g6angu1omh" path="res://assets/_blue_icons/blue_icon_1_1.png" id="2_5r0wl"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="2_csnps"]
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_qnwio"]
-[ext_resource type="Texture2D" uid="uid://l16w0n5oght0" path="res://assets/_blue_icons/blue_icon_1.png" id="3_gn8db"]
 [ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/b_round_shield.tscn" id="4_ipd64"]
 
 [resource]
@@ -10,9 +10,8 @@ script = ExtResource("2_csnps")
 piece_to_add = Array[PackedScene]([ExtResource("4_ipd64")])
 use_previous_event_data = false
 name = "Shields up!"
-description = "Adds 1 Round Shields.
-Round Shileds give 3 Armor, which is removed at the end of each turn."
+description = "Adds 1 Round Shields."
 base = ExtResource("2_qnwio")
-icon = ExtResource("3_gn8db")
+icon = ExtResource("2_5r0wl")
 flags = Array[String]([])
 rearity = "COMMON"

@@ -13,9 +13,10 @@ armor = 1.0
 hand_combo_points_to_give = 1
 
 [node name="blue_sq_4" instance=ExtResource("1_8lf0w")]
+id = 204
 piece_name = "Block"
 family = "fists"
-icon_texture = ExtResource("2_dh1ic")
 type = 1
-cooldown = 2
 action = Array[ExtResource("3_3mysc")]([SubResource("Resource_wcj7v")])
+icon_texture = ExtResource("2_dh1ic")
+cooldown = 2

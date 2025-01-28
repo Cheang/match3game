@@ -10,14 +10,18 @@ script = ExtResource("4_c4a1v")
 type = 0
 atk_dmg = 1.0
 hand_combo_multy = 3.0
+use_strength = false
+use_upgrades_on_dmg = false
+use_upgrades_on_multy = true
 to_give_before = false
 hand_combo_points_to_give = 1
 
 [node name="red_sq_3" instance=ExtResource("1_s5rat")]
+id = 103
 piece_name = "Uppercut"
 family = "fists"
-icon_texture = ExtResource("2_68voc")
 type = 1
+action = Array[ExtResource("3_fy1j6")]([SubResource("Resource_vdnt5")])
+icon_texture = ExtResource("2_68voc")
 cooldown = 5
 upgrades_to_increse_cd = 5
-action = Array[ExtResource("3_fy1j6")]([SubResource("Resource_vdnt5")])

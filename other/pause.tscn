@@ -472,7 +472,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
-text = "Damage Reducion"
+text = "Flat Damage Reducion"
 
 [node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
 layout_mode = 2
@@ -480,7 +480,23 @@ theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")
 text = "0000"
 
-[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction"]
+[node name="cat_defence_dmgreduction2" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Damage Reducion"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
 theme_override_fonts/font = ExtResource("11_flpho")

@@ -14,7 +14,7 @@
 [ext_resource type="Resource" uid="uid://b3dxyym36disw" path="res://rewards/pieces/faith_weak.tres" id="11_edbyt"]
 [ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/body0_strong_body_1.tres" id="11_ljkgp"]
 [ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://players/warrior/warrior.tscn" id="11_pi64o"]
-[ext_resource type="Resource" uid="uid://buvd4ertan8e7" path="res://rewards/pieces/healing_potion.tres" id="12_3y1ki"]
+[ext_resource type="Resource" uid="uid://buvd4ertan8e7" path="res://rewards/pieces/general_healing_potion.tres" id="12_3y1ki"]
 [ext_resource type="Resource" uid="uid://bi6fgd2okm80j" path="res://rewards/pieces/sword/sword0-sword_practice.tres" id="12_4wp5o"]
 [ext_resource type="Resource" uid="uid://c7cawpgd1yofl" path="res://rewards/pieces/general_rush.tres" id="13_6tq0m"]
 [ext_resource type="Resource" uid="uid://dbkv21dn6mkqs" path="res://rewards/pieces/sword/sword0_small_sword.tres" id="13_ef1xv"]

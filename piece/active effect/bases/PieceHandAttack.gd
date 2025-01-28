@@ -6,8 +6,10 @@ var type: int = 0
 
 @export var atk_dmg: float
 @export var hand_combo_multy: float = 1
+@export var use_strength: bool = true
+@export var use_upgrades_on_dmg: bool = true
+@export var use_upgrades_on_multy: bool = false
 @export var to_give_before: bool = true
-
 
 
 func activate():
@@ -18,9 +20,9 @@ func activate():
 		cur_char.add_stat("hand_combo", hand_combo_points_to_give)
 	
 	#Calculate base damage
-	var f_value: float = atk_dmg + cur_char.strength 
+	var f_value: float = atk_dmg + (cur_char.strength * float(use_strength)) + (upgrade * float(use_upgrades_on_dmg))
 	#Apply combo multypler
-	f_value *= cur_char.hand_combo * hand_combo_multy
+	f_value += cur_char.hand_combo * (hand_combo_multy + (upgrade * float(use_upgrades_on_dmg)))
 	#Apply crit
 	if criting:
 		f_value *= 1 + cur_char.crit_mutly / 100

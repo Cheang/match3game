@@ -13,8 +13,9 @@ armor = 3.0
 hand_combo_points_to_give = 0
 
 [node name="blue_sq_1" instance=ExtResource("1_pmqti")]
+id = 201
 piece_name = "Round Shield"
-icon_texture = ExtResource("2_xr5al")
 type = 1
-cooldown = 2
 action = Array[ExtResource("3_1uqw6")]([SubResource("Resource_1a1bj")])
+icon_texture = ExtResource("2_xr5al")
+cooldown = 2

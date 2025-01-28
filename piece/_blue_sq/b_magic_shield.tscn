@@ -13,8 +13,9 @@ mage_armor = 2
 hand_combo_points_to_give = 0
 
 [node name="blue_sq_3" instance=ExtResource("1_x3ivg")]
+id = 203
 piece_name = "Magic Shield"
-icon_texture = ExtResource("2_ubncu")
 type = 1
-cooldown = 4
 action = Array[ExtResource("3_2xldi")]([SubResource("Resource_g6use")])
+icon_texture = ExtResource("2_ubncu")
+cooldown = 4

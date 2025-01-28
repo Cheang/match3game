@@ -27,10 +27,14 @@ func set_card(piece: PieceClass):
 		3:
 			piece_type.text = "Glass"
 	
-	match piece.piece_name:
-		"Short Sword":
+	match piece.id:
+		101:
 			p_desc.text = "Deals: [color=#ae2334]%s[/color] DMG" % [1+Global.cur_char.proficiency+piece.upgrades]
-		"Round Shiled":
+		102:
+			p_desc.text = "Deals: [color=#ae2334]%s[/color] DMG + [color=#7a3045]Combo Points[/color]" % [1+Global.cur_char.strength+piece.upgrades]
+		103:
+			p_desc.text = "Deals: [color=#ae2334]1[/color] DMG + ([color=#7a3045]Combo Points[/color] * [color=#ae2334]%s[/color])" % [3+piece.upgrades]
+		201:
 			p_desc.text = "Gives: [color=#4d65b4]%s[/color] Armor" % [3+piece.upgrades]
-		"Holy Shiled":
-			p_desc.text = "Gives: [color=#4d65b4]%s[/color] Armor & [color=#0b8a8f]%s[/color] Magic Armor" % [3+piece.upgrades, 6+piece.upgrades+Global.cur_char.faith]
+		501:
+			p_desc.text = "Gives: [color=#0b8a8f]%s[/color] Magic Armor" % [6+piece.upgrades+Global.cur_char.faith]

@@ -9,6 +9,7 @@ extends VBoxContainer
 @onready var cat_defence_startarmor: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor
 @onready var cat_defence_startmagearmor: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor
 @onready var cat_defence_dmgreduction: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction
+@onready var cat_defence_dmgreduction2: HBoxContainer = $ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2
 
 @onready var cat_offence_prof: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof
 @onready var cat_offence_str: HBoxContainer = $ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str
@@ -32,6 +33,7 @@ func expand():
 	get_stat_and_set(Global.cur_char.start_armor, cat_defence_startarmor)
 	get_stat_and_set(Global.cur_char.start_mage_armor, cat_defence_startmagearmor)
 	get_stat_and_set(Global.cur_char.dmg_reduction_flat, cat_defence_dmgreduction, true)
+	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true)
 	
 	get_stat_and_set(Global.cur_char.proficiency, cat_offence_prof)
 	get_stat_and_set(Global.cur_char.strength, cat_offence_str)

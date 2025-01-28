@@ -6,9 +6,10 @@
 [ext_resource type="Resource" uid="uid://c6rre6wcakobg" path="res://piece/active effect/hand+1.tres" id="4_f5utg"]
 
 [node name="red_sq_2" instance=ExtResource("1_7x8gp")]
+id = 102
 piece_name = "Punch"
 family = "fists"
-icon_texture = ExtResource("2_3j348")
 type = 1
-cooldown = 2
 action = Array[ExtResource("3_qhvwr")]([ExtResource("4_f5utg")])
+icon_texture = ExtResource("2_3j348")
+cooldown = 2

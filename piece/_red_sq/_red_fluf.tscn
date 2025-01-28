@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://ct3y670y3w06g" path="res://assets/_red_icons/red_icon_6_3.png" id="5_crj7d"]
 
 [node name="red_sq_" instance=ExtResource("1_ohcws")]
+id = 100
 color = "red"
 base_texture = ExtResource("2_f85hb")
 row_teture = ExtResource("3_5vjd8")

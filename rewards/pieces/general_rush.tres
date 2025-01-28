@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://c7cawpgd1yofl"]
 
 [ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="1_1vseb"]
-[ext_resource type="Texture2D" uid="uid://b373kp8ylc4wn" path="res://assets/_green_icons/green_icon_1.png" id="2_o8cta"]
+[ext_resource type="Texture2D" uid="uid://dj48suit8jml0" path="res://assets/_green_icons/green_icon_1_1.png" id="2_skfrg"]
 [ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/g_rush.tscn" id="3_0abbv"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_wu2fp"]
 
@@ -13,6 +13,6 @@ name = "Rush (Week)"
 description = "Adds 1 Rush.
 Rush gives you 1 more move."
 base = ExtResource("1_1vseb")
-icon = ExtResource("2_o8cta")
+icon = ExtResource("2_skfrg")
 flags = Array[String](["flg_rew_rush"])
 rearity = "LEGENDARY"

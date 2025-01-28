@@ -14,7 +14,7 @@ func activate():
 	var cur_enemy = Global.cur_enemy
 	
 	for i in atk_numb:
-		var f_value: float = atk_dmg + cur_char.proficiency
+		var f_value: float = atk_dmg + cur_char.proficiency + upgrade
 		if criting:
 			f_value *= (1 + cur_char.crit_mutly / 100)
 

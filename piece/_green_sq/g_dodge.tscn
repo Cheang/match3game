@@ -6,9 +6,10 @@
 [ext_resource type="Resource" uid="uid://dt1j85o3ltl6d" path="res://piece/active effect/dodge.tres" id="4_s2iwk"]
 
 [node name="green_sq_2" instance=ExtResource("1_r8otn")]
+id = 302
 piece_name = "Dodge"
-icon_texture = ExtResource("2_rxyrn")
 type = 1
+action = Array[ExtResource("3_sps6x")]([ExtResource("4_s2iwk")])
+icon_texture = ExtResource("2_rxyrn")
 cooldown = 4
 can_upgrade = false
-action = Array[ExtResource("3_sps6x")]([ExtResource("4_s2iwk")])

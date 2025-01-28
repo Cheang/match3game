@@ -6,10 +6,11 @@
 [ext_resource type="Resource" uid="uid://dy8qguxfi2yfs" path="res://piece/active effect/speed+1.tres" id="4_lf5ey"]
 
 [node name="green_sq_1" instance=ExtResource("1_55aml")]
+id = 301
 piece_name = "Rush"
 description = "Gives [color=#165a4c]1[/color] Move"
-icon_texture = ExtResource("2_2ncak")
 type = 1
+action = Array[ExtResource("3_b2c63")]([ExtResource("4_lf5ey")])
+icon_texture = ExtResource("2_2ncak")
 cooldown = 2
 can_upgrade = false
-action = Array[ExtResource("3_b2c63")]([ExtResource("4_lf5ey")])

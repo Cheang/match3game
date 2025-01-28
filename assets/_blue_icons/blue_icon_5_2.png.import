@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b6qwbganc5mqs"
-path="res://.godot/imported/puprle_icon_1.png-953706bfd63a3cb8cd49a1913a66828b.ctex"
+uid="uid://du662slujwgr6"
+path="res://.godot/imported/blue_icon_5_2.png-b1de75e1a908bc50df5b588def0b004d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/_purple_icons/puprle_icon_1.png"
-dest_files=["res://.godot/imported/puprle_icon_1.png-953706bfd63a3cb8cd49a1913a66828b.ctex"]
+source_file="res://assets/_blue_icons/blue_icon_5_2.png"
+dest_files=["res://.godot/imported/blue_icon_5_2.png-b1de75e1a908bc50df5b588def0b004d.ctex"]
 
 [params]
 

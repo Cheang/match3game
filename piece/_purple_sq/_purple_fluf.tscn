@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://ddge76boxcxxh" path="res://assets/_purple_icons/purprle_icon_4_3.png" id="5_lrgox"]
 
 [node name="purple_sq_" instance=ExtResource("1_6co4e")]
+id = 400
 color = "purple"
 base_texture = ExtResource("2_qjmgi")
 row_teture = ExtResource("3_u1c55")

@@ -7,9 +7,9 @@
 [resource]
 script = ExtResource("2_l2t4t")
 stats = Array[String](["dmg_reduction"])
-increase = [5.0]
+increase = [1.0]
 name = "Iron Will"
-description = "Increase damage reduction +5"
+description = "Increase damage reduction +1"
 base = ExtResource("1_hjrh8")
 icon = ExtResource("2_kpnji")
 flags = Array[String](["flg_rew_fists_lvl_1_5_picked"])
