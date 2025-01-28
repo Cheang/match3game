@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_j1j08"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_uny0g"]
-[ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/_red_icons/red_icon_2.png" id="2_fgbx2"]
+[ext_resource type="Texture2D" uid="uid://dgrtd2xq830ed" path="res://assets/_red_icons/red_icon_2_1.png" id="2_y5yb5"]
 [ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/r_punch.tscn" id="3_6iumv"]
 
 [resource]
@@ -12,6 +12,6 @@ use_previous_event_data = false
 name = "Punch"
 description = "Gain 1 Punch"
 base = ExtResource("1_uny0g")
-icon = ExtResource("2_fgbx2")
+icon = ExtResource("2_y5yb5")
 flags = Array[String](["flg_rew_fists_lvl_1_5"])
 rearity = "COMMON"

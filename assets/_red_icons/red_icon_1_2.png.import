@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1s5dcvitxn4e"
-path="res://.godot/imported/_sword_shev.png-41c2354ffdaca8b72c3d08925c1caf1a.ctex"
+uid="uid://bpb7i2cgrm60w"
+path="res://.godot/imported/red_icon_1_2.png-888158712f08f2c4dd00259627d6b131.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/_red_icons/_sword_shev.png"
-dest_files=["res://.godot/imported/_sword_shev.png-41c2354ffdaca8b72c3d08925c1caf1a.ctex"]
+source_file="res://assets/_red_icons/red_icon_1_2.png"
+dest_files=["res://.godot/imported/red_icon_1_2.png-888158712f08f2c4dd00259627d6b131.ctex"]
 
 [params]
 

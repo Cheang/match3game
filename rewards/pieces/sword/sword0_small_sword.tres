@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_r6fm7"]
 [ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/r_shor_sword.tscn" id="1_uys6j"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_vs6gy"]
-[ext_resource type="Texture2D" uid="uid://53gy6aagisa8" path="res://assets/_red_icons/red_icon_5.png" id="5_dv0wt"]
+[ext_resource type="Texture2D" uid="uid://bpb7i2cgrm60w" path="res://assets/_red_icons/red_icon_1_2.png" id="2_1jfk5"]
 
 [resource]
 script = ExtResource("1_r6fm7")
@@ -13,8 +13,6 @@ name = "Men at Arms"
 description = "Adds 1 Sword.
 Swords deal 1 DMG + your DMG"
 base = ExtResource("1_vs6gy")
-icon = ExtResource("5_dv0wt")
-passive_boost = Array[String]([])
-piece_boost = Array[String](["shields_up", "sharp_blades"])
-boost_self = true
+icon = ExtResource("2_1jfk5")
+flags = Array[String]([])
 rearity = "UNCOMMON"

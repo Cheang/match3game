@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://bi6fgd2okm80j"]
 
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_fwm7v"]
-[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="2_6biuo"]
+[ext_resource type="Texture2D" uid="uid://bpb7i2cgrm60w" path="res://assets/_red_icons/red_icon_1_2.png" id="2_wfsur"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="3_1mdx4"]
 
 [resource]
@@ -11,6 +11,6 @@ increase = [1.0]
 name = "Sword Practice"
 description = "Increase proficiency +1"
 base = ExtResource("1_fwm7v")
-icon = ExtResource("2_6biuo")
+icon = ExtResource("2_wfsur")
 flags = Array[String]([])
 rearity = "RARE"

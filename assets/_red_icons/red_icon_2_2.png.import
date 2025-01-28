@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dipck4xe8p6w"
-path="res://.godot/imported/_fist_shev.png-d07dbdb116e0b2a3c2888acb21e3ab5d.ctex"
+uid="uid://cvxqe8e7js4co"
+path="res://.godot/imported/red_icon_2_2.png-9d6695b0ea59bf3a197ac66c846139b1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/_red_icons/_fist_shev.png"
-dest_files=["res://.godot/imported/_fist_shev.png-d07dbdb116e0b2a3c2888acb21e3ab5d.ctex"]
+source_file="res://assets/_red_icons/red_icon_2_2.png"
+dest_files=["res://.godot/imported/red_icon_2_2.png-9d6695b0ea59bf3a197ac66c846139b1.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="R_Stat" load_steps=4 format=3 uid="uid://kuo61b4y6l5q"]
 
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="1_hjrh8"]
-[ext_resource type="Texture2D" uid="uid://bkllv7y1ihvb7" path="res://assets/_blue_icons/blue_icon_5.png" id="2_kpnji"]
+[ext_resource type="Texture2D" uid="uid://bkllv7y1ihvb7" path="res://assets/_blue_icons/blue_icon_5_4.png" id="2_kpnji"]
 [ext_resource type="Script" path="res://rewards/others/stat_resource.gd" id="2_l2t4t"]
 
 [resource]
