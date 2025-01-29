@@ -139,4 +139,5 @@ title_text = "Pick a reward"
 
 [connection signal="child_entered_tree" from="background" to="." method="_on_background_child_entered_tree"]
 [connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/skip" to="." method="_on_skip_pressed"]
+[connection signal="mouse_exited" from="rewards/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_mouse_exited"]
 [connection signal="pressed" from="rewards/VBoxContainer/HBoxContainer/reroll" to="." method="_on_reroll_pressed"]

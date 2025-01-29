@@ -57,7 +57,6 @@ func take_dmg(dmg, dmg_type = 0):
 	phase_change()
 
 func pick_next_attack():
-	randomize()
 	next_attack = attacks.pick_random()
 	if has_phases:
 		if phase == 2 and !attacks_p2.is_empty():

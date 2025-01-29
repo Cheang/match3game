@@ -26,28 +26,37 @@ var save_path = "user://save1.tres"
 @export var bosses_killed_needed = 1
 @export var bosses_killed = 0 
 
-func save_data():
-	ResourceSaver.save(self, save_path)
+@export var game_seed: int = 0
+
+func save_data() -> void:
+	var error = ResourceSaver.save(self, save_path)
+	if error != OK:
+		print_debug("Error saving game: ", error)
 
 func load_data():
-	var data = ResourceLoader.load(save_path, "")
-	if data.cur_char:
-		cur_char = data.cur_char.duplicate(true)
-		cur_char_deck = data.cur_char_deck.duplicate()
-	selected_char = data.selected_char.duplicate(true)
-	settings = data.settings
-	cur_scene = data.cur_scene
-	if data.cur_enemy:
-		cur_enemy = data.cur_enemy.duplicate(true)
+	if not FileAccess.file_exists(save_path):
+		print_debug("Save file not found: ", save_path)
+		return  # Prevents loading from a non-existent file
+	
+	var data: Serializer = ResourceLoader.load(save_path, "") as Serializer
+	if not data:
+		print_debug("Failed to load save data.")
+		return
+	
+	cur_char = data.cur_char if data.cur_char else null
+	cur_char_deck = data.cur_char_deck if data.cur_char_deck else []
+	selected_char = data.selected_char if data.selected_char else null
+	settings = data.settings if data.settings else null
+	cur_scene = data.cur_scene 
+	cur_enemy = data.cur_enemy if data.cur_enemy else null
 	
 	game_is_over = data.game_is_over
 	cur_cutscene = data.cur_cutscene
 	current_wave = data.current_wave
 	current_level = data.current_level
 	
-	area_locations = data.area_locations.duplicate(true)
-	if data.area_cur_boss != null:
-		area_cur_boss = data.area_cur_boss.duplicate(true)
+	area_locations = data.area_locations if data.area_locations else []
+	area_cur_boss = data.area_cur_boss if data.area_cur_boss else null
 	area_cur_event = data.area_cur_event
 	
 	minions_needed = data.minions_needed
@@ -57,4 +66,4 @@ func load_data():
 	bosses_killed_needed = data.bosses_killed_needed
 	bosses_killed = data.bosses_killed
 	
-	
+	game_seed = data.game_seed

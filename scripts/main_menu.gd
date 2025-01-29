@@ -29,6 +29,9 @@ func _initialize_scene():
 func _on_start_pressed() -> void:
 	if not choise_made:
 		choise_made = true
+		Global.game_seed = Time.get_unix_time_from_system() * (2 * Time.get_unix_time_from_system())
+		print(Global.game_seed)
+		seed(Global.game_seed)
 		Global.set_up_player()
 		if not area_to_load:
 			area_to_load = def_area
@@ -46,6 +49,8 @@ func _on_load_pressed() -> void:
 		choise_made = true
 		Global.flg_game_is_loaded = true
 		Global.load_data()
+		print(Global.game_seed)
+		seed(Global.game_seed)
 		SceneManager.change_scene(Global.cur_scene, { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_char_select_pressed() -> void:
 	if not choise_made:

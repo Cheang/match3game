@@ -67,7 +67,6 @@ func on_startup() -> void:
 	deck = Global.cur_char.deck_in_game.duplicate()
 	fluf = Global.cur_char.fluf.duplicate()
 	get_obstacles(Global.cur_enemy)
-	randomize()
 	deck.shuffle()
 	fluf.shuffle()
 	all_pieces = Global.make_2d_array(grd_width, grd_height)

@@ -42,6 +42,7 @@ var bosses_killed = 0
 
 #setting
 var save_path = "user://save1.tres"
+var game_seed: int = 0
 #audio
 var cur_song: String = ""
 var setting_res: Resource 
@@ -150,6 +151,8 @@ func save():
 	save_file.bosses_killed_needed = bosses_killed_needed
 	save_file.bosses_killed = bosses_killed
 	
+	save_file.game_seed = game_seed
+	
 	save_file.save_data()
 
 func load_data():
@@ -191,6 +194,7 @@ func load_data():
 			bosses_killed_needed = save_file.bosses_killed_needed
 			bosses_killed = save_file.bosses_killed
 			
+			game_seed = save_file.game_seed
 	else:
 		setting_res = SettingsResource.new()
 		selected_char = def_char

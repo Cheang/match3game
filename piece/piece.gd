@@ -75,7 +75,6 @@ func unmark():
 		is_adj_bomb = false
 
 func will_crit():
-	randomize()
 	var rand = floor(randf_range(1,100))
 	if rand <= Global.cur_char.crit_chanse:
 		base.material = crit_shader
@@ -84,7 +83,6 @@ func will_crit():
 		base.material = null
 
 func will_gold():
-	randomize()
 	var rand = floor(randf_range(1,100))
 	if rand <= Global.cur_char.gold_chanse:
 		gold_border.visible = true
