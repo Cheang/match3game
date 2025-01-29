@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene load_steps=36 format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -19,9 +19,12 @@
 [ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="12_tovol"]
 [ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
 [ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
+[ext_resource type="Texture2D" uid="uid://cu8lnlqe11jsn" path="res://assets/level_ui/buffs/marmor_buff.png" id="18_khhg0"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
+[ext_resource type="Texture2D" uid="uid://bubx02s4hu5xd" path="res://assets/level_ui/buffs/combo_buff.png" id="19_em2v6"]
 [ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
 [ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
+[ext_resource type="Texture2D" uid="uid://bjvil74aajvtt" path="res://assets/level_ui/buffs/dodge_buff.png" id="20_mpwyg"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="22_kmwuu"]
 
@@ -244,48 +247,45 @@ layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
 theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_constants/outline_size = 2
 text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container"]
-self_modulate = Color(0.17, 0.571167, 1, 1)
 layout_mode = 2
-texture = ExtResource("15_pubo4")
+texture = ExtResource("18_khhg0")
 
 [node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
 theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_constants/outline_size = 2
 text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container"]
-self_modulate = Color(0.965138, 0.251231, 0.510355, 1)
 layout_mode = 2
-texture = ExtResource("15_pubo4")
+texture = ExtResource("19_em2v6")
 
 [node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo"]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
 theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
+theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
+theme_override_constants/outline_size = 2
 text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container"]
-self_modulate = Color(0, 0.870821, 0.172243, 1)
 layout_mode = 2
-texture = ExtResource("15_pubo4")
+texture = ExtResource("20_mpwyg")
 
 [node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging"]
 visible = false
