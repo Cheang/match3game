@@ -39,7 +39,7 @@ class_name PlayerResource
 @export_subgroup("Gold")
 @export var start_gold: int
 @export var gold: int = 0
-@export_range(0, 100) var gold_chanse: int
+@export_range(0, 100) var gold_chance: int
 #------------------------------------------------------------------------------#
 @export_group("Magic")
 @export var mana: float 
@@ -50,9 +50,9 @@ class_name PlayerResource
 @export var proficiency: float 
 @export var fluf_damage: float
 @export_subgroup("Critical")
-@export_range(0, 100) var crit_chanse: int:
-	set(new_crit_chanse):
-		crit_chanse = clamp(new_crit_chanse, 0, 100) 
+@export_range(0, 100) var crit_chance: int:
+	set(new_crit_chance):
+		crit_chance = clamp(new_crit_chance, 0, 100) 
 @export var crit_mutly: float 
 @export_subgroup("")
 @export var start_hand_combo: float = 0
@@ -129,51 +129,61 @@ signal playerFinishedTurn
 #Functions_____________________________________________________________________#
 #Player_functions --------------------------------------------------------------
 func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
-	if dmg_reduction_flat > 0:
-		enemy_damage -= clamp(dmg_reduction_flat, 0, enemy_damage - 1)
-	if dmg_reduction > 0:
-		enemy_damage = round(enemy_damage * (1 - clamp(dmg_reduction, 0, max_dmg_reduction) / 100.0))
-	if dodging and type == 0:
+	if dodging and type == 0: # Check if dodging (only for physical attacks, type == 0)
 		dodging = false
-		enemy_damage = 0
-	if cur_mage_armor > 0 and enemy_damage > 0 and !piercing:
-		var temp_dmg
-		temp_dmg = cur_mage_armor - enemy_damage
-		if temp_dmg >= 0:
-			cur_mage_armor = temp_dmg
-			enemy_damage = 0
-		else:
-			cur_mage_armor = 0
-			enemy_damage = abs(temp_dmg)
-	if cur_armor > 0 and enemy_damage > 0:
-		var temp_dmg
-		temp_dmg = cur_armor - enemy_damage
-		if temp_dmg >= 0:
-			cur_armor = temp_dmg
-			enemy_damage = 0
-		else:
-			cur_armor = 0
-			enemy_damage = abs(temp_dmg)
-	if enemy_damage > 0:
-		add_stat("cur_health",enemy_damage*-1)
+		return
+	
+	if dmg_reduction_flat > 0: # Apply flat damage reduction
+		enemy_damage -= clamp(dmg_reduction_flat, 0, enemy_damage - 1)
+	if dmg_reduction > 0: # Apply percentage-based damage reduction
+		enemy_damage = round(enemy_damage * (1 - clamp(dmg_reduction, 0, max_dmg_reduction) / 100.0))
+	
+	if cur_mage_armor > 0 and enemy_damage > 0 and not piercing: # Reduce damage using mage armor (if available and not piercing)
+		enemy_damage = apply_armor_reduction(enemy_damage, "cur_mage_armor")
+	if cur_armor > 0 and enemy_damage > 0: # Reduce damage using regular armor
+		enemy_damage = apply_armor_reduction(enemy_damage, "cur_armor")
+	
+	if enemy_damage > 0: # Apply remaining damage to health
+		modify_stat("cur_health", -enemy_damage)
 
-func add_stat(stat: String, value):
-	if stat in self:
-		set(stat, get(stat)+value)
-		if stat == "moves_left" and get(stat) <= 0:
-			playerFinishedTurn.emit()
-		updateUIPlayer.emit(str(stat))
-	else: 
-		print("Stat does not exist: ", stat)
+func modify_stat(stat: String, value, increment: bool = true) -> void:
+	if not stat in self:
+		print("Stat does not exist:", stat)
+		return
+	set(stat, get(stat) + value if increment else value)
+	# Handle "moves_left" logic
+	if stat == "moves_left" and moves_left <= 0:
+		playerFinishedTurn.emit()
+	updateUIPlayer.emit(stat)
 
-func set_stat(stat: String, value):
-	if stat in self:
-		set(stat, value)
-		if stat == "moves_left" and get(stat) <= 0:
-			playerFinishedTurn.emit()
-		updateUIPlayer.emit(str(stat))
-	else: 
-		print("Stat does not exist: ", stat)
+func reset_stats_at_beging_of_game():
+	deck_in_game.clear()
+	unpack_deck(deck, deck_in_game)
+	modify_stat("cur_health", max_health, false)
+	modify_stat("gold", start_gold, false)
+	modify_stat("rerolls", start_reroll, false)
+
+func reset_stats_at_beging_of_fight():
+	modify_stat("dodging", false, false)
+	modify_stat("moves_left", speed, false)
+	modify_stat("hand_combo", start_hand_combo, false)
+	modify_stat("cur_armor", start_armor, false)
+	modify_stat("cur_mage_armor", start_mage_armor, false)
+
+func reset_stats_at_beging_of_turn():
+	modify_stat("cur_armor", 0, false)
+	modify_stat("hand_combo", start_hand_combo, false)
+	modify_stat("moves_left", speed, false)
+
+#Helper_functions --------------------------------------------------------------
+func apply_armor_reduction(damage: int, armor_property: String) -> int:
+	var armor_value = get(armor_property)
+	var remaining_armor = armor_value - damage
+	if remaining_armor >= 0:
+		set(armor_property, remaining_armor)
+		return 0  # All damage absorbed
+	set(armor_property, 0)
+	return abs(remaining_armor)  # Return leftover damage
 
 func set_flag(flag: String, value = true):
 	if flag in self:
@@ -181,7 +191,7 @@ func set_flag(flag: String, value = true):
 	else: 
 		print("Flag does not exists: ", flag)
 
-func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array, req:Array = []) -> bool: 
+func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array, req:Array = []) -> bool:
 	if flag != value:
 		var req_test = 0
 		if req.is_empty():
@@ -200,55 +210,21 @@ func flag_setter(flag: bool, value, array_to_add: Array, array_to_remove: Array,
 		return flag
 	return flag
 
-func add_piece(deck_to_add, pieces):
-	if deck_to_add and pieces:
-		for piece in pieces:
-			deck_to_add.append(piece)
-
-func add_to_array(array_to_add_to: Array, items: Array):
-	for item in items:
-		var exists = false
-		var reward_piece = load(item)
-		for existing_item in array_to_add_to:
-			if existing_item.name == reward_piece.name:
-				exists = true
-				break
-		if not exists:
-			array_to_add_to.append(reward_piece)
-
-func remove_from_array(array_to_remove: Array, items: Array):
-	for item in items:
-		var reward_piece = load(item)
-		for i in array_to_remove.size():
-			if array_to_remove[i].name == reward_piece.name:
-				array_to_remove.pop_at(i)
-				break
-
 func unpack_deck(deck_to_unpack, target):
 	for scene in deck_to_unpack:
-		if scene and scene is PackedScene:
-			var file_path = ResourceLoader.exists(scene.resource_path)
+		if scene is PackedScene:
 			var instance = scene.instantiate()
-			if instance and instance is Node2D:
-				if file_path:
-					instance.location = scene.resource_path
+			if instance is Node2D:
+				instance.location = scene.resource_path
 				target.append(instance)
 
-func reset_stats_at_beging_of_game():
-	deck_in_game.clear()
-	unpack_deck(deck, deck_in_game)
-	set_stat("cur_health", max_health)
-	set_stat("gold", start_gold)
-	set_stat("rerolls", start_reroll)
+func add_to_array(target_array: Array, items: Array):
+	for item in items:
+		var reward = load(item)
+		if reward not in target_array:
+			target_array.append(reward)
 
-func reset_stats_at_beging_of_fight():
-	set_stat("dodging", false)
-	set_stat("moves_left", speed)
-	set_stat("hand_combo", start_hand_combo)
-	set_stat("cur_armor", start_armor)
-	set_stat("cur_mage_armor", start_mage_armor)
-
-func reset_stats_at_beging_of_turn():
-	set_stat("cur_armor", 0)
-	set_stat("hand_combo", start_hand_combo)
-	set_stat("moves_left", speed)
+func remove_from_array(target_array: Array, items: Array):
+	for item in items:
+		var reward = load(item)
+		target_array.erase(reward)

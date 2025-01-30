@@ -245,7 +245,6 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="stats_overlay" type="MarginContainer" parent="."]
-visible = false
 custom_minimum_size = Vector2(576, 1024)
 layout_mode = 1
 anchors_preset = 13

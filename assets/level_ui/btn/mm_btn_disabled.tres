@@ -1,0 +1,8 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://x6s2efs4240q"]
+
+[ext_resource type="Texture2D" uid="uid://boswm4pwi7ruf" path="res://assets/level_ui/btn/mm_button_disabled.png" id="1_6k8el"]
+
+[resource]
+texture = ExtResource("1_6k8el")
+texture_margin_left = 40.0
+texture_margin_right = 40.0

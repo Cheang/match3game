@@ -154,7 +154,6 @@ func save():
 	save_file.game_seed = game_seed
 	
 	save_file.save_data()
-
 func load_data():
 	var save_file = Serializer.new()
 	if FileAccess.file_exists(save_path):

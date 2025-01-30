@@ -372,13 +372,13 @@ func after_refill():
 	cooldown_and_refill_deck()
 	state = move
 	if enemy_attacked == false:
-		Global.cur_char.add_stat("moves_left", -1)
+		Global.cur_char.modify_stat("moves_left", -1)
 	if !damaged_flesh:
 		generate_flesh()
 	if flesh_spaces.size() >= 5:
-		Global.cur_char.set_stat("flg_flesh_coruption", true)
+		Global.cur_char.modify_stat("flg_flesh_coruption", true, false)
 	else: 
-		Global.cur_char.set_stat("flg_flesh_coruption", false)
+		Global.cur_char.modify_stat("flg_flesh_coruption", false, false)
 	move_checked = false
 	damaged_flesh = false
 

@@ -9,4 +9,4 @@ func activate():
 	var f_value = health
 	if criting:
 		f_value *= (1 + cur_char.crit_mutly / 100)
-	cur_char.add_stat("cur_health",f_value)
+	cur_char.modify_stat("cur_health",f_value)

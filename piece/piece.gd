@@ -76,7 +76,7 @@ func unmark():
 
 func will_crit():
 	var rand = floor(randf_range(1,100))
-	if rand <= Global.cur_char.crit_chanse:
+	if rand <= Global.cur_char.crit_chance:
 		base.material = crit_shader
 		is_criting = true
 	else:
@@ -84,7 +84,7 @@ func will_crit():
 
 func will_gold():
 	var rand = floor(randf_range(1,100))
-	if rand <= Global.cur_char.gold_chanse:
+	if rand <= Global.cur_char.gold_chance:
 		gold_border.visible = true
 		is_gold = true
 	else:

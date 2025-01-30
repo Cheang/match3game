@@ -1,6 +1,6 @@
 extends Control
 
-@onready var load_btn: Button = $VBoxContainer/load
+@onready var load_btn: Button = $VBoxContainer/VBoxContainer/load
 
 @export var song: MusicTrack
 @export var def_area: LocationLoader
@@ -10,8 +10,7 @@ var choise_made: bool = false
 
 func _ready() -> void:
 	call_deferred("_initialize_scene")
-	
-	
+
 func _initialize_scene():
 	choise_made = false
 	Global.cur_enemy = null
@@ -20,11 +19,14 @@ func _initialize_scene():
 		Global.cur_scene = ""
 		Global.game_is_over = false
 		Global.save()
-		
+	
 	Global.changeSong(song)
 	if Global.cur_char and Global.cur_scene:
 		load_btn.disabled = false
 		load_btn.visible = true
+	else:
+		load_btn.disabled = true
+		load_btn.visible = false
 
 func _on_start_pressed() -> void:
 	if not choise_made:
@@ -44,6 +46,7 @@ func _on_start_pressed() -> void:
 		else:
 			Global.cur_scene = "res://locations_screen.tscn"
 			SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+
 func _on_load_pressed() -> void:
 	if not choise_made:
 		choise_made = true

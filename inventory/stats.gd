@@ -38,7 +38,7 @@ func expand():
 	get_stat_and_set(Global.cur_char.proficiency, cat_offence_prof)
 	get_stat_and_set(Global.cur_char.strength, cat_offence_str)
 	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true)
-	get_stat_and_set(Global.cur_char.crit_chanse, cat_offence_crit)
+	get_stat_and_set(Global.cur_char.crit_chance, cat_offence_crit)
 	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg)
 	
 	get_stat_and_set(Global.cur_char.mana, cat_magic_mana)

@@ -17,7 +17,7 @@ func activate():
 	var cur_enemy = Global.cur_enemy
 	
 	if to_give_before:
-		cur_char.add_stat("hand_combo", hand_combo_points_to_give)
+		cur_char.modify_stat("hand_combo", hand_combo_points_to_give)
 	
 	#Calculate base damage
 	var f_value: float = atk_dmg + (cur_char.strength * float(use_strength)) + (upgrade * float(use_upgrades_on_dmg))
@@ -30,4 +30,4 @@ func activate():
 	cur_enemy.take_dmg(f_value, type)
 	
 	if not to_give_before:
-		cur_char.add_stat("hand_combo", hand_combo_points_to_give)
+		cur_char.modify_stat("hand_combo", hand_combo_points_to_give)

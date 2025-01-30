@@ -47,34 +47,36 @@ func _ready() -> void:
 	Global.area_cur_event = null
 	Global.game_is_played = true
 
-func has_enough_pieces(piece_name: String, req: int) -> bool:
-	var numb = 0
-	if req <= 0:
-		return true
-	for piece in Global.cur_char.deck_in_game:
-		if piece.color == piece_name:
-			numb += 1
-		if piece.piece_name == piece_name:
-			numb += 1
-	if numb >= req:
-		return true
-	return false
-
-
 func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):
-	var reward_texture = reward.get_child(2).get_child(0).get_child(0).get_child(0)
+	var reward_texture = $reward/PanelContainer/MarginContainer/VBoxContainer/TextureRect
 	var reward_icon = reward_texture.get_child(0)
-	var reward_text = reward.get_child(2).get_child(0).get_child(0).get_child(1)
-	var reward_description = reward.get_child(2).get_child(0).get_child(0).get_child(2)
-	var reward_animator = reward.get_child(0)
+	var reward_text = $reward/PanelContainer/MarginContainer/VBoxContainer/Label
+	var reward_description = $reward/PanelContainer/MarginContainer/VBoxContainer/Label2
+	var reward_animator = $reward/AnimationPlayer
 	
+	# Assign textures and text
 	reward_texture.texture = texture
 	reward_icon.texture = icon
 	reward_text.text = text
-	
-	if description != "":
+	# Handle optional description
+	if description:
 		reward_description.text = description
 		reward_description.visible = true
+	else:
+		reward_description.visible = false
 	
-	reward_animator.current_animation = "drop_down"
+	# Play animation and ensure visibility
 	reward.visible = true
+	reward_animator.current_animation = "drop_down"
+	
+#Helper_functions --------------------------------------------------------------
+func has_enough_pieces(piece_name: String, req: int) -> bool:
+	if req <= 0:
+		return true
+	var count = 0
+	for piece in Global.cur_char.deck_in_game:
+		if piece.color == piece_name or piece.piece_name == piece_name:
+			count += 1
+			if count >= req:
+				return true
+	return false

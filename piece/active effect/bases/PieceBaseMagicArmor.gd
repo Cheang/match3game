@@ -18,4 +18,4 @@ func activate():
 	if criting:
 		f_value *= (1 + cur_char.crit_mutly / 100)
 	#Apply mage armor
-	cur_char.add_stat("cur_mage_armor", f_value)
+	cur_char.modify_stat("cur_mage_armor", f_value)
