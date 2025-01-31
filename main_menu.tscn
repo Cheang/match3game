@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://857yjlwtnl4h"]
+[gd_scene load_steps=17 format=3 uid="uid://857yjlwtnl4h"]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m0wtd"]
 [ext_resource type="Script" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://sounds/songs/daichovo_horo/daichovo2.wav" id="4_s20nw"]
 [ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://sounds/songs/daichovo_horo/daichovo3.wav" id="5_hglwg"]
 [ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://locations/_loc_loaders/area_1.tres" id="6_h344n"]
+[ext_resource type="Texture2D" uid="uid://ba7g4uk3q3qcl" path="res://assets/level_ui/logo_under.png" id="9_qvpqg"]
 [ext_resource type="StyleBox" uid="uid://bovr1j1wiyher" path="res://assets/level_ui/btn/mm_btn.tres" id="10_joudq"]
 [ext_resource type="StyleBox" uid="uid://chaulfts06r4f" path="res://assets/level_ui/btn/mm_btn_hover.tres" id="10_o0vf0"]
 [ext_resource type="StyleBox" uid="uid://x6s2efs4240q" path="res://assets/level_ui/btn/mm_btn_disabled.tres" id="10_qd8a3"]
@@ -79,6 +80,23 @@ custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 texture = ExtResource("3_jb5a2")
 stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/TextureRect"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -75.0
+offset_right = 200.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_qvpqg")
+stretch_mode = 3
 
 [node name="Control" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
