@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlayerResource" load_steps=21 format=3 uid="uid://b8jo32hmbbisk"]
+[gd_resource type="Resource" script_class="PlayerResource" load_steps=24 format=3 uid="uid://b8jo32hmbbisk"]
 
 [ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/b_round_shield.tscn" id="1_pardm"]
 [ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/g_rush.tscn" id="2_upqac"]
@@ -20,6 +20,9 @@
 [ext_resource type="Resource" uid="uid://dbkv21dn6mkqs" path="res://rewards/pieces/sword/sword0_small_sword.tres" id="13_ef1xv"]
 [ext_resource type="Resource" uid="uid://bgcd0ocbytryg" path="res://rewards/pieces/shields_up.tres" id="15_4a05a"]
 [ext_resource type="Resource" uid="uid://ba0s3qgm8su2y" path="res://rewards/pieces/fists/fists0-way_of_the_fist.tres" id="16_6rpfp"]
+[ext_resource type="Resource" uid="uid://ca24omyatk5k7" path="res://rewards/pieces/bombs/bomb0_hbombs.tres" id="19_wuckb"]
+[ext_resource type="Resource" uid="uid://bqxw2omhnabxy" path="res://rewards/pieces/bombs/bomb0_vbombs.tres" id="20_nq1t4"]
+[ext_resource type="Resource" uid="uid://owx8v46c52lc" path="res://rewards/pieces/bombs/bomb0_adjbombs.tres" id="21_cxvcy"]
 
 [resource]
 script = ExtResource("10_ljvcx")
@@ -52,12 +55,12 @@ proficiency = 1.0
 fluf_damage = 0.0
 crit_chance = 5
 crit_mutly = 100.0
-start_hand_combo = 0.0
+start_hand_combo = 0
 hand_combo = 0
 sprite = ExtResource("11_pi64o")
 deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
 fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
-rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("11_ljkgp"), ExtResource("16_6rpfp")])
+rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("11_ljkgp"), ExtResource("16_6rpfp"), ExtResource("19_wuckb"), ExtResource("20_nq1t4"), ExtResource("21_cxvcy")])
 rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("11_ljkgp"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
 flg_flesh_coruption = false
 flg_can_spawn_col_bombs = false

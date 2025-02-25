@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="R_Piece" load_steps=4 format=3 uid="uid://bqxw2omhnabxy"]
+
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="1_j0ues"]
+[ext_resource type="Texture2D" uid="uid://cwurir1oopeke" path="res://assets/_white_icons/white_icon_2_1.png" id="2_siguj"]
+[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="3_dnwy2"]
+
+[resource]
+script = ExtResource("3_dnwy2")
+piece_to_add = Array[PackedScene]([])
+use_previous_event_data = false
+name = "Horizontal Bombs"
+description = "Grants the ability to spawn bombs when you destroy four vertical tiles."
+base = ExtResource("1_j0ues")
+icon = ExtResource("2_siguj")
+flags = Array[String](["flg_can_spawn_row_bombs"])
+rearity = "LEGENDARY"

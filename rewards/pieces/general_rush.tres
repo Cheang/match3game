@@ -9,10 +9,10 @@
 script = ExtResource("4_wu2fp")
 piece_to_add = Array[PackedScene]([ExtResource("3_0abbv")])
 use_previous_event_data = false
-name = "Rush (Week)"
+name = "Quick Feet"
 description = "Adds 1 Rush.
-Rush gives you 1 more move."
+[color=#9babb2]Rush gives you 1 Move.[/color]"
 base = ExtResource("1_1vseb")
 icon = ExtResource("2_skfrg")
 flags = Array[String](["flg_rew_rush"])
-rearity = "LEGENDARY"
+rearity = "EPIC"

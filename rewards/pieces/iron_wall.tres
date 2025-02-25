@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://dvs5l0yiwnx3s"]
 
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_4yet0"]
+[ext_resource type="Texture2D" uid="uid://b8y25sladek4k" path="res://assets/_blue_icons/blue_icon_2_1.png" id="2_a84bo"]
 [ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="2_melcq"]
-[ext_resource type="Texture2D" uid="uid://bikml4uccjvo7" path="res://assets/_blue_icons/blue_icon_2.png" id="3_qykmn"]
 [ext_resource type="PackedScene" uid="uid://dfb0wfnp8yxer" path="res://piece/_blue_sq/b_iron_shield.tscn" id="4_cshrb"]
 
 [resource]
@@ -12,8 +12,6 @@ use_previous_event_data = false
 name = "Iron Wall"
 description = "Adds 1 Iron Shield"
 base = ExtResource("2_4yet0")
-icon = ExtResource("3_qykmn")
-passive_boost = Array[String]([])
-piece_boost = Array[String](["shields_up"])
-boost_self = false
-rearity = "EPIC"
+icon = ExtResource("2_a84bo")
+flags = Array[String]([])
+rearity = "RARE"

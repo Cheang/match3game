@@ -55,7 +55,7 @@ class_name PlayerResource
 		crit_chance = clamp(new_crit_chance, 0, 100) 
 @export var crit_mutly: float 
 @export_subgroup("")
-@export var start_hand_combo: float = 0
+@export var start_hand_combo: int = 0
 @export var hand_combo: int = 0
 #------------------------------------------------------------------------------#
 @export_category("Art")
@@ -90,6 +90,7 @@ var deck_in_game: Array[PieceClass]
 	set(value):
 		const SMOKE_SCREEN = "res://rewards/pieces/general_rush_smoke_screen.tres"
 		flg_rew_rush = flag_setter(flg_rew_rush, value, [SMOKE_SCREEN], [])
+
 @export_subgroup("Fists")
 @export var flg_rew_fists_lvl_1: bool = false:
 	set(value):
