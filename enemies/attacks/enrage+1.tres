@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Enrage_Attack" load_steps=3 format=3 uid="uid://dga8ipnl6kpri"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/enrage_attack.gd" id="1_6ajpj"]
+[ext_resource type="Script" uid="uid://b3owsyml48h8d" path="res://enemies/attacks/bases/enrage_attack.gd" id="1_6ajpj"]
 [ext_resource type="AudioStream" uid="uid://cfubttrbhtnld" path="res://sounds/scream_1.wav" id="2_bk1cw"]
 
 [resource]

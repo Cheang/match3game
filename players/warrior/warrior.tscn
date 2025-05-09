@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://du6ruvncrt5c4"]
 
-[ext_resource type="Script" path="res://scripts/player/player_anim.gd" id="1_58pmd"]
+[ext_resource type="Script" uid="uid://c5w5oxn52022k" path="res://scripts/player/player_anim.gd" id="1_58pmd"]
 [ext_resource type="Texture2D" uid="uid://bxxfurbr4amco" path="res://assets/player/warrior_body.png" id="2_g76ys"]
 [ext_resource type="Texture2D" uid="uid://cc4ilttpxyuer" path="res://assets/player/warrior_head.png" id="3_1qemf"]
 [ext_resource type="Texture2D" uid="uid://cbkt4gbb4hh2b" path="res://assets/player/warrior_sword.png" id="4_txyqo"]
@@ -63,8 +63,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5ydne"]
 _data = {
-"RESET": SubResource("Animation_kh76w"),
-"idle": SubResource("Animation_quum1")
+&"RESET": SubResource("Animation_kh76w"),
+&"idle": SubResource("Animation_quum1")
 }
 
 [node name="warrior" type="Node2D"]

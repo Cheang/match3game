@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="PieceBaseDefence" load_steps=2 format=3 uid="uid://b2m8wq0s3eg1n"]
+[gd_resource type="Resource" script_class="PieceBaseArmor" load_steps=2 format=3 uid="uid://b2m8wq0s3eg1n"]
 
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="1_kyasl"]
+[ext_resource type="Script" uid="uid://coft1560q83a1" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="1_kyasl"]
 
 [resource]
 script = ExtResource("1_kyasl")
+toughness_mult = true
+hand_combo_mult = false
 armor = 0.0
-mage_armor = 3
+hand_combo_points_to_give = 0

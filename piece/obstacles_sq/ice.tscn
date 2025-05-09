@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://6bg86rq0qfm7"]
 
-[ext_resource type="Script" path="res://piece/obstacles_sq/ice.gd" id="1_ij5jg"]
+[ext_resource type="Script" uid="uid://cbldvudjl6j8g" path="res://piece/obstacles_sq/ice.gd" id="1_ij5jg"]
 [ext_resource type="Texture2D" uid="uid://iid6060fpqx0" path="res://assets/obstacles/ice_0_sq.png" id="1_t78ve"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3pymh"]

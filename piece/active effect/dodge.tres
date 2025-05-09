@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PieceBaseDodge" load_steps=2 format=3 uid="uid://dt1j85o3ltl6d"]
 
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseDodge.gd" id="1_06pqh"]
+[ext_resource type="Script" uid="uid://bcnbwtyh3nt8s" path="res://piece/active effect/bases/PieceBaseDodge.gd" id="1_06pqh"]
 
 [resource]
 script = ExtResource("1_06pqh")
+hand_combo_points_to_give = 0

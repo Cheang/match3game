@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://co453pji2jcqe" path="res://piece/_green_sq/_green_fluf.tscn" id="1_r8otn"]
 [ext_resource type="Texture2D" uid="uid://d1j5mvww6nwto" path="res://assets/_green_icons/green_icon_2.png" id="2_rxyrn"]
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_sps6x"]
+[ext_resource type="Script" uid="uid://dfowlkxej8t14" path="res://piece/active effect/bases/PieceBase.gd" id="3_sps6x"]
 [ext_resource type="Resource" uid="uid://dt1j85o3ltl6d" path="res://piece/active effect/dodge.tres" id="4_s2iwk"]
 
 [node name="green_sq_2" instance=ExtResource("1_r8otn")]

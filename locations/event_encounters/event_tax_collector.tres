@@ -2,8 +2,8 @@
 
 [ext_resource type="Resource" uid="uid://cftnx7yuq7c7d" path="res://event/e_tax_collector.tres" id="1_uc80e"]
 [ext_resource type="Texture2D" uid="uid://74mhbf2c8g0j" path="res://assets/level_ui/location_pictures/loc_event.png" id="2_g0crq"]
-[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="3_6sr2k"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="4_xuub5"]
+[ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://locations/_others/location_resource.gd" id="3_6sr2k"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="4_xuub5"]
 
 [resource]
 script = ExtResource("3_6sr2k")

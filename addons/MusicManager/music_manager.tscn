@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://klqktsr2spx7"]
 
-[ext_resource type="Script" path="res://addons/MusicManager/music_manager.gd" id="1_bajgp"]
+[ext_resource type="Script" uid="uid://cg72w6llpmw1n" path="res://addons/MusicManager/music_manager.gd" id="1_bajgp"]
 
 [sub_resource type="Animation" id="Animation_ugwku"]
 resource_name = "FADE_TO_1"
@@ -135,9 +135,9 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8a2lv"]
 _data = {
-"FADE_TO_1": SubResource("Animation_ugwku"),
-"FADE_TO_2": SubResource("Animation_pth5k"),
-"RESET": SubResource("Animation_lv4ni")
+&"FADE_TO_1": SubResource("Animation_ugwku"),
+&"FADE_TO_2": SubResource("Animation_pth5k"),
+&"RESET": SubResource("Animation_lv4ni")
 }
 
 [node name="MusicManager" type="Node"]

@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="1_s5odv"]
 [ext_resource type="Texture2D" uid="uid://c63xr5f160uv2" path="res://assets/_blue_icons/blue_icon_6.png" id="2_hvoi8"]
 [ext_resource type="PackedScene" uid="uid://bjvtjnwmq714f" path="res://piece/_blue_sq/b_block.tscn" id="3_33cnb"]
-[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_t65wg"]
+[ext_resource type="Script" uid="uid://blxpxrnhrcnr7" path="res://rewards/others/piece_resource.gd" id="4_t65wg"]
 
 [resource]
 script = ExtResource("4_t65wg")

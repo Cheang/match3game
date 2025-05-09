@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7ut720c0esco"]
 
-[ext_resource type="Script" path="res://other/btn_general.gd" id="1_8wasw"]
+[ext_resource type="Script" uid="uid://cuuosyrejvq0m" path="res://other/btn_general.gd" id="1_8wasw"]
 [ext_resource type="PackedScene" uid="uid://b87buk2t5cluu" path="res://other/btn_click.tscn" id="2_7lres"]
 
 [node name="btn" type="Button"]

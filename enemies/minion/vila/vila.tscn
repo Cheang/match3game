@@ -2,7 +2,7 @@
 
 [ext_resource type="Material" uid="uid://clq4bt10v4f3t" path="res://assets/shaders/ghost_effect2.tres" id="1_35j8m"]
 [ext_resource type="Texture2D" uid="uid://eeus51yti0gh" path="res://assets/enemy/vila/vila_body.png" id="1_p5epb"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_xyick"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_xyick"]
 [ext_resource type="Texture2D" uid="uid://dsq81mnt6x276" path="res://assets/enemy/vila/vila_bow.png" id="2_xyfhg"]
 [ext_resource type="Texture2D" uid="uid://fv84rs7n2xxw" path="res://assets/enemy/vila/_57x70px.png" id="3_posao"]
 
@@ -43,9 +43,9 @@ resource_name = "new_animation"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_a0v16"]
 _data = {
-"RESET": SubResource("Animation_0a2x4"),
-"idle": SubResource("Animation_3knvu"),
-"new_animation": SubResource("Animation_edlc8")
+&"RESET": SubResource("Animation_0a2x4"),
+&"idle": SubResource("Animation_3knvu"),
+&"new_animation": SubResource("Animation_edlc8")
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mig41"]

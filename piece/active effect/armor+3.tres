@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PieceBaseArmor" load_steps=2 format=3 uid="uid://biyewp5jf4ta7"]
 
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="1_0oqvc"]
+[ext_resource type="Script" uid="uid://coft1560q83a1" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="1_0oqvc"]
 
 [resource]
 script = ExtResource("1_0oqvc")

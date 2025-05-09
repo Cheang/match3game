@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Tile_Destruction_Attack" load_steps=3 format=3 uid="uid://d3cbjkicneo3u"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/tile_destuction_attac.gd" id="1_0q63g"]
+[ext_resource type="Script" uid="uid://bwnw635e2jy84" path="res://enemies/attacks/bases/tile_destuction_attac.gd" id="1_0q63g"]
 [ext_resource type="AudioStream" uid="uid://c538lmkylcqw1" path="res://sounds/explosion.wav" id="2_dc0cj"]
 
 [resource]

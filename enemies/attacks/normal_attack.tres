@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Basic_Attack" load_steps=3 format=3 uid="uid://hjj2qcqtybi5"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="1_hgo81"]
+[ext_resource type="Script" uid="uid://6ltgy5nl6t63" path="res://enemies/attacks/bases/basic_attack.gd" id="1_hgo81"]
 [ext_resource type="AudioStream" uid="uid://bfyeq52qeuolx" path="res://sounds/slash_1.wav" id="2_40rhp"]
 
 [resource]

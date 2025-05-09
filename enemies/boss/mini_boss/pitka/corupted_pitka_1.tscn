@@ -1,6 +1,6 @@
 [gd_scene load_steps=28 format=3 uid="uid://dxpuqjhxgjetq"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_jwoi1"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_jwoi1"]
 [ext_resource type="Texture2D" uid="uid://cmxhc7enh1st2" path="res://assets/enemy/corupted_pitka/pitka_tenticles_idle_383x205.png" id="2_degvo"]
 [ext_resource type="Texture2D" uid="uid://dcqndcul5ty20" path="res://assets/enemy/corupted_pitka/main_body.png" id="3_rlqc0"]
 [ext_resource type="Texture2D" uid="uid://cmhk831bxg73h" path="res://assets/enemy/corupted_pitka/pitka_main_body_bite_265x241.png" id="4_k6i7s"]
@@ -115,9 +115,9 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_o1hii"]
 _data = {
-"RESET": SubResource("Animation_fcbie"),
-"basic_attack": SubResource("Animation_3tsmc"),
-"idle": SubResource("Animation_s0bnk")
+&"RESET": SubResource("Animation_fcbie"),
+&"basic_attack": SubResource("Animation_3tsmc"),
+&"idle": SubResource("Animation_s0bnk")
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j71wg"]

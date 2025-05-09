@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dhauif6v32uf3"]
 
 [ext_resource type="Texture2D" uid="uid://bsta236iitoqw" path="res://assets/enemy/bear_stravnica/bear_stravnica_body.png" id="1_1umo8"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_t4bc8"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_t4bc8"]
 [ext_resource type="Texture2D" uid="uid://ihsoiu5hp70q" path="res://assets/enemy/bear_stravnica/bear_stravnica_head.png" id="2_ba757"]
 
 [sub_resource type="Animation" id="Animation_sp36c"]
@@ -38,8 +38,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vtmp1"]
 _data = {
-"RESET": SubResource("Animation_sp36c"),
-"idle": SubResource("Animation_mxdx1")
+&"RESET": SubResource("Animation_sp36c"),
+&"idle": SubResource("Animation_mxdx1")
 }
 
 [node name="bear_stravnica" type="Node2D"]

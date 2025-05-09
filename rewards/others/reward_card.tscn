@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bksjsebs3posk"]
 
 [ext_resource type="Texture2D" uid="uid://i1x4yl7wxjam" path="res://assets/level_ui/reward_panel.png" id="1_qyjgv"]
-[ext_resource type="Script" path="res://rewards/others/reward_card.gd" id="2_six43"]
+[ext_resource type="Script" uid="uid://cs2dmh4kscsop" path="res://rewards/others/reward_card.gd" id="2_six43"]
 [ext_resource type="Texture2D" uid="uid://cip6rlu65sv6c" path="res://assets/level_ui/reward_panel_2.png" id="2_wjh80"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_7oj81"]
 

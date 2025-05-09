@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://3dq060p7gv6e"]
 
-[ext_resource type="Script" path="res://other/trun_changer.gd" id="1_ib848"]
+[ext_resource type="Script" uid="uid://d1aupcae5f0bj" path="res://other/trun_changer.gd" id="1_ib848"]
 
 [sub_resource type="Animation" id="Animation_bb4pv"]
 length = 0.001
@@ -35,8 +35,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5jlgr"]
 _data = {
-"RESET": SubResource("Animation_bb4pv"),
-"fade_in": SubResource("Animation_sotw2")
+&"RESET": SubResource("Animation_bb4pv"),
+&"fade_in": SubResource("Animation_sotw2")
 }
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_74hco"]

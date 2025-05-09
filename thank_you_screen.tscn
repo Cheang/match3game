@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dwc7mgeilpsv0"]
 
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/level_ui/main_menu_n_bg.png" id="1_6a63c"]
-[ext_resource type="Script" path="res://scripts/thank_you_screen.gd" id="1_e8ife"]
+[ext_resource type="Script" uid="uid://dq3vkksmms5w4" path="res://scripts/thank_you_screen.gd" id="1_e8ife"]
 
 [node name="thank_you_screen" type="Control"]
 layout_mode = 3

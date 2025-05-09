@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="R_Piece" load_steps=5 format=3 uid="uid://bht8boefb23la"]
 
-[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="1_j1j08"]
+[ext_resource type="Script" uid="uid://blxpxrnhrcnr7" path="res://rewards/others/piece_resource.gd" id="1_j1j08"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="1_uny0g"]
 [ext_resource type="Texture2D" uid="uid://dgrtd2xq830ed" path="res://assets/_red_icons/red_icon_2_1.png" id="2_y5yb5"]
 [ext_resource type="PackedScene" uid="uid://cnt0lk86tnt4x" path="res://piece/_red_sq/r_punch.tscn" id="3_6iumv"]

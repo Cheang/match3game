@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bcmfqa5aviot1"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_encii"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_encii"]
 [ext_resource type="Texture2D" uid="uid://dpo5x8j2am78d" path="res://assets/enemy/wild_boar/wild_boar_body.png" id="1_yk3ve"]
 [ext_resource type="Texture2D" uid="uid://bbieg73wk53qs" path="res://assets/enemy/wild_boar/wild_boar_head.png" id="2_ns8j6"]
 
@@ -54,9 +54,9 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2lvag"]
 _data = {
-"RESET": SubResource("Animation_lvla1"),
-"basic_attack": SubResource("Animation_rukjo"),
-"idle": SubResource("Animation_n3oyu")
+&"RESET": SubResource("Animation_lvla1"),
+&"basic_attack": SubResource("Animation_rukjo"),
+&"idle": SubResource("Animation_n3oyu")
 }
 
 [node name="wild_boar" type="Node2D"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=28 format=3 uid="uid://b0elnudfkd65c"]
 
-[ext_resource type="Script" path="res://other/pause.gd" id="1_drcth"]
+[ext_resource type="Script" uid="uid://dnmifd028g8xu" path="res://other/pause.gd" id="1_drcth"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="2_8aufw"]
 [ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/level_ui/btn/btn_2_hover.png" id="3_hw4hm"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="4_5o83o"]
@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bm7gbwqth4aa2" path="res://assets/level_ui/icons/backpack.png" id="8_cxg1n"]
 [ext_resource type="Texture2D" uid="uid://c4nol0lsxhees" path="res://assets/level_ui/icons/backpack_p.png" id="9_iv3av"]
 [ext_resource type="StyleBox" uid="uid://ixohy6piondu" path="res://assets/level_ui/btn/new_style_box_texture.tres" id="10_h3k5d"]
-[ext_resource type="Script" path="res://inventory/stats.gd" id="10_rk6m7"]
+[ext_resource type="Script" uid="uid://dj6484hl28642" path="res://inventory/stats.gd" id="10_rk6m7"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="11_flpho"]
 [ext_resource type="Texture2D" uid="uid://demwyq5vri1pv" path="res://assets/level_ui/pause_bg.png" id="12_xej0p"]
 [ext_resource type="Texture2D" uid="uid://ccnv4q1dqhdo2" path="res://assets/level_ui/btn/btn_2_light.png" id="12_xyn8i"]

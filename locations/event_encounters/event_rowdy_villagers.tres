@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="Location" load_steps=5 format=3 uid="uid://br20uh8grxa7c"]
 
-[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_ixxj8"]
+[ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://locations/_others/location_resource.gd" id="1_ixxj8"]
 [ext_resource type="Resource" uid="uid://lalxc0m4oab8" path="res://event/e_rowdy_villagers_1.tres" id="1_tmrh1"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_3glhy"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_3glhy"]
 [ext_resource type="Texture2D" uid="uid://74mhbf2c8g0j" path="res://assets/level_ui/location_pictures/loc_event.png" id="2_or7r7"]
 
 [resource]

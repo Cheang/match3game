@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="Location" load_steps=9 format=3 uid="uid://cqehju5d485x1"]
 
-[ext_resource type="Script" path="res://scripts/cur_scene_resource.gd" id="1_75siy"]
+[ext_resource type="Script" uid="uid://bshjyhpass6km" path="res://scripts/cur_scene_resource.gd" id="1_75siy"]
 [ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/level_ui/location_pictures/loc_lamia_boss.png" id="1_avet4"]
-[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_pkour"]
+[ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://locations/_others/location_resource.gd" id="1_pkour"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/level_ui/event/cutscene_bg_kruchma_outside.png" id="1_ykgu2"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_kevmu"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_kevmu"]
 [ext_resource type="Texture2D" uid="uid://dowgoeyetqrxq" path="res://assets/level_ui/event/cutscent_npc_old_man_1.png" id="2_s82tq"]
 [ext_resource type="Resource" uid="uid://cyl7kv84j6vky" path="res://enemies/boss/lamia/lamia.tres" id="3_kdd54"]
 

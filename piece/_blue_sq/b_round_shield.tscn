@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/_blue_fluf.tscn" id="1_pmqti"]
 [ext_resource type="Texture2D" uid="uid://l16w0n5oght0" path="res://assets/_blue_icons/blue_icon_1.png" id="2_xr5al"]
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBase.gd" id="3_1uqw6"]
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="4_7phcw"]
+[ext_resource type="Script" uid="uid://dfowlkxej8t14" path="res://piece/active effect/bases/PieceBase.gd" id="3_1uqw6"]
+[ext_resource type="Script" uid="uid://coft1560q83a1" path="res://piece/active effect/bases/PieceBaseArmor.gd" id="4_7phcw"]
 
 [sub_resource type="Resource" id="Resource_1a1bj"]
 script = ExtResource("4_7phcw")

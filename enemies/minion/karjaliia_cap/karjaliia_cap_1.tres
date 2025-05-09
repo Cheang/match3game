@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="EnemyResource" load_steps=8 format=3 uid="uid://e6scwl0nfeok"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_mu0b4"]
+[ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_mu0b4"]
 [ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://enemies/attacks/normal_attack.tres" id="2_3h6gv"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_3jfvh"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_3jfvh"]
 [ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://enemies/attacks/enrage+1.tres" id="3_tuo2f"]
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="4_pdeom"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="5_ck8d1"]
@@ -11,16 +11,18 @@
 [resource]
 script = ExtResource("2_3jfvh")
 name = "Kardzaliia Capitan"
+type = 0
 max_health = 27.0
+cur_health = 0.0
 physical_dmg_reduction = 0.0
 damage = 1.0
+has_phases = false
+phase = 1
 attacks = Array[ExtResource("1_mu0b4")]([ExtResource("3_tuo2f"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("4_pdeom")])
 attacks_p2 = Array[ExtResource("1_mu0b4")]([])
 attacks_p3 = Array[ExtResource("1_mu0b4")]([])
 attacks_p4 = Array[ExtResource("1_mu0b4")]([])
 speed = 1
-type = 0
-has_phases = false
 sprite = ExtResource("7_duoj2")
 health_bar = ExtResource("5_ck8d1")
 empty_spaces = Array[Vector2]([])

@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="LocationLoader" load_steps=15 format=3 uid="uid://beq8vfn2nxrdo"]
 
-[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="1_wcv6m"]
+[ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://locations/_others/location_resource.gd" id="1_wcv6m"]
 [ext_resource type="Resource" uid="uid://cqehju5d485x1" path="res://locations/boss_encounters/loc_boss_lamia.tres" id="2_vg4qu"]
 [ext_resource type="Resource" uid="uid://csp37q5bepa8w" path="res://locations/enemie_encounters/loc_karjaliia_cap_1.tres" id="3_0pvec"]
 [ext_resource type="Resource" uid="uid://di3upxoydgajk" path="res://locations/enemie_encounters/loc_wild_boar_1.tres" id="4_3g8uc"]
 [ext_resource type="Resource" uid="uid://br20uh8grxa7c" path="res://locations/event_encounters/event_rowdy_villagers.tres" id="4_hnthf"]
-[ext_resource type="Script" path="res://locations/_others/locations_loader.gd" id="4_kqrmq"]
+[ext_resource type="Script" uid="uid://b7nahh8uqgdv4" path="res://locations/_others/locations_loader.gd" id="4_kqrmq"]
 [ext_resource type="Resource" uid="uid://dw3ch66xefnv6" path="res://locations/event_encounters/event_fallen_tree.tres" id="5_37ayj"]
 [ext_resource type="Resource" uid="uid://4nre8u1ei118" path="res://locations/enemie_encounters/loc_corupted_wild_boar_1.tres" id="5_ygnyx"]
 [ext_resource type="Resource" uid="uid://d3yfpmo8s6ytm" path="res://locations/enemie_encounters/loc_bear_stravnica_1.tres" id="6_bpw8g"]

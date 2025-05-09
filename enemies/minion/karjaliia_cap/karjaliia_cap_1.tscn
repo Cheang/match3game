@@ -1,11 +1,11 @@
 [gd_scene load_steps=12 format=3 uid="uid://3j3pvno8yhem"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_frq0b"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_frq0b"]
 [ext_resource type="Texture2D" uid="uid://cky3v84kg3oe7" path="res://assets/enemy/karjaliia/karjaliia_c_body_1.png" id="2_gopgf"]
 [ext_resource type="Texture2D" uid="uid://8ko4unyjhy6w" path="res://assets/enemy/karjaliia/karjaliia_c_hand_1.png" id="3_7vg55"]
 [ext_resource type="Texture2D" uid="uid://dm60xlrgbclyc" path="res://assets/enemy/karjaliia/karjaliia_c_slash_1.png" id="4_4jxj1"]
 [ext_resource type="Texture2D" uid="uid://b38ttb03sbd3x" path="res://assets/enemy/karjaliia/karjaliia_c_head_1.png" id="5_tuopt"]
-[ext_resource type="Script" path="res://scripts/enemies/sprite_randomiser.gd" id="6_gbe4j"]
+[ext_resource type="Script" uid="uid://cm1gsp2ppucyg" path="res://scripts/enemies/sprite_randomiser.gd" id="6_gbe4j"]
 [ext_resource type="Texture2D" uid="uid://cqk1e5iuhk4ie" path="res://assets/enemy/karjaliia/karjaliia_c_head_2.png" id="7_l4bud"]
 
 [sub_resource type="Animation" id="Animation_77ds4"]
@@ -190,9 +190,9 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rnh8k"]
 _data = {
-"RESET": SubResource("Animation_77ds4"),
-"basic_attack": SubResource("Animation_o403m"),
-"idle": SubResource("Animation_tfvwl")
+&"RESET": SubResource("Animation_77ds4"),
+&"basic_attack": SubResource("Animation_o403m"),
+&"idle": SubResource("Animation_tfvwl")
 }
 
 [node name="karjaliia_cap" type="Node2D"]

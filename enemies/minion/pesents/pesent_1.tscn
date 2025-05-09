@@ -1,11 +1,11 @@
 [gd_scene load_steps=12 format=3 uid="uid://edbwrl52wbsb"]
 
 [ext_resource type="Texture2D" uid="uid://8wam2i0b2jt3" path="res://assets/enemy/pesent/pesent_body.png" id="1_abqht"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_anim.gd" id="1_ohmbd"]
+[ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://scripts/enemies/enemy_anim.gd" id="1_ohmbd"]
 [ext_resource type="Texture2D" uid="uid://cdenb1xsdpnng" path="res://assets/enemy/pesent/pesent_hand.png" id="2_tfpq2"]
 [ext_resource type="Texture2D" uid="uid://bvtyd5gl5qe4s" path="res://assets/enemy/pesent/pesent_head.png" id="3_osu17"]
 [ext_resource type="Texture2D" uid="uid://bhpda0xe87gxm" path="res://assets/enemy/pesent/pesent_body_2.png" id="4_6yn1d"]
-[ext_resource type="Script" path="res://scripts/enemies/sprite_randomiser.gd" id="5_nyw7f"]
+[ext_resource type="Script" uid="uid://cm1gsp2ppucyg" path="res://scripts/enemies/sprite_randomiser.gd" id="5_nyw7f"]
 [ext_resource type="Texture2D" uid="uid://brl5r74n8wpog" path="res://assets/enemy/pesent/pesent_head_2.png" id="6_sd7bp"]
 [ext_resource type="Texture2D" uid="uid://t3tvcem6j11c" path="res://assets/enemy/pesent/pesent_head_3.png" id="7_nwrq7"]
 
@@ -67,8 +67,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_tbrop"]
 _data = {
-"RESET": SubResource("Animation_464xt"),
-"idle": SubResource("Animation_bousy")
+&"RESET": SubResource("Animation_464xt"),
+&"idle": SubResource("Animation_bousy")
 }
 
 [node name="pesent_1" type="Node2D"]

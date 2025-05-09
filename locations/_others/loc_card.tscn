@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://ccly008m1l4s5"]
 
 [ext_resource type="Texture2D" uid="uid://bbhneskwfrdwv" path="res://assets/level_ui/btn/btn_light.png" id="1_gngmg"]
-[ext_resource type="Script" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
+[ext_resource type="Script" uid="uid://b062k0u5783id" path="res://locations/_others/loc_card.gd" id="2_tcvsp"]
 [ext_resource type="Texture2D" uid="uid://bbpd48s55of6d" path="res://assets/level_ui/location_pictures/loc_empty.png" id="3_t8ffi"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/153-font.ttf" id="4_x23jn"]
 

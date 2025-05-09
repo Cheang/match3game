@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="EnemyResource" load_steps=11 format=3 uid="uid://b8md2nvxu2oee"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_uqo0m"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_idlbb"]
-[ext_resource type="Script" path="res://enemies/attacks/bases/basic_attack.gd" id="2_r7b1o"]
-[ext_resource type="Script" path="res://enemies/attacks/bases/enrage_attack.gd" id="3_2m4mv"]
+[ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_uqo0m"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_idlbb"]
+[ext_resource type="Script" uid="uid://6ltgy5nl6t63" path="res://enemies/attacks/bases/basic_attack.gd" id="2_r7b1o"]
+[ext_resource type="Script" uid="uid://b3owsyml48h8d" path="res://enemies/attacks/bases/enrage_attack.gd" id="3_2m4mv"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="4_oxslg"]
 [ext_resource type="PackedScene" uid="uid://dhauif6v32uf3" path="res://enemies/minion/bear_stravnica/bear_stravnica.tscn" id="6_blujc"]
 

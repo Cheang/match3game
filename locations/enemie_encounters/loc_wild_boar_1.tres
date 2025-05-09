@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="Location" load_steps=6 format=3 uid="uid://di3upxoydgajk"]
 
 [ext_resource type="Texture2D" uid="uid://dxbwaltuhmic2" path="res://assets/level_ui/location_pictures/loc_generic_fight.png" id="1_x7lf6"]
-[ext_resource type="Script" path="res://locations/_others/location_resource.gd" id="2_d8ni4"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="3_dilgm"]
+[ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://locations/_others/location_resource.gd" id="2_d8ni4"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="3_dilgm"]
 [ext_resource type="Resource" uid="uid://d2nis0gpq35ns" path="res://enemies/minion/wild_boar/wild_boar_1.tres" id="4_2xawn"]
 [ext_resource type="Resource" uid="uid://duwwp183j67gq" path="res://enemies/minion/wild_boar/wild_boar_2.tres" id="5_1p1d0"]
 

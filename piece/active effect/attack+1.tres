@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="PieceBaseAttack" load_steps=2 format=3 uid="uid://t1q3a7d18m50"]
 
-[ext_resource type="Script" path="res://piece/active effect/bases/PieceBaseAttack.gd" id="1_neewn"]
+[ext_resource type="Script" uid="uid://4c7tc7ivv0by" path="res://piece/active effect/bases/PieceBaseAttack.gd" id="1_neewn"]
 
 [resource]
 script = ExtResource("1_neewn")
+type = 0
 atk_dmg = 1.0
 atk_numb = 1
+hand_combo_points_to_give = 0

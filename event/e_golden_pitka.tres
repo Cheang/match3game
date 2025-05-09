@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="Event" load_steps=13 format=3 uid="uid://ci6vrl8ivs1nj"]
 
-[ext_resource type="Script" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_8odv4"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="2_8x4aj"]
-[ext_resource type="Script" path="res://event/_other/event_resource.gd" id="2_asj8m"]
+[ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_8odv4"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_8x4aj"]
+[ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://event/_other/event_resource.gd" id="2_asj8m"]
 [ext_resource type="Resource" uid="uid://pskmqsygacfk" path="res://enemies/boss/mini_boss/pitka/corupted_pitka_1.tres" id="3_oa1fc"]
-[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_fight.gd" id="4_0vt40"]
-[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="5_o4ys0"]
-[ext_resource type="Script" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="7_ocwjy"]
+[ext_resource type="Script" uid="uid://bng6oewrwnmlg" path="res://event/_other/event_choise_varients/evt_choise_fight.gd" id="4_0vt40"]
+[ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="5_o4ys0"]
+[ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="7_ocwjy"]
 
 [sub_resource type="Resource" id="Resource_dxhex"]
 script = ExtResource("4_0vt40")

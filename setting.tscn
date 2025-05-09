@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dn3mm84rkti5b"]
 
-[ext_resource type="Script" path="res://scripts/setting.gd" id="1_dig66"]
+[ext_resource type="Script" uid="uid://deqf6adh7anky" path="res://scripts/setting.gd" id="1_dig66"]
 [ext_resource type="Texture2D" uid="uid://cbn51l2fif0f5" path="res://assets/level_ui/btn/btn_2.png" id="1_fk5cb"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="3_bs73v"]
 

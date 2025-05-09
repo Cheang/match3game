@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="SettingsResource" load_steps=2 format=3 uid="uid://ntq4yg0d5vsp"]
 
-[ext_resource type="Script" path="res://scripts/saving/setting_save_res.gd" id="1_x510o"]
+[ext_resource type="Script" uid="uid://d3cjchsclrgix" path="res://scripts/saving/setting_save_res.gd" id="1_x510o"]
 
 [resource]
 script = ExtResource("1_x510o")

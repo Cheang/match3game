@@ -1,14 +1,17 @@
 [gd_resource type="Resource" script_class="EventChoise" load_steps=2 format=3 uid="uid://clkjvmfvparwq"]
 
-[ext_resource type="Script" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_yfxe3"]
+[ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_yfxe3"]
 
 [resource]
 script = ExtResource("1_yfxe3")
 text = "Leave..."
-type = 0
+description = "None"
 gold_cost = 0
+failable = false
 req_stat = "None"
 req_value = 0.0
 req_piece_remove = false
-req_piece = "None"
+req_piece_remove_blacklist = ""
+req_piece_name = "None"
+req_piece_numb = 1
 req_class = "None"

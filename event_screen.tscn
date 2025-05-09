@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://dc82ykxpsf1if"]
 
-[ext_resource type="Script" path="res://scripts/event_screen.gd" id="1_c7ncb"]
+[ext_resource type="Script" uid="uid://bpfdqfrg5xwm8" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
 [ext_resource type="Texture2D" uid="uid://die4pslebhx02" path="res://assets/level_ui/event/event_shadow.png" id="2_opvah"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/level_ui/btn/btn_disabled.png" id="5_biyog"]
@@ -51,8 +51,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1pdey"]
 _data = {
-"RESET": SubResource("Animation_u0pyg"),
-"drop_down": SubResource("Animation_t1iey")
+&"RESET": SubResource("Animation_u0pyg"),
+&"drop_down": SubResource("Animation_t1iey")
 }
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ki286"]

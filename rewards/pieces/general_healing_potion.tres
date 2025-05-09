@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="1_876wh"]
 [ext_resource type="Texture2D" uid="uid://nv1kjivywddk" path="res://assets/_purple_icons/purple_icon_2_1.png" id="2_4sbev"]
 [ext_resource type="PackedScene" uid="uid://duuv7ras2jq0o" path="res://piece/_purple_sq/p_healing_potion_1.tscn" id="3_tg2fi"]
-[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="4_68wib"]
+[ext_resource type="Script" uid="uid://blxpxrnhrcnr7" path="res://rewards/others/piece_resource.gd" id="4_68wib"]
 
 [resource]
 script = ExtResource("4_68wib")

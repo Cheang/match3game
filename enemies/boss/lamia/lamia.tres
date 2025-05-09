@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://cyl7kv84j6vky"]
 
-[ext_resource type="Script" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_j17yo"]
+[ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_j17yo"]
 [ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://enemies/attacks/normal_attack.tres" id="2_1p6sj"]
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="3_6p5om"]
 [ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://enemies/attacks/enrage+1.tres" id="4_tfsx7"]
 [ext_resource type="Resource" uid="uid://d3cbjkicneo3u" path="res://enemies/attacks/lamia_tile_destruction.tres" id="5_6ib0x"]
 [ext_resource type="Texture2D" uid="uid://cdh1ejimm1oir" path="res://assets/level_ui/enemy_health_green.png" id="6_vvsti"]
-[ext_resource type="Script" path="res://scripts/enemies/enemy_resource.gd" id="7_fkeyq"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="7_fkeyq"]
 [ext_resource type="PackedScene" uid="uid://c48fmwq3lbdm2" path="res://enemies/boss/lamia/lamia.tscn" id="8_c4omb"]
 
 [resource]

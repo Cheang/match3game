@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_4yet0"]
 [ext_resource type="Texture2D" uid="uid://b8y25sladek4k" path="res://assets/_blue_icons/blue_icon_2_1.png" id="2_a84bo"]
-[ext_resource type="Script" path="res://rewards/others/piece_resource.gd" id="2_melcq"]
+[ext_resource type="Script" uid="uid://blxpxrnhrcnr7" path="res://rewards/others/piece_resource.gd" id="2_melcq"]
 [ext_resource type="PackedScene" uid="uid://dfb0wfnp8yxer" path="res://piece/_blue_sq/b_iron_shield.tscn" id="4_cshrb"]
 
 [resource]
