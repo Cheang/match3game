@@ -31,7 +31,7 @@ var active_picking_edit: LineEdit = null
 @onready var preview_choices: VBoxContainer = $PreviewModal/Margin/VBox/ChoicesHolder
 @onready var preview_status: Label = $PreviewModal/Margin/VBox/OutcomeStatus
 
-var file_dialog_mode: String = "open" # "open", "save_as", "pick_bg", "pick_enemy", "pick_piece"
+var file_dialog_mode: String = "open" # "open", "save_as", "pick_bg", "pick_enemy", "pick_piece", "pick_scene"
 
 func _ready() -> void:
 	_apply_editor_theme()
@@ -93,7 +93,7 @@ func create_default_page(title: String, category: String = "Event", desc: String
 func get_incoming_choice_text(page_id: String) -> String:
 	for p in pages:
 		for c in p.get("choices", []):
-			var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "reward" and c.get("after_reward") == "next_page")
+			var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "fight") or (c.get("outcome_type") == "reward" and (c.get("after_reward") == "next_page" or c.get("after_reward") == "fight"))
 			if is_branch and c.get("target_page_id") == page_id:
 				if c.get("text", "").strip_edges() != "":
 					return c["text"].strip_edges()
@@ -255,6 +255,10 @@ func rebuild_graph_ui() -> void:
 		
 		# Slots 1..N: Output for each choice
 		var choice_list: Array = p.get("choices", [])
+		var port_counter = 0
+		var choice_to_port: Dictionary = {}
+		var port_to_choice: Dictionary = {}
+		
 		for ci in choice_list.size():
 			var c = choice_list[ci]
 			var row = HBoxContainer.new()
@@ -274,11 +278,13 @@ func rebuild_graph_ui() -> void:
 			badge.add_theme_font_size_override("font_size", 10)
 			
 			var port_color = Color.WHITE
+			var has_port = false
 			match c.get("outcome_type", "scene_change"):
 				"next_page":
 					badge.text = "➔ Branch"
 					badge.add_theme_color_override("font_color", Color(0.35, 0.85, 1.0))
 					port_color = Color(0.35, 0.85, 1.0)
+					has_port = true
 				"reward":
 					var r_title = c.get("reward_name", "")
 					if r_title == "":
@@ -288,30 +294,50 @@ func rebuild_graph_ui() -> void:
 						badge.text = "★ " + r_title + " ➔ Branch"
 						badge.add_theme_color_override("font_color", Color(1.0, 0.85, 0.25))
 						port_color = Color(1.0, 0.85, 0.25)
+						has_port = true
 					elif after_act == "fight":
-						badge.text = "★ " + r_title + " ⚔ Fight"
+						if c.get("target_page_id", "") != "":
+							badge.text = "★ " + r_title + " ⚔ Fight ➔ Branch"
+						else:
+							badge.text = "★ " + r_title + " ⚔ Fight"
 						badge.add_theme_color_override("font_color", Color(1.0, 0.65, 0.25))
 						port_color = Color(1.0, 0.65, 0.25)
+						has_port = true
 					else:
-						badge.text = "★ " + r_title + " ✓ Exit"
+						badge.text = "★ " + r_title + " ✓ Leave"
 						badge.add_theme_color_override("font_color", Color(1.0, 0.85, 0.25))
 						port_color = Color(1.0, 0.85, 0.25)
+						has_port = false
 				"fight":
 					var enemy_name = c["enemy_path"].get_file().get_basename()
-					badge.text = "⚔ " + (enemy_name if enemy_name != "" else "Combat")
+					if enemy_name == "":
+						enemy_name = "Combat"
+					if c.get("target_page_id", "") != "":
+						badge.text = "⚔ " + enemy_name + " ➔ Branch"
+					else:
+						badge.text = "⚔ " + enemy_name
 					badge.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
 					port_color = Color(1.0, 0.4, 0.4)
+					has_port = true
 				"scene_change":
-					badge.text = "✓ Exit"
+					badge.text = "✓ Leave"
 					badge.add_theme_color_override("font_color", Color(0.4, 0.9, 0.5))
 					port_color = Color(0.4, 0.9, 0.5)
+					has_port = false
 			
 			if c.get("gold_cost", 0) > 0:
 				badge.text += " [" + str(c["gold_cost"]) + "g]"
 			
 			row.add_child(badge)
 			gn.add_child(row)
-			gn.set_slot(ci + 1, false, 0, Color.WHITE, true, 0, port_color)
+			gn.set_slot(ci + 1, false, 0, Color.WHITE, has_port, 0, port_color)
+			if has_port:
+				choice_to_port[ci] = port_counter
+				port_to_choice[port_counter] = ci
+				port_counter += 1
+		
+		gn.set_meta("choice_to_port", choice_to_port)
+		gn.set_meta("port_to_choice", port_to_choice)
 		
 		# Slot N+1: Add Choice inline button
 		var add_ch_box = HBoxContainer.new()
@@ -336,16 +362,20 @@ func rebuild_graph_ui() -> void:
 	# Connect next_page & reward branch choice wires
 	for p in pages:
 		var from_id = p["id"]
+		var from_gn = graph_edit.get_node_or_null(NodePath(from_id))
+		if from_gn == null:
+			continue
+		var choice_to_port: Dictionary = from_gn.get_meta("choice_to_port", {})
 		var choices = p.get("choices", [])
 		for ci in choices.size():
 			var c = choices[ci]
-			var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "reward" and c.get("after_reward") == "next_page")
+			var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "fight") or (c.get("outcome_type") == "reward" and (c.get("after_reward") == "next_page" or c.get("after_reward") == "fight"))
 			if is_branch and c.get("target_page_id", "") != "":
 				var to_id = c["target_page_id"]
-				var from_gn = graph_edit.get_node_or_null(NodePath(from_id))
 				var to_gn = graph_edit.get_node_or_null(NodePath(to_id))
-				if from_gn != null and to_gn != null:
-					graph_edit.connect_node(from_id, ci, to_id, 0)
+				if to_gn != null and choice_to_port.has(ci):
+					var from_port_idx = choice_to_port[ci]
+					graph_edit.connect_node(from_id, from_port_idx, to_id, 0)
 
 func auto_layout_graph() -> void:
 	if pages.is_empty():
@@ -369,7 +399,7 @@ func auto_layout_graph() -> void:
 				break
 		if curr_p:
 			for c in curr_p.get("choices", []):
-				var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "reward" and c.get("after_reward") == "next_page")
+				var is_branch = (c.get("outcome_type") == "next_page") or (c.get("outcome_type") == "fight") or (c.get("outcome_type") == "reward" and (c.get("after_reward") == "next_page" or c.get("after_reward") == "fight"))
 				if is_branch and c.get("target_page_id", "") != "":
 					var target_id = c["target_page_id"]
 					if not depth_map.has(target_id):
@@ -524,7 +554,7 @@ func build_choice_card(choice_idx: int, c_data: Dictionary) -> Control:
 	outcome_opt.add_item("Next Page in Chain", 0)
 	outcome_opt.add_item("Reward (Stat / Piece)", 1)
 	outcome_opt.add_item("Fight Encounter", 2)
-	outcome_opt.add_item("Leave / Return to Map", 3)
+	outcome_opt.add_item("Leave", 3)
 	
 	match c_data.get("outcome_type", "scene_change"):
 		"next_page": outcome_opt.selected = 0
@@ -791,7 +821,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			var after_opt = OptionButton.new()
 			after_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			after_opt.clip_text = true
-			after_opt.add_item("Leave / Return to Locations", 0)
+			after_opt.add_item("Leave", 0)
 			after_opt.add_item("Trigger Fight Encounter", 1)
 			after_opt.add_item("Continue to Next Page", 2)
 			
@@ -815,29 +845,37 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 					"scene_change":
 						var sc_row = HBoxContainer.new()
 						var sc_lbl = Label.new()
-						sc_lbl.text = "Return:"
+						sc_lbl.text = "Scene:"
 						sc_lbl.custom_minimum_size = Vector2(70, 0)
 						sc_row.add_child(sc_lbl)
 						
-						var sc_opt = OptionButton.new()
-						sc_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-						sc_opt.clip_text = true
-						var scenes = [
-							"res://locations_screen.tscn",
-							"res://shop_screen.tscn",
-							"res://game.tscn",
-							"res://main_menu.tscn"
-						]
-						for si in scenes.size():
-							sc_opt.add_item(scenes[si].get_file(), si)
-							if scenes[si] == c_data.get("next_scene", "res://locations_screen.tscn"):
-								sc_opt.selected = si
-						sc_opt.item_selected.connect(func(si):
-							c_data["next_scene"] = scenes[si]
+						var cur_scene = c_data.get("next_scene", "")
+						if cur_scene == "":
+							cur_scene = "res://locations_screen.tscn"
+							c_data["next_scene"] = cur_scene
+						
+						var sc_edit = LineEdit.new()
+						sc_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						sc_edit.text = cur_scene
+						sc_edit.text_changed.connect(func(t):
+							c_data["next_scene"] = t
 							is_dirty = true
-							rebuild_graph_ui()
 						)
-						sc_row.add_child(sc_opt)
+						sc_row.add_child(sc_edit)
+						
+						var sc_browse = Button.new()
+						sc_browse.text = "Change..."
+						sc_browse.pressed.connect(func():
+							file_dialog_mode = "pick_scene"
+							file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+							file_dialog.current_dir = "res://"
+							file_dialog.filters = PackedStringArray(["*.tscn ; Packed Scenes"])
+							file_dialog.popup_centered(Vector2i(800, 500))
+							active_picking_choice = c_data
+							active_picking_field = "next_scene"
+							active_picking_edit = sc_edit
+						)
+						sc_row.add_child(sc_browse)
 						after_details.add_child(sc_row)
 						
 					"fight":
@@ -869,6 +907,49 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 						)
 						f_row.add_child(en_browse)
 						after_details.add_child(f_row)
+						
+						var b_row = HBoxContainer.new()
+						var b_lbl = Label.new()
+						b_lbl.text = "After Fight:"
+						b_lbl.custom_minimum_size = Vector2(70, 0)
+						b_row.add_child(b_lbl)
+						
+						var b_opt = OptionButton.new()
+						b_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						b_opt.clip_text = true
+						b_opt.add_item("(Leave / Conclude Event)", 0)
+						var cur_target = c_data.get("target_page_id", "")
+						var sel_idx = 0
+						for pi in pages.size():
+							var p = pages[pi]
+							var item_title = ("★ [ROOT] " + p["title"]) if pi == 0 else ("↳ " + get_page_choice_name(p))
+							b_opt.add_item(item_title, pi + 1)
+							if p["id"] == cur_target:
+								sel_idx = pi + 1
+						b_opt.selected = sel_idx
+						b_opt.item_selected.connect(func(idx):
+							if idx == 0:
+								c_data["target_page_id"] = ""
+							else:
+								c_data["target_page_id"] = pages[idx - 1]["id"]
+							is_dirty = true
+							rebuild_graph_ui()
+						)
+						b_row.add_child(b_opt)
+						
+						var new_sub_btn = Button.new()
+						new_sub_btn.text = "+ Sub-Page"
+						new_sub_btn.tooltip_text = "Create a new connected sub-page after this combat"
+						new_sub_btn.pressed.connect(func():
+							var branch_name = (c_data["text"] if c_data.get("text", "") != "" else "Combat Victory") + " (Cont.)"
+							var new_id = add_new_page(branch_name, c_data.get("text", ""))
+							c_data["target_page_id"] = new_id
+							is_dirty = true
+							rebuild_graph_ui()
+							render_choice_outcome_details(outcome_details, c_data)
+						)
+						b_row.add_child(new_sub_btn)
+						after_details.add_child(b_row)
 						
 					"next_page":
 						var p_row = HBoxContainer.new()
@@ -956,31 +1037,83 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			row.add_child(en_browse)
 			outcome_details.add_child(row)
 			
+			var branch_row = HBoxContainer.new()
+			var b_lbl = Label.new()
+			b_lbl.text = "After Fight:"
+			b_lbl.custom_minimum_size = Vector2(70, 0)
+			branch_row.add_child(b_lbl)
+			
+			var b_opt = OptionButton.new()
+			b_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b_opt.clip_text = true
+			b_opt.add_item("(Leave / Conclude Event)", 0)
+			var cur_target = c_data.get("target_page_id", "")
+			var sel_idx = 0
+			for pi in pages.size():
+				var p = pages[pi]
+				var item_title = ("★ [ROOT] " + p["title"]) if pi == 0 else ("↳ " + get_page_choice_name(p))
+				b_opt.add_item(item_title, pi + 1)
+				if p["id"] == cur_target:
+					sel_idx = pi + 1
+			b_opt.selected = sel_idx
+			b_opt.item_selected.connect(func(idx):
+				if idx == 0:
+					c_data["target_page_id"] = ""
+				else:
+					c_data["target_page_id"] = pages[idx - 1]["id"]
+				is_dirty = true
+				rebuild_graph_ui()
+			)
+			branch_row.add_child(b_opt)
+			
+			var new_sub_btn = Button.new()
+			new_sub_btn.text = "+ Sub-Page"
+			new_sub_btn.tooltip_text = "Create a new connected sub-page after this combat"
+			new_sub_btn.pressed.connect(func():
+				var branch_name = (c_data["text"] if c_data.get("text", "") != "" else "Combat Victory") + " (Cont.)"
+				var new_id = add_new_page(branch_name, c_data.get("text", ""))
+				c_data["target_page_id"] = new_id
+				is_dirty = true
+				rebuild_graph_ui()
+				render_choice_outcome_details(outcome_details, c_data)
+			)
+			branch_row.add_child(new_sub_btn)
+			outcome_details.add_child(branch_row)
+			
 		"scene_change":
 			var row = HBoxContainer.new()
 			var lbl = Label.new()
 			lbl.text = "Scene:"
 			lbl.custom_minimum_size = Vector2(70, 0)
 			row.add_child(lbl)
-			var sc_opt = OptionButton.new()
-			sc_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			sc_opt.clip_text = true
-			var scenes = [
-				"res://locations_screen.tscn",
-				"res://shop_screen.tscn",
-				"res://game.tscn",
-				"res://main_menu.tscn"
-			]
-			for si in scenes.size():
-				sc_opt.add_item(scenes[si].get_file(), si)
-				if scenes[si] == c_data.get("next_scene", "res://locations_screen.tscn"):
-					sc_opt.selected = si
-			sc_opt.item_selected.connect(func(si):
-				c_data["next_scene"] = scenes[si]
+			
+			var cur_scene = c_data.get("next_scene", "")
+			if cur_scene == "":
+				cur_scene = "res://locations_screen.tscn"
+				c_data["next_scene"] = cur_scene
+			
+			var sc_edit = LineEdit.new()
+			sc_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			sc_edit.text = cur_scene
+			sc_edit.text_changed.connect(func(t):
+				c_data["next_scene"] = t
 				is_dirty = true
-				rebuild_graph_ui()
 			)
-			row.add_child(sc_opt)
+			row.add_child(sc_edit)
+			
+			var sc_browse = Button.new()
+			sc_browse.text = "Change..."
+			sc_browse.pressed.connect(func():
+				file_dialog_mode = "pick_scene"
+				file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+				file_dialog.current_dir = "res://"
+				file_dialog.filters = PackedStringArray(["*.tscn ; Packed Scenes"])
+				file_dialog.popup_centered(Vector2i(800, 500))
+				active_picking_choice = c_data
+				active_picking_field = "next_scene"
+				active_picking_edit = sc_edit
+			)
+			row.add_child(sc_browse)
 			outcome_details.add_child(row)
 
 func get_card_stylebox() -> StyleBoxFlat:
@@ -1035,6 +1168,8 @@ func save_event_to_file(file_path: String) -> bool:
 						var en_res = load(c["enemy_path"])
 						if en_res is EnemyResource:
 							c_fight.enemy.append(en_res)
+					if c.get("target_page_id", "") != "" and page_events.has(c["target_page_id"]):
+						c_fight.next_event = page_events[c["target_page_id"]]
 					choice_res = c_fight
 					
 				"reward":
@@ -1064,7 +1199,10 @@ func save_event_to_file(file_path: String) -> bool:
 								var en_res = load(c["enemy_path"])
 								if en_res is EnemyResource:
 									c_rew.enemy.append(en_res)
-							c_rew.next_event = null
+							if c.get("target_page_id", "") != "" and page_events.has(c["target_page_id"]):
+								c_rew.next_event = page_events[c["target_page_id"]]
+							else:
+								c_rew.next_event = null
 						"next_page":
 							c_rew.fight_overwrite = false
 							if page_events.has(c.get("target_page_id", "")):
@@ -1179,6 +1317,8 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 			c_data["outcome_type"] = "fight"
 			if not c.enemy.is_empty() and c.enemy[0] != null:
 				c_data["enemy_path"] = c.enemy[0].resource_path
+			if c.next_event != null:
+				c_data["target_page_id"] = _parse_event_recursive(c.next_event, visited, c.text if c.text else "")
 		elif c is EvtChoiseReward:
 			c_data["outcome_type"] = "reward"
 			if c.reward != null:
@@ -1199,6 +1339,8 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 				c_data["after_reward"] = "fight"
 				if not c.enemy.is_empty() and c.enemy[0] != null:
 					c_data["enemy_path"] = c.enemy[0].resource_path
+				if c.next_event != null:
+					c_data["target_page_id"] = _parse_event_recursive(c.next_event, visited, c.text if c.text else "")
 			elif c.next_event != null:
 				c_data["after_reward"] = "next_page"
 				c_data["target_page_id"] = _parse_event_recursive(c.next_event, visited, c.text if c.text else "")
@@ -1266,8 +1408,14 @@ func render_preview_page(page_id: String) -> void:
 					var after_act = c.get("after_reward", "scene_change")
 					match after_act:
 						"fight":
-							preview_status.text = reward_msg + "\n⚔ Combat Follow-up: " + c.get("enemy_path", "").get_file()
-							preview_status.visible = true
+							var en_f = c.get("enemy_path", "").get_file()
+							if c.get("target_page_id", "") != "":
+								preview_status.text = reward_msg + "\n⚔ Combat Won vs: " + en_f + " (Continuing to next page...)"
+								preview_status.visible = true
+								render_preview_page(c["target_page_id"])
+							else:
+								preview_status.text = reward_msg + "\n⚔ Combat Won vs: " + en_f + " -> Event Concluded"
+								preview_status.visible = true
 						"next_page":
 							if c.get("target_page_id", "") != "":
 								preview_status.text = reward_msg + " (Continuing to next page...)"
@@ -1280,8 +1428,14 @@ func render_preview_page(page_id: String) -> void:
 							preview_status.text = reward_msg + "\n✓ Event Concluded -> " + c.get("next_scene", "locations_screen.tscn").get_file()
 							preview_status.visible = true
 				"fight":
-					preview_status.text = "⚔ Combat Started with: " + c["enemy_path"].get_file()
-					preview_status.visible = true
+					var en_f = c.get("enemy_path", "").get_file()
+					if c.get("target_page_id", "") != "":
+						preview_status.text = "⚔ Combat Won vs: " + en_f + " (Continuing to next page...)"
+						preview_status.visible = true
+						render_preview_page(c["target_page_id"])
+					else:
+						preview_status.text = "⚔ Combat Won vs: " + en_f + " -> Event Concluded"
+						preview_status.visible = true
 				"scene_change":
 					preview_status.text = "✓ Event Concluded -> " + c["next_scene"].get_file()
 					preview_status.visible = true
@@ -1380,7 +1534,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 				update_bg_preview(path)
 				is_dirty = true
 				rebuild_graph_ui()
-		"pick_piece", "pick_enemy":
+		"pick_piece", "pick_enemy", "pick_scene":
 			if not active_picking_choice.is_empty() and active_picking_field != "":
 				active_picking_choice[active_picking_field] = path
 				if active_picking_edit != null:
@@ -1392,15 +1546,29 @@ func _on_graph_connection_request(from_node: StringName, from_port: int, to_node
 	var from_id = str(from_node)
 	var to_id = str(to_node)
 	
+	var from_gn = graph_edit.get_node_or_null(NodePath(from_node))
+	var choice_idx = from_port
+	if from_gn != null:
+		var port_to_choice: Dictionary = from_gn.get_meta("port_to_choice", {})
+		if port_to_choice.has(from_port):
+			choice_idx = port_to_choice[from_port]
+	
 	for p in pages:
 		if p["id"] == from_id:
 			var choices = p.get("choices", [])
-			if from_port >= 0 and from_port < choices.size():
-				var c = choices[from_port]
+			if choice_idx >= 0 and choice_idx < choices.size():
+				var c = choices[choice_idx]
 				if c.get("outcome_type") == "reward":
-					c["after_reward"] = "next_page"
+					if c.get("after_reward") == "fight":
+						c["target_page_id"] = to_id
+						set_status("Connected reward combat follow-up to: " + to_id)
+					else:
+						c["after_reward"] = "next_page"
+						c["target_page_id"] = to_id
+						set_status("Connected reward branch to: " + to_id)
+				elif c.get("outcome_type") == "fight":
 					c["target_page_id"] = to_id
-					set_status("Connected reward branch to: " + to_id)
+					set_status("Connected combat follow-up branch to: " + to_id)
 				else:
 					c["outcome_type"] = "next_page"
 					c["target_page_id"] = to_id
@@ -1415,15 +1583,29 @@ func _on_graph_connection_request(from_node: StringName, from_port: int, to_node
 func _on_graph_disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
 	var from_id = str(from_node)
 	
+	var from_gn = graph_edit.get_node_or_null(NodePath(from_node))
+	var choice_idx = from_port
+	if from_gn != null:
+		var port_to_choice: Dictionary = from_gn.get_meta("port_to_choice", {})
+		if port_to_choice.has(from_port):
+			choice_idx = port_to_choice[from_port]
+	
 	for p in pages:
 		if p["id"] == from_id:
 			var choices = p.get("choices", [])
-			if from_port >= 0 and from_port < choices.size():
-				var c = choices[from_port]
+			if choice_idx >= 0 and choice_idx < choices.size():
+				var c = choices[choice_idx]
 				if c.get("outcome_type") == "reward":
-					c["after_reward"] = "scene_change"
+					if c.get("after_reward") == "fight":
+						c["target_page_id"] = ""
+						set_status("Disconnected reward combat follow-up.")
+					else:
+						c["after_reward"] = "scene_change"
+						c["target_page_id"] = ""
+						set_status("Disconnected reward branch.")
+				elif c.get("outcome_type") == "fight":
 					c["target_page_id"] = ""
-					set_status("Disconnected reward branch.")
+					set_status("Disconnected combat follow-up branch.")
 				else:
 					c["outcome_type"] = "scene_change"
 					c["target_page_id"] = ""

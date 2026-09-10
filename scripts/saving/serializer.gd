@@ -18,6 +18,7 @@ var save_path = "user://save1.tres"
 @export var area_locations: Array[Location]
 @export var area_cur_boss: Location
 @export var area_cur_event: Event
+@export var post_combat_event: Resource = null
 
 @export var minions_needed: int = 0
 @export var minions_killed: int = 0
@@ -58,6 +59,7 @@ func load_data():
 	area_locations = data.area_locations if data.area_locations else []
 	area_cur_boss = data.area_cur_boss if data.area_cur_boss else null
 	area_cur_event = data.area_cur_event
+	post_combat_event = data.post_combat_event
 	
 	minions_needed = data.minions_needed
 	minions_killed = data.minions_killed

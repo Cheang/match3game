@@ -35,6 +35,7 @@ func _on_enemy_enemy_attacked() -> void:
 	grd.state = grd.move
 
 func _on_back_to_mm_pressed() -> void:
+	Global.post_combat_event = null
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_tree_entered() -> void:

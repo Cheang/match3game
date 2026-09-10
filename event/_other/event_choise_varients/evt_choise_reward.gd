@@ -18,6 +18,7 @@ func activate():
 		reward.activate()
 		reward.boost()
 	if fight_overwrite and not enemy.is_empty():
+		Global.post_combat_event = next_event
 		Global.set_up_enemy(enemy.pick_random())
 		SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 		return

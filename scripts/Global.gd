@@ -1,6 +1,10 @@
 extends Node
 
-const def_char: PlayerResource = preload("res://players/warrior/warrior.tres")
+var def_char: PlayerResource = null
+
+func _ready():
+	if ResourceLoader.exists("res://players/warrior/warrior.tres"):
+		def_char = load("res://players/warrior/warrior.tres")
 
 var cur_char: PlayerResource
 var selected_char: PlayerResource
@@ -30,6 +34,7 @@ var current_level: int = 0
 var area_locations: Array[Location]
 var area_cur_boss: Location
 var area_cur_event: Event
+var post_combat_event: Resource = null
 var event_pieces_removed: int
 
 #for boss spawning
@@ -72,6 +77,7 @@ func reset_variable():
 	minions_killed = 0
 	boss_added = false
 	boss_beaten = false
+	post_combat_event = null
 	current_level += 1
 
 func compare_deck_pieces(a, b):
@@ -82,16 +88,19 @@ func compare_deck_pieces(a, b):
 	return a.color.to_lower() < b.color.to_lower()
 	
 func changeSong(new_song: MusicTrack = null, new_playlist: MusicPlaylist = null):
+	var mm = get_node_or_null("/root/MusicManager")
+	if mm == null:
+		return
 	if new_song != null:
 		var new_song_name = new_song.name
 		if new_song_name != cur_song:
 			cur_song = new_song_name
-			MusicManager.play_song.emit(new_song, true, true, 1.0)
+			mm.play_song.emit(new_song, true, true, 1.0)
 	if new_playlist != null:
 		var new_song_name = new_playlist.name
 		if new_song_name != cur_song:
 			cur_song = new_song_name
-			MusicManager.play_playlist.emit(new_playlist, true, true, 1.0)
+			mm.play_playlist.emit(new_playlist, true, true, 1.0)
 
 #Helper_functions --------------------------------------------------------------
 func is_null(item):
@@ -143,6 +152,7 @@ func save():
 	if area_cur_boss:
 		save_file.area_cur_boss = area_cur_boss.duplicate(true)
 	save_file.area_cur_event = area_cur_event
+	save_file.post_combat_event = post_combat_event
 	
 	save_file.minions_needed = minions_needed
 	save_file.minions_killed = minions_killed
@@ -185,6 +195,7 @@ func load_data():
 			if save_file.area_cur_boss != null:
 				area_cur_boss = save_file.area_cur_boss.duplicate(true)
 			area_cur_event = save_file.area_cur_event
+			post_combat_event = save_file.post_combat_event
 			
 			minions_needed = save_file.minions_needed
 			minions_killed = save_file.minions_killed
@@ -196,6 +207,8 @@ func load_data():
 			game_seed = save_file.game_seed
 	else:
 		setting_res = SettingsResource.new()
+		if def_char == null and ResourceLoader.exists("res://players/warrior/warrior.tres"):
+			def_char = load("res://players/warrior/warrior.tres")
 		selected_char = def_char
 
 func get_tiles_from_player(): 
