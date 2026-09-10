@@ -34,7 +34,7 @@ var grd
 var gold_on_label: int
 
 func _ready() -> void:
-	grd = get_parent().get_parent().get_node("grd")
+	grd = _find_grd()
 	pause_overlay.visible = false
 	stats_overlay.position = Vector2(stats_overlay.position.x, (stats_overlay.position.y + (stats_overlay.size.y - 200)))
 	stats_overlay.visible = true
@@ -151,3 +151,13 @@ func _on_stats_btn_pressed() -> void:
 		for screen in infoscreens:
 			screen.visible = false
 		stats.visible = true
+
+func _find_grd():
+	if owner and owner.has_node("grd"):
+		return owner.get_node("grd")
+	var root = get_tree().current_scene
+	if root:
+		if root.has_node("grd"):
+			return root.get_node("grd")
+		return root.find_child("grd", true, false)
+	return null

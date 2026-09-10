@@ -49,7 +49,10 @@ func get_rewards():
 		reward_cards[i].load_btn()
 
 func choose_reward():
-	var random_number = randi() % 100
+	var bonus: int = 0
+	if Global.cur_char != null and "rarity_bonus" in Global.cur_char:
+		bonus = int(Global.cur_char.get("rarity_bonus"))
+	var random_number = (randi() % 100) + bonus
 	# Select based on probability
 	for tier in rarity_tiers:
 		var rarity = tier[0]
@@ -57,12 +60,14 @@ func choose_reward():
 		if random_number >= threshold and rarity_dict.get(rarity, []).size() > 0:
 			return rarity_dict[rarity][randi() % rarity_dict[rarity].size()]
 	
-	# Fallback: Select the first non-empty category
+	# Fallback: Select the first non-empty category (skipping GODLY without bonus)
 	for tier in rarity_tiers:
 		var rarity = tier[0]
+		if rarity == "GODLY" and bonus <= 0:
+			continue
 		if rarity_dict.get(rarity, []).size() > 0:
 			return rarity_dict[rarity][randi() % rarity_dict[rarity].size()]
-	return null  # Should never reach here
+	return null
 
 #Helper Functions --------------------------------------------------------------
 func update_reroll_btn():

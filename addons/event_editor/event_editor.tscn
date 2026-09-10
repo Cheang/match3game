@@ -1,0 +1,419 @@
+[gd_scene load_steps=5 format=3 uid="uid://c7k9yemw1d123"]
+
+[ext_resource type="Script" path="res://addons/event_editor/event_editor.gd" id="1_editor"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.18, 0.16, 0.22, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.12, 0.11, 0.15, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.14, 0.12, 0.16, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.35, 0.55, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+
+[node name="EventEditor" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_editor")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="HBox" type="HBoxContainer" parent="VBox/Header"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="VBox/Header/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+text = "⚡ Event Flow Editor"
+
+[node name="VSep1" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="NewBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "+ New"
+
+[node name="OpenBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "📂 Open..."
+
+[node name="SaveBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "💾 Save"
+
+[node name="SaveAsBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "Save As..."
+
+[node name="VSep2" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="TemplateOpt" type="OptionButton" parent="VBox/Header/HBox"]
+layout_mode = 2
+item_count = 3
+selected = 0
+popup/item_0/text = "Presets / Templates..."
+popup/item_0/id = 0
+popup/item_1/text = "Forking Dilemma"
+popup/item_1/id = 1
+popup/item_2/text = "Risk vs Reward"
+popup/item_2/id = 2
+
+[node name="VSep3" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="PreviewBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+text = "▶ Playtest Preview"
+
+[node name="Spacer" type="Control" parent="VBox/Header/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FileLabel" type="Label" parent="VBox/Header/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+text = "File: Untitled Event*"
+horizontal_alignment = 2
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Main" type="HSplitContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 0
+
+[node name="Left" type="PanelContainer" parent="VBox/Main"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.62
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Left"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Toolbar" type="HBoxContainer" parent="VBox/Main/Left/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="GraphTitle" type="Label" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+text = "EVENT FLOW GRAPH"
+
+[node name="VSep" type="VSeparator" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+
+[node name="AddPageBtn" type="Button" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+text = "+ Add Page"
+
+[node name="AutoLayoutBtn" type="Button" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+text = "☷ Layout"
+
+[node name="CenterViewBtn" type="Button" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+text = "⛶ Center"
+
+[node name="DelPageBtn" type="Button" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+text = "🗑 Delete"
+
+[node name="Spacer" type="Control" parent="VBox/Main/Left/VBox/Toolbar"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="HintLbl" type="Label" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.65, 0.65, 0.75, 1)
+theme_override_font_sizes/font_size = 11
+text = "💡 Drag port to connect/disconnect • Click node to inspect"
+clip_text = true
+text_overrun_behavior = 3
+tooltip_text = "Drag from a choice's right port to another page's left port to branch.
+Drag to empty space to disconnect.
+Click any node to inspect and configure."
+
+[node name="Graph" type="GraphEdit" parent="VBox/Main/Left/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+right_disconnects = true
+scroll_offset = Vector2(0, 0)
+snap_distance = 20
+use_snap = true
+
+[node name="Right" type="PanelContainer" parent="VBox/Main"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.38
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Scroll" type="ScrollContainer" parent="VBox/Main/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="Inspector" type="VBoxContainer" parent="VBox/Main/Right/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="PageBox" type="PanelContainer" parent="VBox/Main/Right/Scroll/Inspector"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/PageBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+text = "Page Configuration"
+
+[node name="Grid" type="GridContainer" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="TitleLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Title:"
+
+[node name="TitleEdit" type="LineEdit" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "e.g. Village Tavern, Shady Merchant"
+
+[node name="CatLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Category:"
+
+[node name="CatEdit" type="LineEdit" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Event"
+
+[node name="BgLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Background:"
+
+[node name="BgBox" type="HBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BgEdit" type="LineEdit" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/BgBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "res://assets/..."
+
+[node name="BrowseBgBtn" type="Button" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/BgBox"]
+layout_mode = 2
+text = "Browse..."
+
+[node name="BgPreview" type="TextureRect" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/BgBox"]
+custom_minimum_size = Vector2(36, 24)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DescLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox"]
+layout_mode = 2
+text = "Narrative Story Text:"
+
+[node name="DescEdit" type="TextEdit" parent="VBox/Main/Right/Scroll/Inspector/PageBox/VBox"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+wrap_mode = 1
+
+[node name="ChoicesBox" type="PanelContainer" parent="VBox/Main/Right/Scroll/Inspector"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/ChoicesBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderBar" type="HBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/ChoicesBox/VBox"]
+layout_mode = 2
+
+[node name="ChoicesLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/ChoicesBox/VBox/HeaderBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+text = "Branching Choices / Options"
+
+[node name="AddChoiceBtn" type="Button" parent="VBox/Main/Right/Scroll/Inspector/ChoicesBox/VBox/HeaderBar"]
+layout_mode = 2
+text = "+ Add Choice"
+
+[node name="ChoicesContainer" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/ChoicesBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Footer" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="StatusLabel" type="Label" parent="VBox/Footer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
+text = "Ready."
+
+[node name="FileDialog" type="FileDialog" parent="."]
+size = Vector2i(800, 500)
+
+[node name="PreviewModal" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -340.0
+offset_right = 280.0
+offset_bottom = 340.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Margin" type="MarginContainer" parent="PreviewModal"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PreviewModal/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopRow" type="HBoxContainer" parent="PreviewModal/Margin/VBox"]
+layout_mode = 2
+
+[node name="CatLabel" type="Label" parent="PreviewModal/Margin/VBox/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.7, 0.9, 1)
+text = "EVENT PREVIEW"
+
+[node name="ClosePreviewBtn" type="Button" parent="PreviewModal/Margin/VBox/TopRow"]
+layout_mode = 2
+text = "✖ Close"
+
+[node name="BgTexture" type="TextureRect" parent="PreviewModal/Margin/VBox"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="PreviewModal/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Event Title"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="RichTextLabel" parent="PreviewModal/Margin/VBox"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Event story text..."
+
+[node name="ChoicesHolder" type="VBoxContainer" parent="PreviewModal/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OutcomeStatus" type="Label" parent="PreviewModal/Margin/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+text = "Outcome status"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="VBox/Header/HBox/NewBtn" to="." method="_on_new_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/OpenBtn" to="." method="_on_open_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/SaveBtn" to="." method="_on_save_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/SaveAsBtn" to="." method="_on_save_as_btn_pressed"]
+[connection signal="item_selected" from="VBox/Header/HBox/TemplateOpt" to="." method="_on_template_selected"]
+[connection signal="pressed" from="VBox/Header/HBox/PreviewBtn" to="." method="_on_preview_btn_pressed"]
+[connection signal="connection_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_connection_request"]
+[connection signal="disconnection_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_disconnection_request"]
+[connection signal="delete_nodes_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_delete_nodes_request"]
+[connection signal="node_selected" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_node_selected"]
+[connection signal="node_deselected" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_node_deselected"]
+[connection signal="pressed" from="VBox/Main/Left/VBox/Toolbar/AddPageBtn" to="." method="_on_add_page_btn_pressed"]
+[connection signal="pressed" from="VBox/Main/Left/VBox/Toolbar/AutoLayoutBtn" to="." method="_on_auto_layout_pressed"]
+[connection signal="pressed" from="VBox/Main/Left/VBox/Toolbar/CenterViewBtn" to="." method="_on_center_view_pressed"]
+[connection signal="pressed" from="VBox/Main/Left/VBox/Toolbar/DelPageBtn" to="." method="_on_del_page_btn_pressed"]
+[connection signal="text_changed" from="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/TitleEdit" to="." method="_on_title_changed"]
+[connection signal="text_changed" from="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/CatEdit" to="." method="_on_cat_changed"]
+[connection signal="pressed" from="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/Grid/BgBox/BrowseBgBtn" to="." method="_on_browse_bg_pressed"]
+[connection signal="text_changed" from="VBox/Main/Right/Scroll/Inspector/PageBox/VBox/DescEdit" to="." method="_on_desc_changed"]
+[connection signal="pressed" from="VBox/Main/Right/Scroll/Inspector/ChoicesBox/VBox/HeaderBar/AddChoiceBtn" to="." method="_on_add_choice_btn_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="PreviewModal/Margin/VBox/TopRow/ClosePreviewBtn" to="." method="close_playtest_preview"]

@@ -12,10 +12,28 @@ class_name PieceBaseAttack
 func activate():
 	var cur_char = Global.cur_char
 	var cur_enemy = Global.cur_enemy
+	if cur_char == null or cur_enemy == null:
+		return
 	
-	for i in atk_numb:
+	var loops: int = max(1, atk_numb)
+	for i in loops:
 		var f_value: float = atk_dmg + cur_char.proficiency + upgrade
 		if criting:
 			f_value *= (1 + cur_char.crit_mutly / 100)
 
 		cur_enemy.take_dmg(f_value, type)
+
+func get_effect_description(char_resource = null, upgrades: int = 0) -> String:
+	var prof: float = 0.0
+	if char_resource != null and "proficiency" in char_resource:
+		prof = char_resource.proficiency
+	elif Global.cur_char != null and "proficiency" in Global.cur_char:
+		prof = Global.cur_char.proficiency
+	
+	var dmg: float = atk_dmg + prof + upgrades
+	var count: int = max(1, atk_numb)
+	var color_str: String = "#3ca370" if type == 1 else "#ae2334"
+	var type_label: String = " Magic" if type == 1 else ""
+	if count > 1:
+		return "Deals: [color=%s]%g x %d[/color]%s DMG" % [color_str, dmg, count, type_label]
+	return "Deals: [color=%s]%g[/color]%s DMG" % [color_str, dmg, type_label]

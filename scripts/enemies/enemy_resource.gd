@@ -60,7 +60,7 @@ func take_dmg(dmg, dmg_type = 0):
 	add_stat("cur_health",-dmg)
 	
 	#get this out of here
-	if Global.cur_char.life_steal > 0:
+	if Global.cur_char != null and Global.cur_char.life_steal > 0:
 		var value = round(dmg * Global.cur_char.life_steal)
 		Global.cur_char.modify_stat("cur_health",value)
 	

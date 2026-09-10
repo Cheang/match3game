@@ -41,7 +41,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/scene_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/event_editor/plugin.cfg", "res://addons/godot_mcp/plugin.cfg", "res://addons/scene_manager/plugin.cfg")
 
 [gui]
 

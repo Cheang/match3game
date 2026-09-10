@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dc82ykxpsf1if"]
+[gd_scene format=3 uid="uid://dc82ykxpsf1if"]
 
 [ext_resource type="Script" uid="uid://bpfdqfrg5xwm8" path="res://scripts/event_screen.gd" id="1_c7ncb"]
 [ext_resource type="Texture2D" uid="uid://p8s6q0wprste" path="res://assets/level_ui/event/event_bg_general.png" id="2_mcnt1"]
@@ -62,7 +62,7 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
-[node name="event_screen" type="Control"]
+[node name="event_screen" type="Control" unique_id=1073266907]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,7 +73,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_c7ncb")
 
-[node name="event_bg" type="TextureRect" parent="."]
+[node name="event_bg" type="TextureRect" parent="." unique_id=1689638065]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -88,7 +88,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_mcnt1")
 
-[node name="event_gradient" type="TextureRect" parent="."]
+[node name="event_gradient" type="TextureRect" parent="." unique_id=1842843199]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -103,7 +103,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_opvah")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1555647492]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -115,48 +115,48 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 75
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1771832299]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
-[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=40323531]
 custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="event_text" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=56322340]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text" unique_id=776372437]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_cn658")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer" unique_id=1298081644]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 
-[node name="title" type="Label" parent="MarginContainer/VBoxContainer/event_text/PanelContainer/MarginContainer"]
+[node name="title" type="Label" parent="MarginContainer/VBoxContainer/event_text/PanelContainer/MarginContainer" unique_id=1902661200]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_font_sizes/font_size = 42
 text = "Title"
 
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/event_text" unique_id=1523074989]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_mhvcm")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2" unique_id=753194840]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 0
 
-[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2/MarginContainer"]
+[node name="description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/event_text/PanelContainer2/MarginContainer" unique_id=1479257670]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_constants/line_separation = 8
@@ -165,16 +165,16 @@ theme_override_font_sizes/normal_font_size = 20
 text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
 fit_content = true
 
-[node name="choises_holder" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="choises_holder" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1835266030]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="pause" parent="." instance=ExtResource("6_4rf35")]
+[node name="pause" parent="." unique_id=1323905057 instance=ExtResource("6_4rf35")]
 layout_mode = 1
 
-[node name="reward" type="Control" parent="."]
+[node name="reward" type="Control" parent="." unique_id=573272834]
 visible = false
 layout_mode = 1
 anchors_preset = 10
@@ -183,12 +183,10 @@ offset_top = -69.0
 offset_bottom = -69.0
 grow_horizontal = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="reward"]
-libraries = {
-"": SubResource("AnimationLibrary_1pdey")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="reward" unique_id=1211055673]
+libraries/ = SubResource("AnimationLibrary_1pdey")
 
-[node name="event_gradient2" type="TextureRect" parent="reward"]
+[node name="event_gradient2" type="TextureRect" parent="reward" unique_id=258869577]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -206,7 +204,7 @@ expand_mode = 3
 stretch_mode = 2
 flip_v = true
 
-[node name="PanelContainer" type="PanelContainer" parent="reward"]
+[node name="PanelContainer" type="PanelContainer" parent="reward" unique_id=378096577]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 1
 anchors_preset = 5
@@ -218,23 +216,23 @@ offset_bottom = 190.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_ki286")
 
-[node name="MarginContainer" type="MarginContainer" parent="reward/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="reward/PanelContainer" unique_id=1689814846]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="reward/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="reward/PanelContainer/MarginContainer" unique_id=1461076020]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer" unique_id=1194653705]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
 texture = ExtResource("6_wnyme")
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer/TextureRect"]
+[node name="TextureRect2" type="TextureRect" parent="reward/PanelContainer/MarginContainer/VBoxContainer/TextureRect" unique_id=1302274408]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 1
 anchors_preset = 8
@@ -250,14 +248,14 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer" unique_id=1613873630]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
 theme_override_font_sizes/font_size = 32
 text = "title"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="reward/PanelContainer/MarginContainer/VBoxContainer" unique_id=1485585956]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.670588, 0.580392, 0.478431, 1)

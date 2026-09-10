@@ -13,39 +13,73 @@ var resource: Event
 @onready var reward: Control = $reward
 
 func _ready() -> void:
+	if Global.area_cur_event != null:
+		display_event(Global.area_cur_event, false)
+		Global.area_cur_event = null
+	Global.game_is_played = true
+
+func display_event(event_res: Event, animate_transition: bool = false) -> void:
+	if event_res == null:
+		return
+	resource = event_res
+	
+	if animate_transition:
+		var tween = create_tween()
+		tween.tween_property($MarginContainer, "modulate:a", 0.0, 0.15)
+		await tween.finished
+		_populate_event_data()
+		var tween_in = create_tween()
+		tween_in.tween_property($MarginContainer, "modulate:a", 1.0, 0.15)
+	else:
+		_populate_event_data()
+
+func _populate_event_data() -> void:
+	if resource == null:
+		return
+	
 	var cur_char = Global.cur_char
 	var title_label = event_text.get_child(0).get_child(0).get_child(0)
 	var description_label = event_text.get_child(1).get_child(0).get_child(0)
 	
-	resource = Global.area_cur_event
-	pause.set_title(resource.categorie)
-	
+	pause.set_title(resource.categorie if resource.categorie else "Event")
 	title_label.text = resource.title
 	description_label.text = resource.description
 	
 	if resource.background != null:
 		event_bg.texture = resource.background
-		
+	
+	# Clear existing choice buttons
+	for child in choises_holder.get_children():
+		child.queue_free()
+	
 	for choise in resource.choises:
-		if (choise.req_class != "None" and choise.req_class != cur_char.player_class) or (choise.req_piece_name != "None" and not has_enough_pieces(choise.req_piece_name, choise.req_piece_numb)):
+		if choise == null:
 			continue
-		if choise.req_stat != "None" and choise.req_value != 0:
-			var stat = cur_char.get(choise.req_stat)
-			if choise.failable and choise.fail_state:
-				var btn = CHOISE_BTN.instantiate()
-				btn.resource = choise
-				choises_holder.add_child(btn)
-				btn.set_btn()
+		if cur_char != null:
+			if (choise.req_class != "None" and choise.req_class != cur_char.player_class) or (choise.req_piece_name != "None" and not has_enough_pieces(choise.req_piece_name, choise.req_piece_numb)):
 				continue
-			if stat < choise.req_value:
-				continue
+			if choise.req_stat != "None" and choise.req_value != 0:
+				var stat = cur_char.get(choise.req_stat)
+				if choise.failable and choise.fail_state:
+					var btn = CHOISE_BTN.instantiate()
+					btn.resource = choise
+					choises_holder.add_child(btn)
+					if btn.has_signal("reward_requested"):
+						btn.reward_requested.connect(get_reward)
+					if btn.has_signal("next_event_requested"):
+						btn.next_event_requested.connect(display_event.bind(true))
+					btn.set_btn()
+					continue
+				if stat != null and stat < choise.req_value:
+					continue
 		var btn1 = CHOISE_BTN.instantiate()
 		btn1.resource = choise
 		choises_holder.add_child(btn1)
+		if btn1.has_signal("reward_requested"):
+			btn1.reward_requested.connect(get_reward)
+		if btn1.has_signal("next_event_requested"):
+			btn1.next_event_requested.connect(display_event.bind(true))
 		btn1.set_btn()
-	
-	Global.area_cur_event = null
-	Global.game_is_played = true
 
 func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: String = "", ):
 	var reward_texture = $reward/PanelContainer/MarginContainer/VBoxContainer/TextureRect

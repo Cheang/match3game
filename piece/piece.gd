@@ -126,3 +126,15 @@ func make_adj_bomb():
 	is_adj_bomb = true
 	icon.texture = adj_teture
 	base.modulate = Color(1, 1, 1, 1)
+
+func get_dynamic_description(char_resource = null) -> String:
+	if not action.is_empty():
+		var desc_parts: Array[String] = []
+		for act in action:
+			if act != null:
+				var d: String = act.get_effect_description(char_resource, upgrades)
+				if d != "":
+					desc_parts.append(d)
+		if not desc_parts.is_empty():
+			return "\n".join(desc_parts)
+	return description

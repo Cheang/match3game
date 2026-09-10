@@ -31,6 +31,9 @@ func set_btn():
 				title.add_theme_color_override("font_color", Color8(55, 78, 74))
 				description.add_theme_color_override("default_color", Color8(84, 126, 100))
 
+signal reward_requested(texture: Texture2D, text: String, icon: Texture2D, description: String)
+signal next_event_requested(next_event: Event)
+
 func _on_btn_pressed() -> void:
 	if Global.game_is_played == true:
 		if resource.gold_cost > 0:
@@ -58,8 +61,27 @@ func _on_btn_pressed() -> void:
 			2:
 				pass
 			3:
-				get_parent().get_parent().get_parent().get_parent().get_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
+				_show_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
 				await get_tree().create_timer(1.5).timeout
+				if resource is EvtChoiseReward and resource.next_event != null:
+					resource.handled_in_place = true
+					next_event_requested.emit(resource.next_event)
+					var screen = find_parent("event_screen")
+					if screen and screen.has_method("display_event"):
+						screen.display_event(resource.next_event, true)
+						return
 			4:
-				pass
+				if resource is EvtChoiseEvent and resource.next_event != null:
+					resource.handled_in_place = true
+					next_event_requested.emit(resource.next_event)
+					var screen = find_parent("event_screen")
+					if screen and screen.has_method("display_event"):
+						screen.display_event(resource.next_event, true)
+						return
 		resource.activate()
+
+func _show_reward(texture: Texture2D, text: String, icon: Texture2D, desc: String) -> void:
+	reward_requested.emit(texture, text, icon, desc)
+	var screen = find_parent("event_screen")
+	if screen and screen.has_method("get_reward"):
+		screen.get_reward(texture, text, icon, desc)

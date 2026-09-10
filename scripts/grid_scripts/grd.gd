@@ -125,30 +125,30 @@ func spawn_fluf_piece(deck_to_use):
 					all_pieces[i][j] = piece
 
 func spawn_deck_pieces_random(deck_to_use):
-	for i in deck_to_use.size():
-		var rand_col = floor(randf_range(0,grd_width))
-		var rand_row = floor(randf_range(0,grd_height))
-		if !deck_to_use.is_empty():
-			if !restricted_fill(Vector2(rand_col, rand_row)):
-				if all_pieces[rand_col][rand_row] == null:
-					var rand = floor(randf_range(0,deck_to_use.size()))
-					var piece = deck_to_use[rand]
-					var loops = 0;
-					while match_at(rand_col, rand_row, piece.color) && loops < 100:
-						if loops >= 99:
-								return
-						rand = floor(randf_range(0,deck_to_use.size()))
-						loops += 1 
-						piece = deck_to_use[rand]
-					add_child(piece)
-					#piece.position = Global.grd_to_pixel(rand_col,grd_height+1)
-					piece.move(Global.grd_to_pixel(rand_col,grd_height+1), 0)
-					piece.unmark()
-					deck_to_use.pop_at(rand)
-					piece.move(Global.grd_to_pixel(rand_col,rand_row), .5)
-					all_pieces[rand_col][rand_row] = piece
-		else:
-			i -= 1
+	var max_attempts = 300
+	var attempts = 0
+	while not deck_to_use.is_empty() and attempts < max_attempts:
+		attempts += 1
+		var rand_col = int(randf_range(0, grd_width))
+		var rand_row = int(randf_range(0, grd_height))
+		if not restricted_fill(Vector2(rand_col, rand_row)):
+			if all_pieces[rand_col][rand_row] == null:
+				var rand = int(randf_range(0, deck_to_use.size()))
+				var piece = deck_to_use[rand]
+				var loops = 0
+				while match_at(rand_col, rand_row, piece.color) and loops < 100:
+					rand = int(randf_range(0, deck_to_use.size()))
+					piece = deck_to_use[rand]
+					loops += 1
+				add_child(piece)
+				piece.move(Global.grd_to_pixel(rand_col, grd_height + 1), 0)
+				piece.unmark()
+				deck_to_use.pop_at(rand)
+				piece.move(Global.grd_to_pixel(rand_col, rand_row), 0.5)
+				all_pieces[rand_col][rand_row] = piece
+	
+	if not deck_to_use.is_empty():
+		spawn_deck_pieces_fill(deck_to_use)
 
 func spawn_deck_pieces_fill(deck_to_use):
 	for i in range(grd_width):
@@ -198,15 +198,18 @@ func is_in_grd(grid_position):
 	return false
 
 func touch_input():
+	if state != move:
+		return
 	if Input.is_action_just_pressed("ui_touch"):
-		if is_in_grd(Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)):
-			first_touch = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+		var mouse_grd = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+		if is_in_grd(mouse_grd):
+			first_touch = mouse_grd
 			controling_grd = true
 	if Input.is_action_just_released("ui_touch"):
 		if controling_grd: 
 			controling_grd = false
 			final_touch = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
-			final_touch = Vector2(clamp(final_touch.x, 0, grd_width), clamp(final_touch.y, 0, grd_height))
+			final_touch = Vector2(clamp(final_touch.x, 0, grd_width - 1), clamp(final_touch.y, 0, grd_height - 1))
 			touch_difference(first_touch, final_touch)
 
 func touch_difference(grd_1, grd_2):
@@ -223,18 +226,22 @@ func touch_difference(grd_1, grd_2):
 			swap_pieces(grd_1.x, grd_1.y, Vector2(0, -1))
 
 func swap_pieces(col, row, direction):
+	var target_col = int(col + direction.x)
+	var target_row = int(row + direction.y)
+	if not is_in_grd(Vector2(col, row)) or not is_in_grd(Vector2(target_col, target_row)):
+		return
 	var first_piece = all_pieces[col][row]
-	var other_piece = all_pieces[col + direction.x][row + direction.y]
+	var other_piece = all_pieces[target_col][target_row]
 	if !Global.is_null(first_piece) and !Global.is_null(other_piece):
-		if !restricted_move(Vector2(col,row)) and !restricted_move(Vector2(col,row) + direction):
+		if !restricted_move(Vector2(col,row)) and !restricted_move(Vector2(target_col, target_row)):
 			piece_one = first_piece
 			piece_two = other_piece
 			last_place = Vector2(col, row)
 			last_direction = direction
 			state = wait
 			all_pieces[col][row] = other_piece
-			all_pieces[col + direction.x][row + direction.y] = first_piece
-			first_piece.move(Global.grd_to_pixel(col + direction.x, row + direction.y))
+			all_pieces[target_col][target_row] = first_piece
+			first_piece.move(Global.grd_to_pixel(target_col, target_row))
 			other_piece.move(Global.grd_to_pixel(col, row))
 			if !move_checked:
 				find_matches()
@@ -368,11 +375,12 @@ func after_refill():
 				if match_at(i,j,all_pieces[i][j].color):
 					find_matches()
 					return
-	enemy_attacked = false
 	cooldown_and_refill_deck()
 	state = move
-	if enemy_attacked == false:
-		Global.cur_char.modify_stat("moves_left", -1)
+	if not enemy_attacked:
+		if Global.cur_char != null:
+			Global.cur_char.modify_stat("moves_left", -1)
+	enemy_attacked = false
 	if !damaged_flesh:
 		generate_flesh()
 	if flesh_spaces.size() >= 5:

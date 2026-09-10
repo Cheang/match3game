@@ -8,6 +8,8 @@ class_name PieceBaseArmor
 
 func activate():
 	var cur_char = Global.cur_char
+	if cur_char == null:
+		return
 	#Calculate base armor
 	var f_value: float = armor + upgrade + cur_char.toughness*float(toughness_mult)
 	#Apply combo multypler
@@ -19,3 +21,15 @@ func activate():
 		f_value *= (1 + cur_char.crit_mutly / 100)
 	#Apply armor
 	cur_char.modify_stat("cur_armor", f_value)
+
+func get_effect_description(char_resource = null, upgrades: int = 0) -> String:
+	var t: float = 0.0
+	if char_resource != null and "toughness" in char_resource:
+		t = char_resource.toughness
+	elif Global.cur_char != null and "toughness" in Global.cur_char:
+		t = Global.cur_char.toughness
+	
+	var total_armor: float = armor + upgrades + (t * float(toughness_mult))
+	if hand_combo_mult:
+		return "Gives: [color=#4d65b4]%g[/color] Armor * [color=#7a3045]Combo Points[/color]" % [total_armor]
+	return "Gives: [color=#4d65b4]%g[/color] Armor" % [total_armor]
