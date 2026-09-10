@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Location" load_steps=9 format=3 uid="uid://cqehju5d485x1"]
+[gd_resource type="Resource" script_class="Location" format=3 uid="uid://cqehju5d485x1"]
 
 [ext_resource type="Script" uid="uid://bshjyhpass6km" path="res://scripts/cur_scene_resource.gd" id="1_75siy"]
 [ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/level_ui/location_pictures/loc_lamia_boss.png" id="1_avet4"]
@@ -25,10 +25,7 @@ script = ExtResource("1_pkour")
 name = "The Great Snake"
 description = "Lorem Ipsum"
 pic = ExtResource("1_avet4")
-next_scene = "res://main_menu.tscn"
 transition_color = Color(0.180392, 0.133333, 0.184314, 1)
 enemy_encounter = true
 cut_scene = SubResource("Resource_30f5c")
 which_enemy = Array[ExtResource("2_kevmu")]([ExtResource("3_kdd54")])
-level = 0
-event_encounter = false

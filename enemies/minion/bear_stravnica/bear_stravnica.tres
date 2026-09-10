@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=11 format=3 uid="uid://b8md2nvxu2oee"]
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://b8md2nvxu2oee"]
 
 [ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_uqo0m"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_idlbb"]
@@ -10,53 +10,28 @@
 [sub_resource type="Resource" id="Resource_po0pf"]
 script = ExtResource("2_r7b1o")
 damage = 1.0
-attacks = 1
 tooltip = "Bite"
-animation = ""
-animation_time = 0.0
 
 [sub_resource type="Resource" id="Resource_vlli0"]
 script = ExtResource("3_2m4mv")
 damage = 1.0
 tooltip = "Enrage"
-animation = ""
-animation_time = 0.0
 
 [sub_resource type="Resource" id="Resource_iiu06"]
 script = ExtResource("2_r7b1o")
 damage = 1.0
 attacks = 2
 tooltip = "Thrash"
-animation = ""
-animation_time = 0.0
 
 [sub_resource type="Resource" id="Resource_xxduf"]
 script = ExtResource("2_r7b1o")
 damage = 1.0
-attacks = 1
 tooltip = "Bite"
-animation = ""
-animation_time = 0.0
 
 [resource]
 script = ExtResource("2_idlbb")
 name = "Stravnica Bear"
-type = 0
 max_health = 35.0
-cur_health = 0.0
-physical_dmg_reduction = 0.0
 damage = 2.0
-has_phases = false
-phase = 1
 attacks = Array[ExtResource("1_uqo0m")]([SubResource("Resource_po0pf"), SubResource("Resource_vlli0"), SubResource("Resource_iiu06"), SubResource("Resource_xxduf")])
-attacks_p2 = Array[ExtResource("1_uqo0m")]([])
-attacks_p3 = Array[ExtResource("1_uqo0m")]([])
-attacks_p4 = Array[ExtResource("1_uqo0m")]([])
-speed = 1
 sprite = ExtResource("6_blujc")
-health_bar = ExtResource("4_oxslg")
-empty_spaces = Array[Vector2]([])
-ice_spaces = Array[Vector2]([])
-freeze_spaces = Array[Vector2]([])
-rock_spaces = Array[Vector2]([])
-flesh_spaces = Array[Vector2]([])

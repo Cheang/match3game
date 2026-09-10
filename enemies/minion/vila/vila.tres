@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://bk5sqcp28vayd"]
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://bk5sqcp28vayd"]
 
 [ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_kjfkh"]
 [ext_resource type="Script" uid="uid://6ltgy5nl6t63" path="res://enemies/attacks/bases/basic_attack.gd" id="2_vagb6"]
@@ -10,39 +10,19 @@
 [sub_resource type="Resource" id="Resource_li333"]
 script = ExtResource("2_vagb6")
 damage = 1.0
-attacks = 1
 tooltip = "True Shot"
-animation = ""
-animation_time = 0.0
 
 [sub_resource type="Resource" id="Resource_c4817"]
 script = ExtResource("2_vagb6")
-damage = 0.0
-attacks = 1
 tooltip = "Thinking"
-animation = ""
-animation_time = 0.0
 
 [resource]
 script = ExtResource("3_kh8ag")
 name = "Vila"
-type = 0
 max_health = 20.0
-cur_health = 0.0
 physical_dmg_reduction = 50.0
 damage = 3.0
-has_phases = false
-phase = 1
 attacks = Array[ExtResource("1_kjfkh")]([SubResource("Resource_li333"), SubResource("Resource_c4817")])
-attacks_p2 = Array[ExtResource("1_kjfkh")]([])
-attacks_p3 = Array[ExtResource("1_kjfkh")]([])
-attacks_p4 = Array[ExtResource("1_kjfkh")]([])
 speed = 0
 sprite = ExtResource("5_svqro")
-health_bar = ExtResource("3_08ell")
 shader = ExtResource("5_2m358")
-empty_spaces = Array[Vector2]([])
-ice_spaces = Array[Vector2]([])
-freeze_spaces = Array[Vector2]([])
-rock_spaces = Array[Vector2]([])
-flesh_spaces = Array[Vector2]([])

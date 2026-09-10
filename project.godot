@@ -8,12 +8,16 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="LoreTiles"
 config/version="0.1"
-run/main_scene="res://other/start_scene.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+run/main_scene="res://scenes/start_scene.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/bg_color=Color(0.180392, 0.133333, 0.184314, 1)
 boot_splash/image="res://assets/level_ui/logo.png"
 config/icon="res://assets/icon/icon.png"
@@ -22,13 +26,14 @@ config/icon="res://assets/icon/icon.png"
 
 Global="*res://scripts/Global.gd"
 Locations="*res://scripts/Locations.gd"
-SceneManager="*res://addons/scene_manager/SceneManager.tscn"
-MusicManager="*res://addons/MusicManager/music_manager.tscn"
+SceneManager="*uid://j20v4cg7v8m1"
+MusicManager="*uid://klqktsr2spx7"
 
 [display]
 
 window/size/viewport_width=576
 window/size/viewport_height=1024
+window/size/mode=3
 window/size/initial_screen=3
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
@@ -40,8 +45,8 @@ enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/
 
 [gui]
 
-theme/custom="res://assets/theme/mainTheme.tres"
 theme/default_font_antialiasing=0
+theme/custom="res://assets/theme/mainTheme.tres"
 
 [input]
 

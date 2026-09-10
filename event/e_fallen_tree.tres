@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=19 format=3 uid="uid://mpv3rrt7rf3k"]
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://mpv3rrt7rf3k"]
 
 [ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_goqmw"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="2_1cqn8"]
@@ -18,8 +18,6 @@ increase = [5]
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("3_nht5e")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_s7dvr"]
 script = ExtResource("7_5ffkd")
@@ -27,20 +25,9 @@ reward = SubResource("Resource_4vsok")
 fight_overwrite = true
 enemy = Array[ExtResource("2_tl81x")]([ExtResource("2_i41h6"), ExtResource("4_jy64e")])
 text = "Continue"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_wbkl8"]
 script = ExtResource("2_x4t16")
-categorie = "Event"
 title = "Fallen Tree"
 description = "You pick up the gold and hear and angry snort  behind you, looks like you have a fight on your hand..."
 choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_s7dvr")])
@@ -49,35 +36,13 @@ choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_s7dvr")])
 script = ExtResource("9_yrxgu")
 next_event = SubResource("Resource_wbkl8")
 text = "Take the gold"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_x27l4"]
 script = ExtResource("2_1cqn8")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_jvb48"]
 script = ExtResource("2_x4t16")
-categorie = "Event"
 title = "Fallen Tree"
 description = "As you inspect the fallen tree more closely, your fingers brush against something unusual in a hollow near the trunk. Digging a little deeper, you uncover a small pouch tucked away inside, its weight and jingling sound revealing it to be filled with gold."
 choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_iujkh"), SubResource("Resource_x27l4")])
@@ -86,35 +51,13 @@ choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_iujkh"), SubResou
 script = ExtResource("9_yrxgu")
 next_event = SubResource("Resource_jvb48")
 text = "Investigate"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_ipfbh"]
 script = ExtResource("2_1cqn8")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [resource]
 script = ExtResource("2_x4t16")
-categorie = "Event"
 title = "Fallen Tree"
 description = "Walking along the road, you spot a large fallen tree, its roots and branches sprawled unnaturally across the ground. The cut on the trunk looks too clean to be natural, and the way it blocks the path feels deliberate. Something about it feels out of place. What will you do?"
 choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_75kt4"), SubResource("Resource_ipfbh")])

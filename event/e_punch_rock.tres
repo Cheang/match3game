@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=16 format=3 uid="uid://usrhyg526xx"]
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://usrhyg526xx"]
 
 [ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_o3v2p"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_2ekwh"]
@@ -16,32 +16,16 @@ script = ExtResource("3_5k0ji")
 piece_to_add = Array[PackedScene]([ExtResource("3_wd4vi")])
 use_previous_event_data = true
 name = "Punch"
-description = ""
 base = ExtResource("3_2vumd")
 icon = ExtResource("4_5mejo")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_bajvr"]
 script = ExtResource("4_3e2a6")
 reward = SubResource("Resource_gv3y7")
-fight_overwrite = false
-enemy = Array[ExtResource("2_2ekwh")]([])
 text = "Continue"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_t0w50"]
 script = ExtResource("2_coahw")
-categorie = "Event"
 title = "Strange Altar"
 description = "You place your weapons on the altar and immediately feel a weight in your fist, as if you could punch with newfound strength."
 choises = Array[ExtResource("1_o3v2p")]([SubResource("Resource_bajvr")])
@@ -50,35 +34,17 @@ choises = Array[ExtResource("1_o3v2p")]([SubResource("Resource_bajvr")])
 script = ExtResource("6_vaaq1")
 next_event = SubResource("Resource_t0w50")
 text = "Make a sacrifice"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
 req_piece_remove = true
 req_piece_remove_blacklist = "Punch"
 req_piece_name = "red"
 req_piece_numb = 0
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_ipwer"]
 script = ExtResource("7_jw8hl")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [resource]
 script = ExtResource("2_coahw")
-categorie = "Event"
 title = "Strange Altar"
 description = "Before you stands a rock adorned with intricate carvings and decorations. At its center, a carving reminiscent of a fist catches your eye, and beneath your feet, the ground bears an altar-like structure."
 choises = Array[ExtResource("1_o3v2p")]([SubResource("Resource_6cb7k"), SubResource("Resource_ipwer")])

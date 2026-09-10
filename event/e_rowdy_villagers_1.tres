@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=27 format=3 uid="uid://lalxc0m4oab8"]
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://lalxc0m4oab8"]
 
 [ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_iep27"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_75m3y"]
@@ -18,29 +18,14 @@ increase = [2]
 name = "Gold Pieces"
 description = "Get 2 Gold"
 base = ExtResource("4_6gs8v")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_olbvy"]
 script = ExtResource("5_drwhw")
 reward = SubResource("Resource_75jmv")
-fight_overwrite = false
-enemy = Array[ExtResource("2_75m3y")]([])
 text = "Take it"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_gahxv"]
 script = ExtResource("2_x30kn")
-categorie = "Event"
 title = "Rowdy Villagers"
 description = "As you compel the man to return the gold, he begins to weep, overwhelmed by the thought of his young daughter's fate. The other villager, grateful for your intervention, hands you 2 gold as a token of thanks."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_olbvy")])
@@ -49,35 +34,14 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_olbvy")])
 script = ExtResource("7_h0m8j")
 next_event = SubResource("Resource_gahxv")
 text = "Make him return the gold"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_5vsuj"]
 script = ExtResource("9_18ry6")
 enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_4nv4i")])
 text = "Fight"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_6fph1"]
 script = ExtResource("2_x30kn")
-categorie = "Event"
 title = "Rowdy Villagers"
 description = "Seems like the other villigers don't agrea with that decision. Get ready for a fight."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_5vsuj")])
@@ -86,20 +50,9 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_5vsuj")])
 script = ExtResource("7_h0m8j")
 next_event = SubResource("Resource_6fph1")
 text = "Defend him, let him keep the gold"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_wv72e"]
 script = ExtResource("2_x30kn")
-categorie = "Event"
 title = "Rowdy Villagers"
 description = "When you ask what’s going on, the villagers explain that the man on the right stole 8 gold from the man on the left, claiming he needed the money to buy medicine for his sick daughter. What will you do?"
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_ini77"), SubResource("Resource_k6ncp")])
@@ -108,31 +61,11 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_ini77"), SubResou
 script = ExtResource("7_h0m8j")
 next_event = SubResource("Resource_wv72e")
 text = "Try to talk to them"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_yhnc8"]
 script = ExtResource("9_18ry6")
 enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_4nv4i")])
 text = "Join in the Fight"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_0qer2"]
 script = ExtResource("5_lr1ko")
@@ -141,44 +74,18 @@ increase = [5]
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("4_6gs8v")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_6tjg4"]
 script = ExtResource("5_drwhw")
 reward = SubResource("Resource_0qer2")
-fight_overwrite = false
-enemy = Array[ExtResource("2_75m3y")]([])
 text = "Take it"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_qolxl"]
 script = ExtResource("2_f35as")
-next_scene = "res://locations_screen.tscn"
 text = "Refuse"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_alwvk"]
 script = ExtResource("2_x30kn")
-categorie = "Event"
 title = "Rowdy Villagers"
 description = "As you approach and brandish your sword, the villagers recoil in fear and gradually back away. While leaving the village, a short, chubby man hurries to catch up with you, pressing a gold purse into your hand and thanking you for stopping the fight."
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_6tjg4"), SubResource("Resource_qolxl")])
@@ -187,35 +94,14 @@ choises = Array[ExtResource("1_iep27")]([SubResource("Resource_6tjg4"), SubResou
 script = ExtResource("7_h0m8j")
 next_event = SubResource("Resource_alwvk")
 text = "Flash you blade to calm them"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
 req_piece_name = "Short Sword"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_dudp6"]
 script = ExtResource("2_f35as")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [resource]
 script = ExtResource("2_x30kn")
-categorie = "Event"
 title = "Rowdy Villagers"
 description = "A group of villagers, clad in traditional garb, stand in a dusty village square, their faces flushed with anger as they argue heatedly over a boundary dispute. Nearby, curious onlookers gather around small stone houses. What would you do?"
 choises = Array[ExtResource("1_iep27")]([SubResource("Resource_3qrpa"), SubResource("Resource_yhnc8"), SubResource("Resource_oepy4"), SubResource("Resource_dudp6")])

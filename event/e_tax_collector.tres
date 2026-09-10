@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=24 format=3 uid="uid://cftnx7yuq7c7d"]
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://cftnx7yuq7c7d"]
 
 [ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://event/_other/event_choise_varients/event_choise_resource.gd" id="1_swuau"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_cf3eu"]
@@ -16,34 +16,19 @@
 [sub_resource type="Resource" id="Resource_h7tar"]
 script = ExtResource("5_qn67d")
 piece_to_add = Array[PackedScene]([ExtResource("5_bfl87")])
-use_previous_event_data = false
 name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"
 base = ExtResource("3_o1m3v")
 icon = ExtResource("6_isglo")
-flags = Array[String]([])
 rearity = null
 
 [sub_resource type="Resource" id="Resource_cb017"]
 script = ExtResource("6_r32wb")
 reward = SubResource("Resource_h7tar")
-fight_overwrite = false
-enemy = Array[ExtResource("2_cf3eu")]([])
 text = "Thank him"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_m1ib8"]
 script = ExtResource("2_lg513")
-categorie = "Event"
 title = "Taxes"
 description = "You hand the man a pouch filled with a few gold coins. \"This should cover whatever he's asking and leave you some to get through the winter.\" The big man's eyes well up with tears as he thanks you profusely. In gratitude, he hands you a sword."
 choises = Array[ExtResource("1_swuau")]([SubResource("Resource_cb017")])
@@ -54,33 +39,14 @@ next_event = SubResource("Resource_m1ib8")
 text = "Give them coin"
 description = "Lose 20 gold"
 gold_cost = 20
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_d7jas"]
 script = ExtResource("13_cajp3")
 enemy = Array[ExtResource("2_cf3eu")]([ExtResource("11_on8bi")])
 text = "Fight"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_lkqdy"]
 script = ExtResource("2_lg513")
-categorie = "Event"
 title = "Taxes"
 description = "You find the ottomans in the center of the village holding a boy, waiting for their payment. You decide to tech them not to take children as hostages. You start walking towords them unsheting your sword. Its time to fight."
 choises = Array[ExtResource("1_swuau")]([SubResource("Resource_d7jas")])
@@ -89,35 +55,13 @@ choises = Array[ExtResource("1_swuau")]([SubResource("Resource_d7jas")])
 script = ExtResource("3_aj5pr")
 next_event = SubResource("Resource_lkqdy")
 text = "Find the ottomans"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_osfo5"]
 script = ExtResource("4_qxlvy")
-next_scene = "res://locations_screen.tscn"
 text = "You hunt monsters not ottomans"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_j437d"]
 script = ExtResource("2_lg513")
-categorie = "Event"
 title = "Taxes"
 description = "You reach the bar and order a drink. Almost immediately, a big, burly man approaches, his face etched with worry. \"You're a Kuker, right? Supposed to help people? Well, we could sure use your help right now. The Ottoman tax collector is here, demanding far more than we can afford. Can you help this village?\""
 choises = Array[ExtResource("1_swuau")]([SubResource("Resource_ufvf1"), SubResource("Resource_h40eu"), SubResource("Resource_osfo5")])
@@ -126,35 +70,13 @@ choises = Array[ExtResource("1_swuau")]([SubResource("Resource_ufvf1"), SubResou
 script = ExtResource("3_aj5pr")
 next_event = SubResource("Resource_j437d")
 text = "Go to the bar"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_jncf0"]
 script = ExtResource("4_qxlvy")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [resource]
 script = ExtResource("2_lg513")
-categorie = "Event"
 title = "Taxes"
 description = "As you travel the road, a few Ottomans ride past you. Hours later, you reach a village and head to the kruchma. As you step inside, the air is thick with tension, villagers are in a state of panic, their conversations hurried and anxious. The moment they notice you, silence falls over the room."
 choises = Array[ExtResource("1_swuau")]([SubResource("Resource_g5w1h"), SubResource("Resource_jncf0")])

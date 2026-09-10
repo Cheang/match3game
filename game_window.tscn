@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://fkwi6d3pn4c4"]
+[gd_scene format=3 uid="uid://fkwi6d3pn4c4"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_h0vfo"]
 [ext_resource type="Texture2D" uid="uid://ca1yl0g8764dq" path="res://assets/level_ui/level_bg.png" id="1_ioeul"]
@@ -82,69 +82,69 @@ turbulence_noise_scale = 2.825
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
 
-[node name="game_window" type="Node2D"]
+[node name="game_window" type="Node2D" unique_id=1161874224]
 script = ExtResource("1_q6hof")
 
-[node name="background" type="Sprite2D" parent="."]
+[node name="background" type="Sprite2D" parent="." unique_id=1571498864]
 z_index = 400
 texture = ExtResource("1_h0vfo")
 centered = false
 offset = Vector2(0, -163)
 
-[node name="grd" type="Node2D" parent="."]
+[node name="grd" type="Node2D" parent="." unique_id=317081941]
 z_index = 500
 script = ExtResource("2_i4bg5")
 
-[node name="destroy_timer" type="Timer" parent="grd"]
+[node name="destroy_timer" type="Timer" parent="grd" unique_id=1114152019]
 wait_time = 0.2
 one_shot = true
 
-[node name="collapse_timer" type="Timer" parent="grd"]
+[node name="collapse_timer" type="Timer" parent="grd" unique_id=2027453231]
 wait_time = 0.2
 one_shot = true
 
-[node name="refill_timer" type="Timer" parent="grd"]
+[node name="refill_timer" type="Timer" parent="grd" unique_id=1127530300]
 wait_time = 0.2
 one_shot = true
 
-[node name="audioPlayer" type="AudioStreamPlayer" parent="grd"]
+[node name="audioPlayer" type="AudioStreamPlayer" parent="grd" unique_id=849361727]
 volume_db = -20.0
 bus = &"SFX"
 script = ExtResource("4_6newg")
 
-[node name="grd_ice" type="Node2D" parent="grd"]
+[node name="grd_ice" type="Node2D" parent="grd" unique_id=1410747641]
 z_index = 1
 script = ExtResource("4_a7uqp")
 
-[node name="grd_freeze" type="Node2D" parent="grd"]
+[node name="grd_freeze" type="Node2D" parent="grd" unique_id=1342156457]
 z_index = 1
 script = ExtResource("4_lguch")
 
-[node name="grd_rock" type="Node2D" parent="grd"]
+[node name="grd_rock" type="Node2D" parent="grd" unique_id=1922390564]
 z_index = 1
 script = ExtResource("7_hc5va")
 
-[node name="grd_flesh" type="Node2D" parent="grd"]
+[node name="grd_flesh" type="Node2D" parent="grd" unique_id=1712654637]
 z_index = 1
 script = ExtResource("8_jpie2")
 
-[node name="middleground" type="Sprite2D" parent="."]
+[node name="middleground" type="Sprite2D" parent="." unique_id=792333464]
 z_index = 600
 texture = ExtResource("1_ioeul")
 centered = false
 offset = Vector2(0, -163)
 
-[node name="enemy" type="Node2D" parent="."]
+[node name="enemy" type="Node2D" parent="." unique_id=868701315]
 z_index = 700
 script = ExtResource("5_7ysvn")
 
-[node name="art" type="Node2D" parent="enemy"]
+[node name="art" type="Node2D" parent="enemy" unique_id=1692013210]
 
-[node name="border3" type="Sprite2D" parent="enemy"]
+[node name="border3" type="Sprite2D" parent="enemy" unique_id=595770620]
 texture = ExtResource("8_3apa5")
 centered = false
 
-[node name="enemy_healthbar" type="TextureProgressBar" parent="enemy"]
+[node name="enemy_healthbar" type="TextureProgressBar" parent="enemy" unique_id=2022541882]
 offset_left = 34.0
 offset_top = 179.0
 offset_right = 319.0
@@ -153,18 +153,18 @@ value = 100.0
 texture_under = ExtResource("9_a7vs4")
 texture_progress = ExtResource("10_lbrow")
 
-[node name="fire_particles" type="GPUParticles2D" parent="enemy/enemy_healthbar"]
+[node name="fire_particles" type="GPUParticles2D" parent="enemy/enemy_healthbar" unique_id=2005167569]
 visible = false
 position = Vector2(285, 23)
 amount = 150
-process_material = SubResource("ParticleProcessMaterial_4x0u5")
 lifetime = 0.5
 speed_scale = 0.7
 randomness = 1.0
 fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_4x0u5")
 
-[node name="health" type="Label" parent="enemy/enemy_healthbar"]
-layout_mode = 2
+[node name="health" type="Label" parent="enemy/enemy_healthbar" unique_id=1735035064]
+layout_mode = 0
 offset_top = 15.0
 offset_right = 285.0
 offset_bottom = 35.0
@@ -174,25 +174,25 @@ theme_override_font_sizes/font_size = 20
 text = "Health : "
 horizontal_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="enemy"]
+[node name="PanelContainer" type="PanelContainer" parent="enemy" unique_id=311577613]
 offset_left = 34.0
 offset_top = 161.0
 offset_right = 319.0
 offset_bottom = 176.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_lxi5x")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="enemy/PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="enemy/PanelContainer" unique_id=1078252485]
 layout_mode = 2
 
-[node name="attack" type="Label" parent="enemy/PanelContainer/HBoxContainer"]
+[node name="attack" type="Label" parent="enemy/PanelContainer/HBoxContainer" unique_id=1404180570]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("12_tovol")
 text = "15 :Attack"
 
-[node name="enemy_audio" type="AudioStreamPlayer" parent="enemy"]
+[node name="enemy_audio" type="AudioStreamPlayer" parent="enemy" unique_id=1782627126]
 
-[node name="player" type="Node2D" parent="." node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
+[node name="player" type="Node2D" parent="." unique_id=21942865 node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 z_index = 700
 script = ExtResource("11_ghvty")
 bool_buff_texture = [NodePath("health_buffs/buff_container/dodging")]
@@ -200,32 +200,32 @@ bool_buff_stat = Array[String](["dodging"])
 buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_buffs/buff_container/marmor"), NodePath("health_buffs/buff_container/hndcombo")]
 buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
-[node name="art" type="Node2D" parent="player"]
+[node name="art" type="Node2D" parent="player" unique_id=1247743326]
 
-[node name="health_buffs" type="VBoxContainer" parent="player"]
+[node name="health_buffs" type="VBoxContainer" parent="player" unique_id=883629848]
 offset_left = 256.0
 offset_top = 845.0
 offset_right = 541.0
 offset_bottom = 922.0
 
-[node name="player_healthbar" type="TextureProgressBar" parent="player/health_buffs"]
+[node name="player_healthbar" type="TextureProgressBar" parent="player/health_buffs" unique_id=1628175777]
 layout_mode = 2
 value = 100.0
 texture_under = ExtResource("9_a7vs4")
 texture_progress = ExtResource("12_88ip3")
 
-[node name="fire_particles" type="GPUParticles2D" parent="player/health_buffs/player_healthbar"]
+[node name="fire_particles" type="GPUParticles2D" parent="player/health_buffs/player_healthbar" unique_id=968827709]
 visible = false
 position = Vector2(285, 23)
 amount = 150
-process_material = SubResource("ParticleProcessMaterial_im0vd")
 lifetime = 0.5
 speed_scale = 0.7
 randomness = 1.0
 fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_im0vd")
 
-[node name="health" type="Label" parent="player/health_buffs/player_healthbar"]
-layout_mode = 2
+[node name="health" type="Label" parent="player/health_buffs/player_healthbar" unique_id=1460991713]
+layout_mode = 0
 offset_top = 15.0
 offset_right = 285.0
 offset_bottom = 47.0
@@ -234,15 +234,15 @@ theme_override_font_sizes/font_size = 20
 text = "Health : "
 horizontal_alignment = 1
 
-[node name="buff_container" type="HFlowContainer" parent="player/health_buffs"]
+[node name="buff_container" type="HFlowContainer" parent="player/health_buffs" unique_id=545210759]
 layout_mode = 2
 alignment = 2
 
-[node name="armor" type="TextureRect" parent="player/health_buffs/buff_container"]
+[node name="armor" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=38076845]
 layout_mode = 2
 texture = ExtResource("15_pubo4")
 
-[node name="armorlabel" type="Label" parent="player/health_buffs/buff_container/armor"]
+[node name="armorlabel" type="Label" parent="player/health_buffs/buff_container/armor" unique_id=2085406834]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -253,11 +253,11 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container"]
+[node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=48446432]
 layout_mode = 2
 texture = ExtResource("18_khhg0")
 
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor" unique_id=850611669]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -268,11 +268,11 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container"]
+[node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=2123916141]
 layout_mode = 2
 texture = ExtResource("19_em2v6")
 
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo" unique_id=1391305553]
 layout_mode = 0
 offset_right = 28.0
 offset_bottom = 30.0
@@ -283,11 +283,11 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container"]
+[node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=1578865766]
 layout_mode = 2
 texture = ExtResource("20_mpwyg")
 
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging"]
+[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging" unique_id=2097307235]
 visible = false
 layout_mode = 0
 offset_right = 28.0
@@ -299,11 +299,11 @@ text = "12"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="moves_border" type="Sprite2D" parent="player"]
+[node name="moves_border" type="Sprite2D" parent="player" unique_id=1148409741]
 texture = ExtResource("14_bu8h0")
 centered = false
 
-[node name="move_remaing" type="Label" parent="player"]
+[node name="move_remaing" type="Label" parent="player" unique_id=2108802396]
 offset_top = 232.0
 offset_right = 576.0
 offset_bottom = 254.0
@@ -313,20 +313,21 @@ theme_override_font_sizes/font_size = 22
 text = "Moves Remaing: 2"
 horizontal_alignment = 1
 
-[node name="foreground" type="Node2D" parent="."]
+[node name="foreground" type="Node2D" parent="." unique_id=1973101239]
 z_index = 800
 position = Vector2(0, -163)
 
-[node name="border" type="Sprite2D" parent="foreground"]
+[node name="border" type="Sprite2D" parent="foreground" unique_id=840651831]
 texture = ExtResource("7_238bl")
 centered = false
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1082063967]
 layer = 2
+visible = false
 
-[node name="pause" parent="CanvasLayer" instance=ExtResource("19_ryfr5")]
+[node name="pause" parent="CanvasLayer" unique_id=1718140589 instance=ExtResource("19_ryfr5")]
 
-[node name="defeat_overlay" type="PanelContainer" parent="CanvasLayer"]
+[node name="defeat_overlay" type="PanelContainer" parent="CanvasLayer" unique_id=486033591]
 visible = false
 offset_right = 576.0
 offset_bottom = 1024.0
@@ -334,28 +335,28 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_11eos")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/defeat_overlay"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/defeat_overlay" unique_id=788247640]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/defeat_overlay/MarginContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/defeat_overlay/MarginContainer" unique_id=1313822275]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer" unique_id=706849010]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" unique_id=1912171853]
 custom_minimum_size = Vector2(90, 90)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("18_xnkws")
 
-[node name="Label" type="Label" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" unique_id=1818325528]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.909804, 0.231373, 0.231373, 1)
 theme_override_font_sizes/font_size = 32
@@ -363,13 +364,13 @@ text = "You have
 been defeated"
 horizontal_alignment = 1
 
-[node name="back_to_mm" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" instance=ExtResource("22_kmwuu")]
+[node name="back_to_mm" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" unique_id=317826915 instance=ExtResource("22_kmwuu")]
 layout_mode = 2
 text = "Main Menu"
 
-[node name="trun_changer" parent="CanvasLayer" instance=ExtResource("20_gybn7")]
+[node name="trun_changer" parent="CanvasLayer" unique_id=1485023123 instance=ExtResource("20_gybn7")]
 
-[node name="cam" parent="." instance=ExtResource("20_sxuy2")]
+[node name="cam" parent="." unique_id=608592563 instance=ExtResource("20_sxuy2")]
 
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
 [connection signal="tree_entered" from="." to="." method="_on_tree_entered"]

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Event" load_steps=15 format=3 uid="uid://5b2qagjixfgm"]
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://5b2qagjixfgm"]
 
 [ext_resource type="Texture2D" uid="uid://mps4y8cfwk5a" path="res://assets/level_ui/event/event_bg_tavern.png" id="1_0knlt"]
 [ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://event/_other/event_resource.gd" id="2_g8liw"]
@@ -18,25 +18,13 @@ name = "Heal"
 description = "+4 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_vwydy"]
 script = ExtResource("7_lyp7t")
 reward = SubResource("Resource_yw150")
-fight_overwrite = false
-enemy = Array[ExtResource("3_ye4l4")]([])
 text = "Get a drink"
 description = "Heal 4HP, -6Gold"
 gold_cost = 6
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_8av5t"]
 script = ExtResource("4_q28c1")
@@ -46,40 +34,17 @@ name = "Heal"
 description = "+10 HP"
 base = ExtResource("2_lyahq")
 icon = ExtResource("3_u5k8t")
-flags = Array[String]([])
-rearity = "COMMON"
 
 [sub_resource type="Resource" id="Resource_q5121"]
 script = ExtResource("7_lyp7t")
 reward = SubResource("Resource_8av5t")
-fight_overwrite = false
-enemy = Array[ExtResource("3_ye4l4")]([])
 text = "Drink and meal"
 description = "Heal 10HP, - 10Gold"
 gold_cost = 10
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [sub_resource type="Resource" id="Resource_2kdv4"]
 script = ExtResource("8_kdhdn")
-next_scene = "res://locations_screen.tscn"
 text = "Leave"
-description = "None"
-gold_cost = 0
-failable = false
-req_stat = "None"
-req_value = 0.0
-req_piece_remove = false
-req_piece_remove_blacklist = ""
-req_piece_name = "None"
-req_piece_numb = 1
-req_class = "None"
 
 [resource]
 script = ExtResource("2_g8liw")

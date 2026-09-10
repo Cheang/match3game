@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=13 format=3 uid="uid://8koqx7511051"]
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://8koqx7511051"]
 
 [ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_lkmlp"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_6orxw"]
@@ -13,55 +13,34 @@
 script = ExtResource("2_xas1u")
 damage = 2.0
 tooltip = "Enrage: + 2 DMG"
-animation = ""
-animation_time = 0.0
 sound = ExtResource("3_x3tvr")
 
 [sub_resource type="Resource" id="Resource_0cb8h"]
 script = ExtResource("2_xas1u")
 damage = 2.0
 tooltip = "Enrage: + 2 DMG"
-animation = ""
-animation_time = 0.0
 sound = ExtResource("3_x3tvr")
 
 [sub_resource type="Resource" id="Resource_7efn5"]
 script = ExtResource("4_jb7cx")
 damage = 1.0
-attacks = 1
 tooltip = "Weak Attack"
-animation = ""
-animation_time = 0.0
 sound = ExtResource("5_xnje7")
 
 [sub_resource type="Resource" id="Resource_n8rpl"]
 script = ExtResource("4_jb7cx")
 damage = 2.0
-attacks = 1
 tooltip = "Strong Attack"
-animation = ""
-animation_time = 0.0
 sound = ExtResource("5_xnje7")
 
 [resource]
 script = ExtResource("2_6orxw")
 name = "Villager"
-type = 0
 max_health = 18.0
-cur_health = 0.0
-physical_dmg_reduction = 0.0
 damage = 1.0
 has_phases = true
-phase = 1
 attacks = Array[ExtResource("1_lkmlp")]([SubResource("Resource_uao6c")])
 attacks_p2 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_0cb8h")])
 attacks_p3 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_7efn5")])
 attacks_p4 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_n8rpl")])
-speed = 1
 sprite = ExtResource("8_3ygr2")
-health_bar = ExtResource("6_ykc4h")
-empty_spaces = Array[Vector2]([])
-ice_spaces = Array[Vector2]([])
-freeze_spaces = Array[Vector2]([])
-rock_spaces = Array[Vector2]([])
-flesh_spaces = Array[Vector2]([])
