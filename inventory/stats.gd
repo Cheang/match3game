@@ -25,7 +25,8 @@ extends VBoxContainer
 @onready var cat_utility_cd: HBoxContainer = $ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd
 
 func expand():
-	
+	if Global.cur_char == null:
+		return
 	get_stat_and_set(Global.cur_char.max_health, cat_health_max)
 	get_stat_and_set(Global.cur_char.cur_health, cat_health_cur)
 	get_stat_and_set(Global.cur_char.life_steal, cat_health_lifesteal, true)

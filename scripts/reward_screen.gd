@@ -75,10 +75,15 @@ func update_reroll_btn():
 		reroll.text = "Reroll X%d" % Global.cur_char.rerolls
 
 func get_rewards_from_player():
+	for k in rarity_dict:
+		rarity_dict[k].clear()
+	if Global.cur_char == null:
+		return
 	rewards = (Global.cur_char.rewards_passive if Global.boss_beaten else Global.cur_char.rewards_piece).duplicate()
 	Global.boss_beaten = false
 	for rew in rewards:
-		rarity_dict[rew.rearity].append(rew)
+		if rew != null and rarity_dict.has(rew.rearity):
+			rarity_dict[rew.rearity].append(rew)
 
 #On Signals---------------------------------------------------------------------
 func _on_skip_pressed() -> void:
@@ -91,9 +96,9 @@ func _on_skip_pressed() -> void:
 		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_reroll_pressed() -> void:
-	if Global.cur_char.rerolls > 0:
+	if Global.cur_char != null and Global.cur_char.rerolls > 0:
+		Global.cur_char.modify_stat("rerolls", -1)
 		get_rewards()
-		Global.cur_char.rerolls -= 1
 	update_reroll_btn()
 
 func _on_background_child_entered_tree(node: Node) -> void:

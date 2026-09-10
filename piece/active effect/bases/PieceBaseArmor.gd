@@ -6,8 +6,8 @@ class_name PieceBaseArmor
 
 @export var armor: float
 
-func activate():
-	var cur_char = Global.cur_char
+func activate(context = null):
+	var cur_char = context.get("attacker", Global.cur_char) if (context != null and context is Dictionary) else Global.cur_char
 	if cur_char == null:
 		return
 	#Calculate base armor
@@ -31,5 +31,5 @@ func get_effect_description(char_resource = null, upgrades: int = 0) -> String:
 	
 	var total_armor: float = armor + upgrades + (t * float(toughness_mult))
 	if hand_combo_mult:
-		return "Gives: [color=#4d65b4]%g[/color] Armor * [color=#7a3045]Combo Points[/color]" % [total_armor]
-	return "Gives: [color=#4d65b4]%g[/color] Armor" % [total_armor]
+		return "Gives: [color=#4d65b4]%s[/color] Armor * [color=#7a3045]Combo Points[/color]" % [_fmt(total_armor)]
+	return "Gives: [color=#4d65b4]%s[/color] Armor" % [_fmt(total_armor)]

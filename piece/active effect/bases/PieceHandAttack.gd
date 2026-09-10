@@ -12,9 +12,9 @@ var type: int = 0
 @export var to_give_before: bool = true
 
 
-func activate():
-	var cur_char = Global.cur_char
-	var cur_enemy = Global.cur_enemy
+func activate(context = null):
+	var cur_char = context.get("attacker", Global.cur_char) if (context != null and context is Dictionary) else Global.cur_char
+	var cur_enemy = context.get("target", Global.cur_enemy) if (context != null and context is Dictionary) else Global.cur_enemy
 	if cur_char == null or cur_enemy == null:
 		return
 	
@@ -46,5 +46,5 @@ func get_effect_description(char_resource = null, upgrades: int = 0) -> String:
 	var color_str: String = "#3ca370" if type == 1 else "#ae2334"
 	var type_label: String = " Magic" if type == 1 else ""
 	if mult > 1:
-		return "Deals: [color=%s]%g[/color]%s DMG + ([color=#7a3045]Combo Points[/color] * [color=%s]%g[/color])" % [color_str, base_d, type_label, color_str, mult]
-	return "Deals: [color=%s]%g[/color]%s DMG + [color=#7a3045]Combo Points[/color]" % [color_str, base_d, type_label]
+		return "Deals: [color=%s]%s[/color]%s DMG + ([color=#7a3045]Combo Points[/color] * [color=%s]%s[/color])" % [color_str, _fmt(base_d), type_label, color_str, _fmt(mult)]
+	return "Deals: [color=%s]%s[/color]%s DMG + [color=#7a3045]Combo Points[/color]" % [color_str, _fmt(base_d), type_label]

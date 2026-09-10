@@ -5,8 +5,8 @@ class_name PieceBaseSpeed
 
 
 
-func activate():
-	var cur_char = Global.cur_char
+func activate(context = null):
+	var cur_char = context.get("attacker", Global.cur_char) if (context != null and context is Dictionary) else Global.cur_char
 	if cur_char == null:
 		return
 	

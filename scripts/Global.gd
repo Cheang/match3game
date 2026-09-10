@@ -5,6 +5,8 @@ var def_char: PlayerResource = null
 func _ready():
 	if ResourceLoader.exists("res://players/warrior/warrior.tres"):
 		def_char = load("res://players/warrior/warrior.tres")
+	if setting_res == null:
+		setting_res = SettingsResource.new()
 
 var cur_char: PlayerResource
 var selected_char: PlayerResource
@@ -58,9 +60,12 @@ var flg_game_is_loaded: bool = false
 #Functions_____________________________________________________________________#
 #Player_functions --------------------------------------------------------------
 func set_up_player():
-	cur_char = selected_char.duplicate()
-	cur_char.reset_stats_at_beging_of_game()
-	reset_variable()
+	if selected_char == null:
+		selected_char = def_char
+	if selected_char != null:
+		cur_char = selected_char.duplicate()
+		cur_char.reset_stats_at_beging_of_game()
+		reset_variable()
 func select_character(character: PlayerResource):
 	selected_char = character
 
@@ -103,41 +108,40 @@ func changeSong(new_song: MusicTrack = null, new_playlist: MusicPlaylist = null)
 			mm.play_playlist.emit(new_playlist, true, true, 1.0)
 
 #Helper_functions --------------------------------------------------------------
-func is_null(item):
-	if item == null:
-		return true
-	return false
-func grd_to_pixel(col, row):
+func is_null(item) -> bool:
+	return item == null
+
+func grd_to_pixel(col, row) -> Vector2:
 	var new_x = grd_x_start + grd_offset * col
 	var new_y = grd_y_start + -grd_offset * row
 	return Vector2(new_x, new_y)
-func pixel_to_grd(x, y):
+
+func pixel_to_grd(x, y) -> Vector2:
 	var new_x = round((x - grd_x_start) / grd_offset)
 	var new_y = round((y - grd_y_start) / -grd_offset)
 	return Vector2(new_x, new_y)
-func make_2d_array(width, height):
-	var array = []
+
+func make_2d_array(width: int, height: int) -> Array:
+	var array: Array = []
 	for i in width:
-		array.append([])
-		for j in height:
-			array[i].append(null)
+		var col: Array = []
+		col.resize(height)
+		array.append(col)
 	return array
-func is_in_array(array, item):
-	for i in array.size():
-		if array[i] == item:
-			return true
-	return false
-func remove_from_array(array, item):
-	for i in range(array.size()-1, -1, -1):
-		if array[i] == item:
-			array.remove_at(i)
+
+func is_in_array(array: Array, item) -> bool:
+	return array.has(item)
+
+func remove_from_array(array: Array, item) -> void:
+	array.erase(item)
 
 func save():
 	var save_file = Serializer.new()
 	if cur_char:
 		save_file.cur_char = cur_char.duplicate(true)
 		save_file.cur_char_deck = get_tiles_from_player()
-	save_file.selected_char = selected_char.duplicate(true)
+	if selected_char:
+		save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
 	save_file.cur_scene = cur_scene
 	if cur_enemy:
@@ -148,7 +152,11 @@ func save():
 	save_file.current_wave = current_wave
 	save_file.current_level = current_level
 	
-	save_file.area_locations = area_locations.duplicate(true)
+	save_file.area_locations.clear()
+	if area_locations != null:
+		for loc in area_locations:
+			if loc is Location:
+				save_file.area_locations.append(loc.duplicate(true))
 	if area_cur_boss:
 		save_file.area_cur_boss = area_cur_boss.duplicate(true)
 	save_file.area_cur_event = area_cur_event
@@ -168,8 +176,14 @@ func load_data():
 	var save_file = Serializer.new()
 	if FileAccess.file_exists(save_path):
 		save_file.load_data()
-		selected_char = save_file.selected_char.duplicate(true)
-		setting_res = save_file.settings
+		if save_file.selected_char:
+			selected_char = save_file.selected_char.duplicate(true)
+		elif def_char:
+			selected_char = def_char
+		if save_file.settings:
+			setting_res = save_file.settings
+		elif setting_res == null:
+			setting_res = SettingsResource.new()
 		
 		if save_file.cur_char and save_file.cur_scene:
 			cur_char = save_file.cur_char.duplicate(true)
@@ -191,7 +205,11 @@ func load_data():
 			current_wave = save_file.current_wave
 			current_level = save_file.current_level
 			
-			area_locations = save_file.area_locations.duplicate(true)
+			area_locations.clear()
+			if save_file.area_locations != null:
+				for loc in save_file.area_locations:
+					if loc is Location:
+						area_locations.append(loc.duplicate(true))
 			if save_file.area_cur_boss != null:
 				area_cur_boss = save_file.area_cur_boss.duplicate(true)
 			area_cur_event = save_file.area_cur_event

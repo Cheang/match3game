@@ -52,13 +52,18 @@ func _ready() -> void:
 	set_title(title_text)
 	if Global.cur_char != null:
 		gold_on_label = Global.cur_char.gold
+		if not Global.cur_char.updateUIPlayer.is_connected(_on_player_stat_updated):
+			Global.cur_char.updateUIPlayer.connect(_on_player_stat_updated)
 	gold.text = "%s" % [gold_on_label]
 
-func _process(_delta: float) -> void:
-	if Global.cur_char != null:
-		if gold_on_label != Global.cur_char.gold:
-			gold_on_label = Global.cur_char.gold
-			gold.text = "%s" % [gold_on_label]
+func _on_player_stat_updated(stat: String) -> void:
+	if stat == "gold" and Global.cur_char != null:
+		gold_on_label = Global.cur_char.gold
+		gold.text = "%s" % [gold_on_label]
+
+func _exit_tree() -> void:
+	if Global.cur_char != null and Global.cur_char.updateUIPlayer.is_connected(_on_player_stat_updated):
+		Global.cur_char.updateUIPlayer.disconnect(_on_player_stat_updated)
 
 func _on_pause_btn_pressed() -> void:
 	if Global.game_is_played == true:
@@ -72,7 +77,10 @@ func _on_resume_pressed() -> void:
 	await get_tree().create_timer(.1).timeout
 	Global.game_is_played = true
 	if grd != null:
-		grd.state = grd.move
+		if Global.cur_char != null and Global.cur_char.moves_left <= 0:
+			grd.state = grd.wait
+		else:
+			grd.state = grd.move
 	pause_overlay.visible = false
 
 func _on_options_pressed() -> void:
@@ -97,14 +105,17 @@ func _on_texture_button_pressed() -> void:
 		texture_button.disabled = true
 		texture_button2.disabled = true
 		texture_button.button_pressed = true
-		player_class.text = str(Global.cur_char.player_class)
-		stats.expand()
+		if Global.cur_char != null:
+			player_class.text = str(Global.cur_char.player_class)
+			stats.expand()
+			for child in deck_container.get_children():
+				child.queue_free()
+			Global.cur_char.deck_in_game.sort_custom(Global.compare_deck_pieces)
+			for piece in Global.cur_char.deck_in_game:
+				var cur_piece = PIECE_CARD.instantiate()
+				deck_container.add_child(cur_piece)
+				cur_piece.set_card(piece)
 		actual_target = stats_overlay.position + target_1
-		Global.cur_char.deck_in_game.sort_custom(Global.compare_deck_pieces)
-		for piece in Global.cur_char.deck_in_game:
-			var cur_piece = PIECE_CARD.instantiate()
-			deck_container.add_child(cur_piece)
-			cur_piece.set_card(piece)
 		move(actual_target, anim_speed)
 		await get_tree().create_timer(anim_speed).timeout
 		texture_button.disabled = false

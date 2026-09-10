@@ -75,6 +75,8 @@ func unmark():
 		is_adj_bomb = false
 
 func will_crit():
+	if Global.cur_char == null:
+		return
 	var rand = floor(randf_range(1,100))
 	if rand <= Global.cur_char.crit_chance:
 		base.material = crit_shader
@@ -83,6 +85,8 @@ func will_crit():
 		base.material = null
 
 func will_gold():
+	if Global.cur_char == null:
+		return
 	var rand = floor(randf_range(1,100))
 	if rand <= Global.cur_char.gold_chance:
 		gold_border.visible = true
@@ -92,11 +96,11 @@ func will_gold():
 
 func activate_actions(to_activate: Array):
 	if not matched:
-		if is_gold:
-			Global.cur_char.gold += 1
+		if is_gold and Global.cur_char != null:
+			Global.cur_char.modify_stat("gold", 1)
 		if !to_activate.is_empty() and !is_row_bomb and !is_col_bomb and !is_adj_bomb:
 			for i in to_activate.size():
-				if !Global.is_null(to_activate[i]):
+				if to_activate[i] != null:
 					to_activate[i].criting = is_criting
 					to_activate[i].upgrade = upgrades
 					to_activate[i].activate()

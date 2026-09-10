@@ -34,19 +34,31 @@ func _on_choise_btn_pressed() -> void:
 		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 
+static var cached_styleboxes: Dictionary = {}
+
+static func get_rarity_stylebox(rarity: String) -> StyleBoxTexture:
+	if cached_styleboxes.has(rarity):
+		return cached_styleboxes[rarity]
+	var sb = StyleBoxTexture.new()
+	sb.texture_margin_bottom = 15
+	sb.texture_margin_top = 15
+	sb.texture_margin_left = 15
+	sb.texture_margin_right = 15
+	sb.content_margin_bottom = 10
+	sb.content_margin_top = 10
+	sb.content_margin_left = 10
+	sb.content_margin_right = 10
+	if rarity in REWARD_PANELS:
+		sb.texture = REWARD_PANELS[rarity]
+	cached_styleboxes[rarity] = sb
+	return sb
+
 func load_btn():
+	if reward_resource == null:
+		return
 	reward_base.texture = reward_resource.base if reward_resource.base != null else null
 	reward_icon.texture = reward_resource.icon if reward_resource.icon != null else null
 	reward_name.text = reward_resource.name
 	reward_description.text = reward_resource.description
 
-	# Apply rarity-based style
-	var style_box = StyleBoxTexture.new()
-	for margin in ["bottom", "top", "left", "right"]:
-		style_box.set("texture_margin_" + margin, 15)
-		style_box.set("content_margin_" + margin, 10)
-
-	if reward_resource.rearity in REWARD_PANELS:
-		style_box.texture = REWARD_PANELS[reward_resource.rearity]
-
-	add_theme_stylebox_override("panel", style_box)
+	add_theme_stylebox_override("panel", get_rarity_stylebox(reward_resource.rearity))

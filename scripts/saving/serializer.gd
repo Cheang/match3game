@@ -56,7 +56,11 @@ func load_data():
 	current_wave = data.current_wave
 	current_level = data.current_level
 	
-	area_locations = data.area_locations if data.area_locations else []
+	area_locations.clear()
+	if data.area_locations != null:
+		for loc in data.area_locations:
+			if loc is Location:
+				area_locations.append(loc)
 	area_cur_boss = data.area_cur_boss if data.area_cur_boss else null
 	area_cur_event = data.area_cur_event
 	post_combat_event = data.post_combat_event

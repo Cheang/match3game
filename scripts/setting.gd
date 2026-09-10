@@ -20,15 +20,21 @@ func _ready() -> void:
 
 func _on_master_slider_value_changed(value: float) -> void:
 	Global.setting_res.set_audio_audio_lvl = value
-	AudioServer.set_bus_volume_db(0,linear_to_db(Global.setting_res.set_audio_audio_lvl))
+	var idx = AudioServer.get_bus_index("Master")
+	if idx >= 0:
+		AudioServer.set_bus_volume_db(idx, linear_to_db(value))
 
 func _on_music_slider_value_changed(value: float) -> void:
 	Global.setting_res.set_audio_music_lvl = value
-	AudioServer.set_bus_volume_db(1,linear_to_db(Global.setting_res.set_audio_music_lvl))
+	var idx = AudioServer.get_bus_index("Music")
+	if idx >= 0:
+		AudioServer.set_bus_volume_db(idx, linear_to_db(value))
 
 func _on_sfx_slider_value_changed(value: float) -> void:
 	Global.setting_res.set_audio_sfx_lvl = value
-	AudioServer.set_bus_volume_db(2,linear_to_db(Global.setting_res.set_audio_sfx_lvl))
+	var idx = AudioServer.get_bus_index("SFX")
+	if idx >= 0:
+		AudioServer.set_bus_volume_db(idx, linear_to_db(value))
 
 
 func _on_master_slider_mouse_exited() -> void:
@@ -43,16 +49,22 @@ func _on_sfx_slider_mouse_exited() -> void:
 
 func _on_master_mute_toggled(toggled_on: bool) -> void:
 	Global.setting_res.set_audio_audio_playing = toggled_on
-	AudioServer.set_bus_mute(0,Global.setting_res.set_audio_audio_playing)
+	var idx = AudioServer.get_bus_index("Master")
+	if idx >= 0:
+		AudioServer.set_bus_mute(idx, toggled_on)
 
 
 func _on_music_mute_toggled(toggled_on: bool) -> void:
 	Global.setting_res.set_audio_music_playing = toggled_on
-	AudioServer.set_bus_mute(1,Global.setting_res.set_audio_music_playing)
+	var idx = AudioServer.get_bus_index("Music")
+	if idx >= 0:
+		AudioServer.set_bus_mute(idx, toggled_on)
 
 func _on_sfx_mute_toggled(toggled_on: bool) -> void:
 	Global.setting_res.set_audio_sfx_playing = toggled_on
-	AudioServer.set_bus_mute(2,Global.setting_res.set_audio_sfx_playing)
+	var idx = AudioServer.get_bus_index("SFX")
+	if idx >= 0:
+		AudioServer.set_bus_mute(idx, toggled_on)
 
 func _on_back_pressed() -> void:
 	await get_tree().create_timer(.1).timeout

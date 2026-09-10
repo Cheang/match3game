@@ -17,50 +17,70 @@ signal enemy_attacked
 
 
 func _ready() -> void:
+	if Global.cur_enemy == null:
+		return
 	Global.cur_enemy.pick_next_attack()
-	attack.text = Global.cur_enemy.next_attack.tooltip
-	var enemy_sprite = Global.cur_enemy.sprite.instantiate()
-	art.add_child(enemy_sprite)
-	art.set_material(Global.cur_enemy.shader)
-	enemy_healthbar.texture_progress = Global.cur_enemy.health_bar
+	if Global.cur_enemy.next_attack != null:
+		attack.text = Global.cur_enemy.next_attack.tooltip
+	else:
+		attack.text = ""
+	if Global.cur_enemy.sprite != null:
+		var enemy_sprite = Global.cur_enemy.sprite.instantiate()
+		art.add_child(enemy_sprite)
+	if Global.cur_enemy.shader != null:
+		art.set_material(Global.cur_enemy.shader)
+	if Global.cur_enemy.health_bar != null:
+		enemy_healthbar.texture_progress = Global.cur_enemy.health_bar
 	update_health()
 
 func _on_enemy_healthbar_value_changed(value: float) -> void:
 	if !one_time_fire:
 		fire.visible = true
 		one_time_fire = true
-	if Global.cur_enemy.max_health == Global.cur_enemy.cur_health and one_time_fire:
+	if Global.cur_enemy != null and Global.cur_enemy.max_health == Global.cur_enemy.cur_health and one_time_fire:
 		fire.visible = false
 		one_time_fire = false
 	art.set_material(ATTACKED_GLOW)
 	move(Vector2((value * 2.85), fire.position.y), .5)
 	await get_tree().create_timer(.3).timeout
-	art.set_material(Global.cur_enemy.shader)
+	if Global.cur_enemy != null:
+		art.set_material(Global.cur_enemy.shader)
 
 func _on_game_window_enemy_attacking() -> void:
-	if Global.cur_enemy.next_attack.animation != null:
-		art.get_child(0).set_animp(Global.cur_enemy.next_attack.animation)
+	if Global.cur_enemy == null or Global.cur_enemy.next_attack == null:
+		enemy_attacked.emit()
+		return
+	if Global.cur_enemy.next_attack.animation != null and art.get_child_count() > 0:
+		var sprite_node = art.get_child(0)
+		if sprite_node.has_method("set_animp"):
+			sprite_node.set_animp(Global.cur_enemy.next_attack.animation)
 	if Global.cur_enemy.next_attack.sound != null:
 		enemy_audio.stream = Global.cur_enemy.next_attack.sound
 		enemy_audio.play()
 	await get_tree().create_timer(Global.cur_enemy.next_attack.animation_time).timeout
 	Global.cur_enemy.next_attack.attack()
-	art.get_child(0).set_animp("RESET")
-	art.get_child(0).set_animp("idle")
+	if art.get_child_count() > 0:
+		var sprite_node = art.get_child(0)
+		if sprite_node.has_method("set_animp"):
+			sprite_node.set_animp("RESET")
+			sprite_node.set_animp("idle")
 	Global.cur_enemy.pick_next_attack()
-	attack.text = Global.cur_enemy.next_attack.tooltip
+	if Global.cur_enemy.next_attack != null:
+		attack.text = Global.cur_enemy.next_attack.tooltip
+	else:
+		attack.text = ""
 	enemy_attacked.emit()
 
 func _on_game_window_enemy_health_change() -> void:
 	update_health()
 
 func _on_tree_entered() -> void:
-	Global.cur_enemy.updateUIEnemy.connect(update_ui)
-	pass # Replace with function body.
+	if Global.cur_enemy != null:
+		Global.cur_enemy.updateUIEnemy.connect(update_ui)
 
 func _on_tree_exiting() -> void:
-	Global.cur_enemy.updateUIEnemy.disconnect(update_ui)
-	pass # Replace with function body.
+	if Global.cur_enemy != null and Global.cur_enemy.updateUIEnemy.is_connected(update_ui):
+		Global.cur_enemy.updateUIEnemy.disconnect(update_ui)
 
 
 

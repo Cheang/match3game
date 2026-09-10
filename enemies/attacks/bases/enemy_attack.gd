@@ -7,6 +7,5 @@ class_name EnemyAttackBase
 
 @export var sound: AudioStreamWAV
 
-func attack():
-	
+func attack(_context = null):
 	pass

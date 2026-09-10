@@ -3,8 +3,8 @@ class_name PieceBaseHeal
 
 @export var health: float
 
-func activate():
-	var cur_char = Global.cur_char
+func activate(context = null):
+	var cur_char = context.get("attacker", Global.cur_char) if (context != null and context is Dictionary) else Global.cur_char
 	if cur_char == null:
 		return
 	
@@ -15,4 +15,4 @@ func activate():
 
 func get_effect_description(_char_resource = null, upgrades: int = 0) -> String:
 	var total_heal: float = health + upgrades
-	return "Heals: [color=#a854a8]%g[/color] HP" % [total_heal]
+	return "Heals: [color=#a854a8]%s[/color] HP" % [_fmt(total_heal)]

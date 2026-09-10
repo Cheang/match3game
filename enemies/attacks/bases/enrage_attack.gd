@@ -3,5 +3,7 @@ class_name Enrage_Attack
 
 @export var damage: float
 
-func attack():
-	Global.cur_enemy.damage += damage
+func attack(context = null):
+	var attacker = context.get("attacker", Global.cur_enemy) if (context != null and context is Dictionary) else Global.cur_enemy
+	if attacker != null:
+		attacker.damage += damage

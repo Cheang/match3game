@@ -74,10 +74,11 @@ func phase_change():
 		phase += 1
 
 func pick_next_attack():
-	next_attack = attacks.pick_random()
+	if not attacks.is_empty():
+		next_attack = attacks.pick_random()
 	if has_phases:
 		var phase_attacks = [null, attacks_p2, attacks_p3, attacks_p4]
-		if phase > 1 and phase < phase_attacks.size() and !phase_attacks[phase - 1].is_empty():
+		if phase > 1 and phase <= phase_attacks.size() and phase_attacks[phase - 1] != null and not phase_attacks[phase - 1].is_empty():
 			next_attack = phase_attacks[phase - 1].pick_random()
 
 func destroy_pieces(space_to_destroy: Array[Vector2]):

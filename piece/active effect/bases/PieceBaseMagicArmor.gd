@@ -5,8 +5,8 @@ class_name PieceBaseMagicArmor
 @export var hand_combo_mult: bool = false
 @export var mage_armor: int
 
-func activate():
-	var cur_char = Global.cur_char
+func activate(context = null):
+	var cur_char = context.get("attacker", Global.cur_char) if (context != null and context is Dictionary) else Global.cur_char
 	if cur_char == null:
 		return
 	
@@ -31,5 +31,5 @@ func get_effect_description(char_resource = null, upgrades: int = 0) -> String:
 	
 	var total_mage_armor: float = mage_armor + upgrades + (f * float(faith_mult))
 	if hand_combo_mult:
-		return "Gives: [color=#0b8a8f]%g[/color] Magic Armor * [color=#7a3045]Combo Points[/color]" % [total_mage_armor]
-	return "Gives: [color=#0b8a8f]%g[/color] Magic Armor" % [total_mage_armor]
+		return "Gives: [color=#0b8a8f]%s[/color] Magic Armor * [color=#7a3045]Combo Points[/color]" % [_fmt(total_mage_armor)]
+	return "Gives: [color=#0b8a8f]%s[/color] Magic Armor" % [_fmt(total_mage_armor)]

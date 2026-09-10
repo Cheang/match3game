@@ -30,6 +30,11 @@ var rock_spaces: Array[Vector2]
 var flesh_spaces: Array[Vector2]
 var damaged_flesh: bool = false
 @onready var grd_flesh: Node2D = $grd_flesh
+@onready var audio_player: AudioStreamPlayer = $audioPlayer
+@onready var destroy_timer: Timer = $destroy_timer
+@onready var collapse_timer: Timer = $collapse_timer
+@onready var refill_timer: Timer = $refill_timer
+var fluf_color_cache: Dictionary = {}
 
 #obstacles signals
 @warning_ignore("unused_signal")
@@ -104,74 +109,81 @@ func spawn_obstacles(ob_spaces, signal_str: String):
 func overwrite_obstacles():
 	pass
 
+func get_fluf_color(scene: PackedScene) -> String:
+	if fluf_color_cache.has(scene):
+		return fluf_color_cache[scene]
+	var inst = scene.instantiate()
+	var c: String = inst.color
+	inst.queue_free()
+	fluf_color_cache[scene] = c
+	return c
+
 func spawn_fluf_piece(deck_to_use):
+	if deck_to_use.is_empty():
+		return
 	for i in range(grd_width):
 		for j in range(grd_height):
-			if !restricted_fill(Vector2(i, j)):
-				if all_pieces[i][j] == null:
-					#choose piece
-					var rand = floor(randf_range(0,deck_to_use.size()))
-					var piece = deck_to_use[rand].instantiate()
-					var loops = 0;
-					while match_at(i, j, piece.color) && loops < 100:
-						piece.queue_free()
-						rand = floor(randf_range(0,deck_to_use.size()))
-						loops += 1 
-						piece = deck_to_use[rand].instantiate()
-					#create piece
-					add_child(piece)
-					piece.position = Global.grd_to_pixel(i,grd_height+1)
-					piece.move(Global.grd_to_pixel(i,j), .5)
-					all_pieces[i][j] = piece
+			if !restricted_fill(Vector2(i, j)) and all_pieces[i][j] == null:
+				var valid_scenes: Array[PackedScene] = []
+				for scene in deck_to_use:
+					if not match_at(i, j, get_fluf_color(scene)):
+						valid_scenes.append(scene)
+				var chosen_scene: PackedScene = valid_scenes.pick_random() if not valid_scenes.is_empty() else deck_to_use.pick_random()
+				var piece = chosen_scene.instantiate()
+				add_child(piece)
+				piece.position = Global.grd_to_pixel(i, grd_height + 1)
+				piece.move(Global.grd_to_pixel(i, j), 0.5)
+				all_pieces[i][j] = piece
 
 func spawn_deck_pieces_random(deck_to_use):
-	var max_attempts = 300
-	var attempts = 0
-	while not deck_to_use.is_empty() and attempts < max_attempts:
-		attempts += 1
-		var rand_col = int(randf_range(0, grd_width))
-		var rand_row = int(randf_range(0, grd_height))
-		if not restricted_fill(Vector2(rand_col, rand_row)):
-			if all_pieces[rand_col][rand_row] == null:
-				var rand = int(randf_range(0, deck_to_use.size()))
-				var piece = deck_to_use[rand]
-				var loops = 0
-				while match_at(rand_col, rand_row, piece.color) and loops < 100:
-					rand = int(randf_range(0, deck_to_use.size()))
-					piece = deck_to_use[rand]
-					loops += 1
-				add_child(piece)
-				piece.move(Global.grd_to_pixel(rand_col, grd_height + 1), 0)
-				piece.unmark()
-				deck_to_use.pop_at(rand)
-				piece.move(Global.grd_to_pixel(rand_col, rand_row), 0.5)
-				all_pieces[rand_col][rand_row] = piece
+	var available_slots: Array[Vector2] = []
+	for col in range(grd_width):
+		for row in range(grd_height):
+			if !restricted_fill(Vector2(col, row)) and all_pieces[col][row] == null:
+				available_slots.append(Vector2(col, row))
+	available_slots.shuffle()
+	
+	while not deck_to_use.is_empty() and not available_slots.is_empty():
+		var slot = available_slots.pop_back()
+		var col = int(slot.x)
+		var row = int(slot.y)
+		
+		var valid_indices: Array[int] = []
+		for idx in range(deck_to_use.size()):
+			if not match_at(col, row, deck_to_use[idx].color):
+				valid_indices.append(idx)
+		var chosen_idx: int = valid_indices.pick_random() if not valid_indices.is_empty() else randi() % deck_to_use.size()
+		var piece = deck_to_use[chosen_idx]
+		deck_to_use.pop_at(chosen_idx)
+		
+		add_child(piece)
+		piece.move(Global.grd_to_pixel(col, grd_height + 1), 0)
+		piece.unmark()
+		piece.move(Global.grd_to_pixel(col, row), 0.5)
+		all_pieces[col][row] = piece
 	
 	if not deck_to_use.is_empty():
 		spawn_deck_pieces_fill(deck_to_use)
 
 func spawn_deck_pieces_fill(deck_to_use):
+	if deck_to_use.is_empty():
+		return
 	for i in range(grd_width):
 		for j in range(grd_height):
-			if !restricted_fill(Vector2(i, j)):
-				if !deck_to_use.is_empty():
-					if all_pieces[i][j] == null:
-						var rand = floor(randf_range(0,deck_to_use.size()))
-						var piece = deck_to_use[rand]
-						var loops = 0;
-						while match_at(i, j, piece.color) && loops < 100:
-							if loops >= 99:
-								return
-							rand = floor(randf_range(0,deck_to_use.size()))
-							loops += 1 
-							piece = deck_to_use[rand]
-						add_child(piece)
-						#piece.position = Global.grd_to_pixel(i,grd_height+1)
-						piece.move(Global.grd_to_pixel(i,grd_height+1), 0)
-						piece.unmark()
-						deck_to_use.pop_at(rand)
-						piece.move(Global.grd_to_pixel(i,j), .5)
-						all_pieces[i][j] = piece
+			if !restricted_fill(Vector2(i, j)) and not deck_to_use.is_empty() and all_pieces[i][j] == null:
+				var valid_indices: Array[int] = []
+				for idx in range(deck_to_use.size()):
+					if not match_at(i, j, deck_to_use[idx].color):
+						valid_indices.append(idx)
+				var chosen_idx: int = valid_indices.pick_random() if not valid_indices.is_empty() else randi() % deck_to_use.size()
+				var piece = deck_to_use[chosen_idx]
+				deck_to_use.pop_at(chosen_idx)
+				
+				add_child(piece)
+				piece.move(Global.grd_to_pixel(i, grd_height + 1), 0)
+				piece.unmark()
+				piece.move(Global.grd_to_pixel(i, j), 0.5)
+				all_pieces[i][j] = piece
 
 func match_at(col, row, color: String):
 	if col > 1:
@@ -182,6 +194,10 @@ func match_at(col, row, color: String):
 		if all_pieces[col+1][row] != null and all_pieces[col+2][row] != null:
 			if all_pieces[col+1][row].color == color && all_pieces[col+2][row].color == color:
 				return true
+	if col > 0 and col < grd_width - 1:
+		if all_pieces[col-1][row] != null and all_pieces[col+1][row] != null:
+			if all_pieces[col-1][row].color == color && all_pieces[col+1][row].color == color:
+				return true
 	if row > 1:
 		if all_pieces[col][row-1] != null and all_pieces[col][row-2] != null:
 			if all_pieces[col][row-1].color == color && all_pieces[col][row-2].color == color:
@@ -190,6 +206,11 @@ func match_at(col, row, color: String):
 		if all_pieces[col][row+1] != null and all_pieces[col][row+2] != null:
 			if all_pieces[col][row+1].color == color && all_pieces[col][row+2].color == color:
 				return true
+	if row > 0 and row < grd_height - 1:
+		if all_pieces[col][row-1] != null and all_pieces[col][row+1] != null:
+			if all_pieces[col][row-1].color == color && all_pieces[col][row+1].color == color:
+				return true
+	return false
 
 func is_in_grd(grid_position):
 	if grid_position.x >= 0 and grid_position.x < grd_width:
@@ -199,6 +220,15 @@ func is_in_grd(grid_position):
 
 func touch_input():
 	if state != move:
+		controling_grd = false
+		return
+	if Global.cur_char != null and Global.cur_char.moves_left <= 0:
+		controling_grd = false
+		state = wait
+		return
+	if not Global.game_is_played:
+		controling_grd = false
+		state = wait
 		return
 	if Input.is_action_just_pressed("ui_touch"):
 		var mouse_grd = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
@@ -277,7 +307,7 @@ func find_matches():
 							add_to_array(Vector2(i,j+1), cur_matches)
 							add_to_array(Vector2(i,j-1), cur_matches)
 		get_bombed_pieces()
-		get_node("destroy_timer").start()
+		destroy_timer.start()
 
 func get_bombed_pieces():
 	for i in grd_width:
@@ -295,7 +325,7 @@ func mark_for_destruction(space_to_destroy: Array[Vector2], activate_piece = fal
 	enemy_attacked = true
 	for i in space_to_destroy.size():
 		all_pieces[space_to_destroy[i].x][space_to_destroy[i].y].mark(activate_piece)
-	get_node("destroy_timer").start()
+	destroy_timer.start()
 
 func find_bombs():
 	for c_match in cur_matches:
@@ -338,14 +368,15 @@ func destroy_matched(should_collapse: bool = true):
 						deck_to_dest.push_back(all_pieces[i][j])
 					was_matched = true
 					all_pieces[i][j].position = Vector2(0,0)
-					get_node("audioPlayer").play_on_destruction()
 					remove_child(all_pieces[i][j])
 					if all_pieces[i][j].type == 0:
 						all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
+	if was_matched:
+		audio_player.play_on_destruction()
 	move_checked = true
 	if was_matched and should_collapse:
-		get_node("collapse_timer").start()
+		collapse_timer.start()
 	else:
 		swap_back()
 	cur_matches.clear()
@@ -360,7 +391,7 @@ func collapse_col():
 						all_pieces[i][j] = all_pieces[i][k]
 						all_pieces[i][k] = null
 						break
-	get_node("refill_timer").start()
+	refill_timer.start()
 
 func refill_col():
 	if !deck.is_empty():
@@ -376,19 +407,24 @@ func after_refill():
 					find_matches()
 					return
 	cooldown_and_refill_deck()
-	state = move
 	if not enemy_attacked:
 		if Global.cur_char != null:
 			Global.cur_char.modify_stat("moves_left", -1)
 	enemy_attacked = false
 	if !damaged_flesh:
-		generate_flesh()
+		await generate_flesh()
 	if flesh_spaces.size() >= 5:
 		Global.cur_char.modify_stat("flg_flesh_coruption", true, false)
 	else: 
 		Global.cur_char.modify_stat("flg_flesh_coruption", false, false)
 	move_checked = false
 	damaged_flesh = false
+	if Global.cur_char != null and Global.cur_char.moves_left <= 0:
+		state = wait
+	elif not Global.game_is_played:
+		state = wait
+	else:
+		state = move
 
 func generate_flesh():
 	if flesh_spaces.size() > 0:

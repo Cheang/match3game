@@ -176,13 +176,22 @@ func reset_stats_at_beging_of_turn():
 	modify_stat("hand_combo", start_hand_combo, false)
 	modify_stat("moves_left", speed, false)
 
+func reset_stats_at_beginning_of_game() -> void:
+	reset_stats_at_beging_of_game()
+
+func reset_stats_at_beginning_of_fight() -> void:
+	reset_stats_at_beging_of_fight()
+
+func reset_stats_at_beginning_of_turn() -> void:
+	reset_stats_at_beging_of_turn()
+
 #Helper_functions --------------------------------------------------------------
-func apply_armor_reduction(damage: int, armor_property: String) -> int:
+func apply_armor_reduction(damage: float, armor_property: String) -> float:
 	var armor_value = get(armor_property)
 	var remaining_armor = armor_value - damage
 	if remaining_armor >= 0:
 		set(armor_property, remaining_armor)
-		return 0  # All damage absorbed
+		return 0.0  # All damage absorbed
 	set(armor_property, 0)
 	return abs(remaining_armor)  # Return leftover damage
 

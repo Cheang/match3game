@@ -39,7 +39,7 @@ func _on_start_pressed() -> void:
 			area_to_load = def_area
 		Locations.load_locations_from_directory(area_to_load)
 		Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
-		if Global.area_cur_boss.cut_scene:
+		if Global.area_cur_boss != null and Global.area_cur_boss.cut_scene:
 			Global.cur_cutscene = Global.area_cur_boss.cut_scene
 			Global.cur_scene = "res://cut_scene.tscn"
 			SceneManager.change_scene("res://cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

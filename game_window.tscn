@@ -323,7 +323,6 @@ centered = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1082063967]
 layer = 2
-visible = false
 
 [node name="pause" parent="CanvasLayer" unique_id=1718140589 instance=ExtResource("19_ryfr5")]
 

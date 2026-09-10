@@ -16,19 +16,18 @@ var enemy_attacked_once: bool = false
 func _ready() -> void:
 	Global.save()
 	defeat_overlay.visible = false
-	pause.set_title(Global.cur_enemy.name)
+	if Global.cur_enemy != null:
+		pause.set_title(Global.cur_enemy.name)
+		last_enemy_health = Global.cur_enemy.cur_health
+	else:
+		pause.set_title("Battle")
 	grd.on_startup()
-	last_enemy_health = Global.cur_enemy.cur_health
 	Global.game_is_played = true
 	grd.state = grd.move
 
-func _process(_delta: float) -> void:
-	if Global.cur_enemy.cur_health <= 0:
-		enemy_died()
-
-
 func _on_enemy_enemy_attacked() -> void:
-	Global.cur_char.reset_stats_at_beging_of_turn()
+	if Global.cur_char != null:
+		Global.cur_char.reset_stats_at_beging_of_turn()
 	enemy_attacked_once = false
 	trun_changer.change_turn(0)
 	await get_tree().create_timer(.8).timeout
@@ -39,15 +38,24 @@ func _on_back_to_mm_pressed() -> void:
 	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_tree_entered() -> void:
-	Global.cur_char.playerDied.connect(player_died)
-	Global.cur_char.playerFinishedTurn.connect(player_finished_turn)
-	Global.cur_enemy.enemyDied.connect(enemy_died)
-	Global.cur_enemy.destroyPieces.connect(destroy_tile)
+	if Global.cur_char != null:
+		Global.cur_char.playerDied.connect(player_died)
+		Global.cur_char.playerFinishedTurn.connect(player_finished_turn)
+	if Global.cur_enemy != null:
+		Global.cur_enemy.enemyDied.connect(enemy_died)
+		Global.cur_enemy.destroyPieces.connect(destroy_tile)
+
 func _on_tree_exiting() -> void:
-	Global.cur_char.playerDied.disconnect(player_died)
-	Global.cur_char.playerFinishedTurn.disconnect(player_finished_turn)
-	Global.cur_enemy.enemyDied.disconnect(enemy_died)
-	Global.cur_enemy.destroyPieces.disconnect(destroy_tile)
+	if Global.cur_char != null:
+		if Global.cur_char.playerDied.is_connected(player_died):
+			Global.cur_char.playerDied.disconnect(player_died)
+		if Global.cur_char.playerFinishedTurn.is_connected(player_finished_turn):
+			Global.cur_char.playerFinishedTurn.disconnect(player_finished_turn)
+	if Global.cur_enemy != null:
+		if Global.cur_enemy.enemyDied.is_connected(enemy_died):
+			Global.cur_enemy.enemyDied.disconnect(enemy_died)
+		if Global.cur_enemy.destroyPieces.is_connected(destroy_tile):
+			Global.cur_enemy.destroyPieces.disconnect(destroy_tile)
 
 
 #Helper_functions --------------------------------------------------------------
