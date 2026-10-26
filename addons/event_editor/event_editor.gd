@@ -119,7 +119,7 @@ func create_default_choice(text: String = "Proceed") -> Dictionary:
 		"reward_desc": "You received a reward.",
 		"reward_stat": "gold",
 		"reward_stat_amount": 25.0,
-		"reward_piece_path": "res://piece/_red_sq/r_shor_sword.tscn",
+		"reward_piece_path": "res://tiles/equipment/short_sword.tres",
 		"enemy_path": "res://enemies/minion/pesents/pesent_1.tres",
 		"next_scene": "res://locations_screen.tscn",
 		"gold_cost": 0,
@@ -791,8 +791,8 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 				p_browse.pressed.connect(func():
 					file_dialog_mode = "pick_piece"
 					file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-					file_dialog.current_dir = "res://piece"
-					file_dialog.filters = PackedStringArray(["*.tscn ; Piece Scenes"])
+					file_dialog.current_dir = "res://tiles/equipment"
+					file_dialog.filters = PackedStringArray(["*.tres ; Equipment Resources"])
 					file_dialog.popup_centered(Vector2i(800, 500))
 					active_picking_choice = c_data
 					active_picking_field = "reward_piece_path"
@@ -1180,7 +1180,9 @@ func save_event_to_file(file_path: String) -> bool:
 						r_p.description = c.get("reward_desc", "")
 						if c.get("reward_piece_path", "") != "" and ResourceLoader.exists(c["reward_piece_path"]):
 							var p_scene = load(c["reward_piece_path"])
-							if p_scene is PackedScene:
+							if p_scene is Equipment:
+								r_p.modifiers_to_add.append(p_scene)
+							elif p_scene is PackedScene:
 								r_p.piece_to_add.append(p_scene)
 						c_rew.reward = r_p
 					else:
@@ -1326,7 +1328,9 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 				c_data["reward_desc"] = c.reward.description
 				if c.reward is R_Piece:
 					c_data["reward_type"] = "piece"
-					if not c.reward.piece_to_add.is_empty() and c.reward.piece_to_add[0] != null:
+					if not c.reward.modifiers_to_add.is_empty() and c.reward.modifiers_to_add[0] != null:
+						c_data["reward_piece_path"] = c.reward.modifiers_to_add[0].resource_path
+					elif not c.reward.piece_to_add.is_empty() and c.reward.piece_to_add[0] != null:
 						c_data["reward_piece_path"] = c.reward.piece_to_add[0].resource_path
 				elif c.reward is R_Stat:
 					c_data["reward_type"] = "stat"

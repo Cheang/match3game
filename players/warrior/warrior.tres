@@ -1,77 +1,17 @@
-[gd_resource type="Resource" script_class="PlayerResource" load_steps=24 format=3 uid="uid://b8jo32hmbbisk"]
+[gd_resource type="Resource" script_class="PlayerResource" format=3 uid="uid://b8jo32hmbbisk"]
 
-[ext_resource type="PackedScene" uid="uid://cd0nyvfnjstgb" path="res://piece/_blue_sq/b_round_shield.tscn" id="1_pardm"]
-[ext_resource type="PackedScene" uid="uid://cj5nid13gww62" path="res://piece/_green_sq/g_rush.tscn" id="2_upqac"]
-[ext_resource type="PackedScene" uid="uid://d20iwi733vona" path="res://piece/_red_sq/r_shor_sword.tscn" id="3_eihym"]
-[ext_resource type="PackedScene" uid="uid://cw3airgurvyv5" path="res://piece/_white_sq/w_holy_shield.tscn" id="4_6q3uv"]
-[ext_resource type="PackedScene" uid="uid://cbh3vila467yb" path="res://piece/_red_sq/_red_fluf.tscn" id="5_68sr3"]
-[ext_resource type="PackedScene" uid="uid://bth1axcbcess2" path="res://piece/_blue_sq/_blue_fluf.tscn" id="6_1pvt5"]
-[ext_resource type="PackedScene" uid="uid://co453pji2jcqe" path="res://piece/_green_sq/_green_fluf.tscn" id="7_pwnkj"]
-[ext_resource type="PackedScene" uid="uid://bthiuci0deljg" path="res://piece/_purple_sq/_purple_fluf.tscn" id="8_en3c6"]
-[ext_resource type="PackedScene" uid="uid://u8xfuav2kkon" path="res://piece/_white_sq/_white_fluf.tscn" id="9_3l6gg"]
-[ext_resource type="Script" uid="uid://bjdufec8tqxrl" path="res://rewards/others/reward_resource.gd" id="10_k67pm"]
 [ext_resource type="Script" uid="uid://cbex40bcq7b0h" path="res://scripts/player/player_resource.gd" id="10_ljvcx"]
-[ext_resource type="Resource" uid="uid://b3dxyym36disw" path="res://rewards/pieces/faith_weak.tres" id="11_edbyt"]
-[ext_resource type="Resource" uid="uid://bbc53l18hvjdl" path="res://rewards/pieces/body0_strong_body_1.tres" id="11_ljkgp"]
 [ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://players/warrior/warrior.tscn" id="11_pi64o"]
-[ext_resource type="Resource" uid="uid://buvd4ertan8e7" path="res://rewards/pieces/general_healing_potion.tres" id="12_3y1ki"]
-[ext_resource type="Resource" uid="uid://bi6fgd2okm80j" path="res://rewards/pieces/sword/sword0-sword_practice.tres" id="12_4wp5o"]
-[ext_resource type="Resource" uid="uid://c7cawpgd1yofl" path="res://rewards/pieces/general_rush.tres" id="13_6tq0m"]
-[ext_resource type="Resource" uid="uid://dbkv21dn6mkqs" path="res://rewards/pieces/sword/sword0_small_sword.tres" id="13_ef1xv"]
-[ext_resource type="Resource" uid="uid://bgcd0ocbytryg" path="res://rewards/pieces/shields_up.tres" id="15_4a05a"]
-[ext_resource type="Resource" uid="uid://ba0s3qgm8su2y" path="res://rewards/pieces/fists/fists0-way_of_the_fist.tres" id="16_6rpfp"]
-[ext_resource type="Resource" uid="uid://ca24omyatk5k7" path="res://rewards/pieces/bombs/bomb0_hbombs.tres" id="19_wuckb"]
-[ext_resource type="Resource" uid="uid://bqxw2omhnabxy" path="res://rewards/pieces/bombs/bomb0_vbombs.tres" id="20_nq1t4"]
-[ext_resource type="Resource" uid="uid://owx8v46c52lc" path="res://rewards/pieces/bombs/bomb0_adjbombs.tres" id="21_cxvcy"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="22_pbase"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="23_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="24_rshield"]
+[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="25_rush"]
+[ext_resource type="Resource" uid="uid://dv3yjpg60n6se" path="res://tiles/equipment/holy_shield.tres" id="26_hshield"]
+[ext_resource type="Resource" path="res://rewards/warrior_tree.tres" id="27_tree"]
 
 [resource]
 script = ExtResource("10_ljvcx")
-player_class = "Warrior"
-max_health = 20.0
-cur_health = 0.0
-life_steal = 0.0
-toughness = 0.0
-start_armor = 0.0
-start_mage_armor = 0.0
-cur_armor = 0.0
-cur_mage_armor = 0.0
-dmg_reduction_flat = 0.0
-dmg_reduction = 0.0
-max_dmg_reduction = 90.0
-speed = 2
-moves_left = 0
-agility = 0.0
-dodging = false
-cooldown_reduction = 0
-start_reroll = 999
-rerolls = 0
-start_gold = 100
-gold = 0
-gold_chance = 1
-mana = 0.0
-faith = 0.0
-strength = 0.0
-proficiency = 1.0
-fluf_damage = 0.0
-crit_chance = 5
-crit_mutly = 100.0
-start_hand_combo = 0
-hand_combo = 0
 sprite = ExtResource("11_pi64o")
-deck = Array[PackedScene]([ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("1_pardm"), ExtResource("2_upqac"), ExtResource("2_upqac"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("3_eihym"), ExtResource("4_6q3uv")])
-fluf = Array[PackedScene]([ExtResource("5_68sr3"), ExtResource("6_1pvt5"), ExtResource("7_pwnkj"), ExtResource("8_en3c6"), ExtResource("9_3l6gg")])
-rewards_piece = Array[ExtResource("10_k67pm")]([ExtResource("11_edbyt"), ExtResource("12_3y1ki"), ExtResource("13_ef1xv"), ExtResource("13_6tq0m"), ExtResource("15_4a05a"), ExtResource("11_ljkgp"), ExtResource("16_6rpfp"), ExtResource("19_wuckb"), ExtResource("20_nq1t4"), ExtResource("21_cxvcy")])
-rewards_passive = Array[ExtResource("10_k67pm")]([ExtResource("11_ljkgp"), ExtResource("12_4wp5o"), ExtResource("12_4wp5o")])
-flg_flesh_coruption = false
-flg_can_spawn_col_bombs = false
-flg_can_spawn_row_bombs = false
-flg_can_spawn_adj_bombs = false
-flg_can_spawn_clr_bombs = false
-flg_rew_body_1 = false
-flg_rew_body_2 = false
-flg_rew_rush = false
-flg_rew_fists_lvl_1 = false
-flg_rew_fists_lvl_1_5 = false
-flg_rew_fists_lvl_1_5_picked = false
-flg_rew_fists_lvl_2 = false
-flg_rew_fists_irn_body = false
+start_reroll = 999
+starting_modifiers = Array[ExtResource("22_pbase")]([ExtResource("23_ssword"), ExtResource("23_ssword"), ExtResource("24_rshield"), ExtResource("25_rush"), ExtResource("26_hshield")])
+reward_tree = ExtResource("27_tree")

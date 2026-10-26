@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Reward" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://dgrtd2xq830ed" path="res://assets/_red_icons/red_icon_2_1.png" id="3_icon"]
+[ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="4_eq"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Way of the Fist"
+description = "Get 3 Punches"
+base = ExtResource("2_base")
+icon = ExtResource("3_icon")
+rarity = 1
+category = 0
+equipment_to_grant = Array[Resource]([ExtResource("4_eq"), ExtResource("4_eq"), ExtResource("4_eq")])
+unlock_tags = Array[String](["flg_rew_fists_lvl_1"])
+remove_from_pool_when_picked = true

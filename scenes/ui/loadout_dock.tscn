@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/loadout_dock.gd" id="1_dock"]
+
+[node name="loadout_dock" type="PanelContainer"]
+offset_left = 28.0
+offset_top = 838.0
+offset_right = 548.0
+offset_bottom = 874.0
+script = ExtResource("1_dock")

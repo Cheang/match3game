@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://crambqr7imicy" path="res://assets/_red_icons/red_icon_7.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Uppercut"
+icon = ExtResource("2_icon")
+description = "Deals 1 + (Combo * 3) DMG, then +1 Combo"
+family = "fists"
+slot_cost = 2
+trigger_condition = 1
+cooldown_turns = 1
+once_per_battle = false
+allowed_colors = Array[int]([])
+base_damage = 1.0
+damage_type = 0
+hit_count = 1
+damage_stat_scaling = 0
+damage_combo_multiplier = 3.0
+combo_points_after = 1
+can_upgrade = true
+upgrade = 0
+upgrade_scales_combo_mult = true

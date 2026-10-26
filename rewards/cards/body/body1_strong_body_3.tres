@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Reward" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://dhuiwvsjf4wcs" path="res://assets/_red_icons/red_icon_3_1.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Strong Body III"
+description = "Max Health +3"
+base = ExtResource("2_base")
+icon = ExtResource("3_icon")
+rarity = 1
+category = 0
+max_health = 3.0
+unlock_tags = Array[String](["flg_rew_body_2"])
+remove_from_pool_when_picked = true

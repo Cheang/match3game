@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="PieceBaseSpeed" load_steps=2 format=3 uid="uid://dy8qguxfi2yfs"]
-
-[ext_resource type="Script" uid="uid://cvgle4whl4up0" path="res://piece/active effect/bases/PieceBaseSpeed.gd" id="1_xk60y"]
-
-[resource]
-script = ExtResource("1_xk60y")
-moves_to_give = 1
-hand_combo_points_to_give = 0

@@ -4,7 +4,7 @@ extends Node2D
 signal remove_freeze
 
 var freeze_pieces = []
-var freeze = preload("res://piece/obstacles_sq/freeze.tscn")
+var freeze = preload("res://tiles/obstacles/freeze.tscn")
 
 func _ready() -> void:
 	freeze_pieces = Global.make_2d_array(Global.grd_width, Global.grd_height)

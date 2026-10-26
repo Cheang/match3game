@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Reward" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://nv1kjivywddk" path="res://assets/_purple_icons/purple_icon_2_1.png" id="3_icon"]
+[ext_resource type="Resource" path="res://tiles/equipment/healing_potion.tres" id="4_eq"]
+
+[resource]
+script = ExtResource("1_script")
+name = "Healing Potion"
+description = "Adds 3 Healing Potions"
+base = ExtResource("2_base")
+icon = ExtResource("3_icon")
+rarity = 3
+category = 0
+equipment_to_grant = Array[Resource]([ExtResource("4_eq"), ExtResource("4_eq"), ExtResource("4_eq")])
+remove_from_pool_when_picked = true

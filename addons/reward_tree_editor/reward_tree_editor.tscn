@@ -1,0 +1,339 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/reward_tree_editor/reward_tree_editor.gd" id="1_editor"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.18, 0.16, 0.22, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.12, 0.11, 0.15, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.14, 0.12, 0.16, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.35, 0.55, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+
+[node name="RewardTreeEditor" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_editor")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="HBox" type="HBoxContainer" parent="VBox/Header"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="VBox/Header/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+text = "⚡ Reward Tree Editor"
+
+[node name="VSep1" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="NewBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "+ New Tree"
+
+[node name="OpenBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "📂 Open..."
+
+[node name="SaveBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "💾 Save"
+
+[node name="SaveAsBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "Save As..."
+
+[node name="VSep2" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="AddBranchBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "+ Add Branch"
+
+[node name="AutoLayoutBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "☷ Layout"
+
+[node name="CenterViewBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "⛶ Center"
+
+[node name="DelBranchBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+text = "🗑 Delete Branch"
+
+[node name="VSep3" type="VSeparator" parent="VBox/Header/HBox"]
+layout_mode = 2
+
+[node name="TestDraftBtn" type="Button" parent="VBox/Header/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+text = "▶ Test Draft Simulation"
+
+[node name="Spacer" type="Control" parent="VBox/Header/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FileLabel" type="Label" parent="VBox/Header/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+text = "File: Untitled Tree*"
+horizontal_alignment = 2
+clip_text = true
+
+[node name="Main" type="HSplitContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 0
+
+[node name="Left" type="PanelContainer" parent="VBox/Main"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.65
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Left"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Toolbar" type="HBoxContainer" parent="VBox/Main/Left/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="GraphTitle" type="Label" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+text = "REWARD PROGRESSION GRAPH"
+
+[node name="HintLbl" type="Label" parent="VBox/Main/Left/VBox/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.65, 0.65, 0.75, 1)
+theme_override_font_sizes/font_size = 11
+text = "💡 Drag output port to input port to connect branches • Click node to inspect"
+horizontal_alignment = 2
+clip_text = true
+
+[node name="Graph" type="GraphEdit" parent="VBox/Main/Left/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+right_disconnects = true
+snap_distance = 20
+use_snap = true
+
+[node name="Right" type="PanelContainer" parent="VBox/Main"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.35
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Scroll" type="ScrollContainer" parent="VBox/Main/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="Inspector" type="VBoxContainer" parent="VBox/Main/Right/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="TreeBox" type="PanelContainer" parent="VBox/Main/Right/Scroll/Inspector"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/TreeBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TreeHeaderLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/TreeBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+text = "Tree Properties"
+
+[node name="Grid" type="GridContainer" parent="VBox/Main/Right/Scroll/Inspector/TreeBox/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="NameLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/TreeBox/VBox/Grid"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Tree Name:"
+
+[node name="TreeNameEdit" type="LineEdit" parent="VBox/Main/Right/Scroll/Inspector/TreeBox/VBox/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "e.g. Warrior Arsenal & Might"
+
+[node name="NodeBox" type="PanelContainer" parent="VBox/Main/Right/Scroll/Inspector"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="VBox" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/NodeBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NodeHeaderLbl" type="Label" parent="VBox/Main/Right/Scroll/Inspector/NodeBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+text = "Branch Configuration"
+
+[node name="NodeContent" type="VBoxContainer" parent="VBox/Main/Right/Scroll/Inspector/NodeBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Footer" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="StatusLabel" type="Label" parent="VBox/Footer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
+text = "Ready."
+
+[node name="FileDialog" type="FileDialog" parent="."]
+size = Vector2i(800, 500)
+
+[node name="TestDraftModal" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -240.0
+offset_right = 340.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Margin" type="MarginContainer" parent="TestDraftModal"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="TestDraftModal/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TopRow" type="HBoxContainer" parent="TestDraftModal/Margin/VBox"]
+layout_mode = 2
+
+[node name="DraftTitle" type="Label" parent="TestDraftModal/Margin/VBox/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+text = "🎲 Combat Reward Draft Simulation"
+
+[node name="RerollBtn" type="Button" parent="TestDraftModal/Margin/VBox/TopRow"]
+layout_mode = 2
+text = "🎲 Roll New Cards"
+
+[node name="ResetTreeBtn" type="Button" parent="TestDraftModal/Margin/VBox/TopRow"]
+layout_mode = 2
+text = "🔄 Reset Run State"
+
+[node name="CloseDraftBtn" type="Button" parent="TestDraftModal/Margin/VBox/TopRow"]
+layout_mode = 2
+text = "✖ Close"
+
+[node name="TagsLabel" type="Label" parent="TestDraftModal/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.85, 1)
+theme_override_font_sizes/font_size = 11
+text = "Acquired Tags: (None)"
+
+[node name="CardsHolder" type="HBoxContainer" parent="TestDraftModal/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="DraftResultLbl" type="Label" parent="TestDraftModal/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+text = "Click a reward card to pick it and trigger tree progression!"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="VBox/Header/HBox/NewBtn" to="." method="_on_new_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/OpenBtn" to="." method="_on_open_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/SaveBtn" to="." method="_on_save_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/SaveAsBtn" to="." method="_on_save_as_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/AddBranchBtn" to="." method="_on_add_branch_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/AutoLayoutBtn" to="." method="_on_auto_layout_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/CenterViewBtn" to="." method="_on_center_view_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/DelBranchBtn" to="." method="_on_del_branch_btn_pressed"]
+[connection signal="pressed" from="VBox/Header/HBox/TestDraftBtn" to="." method="_on_test_draft_btn_pressed"]
+[connection signal="connection_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_connection_request"]
+[connection signal="disconnection_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_disconnection_request"]
+[connection signal="delete_nodes_request" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_delete_nodes_request"]
+[connection signal="node_selected" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_node_selected"]
+[connection signal="node_deselected" from="VBox/Main/Left/VBox/Graph" to="." method="_on_graph_node_deselected"]
+[connection signal="text_changed" from="VBox/Main/Right/Scroll/Inspector/TreeBox/VBox/Grid/TreeNameEdit" to="." method="_on_tree_name_changed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="TestDraftModal/Margin/VBox/TopRow/RerollBtn" to="." method="_roll_simulation_draft"]
+[connection signal="pressed" from="TestDraftModal/Margin/VBox/TopRow/ResetTreeBtn" to="." method="_reset_simulation_state"]
+[connection signal="pressed" from="TestDraftModal/Margin/VBox/TopRow/CloseDraftBtn" to="." method="_close_draft_modal"]

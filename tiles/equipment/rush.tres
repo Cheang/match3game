@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b373kp8ylc4wn" path="res://assets/_green_icons/green_icon_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Rush"
+icon = ExtResource("2_icon")
+description = "Gives +1 Move (4+ Match)"
+family = "mobility"
+slot_cost = 1
+trigger_condition = 1
+cooldown_turns = 1
+once_per_battle = false
+allowed_colors = Array[int]([])
+moves_to_give = 1
+can_upgrade = false
+upgrade = 0

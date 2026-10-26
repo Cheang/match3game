@@ -1,5 +1,35 @@
 extends Node
 
+enum TileColor {
+	# Base Colors
+	RED = 100,
+	BLUE = 200,
+	GREEN = 300,
+	PURPLE = 400,
+	WHITE = 500,
+
+	# Exotic / Corrupted Variations (Parent = Base Color / 100 * 100)
+	DARK_CRIMSON = 101,  # Parent: RED
+	COBALT_FROST = 201,  # Parent: BLUE
+	VENOM_GREEN = 301,   # Parent: GREEN
+	ELDRITCH_VOID = 401, # Parent: PURPLE
+	SOLAR_GOLD = 501     # Parent: WHITE
+}
+
+## Central registry mapping each Equipment Family to its natural TileColor.
+## When adding a new family to the game, define it here.
+const EQUIPMENT_FAMILY_COLORS: Dictionary = {
+	"sword": TileColor.RED,
+	"fists": TileColor.RED,
+	"shields": TileColor.BLUE,
+	"mobility": TileColor.GREEN,
+	"healing": TileColor.PURPLE,
+}
+
+## Returns the default preferred color for a given equipment family name.
+func get_family_default_color(family_name: String) -> int:
+	return EQUIPMENT_FAMILY_COLORS.get(family_name.to_lower(), 0)
+
 var def_char: PlayerResource = null
 
 func _ready():
@@ -58,14 +88,87 @@ var setting_res: Resource
 var flg_game_is_loaded: bool = false
 
 #Functions_____________________________________________________________________#
+#Color_functions ---------------------------------------------------------------
+func is_exotic_color(color: int) -> bool:
+	return (int(color) % 100) != 0
+
+func get_base_family(color: int) -> int:
+	return int(color / 100) * 100
+
+func get_color_name(color: int) -> String:
+	match color:
+		0: return "Any Color"
+		TileColor.RED: return "Red"
+		TileColor.BLUE: return "Blue"
+		TileColor.GREEN: return "Green"
+		TileColor.PURPLE: return "Purple"
+		TileColor.WHITE: return "White"
+		TileColor.DARK_CRIMSON: return "Crimson"
+		TileColor.COBALT_FROST: return "Frost"
+		TileColor.VENOM_GREEN: return "Venom"
+		TileColor.ELDRITCH_VOID: return "Void"
+		TileColor.SOLAR_GOLD: return "Solar"
+	return "Any Color"
+
+func get_color_short_label(color: int) -> String:
+	match color:
+		0: return "ANY"
+		TileColor.RED: return "R"
+		TileColor.BLUE: return "B"
+		TileColor.GREEN: return "G"
+		TileColor.PURPLE: return "P"
+		TileColor.WHITE: return "W"
+		TileColor.DARK_CRIMSON: return "R*"
+		TileColor.COBALT_FROST: return "B*"
+		TileColor.VENOM_GREEN: return "G*"
+		TileColor.ELDRITCH_VOID: return "P*"
+		TileColor.SOLAR_GOLD: return "W*"
+	return "ANY"
+
+func get_color_ui_tint(color: int) -> Color:
+	match color:
+		0: return Color("#7f798a")
+		TileColor.RED: return Color("#ae2334")
+		TileColor.BLUE: return Color("#4d65b4")
+		TileColor.GREEN: return Color("#3ca370")
+		TileColor.PURPLE: return Color("#8b408b")
+		TileColor.WHITE: return Color("#d4d2c5")
+		TileColor.DARK_CRIMSON: return Color("#6e0d25")
+		TileColor.COBALT_FROST: return Color("#36c5f4")
+		TileColor.VENOM_GREEN: return Color("#8fde5d")
+		TileColor.ELDRITCH_VOID: return Color("#4b1d52")
+		TileColor.SOLAR_GOLD: return Color("#f9c22b")
+	return Color("#7f798a")
+
+func get_color_base_texture(color: int) -> Texture2D:
+	if color == 0:
+		return preload("res://assets/white_0_sq.png")
+	match get_base_family(color):
+		TileColor.RED: return preload("res://assets/red_0_sq.png")
+		TileColor.BLUE: return preload("res://assets/blue_0_sq.png")
+		TileColor.GREEN: return preload("res://assets/green_0_sq.png")
+		TileColor.PURPLE: return preload("res://assets/purple_0_sq.png")
+		TileColor.WHITE: return preload("res://assets/white_0_sq.png")
+	return preload("res://assets/white_0_sq.png")
+
+func color_string_to_id(color_str: String) -> int:
+	match color_str.to_lower():
+		"red": return TileColor.RED
+		"blue": return TileColor.BLUE
+		"green": return TileColor.GREEN
+		"purple": return TileColor.PURPLE
+		"white": return TileColor.WHITE
+	return TileColor.RED
+
 #Player_functions --------------------------------------------------------------
 func set_up_player():
 	if selected_char == null:
 		selected_char = def_char
 	if selected_char != null:
-		cur_char = selected_char.duplicate()
-		cur_char.reset_stats_at_beging_of_game()
+		cur_char = selected_char.duplicate(true)
+		cur_char.reset_stats_at_beginning_of_game()
 		reset_variable()
+
 func select_character(character: PlayerResource):
 	selected_char = character
 
@@ -74,7 +177,6 @@ func set_up_enemy(specific_enemy: EnemyResource):
 	if !is_null(specific_enemy):
 		cur_enemy = specific_enemy.duplicate()
 		cur_enemy.cur_health = cur_enemy.max_health
-		pass
 
 #Game_functions ----------------------------------------------------------------
 func reset_variable():
@@ -86,12 +188,22 @@ func reset_variable():
 	current_level += 1
 
 func compare_deck_pieces(a, b):
-	if a.color == b.color:
-		if a.piece_name == b.piece_name:
-			return a.upgrades - b.upgrades
-		return a.piece_name.to_lower() < b.piece_name.to_lower()
-	return a.color.to_lower() < b.color.to_lower()
-	
+	if a is Equipment and b is Equipment:
+		var ca: int = a.allowed_colors[0] if not a.allowed_colors.is_empty() else 100
+		var cb: int = b.allowed_colors[0] if not b.allowed_colors.is_empty() else 100
+		if ca == cb:
+			if a.piece_name == b.piece_name:
+				return a.upgrade < b.upgrade
+			return a.piece_name.to_lower() < b.piece_name.to_lower()
+		return ca < cb
+	if "color" in a and "color" in b:
+		if a.color == b.color:
+			if a.piece_name == b.piece_name:
+				return a.upgrades - b.upgrades
+			return a.piece_name.to_lower() < b.piece_name.to_lower()
+		return a.color.to_lower() < b.color.to_lower()
+	return false
+
 func changeSong(new_song: MusicTrack = null, new_playlist: MusicPlaylist = null):
 	var mm = get_node_or_null("/root/MusicManager")
 	if mm == null:
@@ -120,6 +232,11 @@ func pixel_to_grd(x, y) -> Vector2:
 	var new_x = round((x - grd_x_start) / grd_offset)
 	var new_y = round((y - grd_y_start) / -grd_offset)
 	return Vector2(new_x, new_y)
+
+# Converts internal row index (where row 0 is visual bottom at y=grd_y_start)
+# to spec depth row index (where 0 is top of grid and grd_height - 1 is bottom of grid).
+func to_spec_row(internal_row: int) -> int:
+	return clampi((grd_height - 1) - internal_row, 0, grd_height - 1)
 
 func make_2d_array(width: int, height: int) -> Array:
 	var array: Array = []
@@ -172,6 +289,7 @@ func save():
 	save_file.game_seed = game_seed
 	
 	save_file.save_data()
+
 func load_data():
 	var save_file = Serializer.new()
 	if FileAccess.file_exists(save_path):
@@ -187,17 +305,8 @@ func load_data():
 		
 		if save_file.cur_char and save_file.cur_scene:
 			cur_char = save_file.cur_char.duplicate(true)
+			cur_char.ensure_loadout_tracks()
 			cur_scene = save_file.cur_scene
-			if save_file.cur_char_deck:
-				for scene in save_file.cur_char_deck:
-					if scene:
-						var scene_resource = load(scene["scene_path"])
-						var instance = scene_resource.instantiate()
-						if instance and instance is Node2D:
-							instance.location = scene["scene_path"]
-							instance.upgrades = scene["upgrades"]
-							instance.cooldown = scene["cooldown"]
-							cur_char.deck_in_game.append(instance)
 			if save_file.cur_enemy:
 				cur_enemy = save_file.cur_enemy.duplicate(true)
 			game_is_over = save_file.game_is_over
@@ -229,8 +338,10 @@ func load_data():
 			def_char = load("res://players/warrior/warrior.tres")
 		selected_char = def_char
 
-func get_tiles_from_player(): 
+func get_tiles_from_player():
 	var array_to_return: Array = []
-	for tile in cur_char.deck_in_game:
-		array_to_return.append(tile.set_node_values())
+	if cur_char != null:
+		for tile in cur_char.deck_in_game:
+			if tile != null and tile.has_method("set_node_values"):
+				array_to_return.append(tile.set_node_values())
 	return array_to_return

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Equipment" format=3 uid="uid://dv3yjpg60n6se"]
+
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cuj6n0jrqbw8j" path="res://assets/_white_icons/white_icon_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Holy Shield"
+icon = ExtResource("2_icon")
+description = "Gives 6 + Spirit Magic Armor"
+family = "shields"
+slot_cost = 2
+cooldown_turns = 2
+once_per_battle = true
+base_magic_armor = 6.0

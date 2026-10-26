@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Short Sword"
+icon = ExtResource("2_icon")
+description = "Deals 1 + Might Physical DMG"
+family = "sword"
+slot_cost = 1
+trigger_condition = 0
+cooldown_turns = 0
+once_per_battle = false
+allowed_colors = Array[int]([])
+base_damage = 1.0
+damage_type = 0
+hit_count = 1
+damage_stat_scaling = 1
+damage_combo_multiplier = 0.0
+can_upgrade = true
+upgrade = 0

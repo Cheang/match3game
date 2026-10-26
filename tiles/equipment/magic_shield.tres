@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Equipment" format=3 uid="uid://dp5cfgnc3kq5w"]
+
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ckfmmrlppmvuc" path="res://assets/_blue_icons/blue_icon_4.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Magic Shield"
+icon = ExtResource("2_icon")
+description = "Gives 2 + Spirit Magic Armor"
+family = "shields"
+cooldown_turns = 1
+base_magic_armor = 2.0

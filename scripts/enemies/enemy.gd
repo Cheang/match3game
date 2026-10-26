@@ -21,7 +21,7 @@ func _ready() -> void:
 		return
 	Global.cur_enemy.pick_next_attack()
 	if Global.cur_enemy.next_attack != null:
-		attack.text = Global.cur_enemy.next_attack.tooltip
+		attack.text = _format_intent(Global.cur_enemy.next_attack)
 	else:
 		attack.text = ""
 	if Global.cur_enemy.sprite != null:
@@ -66,7 +66,7 @@ func _on_game_window_enemy_attacking() -> void:
 			sprite_node.set_animp("idle")
 	Global.cur_enemy.pick_next_attack()
 	if Global.cur_enemy.next_attack != null:
-		attack.text = Global.cur_enemy.next_attack.tooltip
+		attack.text = _format_intent(Global.cur_enemy.next_attack)
 	else:
 		attack.text = ""
 	enemy_attacked.emit()
@@ -85,6 +85,20 @@ func _on_tree_exiting() -> void:
 
 
 #Helper_functions --------------------------------------------------------------
+func _format_intent(next_atk: EnemyAttackBase) -> String:
+	if next_atk == null:
+		return ""
+	var raw: String = next_atk.tooltip
+	if "damage" in next_atk and Global.cur_enemy != null:
+		var total_dmg: int = int(roundf(next_atk.damage * Global.cur_enemy.damage))
+		var hits: int = next_atk.attacks if "attacks" in next_atk else 1
+		if hits > 1:
+			return "[ATK] %d x %d DMG" % [total_dmg, hits]
+		return "[ATK] %d DMG" % total_dmg
+	if raw.begins_with("["):
+		return raw
+	return "[INTENT] " + raw
+
 func update_health():
 	health.text = "HP: %d / %d" % [Global.cur_enemy.cur_health, Global.cur_enemy.max_health]
 	enemy_healthbar.value = Global.cur_enemy.cur_health * 100.0 / Global.cur_enemy.max_health

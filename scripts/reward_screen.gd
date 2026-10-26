@@ -26,7 +26,11 @@ var rarity_tiers = [
 		["COMMON", 0]
 	]
 
+var is_boss_draft: bool = false
+
 func _ready() -> void:
+	is_boss_draft = Global.boss_beaten
+	Global.boss_beaten = false
 	get_rewards_from_player()
 	update_reroll_btn()
 	get_rewards()
@@ -79,11 +83,12 @@ func get_rewards_from_player():
 		rarity_dict[k].clear()
 	if Global.cur_char == null:
 		return
-	rewards = (Global.cur_char.rewards_passive if Global.boss_beaten else Global.cur_char.rewards_piece).duplicate()
-	Global.boss_beaten = false
+	rewards = (Global.cur_char.rewards_passive if is_boss_draft else Global.cur_char.rewards_piece).duplicate()
 	for rew in rewards:
-		if rew != null and rarity_dict.has(rew.rearity):
-			rarity_dict[rew.rearity].append(rew)
+		if rew != null:
+			var r_name: String = rew.rearity if "rearity" in rew else "COMMON"
+			if rarity_dict.has(r_name):
+				rarity_dict[r_name].append(rew)
 
 #On Signals---------------------------------------------------------------------
 func _on_skip_pressed() -> void:

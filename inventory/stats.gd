@@ -27,31 +27,40 @@ extends VBoxContainer
 func expand():
 	if Global.cur_char == null:
 		return
-	get_stat_and_set(Global.cur_char.max_health, cat_health_max)
-	get_stat_and_set(Global.cur_char.cur_health, cat_health_cur)
-	get_stat_and_set(Global.cur_char.life_steal, cat_health_lifesteal, true)
+	get_stat_and_set(Global.cur_char.max_health, cat_health_max, false, "Max Health")
+	get_stat_and_set(Global.cur_char.cur_health, cat_health_cur, false, "Current Health")
+	get_stat_and_set(Global.cur_char.life_steal, cat_health_lifesteal, true, "Life Steal")
 	
-	get_stat_and_set(Global.cur_char.start_armor, cat_defence_startarmor)
-	get_stat_and_set(Global.cur_char.start_mage_armor, cat_defence_startmagearmor)
-	get_stat_and_set(Global.cur_char.dmg_reduction_flat, cat_defence_dmgreduction, true)
-	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true)
+	get_stat_and_set(Global.cur_char.grit, cat_defence_startarmor, false, "Grit (Blue)")
+	get_stat_and_set(Global.cur_char.start_mage_armor, cat_defence_startmagearmor, true, "Starting Magic Armor")
+	get_stat_and_set(Global.cur_char.dmg_reduction_flat, cat_defence_dmgreduction, true, "Flat DMG Reduction")
+	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true, "Damage Reduction")
 	
-	get_stat_and_set(Global.cur_char.proficiency, cat_offence_prof)
-	get_stat_and_set(Global.cur_char.strength, cat_offence_str)
-	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true)
-	get_stat_and_set(Global.cur_char.crit_chance, cat_offence_crit)
-	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg)
+	get_stat_and_set(Global.cur_char.might, cat_offence_str, false, "Might (Red)")
+	if cat_offence_prof != null:
+		cat_offence_prof.visible = false
+	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true, "Empty Tile Damage")
+	get_stat_and_set(Global.cur_char.crit_chance, cat_offence_crit, false, "Critical Strike Chance")
+	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg, false, "Critical Strike Damage")
 	
-	get_stat_and_set(Global.cur_char.mana, cat_magic_mana)
+	get_stat_and_set(Global.cur_char.spirit, cat_magic_mana, false, "Spirit (Purple/White)")
 	
-	get_stat_and_set(Global.cur_char.speed, cat_utility_spd)
-	get_stat_and_set(Global.cur_char.agility, cat_utility_agility)
-	get_stat_and_set(Global.cur_char.rerolls, cat_utility_rerolls)
-	get_stat_and_set(Global.cur_char.cooldown_reduction, cat_utility_cd, true)
+	get_stat_and_set(Global.cur_char.speed, cat_utility_spd, false, "Speed (Green / Moves)")
+	if cat_utility_agility != null:
+		cat_utility_agility.visible = false
+	get_stat_and_set(Global.cur_char.rerolls, cat_utility_rerolls, false, "Rerolls")
+	get_stat_and_set(Global.cur_char.cooldown_reduction, cat_utility_cd, true, "Cooldown Reduction")
 	
-func get_stat_and_set(value, to_set: HBoxContainer, hide_if_empty: bool = false):
+func get_stat_and_set(value, to_set: HBoxContainer, hide_if_empty: bool = false, custom_name: String = ""):
+	if to_set == null:
+		return
+	var name_lbl = to_set.get_child(0)
 	var label_to_set = to_set.get_child(1)
+	if custom_name != "" and name_lbl is Label:
+		name_lbl.text = custom_name
 	if value <= 0 and hide_if_empty:
 		to_set.visible = false
+	else:
+		to_set.visible = true
 	if label_to_set:
 		label_to_set.text = str(value)

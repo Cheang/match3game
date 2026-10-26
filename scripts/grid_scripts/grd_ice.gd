@@ -2,7 +2,7 @@ extends Node2D
 
 
 var ice_pieces = []
-var ice = preload("res://piece/obstacles_sq/ice.tscn")
+var ice = preload("res://tiles/obstacles/ice.tscn")
 var one_time: bool = false
 
 func _ready() -> void:

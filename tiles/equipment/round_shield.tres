@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://l16w0n5oght0" path="res://assets/_blue_icons/blue_icon_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Round Shield"
+icon = ExtResource("2_icon")
+description = "Gives 3 + Grit Armor"
+family = "shields"
+slot_cost = 1
+trigger_condition = 0
+cooldown_turns = 0
+once_per_battle = false
+allowed_colors = Array[int]([])
+base_armor = 3.0
+armor_stat_scaling = 2
+multiply_armor_by_combo = false
+can_upgrade = true
+upgrade = 0

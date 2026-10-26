@@ -19,12 +19,24 @@ var reward_resource: Reward
 var index: int
 
 func _on_choise_btn_pressed() -> void:
+	if reward_resource == null:
+		return
 	Global.game_is_played = false
-	reward_resource.activate()
-	reward_resource.boost()
-	
+
+	var mods: Array[Equipment] = reward_resource.get_resolved_modifiers()
+	if not mods.is_empty():
+		var modal := SlotEquipModal.new()
+		get_tree().current_scene.add_child(modal)
+		modal.prompt_modifiers(mods)
+		await modal.modal_closed
+		reward_resource.activate(false)
+	else:
+		reward_resource.activate(true)
+
+	_proceed_after_reward()
+
+func _proceed_after_reward() -> void:
 	if Global.boss_beaten:
-		#this will go to the next level
 		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	elif Global.post_combat_event != null:
 		Global.area_cur_event = Global.post_combat_event
@@ -32,7 +44,6 @@ func _on_choise_btn_pressed() -> void:
 		SceneManager.change_scene("res://event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	else:
 		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-
 
 static var cached_styleboxes: Dictionary = {}
 
@@ -59,6 +70,7 @@ func load_btn():
 	reward_base.texture = reward_resource.base if reward_resource.base != null else null
 	reward_icon.texture = reward_resource.icon if reward_resource.icon != null else null
 	reward_name.text = reward_resource.name
-	reward_description.text = reward_resource.description
+	reward_description.text = reward_resource.get_effect_description() if reward_resource.has_method("get_effect_description") else reward_resource.description
 
-	add_theme_stylebox_override("panel", get_rarity_stylebox(reward_resource.rearity))
+	var r_key: String = reward_resource.rearity if reward_resource.rearity != null and reward_resource.rearity != "" else "COMMON"
+	add_theme_stylebox_override("panel", get_rarity_stylebox(r_key))

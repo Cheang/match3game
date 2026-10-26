@@ -34,22 +34,63 @@ func set_btn():
 signal reward_requested(texture: Texture2D, text: String, icon: Texture2D, description: String)
 signal next_event_requested(next_event: Event)
 
+func _matches_piece_filter(mod: Equipment, filter_str: String, blacklist_str: String) -> bool:
+	if mod == null:
+		return false
+	if blacklist_str != "" and mod.piece_name == blacklist_str:
+		return false
+	var target_lower: String = filter_str.to_lower()
+	if mod.piece_name.to_lower() == target_lower:
+		return true
+	for c in mod.get_effective_allowed_colors():
+		if Global.get_color_name(c).to_lower() == target_lower:
+			return true
+	return false
+
+func _remove_matching_modifiers(filter_str: String, blacklist_str: String, max_to_remove: int) -> int:
+	if Global.cur_char == null:
+		return 0
+	var removed_count: int = 0
+	Global.cur_char.ensure_loadout_tracks()
+	for k in Global.cur_char.color_loadouts.keys():
+		var track: ColorLoadoutTrack = Global.cur_char.color_loadouts[k]
+		if track == null:
+			continue
+		var idx: int = 0
+		while idx < track.equipped_modifiers.size():
+			var mod: Equipment = track.equipped_modifiers[idx]
+			if _matches_piece_filter(mod, filter_str, blacklist_str):
+				track.equipped_modifiers.remove_at(idx)
+				removed_count += 1
+				if max_to_remove != 0 and removed_count >= max_to_remove:
+					Global.cur_char.loadoutChanged.emit()
+					return removed_count
+			else:
+				idx += 1
+
+	var inv_idx: int = 0
+	while inv_idx < Global.cur_char.modifier_inventory.size():
+		var mod: Equipment = Global.cur_char.modifier_inventory[inv_idx]
+		if _matches_piece_filter(mod, filter_str, blacklist_str):
+			Global.cur_char.modifier_inventory.remove_at(inv_idx)
+			removed_count += 1
+			if max_to_remove != 0 and removed_count >= max_to_remove:
+				break
+		else:
+			inv_idx += 1
+	Global.cur_char.loadoutChanged.emit()
+	return removed_count
+
 func _on_btn_pressed() -> void:
 	if Global.game_is_played == true:
 		if resource.gold_cost > 0:
-			Global.cur_char.gold -= resource.gold_cost
+			Global.cur_char.modify_stat("gold", -resource.gold_cost)
 		if resource.req_piece_remove:
-			var i = 0
-			var numb = 0
-			while i < Global.cur_char.deck_in_game.size():
-				if (Global.cur_char.deck_in_game[i].piece_name == resource.req_piece_name or Global.cur_char.deck_in_game[i].color == resource.req_piece_name) and Global.cur_char.deck_in_game[i].piece_name != resource.req_piece_remove_blacklist:
-					Global.cur_char.deck_in_game.remove_at(i)
-					numb += 1
-					if resource.req_piece_numb != 0 and numb == resource.req_piece_numb:
-						break
-				else:
-					i += 1
-			Global.event_pieces_removed = numb
+			Global.event_pieces_removed = _remove_matching_modifiers(
+				resource.req_piece_name,
+				resource.req_piece_remove_blacklist,
+				resource.req_piece_numb
+			)
 		if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
 			var stat_to_check = Global.cur_char.get(resource.req_stat)
 			if stat_to_check < resource.req_value:
@@ -62,6 +103,27 @@ func _on_btn_pressed() -> void:
 				pass
 			3:
 				_show_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
+				var mods: Array[Equipment] = resource.reward.get_resolved_modifiers() if (resource.reward != null and resource.reward.has_method("get_resolved_modifiers")) else []
+				if not mods.is_empty():
+					resource.reward.apply_progression()
+					var modal := SlotEquipModal.new()
+					get_tree().current_scene.add_child(modal)
+					modal.prompt_modifiers(mods)
+					await modal.modal_closed
+					if resource is EvtChoiseReward:
+						var evt_rew: EvtChoiseReward = resource as EvtChoiseReward
+						if evt_rew.fight_overwrite and not evt_rew.enemy.is_empty():
+							Global.post_combat_event = evt_rew.next_event
+							Global.set_up_enemy(evt_rew.enemy.pick_random())
+							SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+							return
+						if evt_rew.next_event != null:
+							var screen = find_parent("event_screen")
+							if screen and screen.has_method("display_event"):
+								screen.display_event(evt_rew.next_event, true)
+								return
+						SceneManager.change_scene(evt_rew.next_scene if evt_rew.next_scene != "" else "res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+						return
 				await get_tree().create_timer(1.5).timeout
 				if resource is EvtChoiseReward and resource.next_event != null:
 					resource.handled_in_place = true

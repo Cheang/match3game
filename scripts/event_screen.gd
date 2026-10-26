@@ -107,9 +107,20 @@ func get_reward(texture: Texture2D, text: String,icon: Texture2D, description: S
 func has_enough_pieces(piece_name: String, req: int) -> bool:
 	if req <= 0:
 		return true
-	var count = 0
-	for piece in Global.cur_char.deck_in_game:
-		if piece.color == piece_name or piece.piece_name == piece_name:
+	if Global.cur_char == null:
+		return false
+	var count: int = 0
+	var target_lower: String = piece_name.to_lower()
+	for mod in Global.cur_char.get_all_owned_modifiers():
+		if mod == null:
+			continue
+		var matches_name: bool = mod.piece_name.to_lower() == target_lower
+		var matches_color: bool = false
+		for c in mod.get_effective_allowed_colors():
+			if Global.get_color_name(c).to_lower() == target_lower:
+				matches_color = true
+				break
+		if matches_name or matches_color:
 			count += 1
 			if count >= req:
 				return true

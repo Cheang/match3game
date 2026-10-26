@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bikml4uccjvo7" path="res://assets/_blue_icons/blue_icon_2.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+piece_name = "Iron Shield"
+icon = ExtResource("2_icon")
+description = "Gives 6 + Grit Armor"
+family = "shields"
+slot_cost = 2
+trigger_condition = 0
+cooldown_turns = 1
+once_per_battle = false
+allowed_colors = Array[int]([])
+base_armor = 6.0
+armor_stat_scaling = 2
+multiply_armor_by_combo = false
+can_upgrade = true
+upgrade = 0

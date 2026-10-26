@@ -4,7 +4,7 @@ extends Node2D
 signal remove_flesh
 
 var flesh_pieces = []
-var flesh = preload("res://piece/obstacles_sq/flesh.tscn")
+var flesh = preload("res://tiles/obstacles/flesh.tscn")
 
 func _ready() -> void:
 	flesh_pieces = Global.make_2d_array(Global.grd_width, Global.grd_height)

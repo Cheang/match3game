@@ -6,14 +6,13 @@
 [ext_resource type="Texture2D" uid="uid://cq1lm5028pqof" path="res://assets/purple_0_sq.png" id="2_lyahq"]
 [ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/_purple_icons/purple_icon_3.png" id="3_u5k8t"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="3_ye4l4"]
-[ext_resource type="Script" uid="uid://cjtgbxuhxwr3d" path="res://rewards/others/stat_resource.gd" id="4_q28c1"]
+[ext_resource type="Script" path="res://rewards/reward.gd" id="4_q28c1"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="7_lyp7t"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="8_kdhdn"]
 
 [sub_resource type="Resource" id="Resource_yw150"]
 script = ExtResource("4_q28c1")
-stats = Array[String](["cur_health"])
-increase = [4.0]
+heal_hp = 4.0
 name = "Heal"
 description = "+4 HP"
 base = ExtResource("2_lyahq")
@@ -28,8 +27,7 @@ gold_cost = 6
 
 [sub_resource type="Resource" id="Resource_8av5t"]
 script = ExtResource("4_q28c1")
-stats = Array[String](["cur_health"])
-increase = [10.0]
+heal_hp = 10.0
 name = "Heal"
 description = "+10 HP"
 base = ExtResource("2_lyahq")

@@ -4,7 +4,7 @@ extends Node2D
 signal remove_rock
 
 var rock_pieces = []
-var rock = preload("res://piece/obstacles_sq/rock.tscn")
+var rock = preload("res://tiles/obstacles/rock.tscn")
 
 func _ready() -> void:
 	rock_pieces = Global.make_2d_array(Global.grd_width, Global.grd_height)
