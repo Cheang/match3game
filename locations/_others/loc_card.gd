@@ -23,10 +23,10 @@ func _on_selection_btn_pressed() -> void:
 		var enemy_chosen = loc_res.which_enemy.pick_random()
 		Global.set_up_enemy(enemy_chosen)
 		Global.minions_killed += 1
-		destination_scene = "res://game_window.tscn"
+		destination_scene = "res://scenes/game_window.tscn"
 	elif loc_res.event_encounter and loc_res.event_resource:
 		Global.area_cur_event = loc_res.event_resource
-		destination_scene = "res://event_screen.tscn"
+		destination_scene = "res://scenes/event_screen.tscn"
 	selected = true
 	Global.game_is_played = false
 	if destination_scene != "":

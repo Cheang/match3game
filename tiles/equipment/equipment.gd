@@ -31,6 +31,46 @@ enum StatScaling {
 	CURRENT_ARMOR = 5       ## Adds the player's current Physical Armor in combat.
 }
 
+## Equipment rarity tiers.
+enum Rarity {
+	COMMON = 0,
+	UNCOMMON = 1,
+	RARE = 2,
+	EPIC = 3,
+	LEGENDARY = 4,
+	GODLY = 5
+}
+
+static func get_rarity_name(r: Rarity) -> String:
+	match r:
+		Rarity.COMMON: return "Common"
+		Rarity.UNCOMMON: return "Uncommon"
+		Rarity.RARE: return "Rare"
+		Rarity.EPIC: return "Epic"
+		Rarity.LEGENDARY: return "Legendary"
+		Rarity.GODLY: return "Godly"
+	return "Common"
+
+static func get_rarity_color(r: Rarity) -> Color:
+	match r:
+		Rarity.COMMON: return Color("#b0b0b0")
+		Rarity.UNCOMMON: return Color("#3ca370")
+		Rarity.RARE: return Color("#4d65b4")
+		Rarity.EPIC: return Color("#a854a8")
+		Rarity.LEGENDARY: return Color("#f2c94c")
+		Rarity.GODLY: return Color("#44ddff")
+	return Color("#b0b0b0")
+
+static func get_rarity_hex(r: Rarity) -> String:
+	match r:
+		Rarity.COMMON: return "#b0b0b0"
+		Rarity.UNCOMMON: return "#3ca370"
+		Rarity.RARE: return "#4d65b4"
+		Rarity.EPIC: return "#a854a8"
+		Rarity.LEGENDARY: return "#f2c94c"
+		Rarity.GODLY: return "#44ddff"
+	return "#b0b0b0"
+
 # ==============================================================================
 # 1. IDENTITY & SLOT
 # ==============================================================================
@@ -47,7 +87,18 @@ enum StatScaling {
 @export_range(1, 3) var slot_cost: int = 1
 
 # ==============================================================================
-# 2. TRIGGER & RESTRICTIONS
+# 2. RARITY & SCALING
+# ==============================================================================
+@export_group("Rarity & Scaling")
+## Current rarity tier of this equipment.
+## Base version (COMMON) grants 0 passive hero stat boosts.
+## Higher rarities grant passive stats, scaled effects, and extra colors configured in rarity_tiers.
+@export var rarity: Rarity = Rarity.COMMON
+## Specific tier configurations (passive stats, effect scaling, and color options) for higher rarities.
+@export var rarity_tiers: Array[EquipmentRarityTier] = []
+
+# ==============================================================================
+# 3. TRIGGER & RESTRICTIONS
 # ==============================================================================
 @export_group("Trigger & Restrictions")
 ## Board condition required for this equipment to fire when its track color is matched.
@@ -175,11 +226,12 @@ func get_context_potency_multiplier(ctx: MatchContext) -> float:
 func on_triggered() -> void:
 	if once_per_battle:
 		used_this_battle = true
-	if cooldown_turns > 0:
+	var eff_cd: int = get_effective_cooldown_turns()
+	if eff_cd > 0:
 		var cdr: int = 0
 		if Global.cur_char != null:
 			cdr = Global.cur_char.cooldown_reduction + int(floor(Global.cur_char.spirit * 0.25))
-		current_cooldown = max(0, cooldown_turns - cdr)
+		current_cooldown = max(0, eff_cd - cdr)
 
 func reset_for_battle() -> void:
 	current_cooldown = 0
@@ -206,6 +258,127 @@ func _get_stat_value(c_res, scaling: StatScaling) -> float:
 			return float(c_res.cur_armor) if "cur_armor" in c_res else 0.0
 	return 0.0
 
+# ==============================================================================
+# DYNAMIC RARITY & TIER RESOLUTION
+# ==============================================================================
+
+## Returns the active EquipmentRarityTier for this item's current rarity.
+## Returns null if this item is COMMON (base) or has no configuration for this tier.
+func get_active_tier() -> EquipmentRarityTier:
+	if rarity == Rarity.COMMON:
+		return null
+	for tier in rarity_tiers:
+		if tier != null and int(tier.rarity) == int(rarity):
+			return tier
+	return null
+
+## Returns dictionary of all passive hero stat boosts for the current rarity tier.
+## Base (COMMON) items return an empty dictionary (0 stat boosts).
+func get_stat_boosts() -> Dictionary:
+	var tier = get_active_tier()
+	if tier == null:
+		return {}
+	return tier.get_stat_boosts()
+
+func get_effective_base_damage() -> float:
+	var tier = get_active_tier()
+	if tier == null:
+		return base_damage
+	if tier.is_effect_override:
+		return tier.base_damage if tier.base_damage > 0.0 else base_damage
+	return base_damage + tier.base_damage
+
+func get_effective_hit_count() -> int:
+	var tier = get_active_tier()
+	if tier == null:
+		return max(1, hit_count)
+	if tier.is_effect_override:
+		return max(1, tier.hit_count) if tier.hit_count > 0 else max(1, hit_count)
+	return max(1, hit_count + tier.hit_count)
+
+func get_effective_damage_combo_multiplier() -> float:
+	var tier = get_active_tier()
+	if tier == null:
+		return damage_combo_multiplier
+	if tier.is_effect_override:
+		return tier.damage_combo_multiplier if tier.damage_combo_multiplier > 0.0 else damage_combo_multiplier
+	return damage_combo_multiplier + tier.damage_combo_multiplier
+
+func get_effective_base_armor() -> float:
+	var tier = get_active_tier()
+	if tier == null:
+		return base_armor
+	if tier.is_effect_override:
+		return tier.base_armor if tier.base_armor > 0.0 else base_armor
+	return base_armor + tier.base_armor
+
+func get_effective_base_magic_armor() -> float:
+	var tier = get_active_tier()
+	if tier == null:
+		return base_magic_armor
+	if tier.is_effect_override:
+		return tier.base_magic_armor if tier.base_magic_armor > 0.0 else base_magic_armor
+	return base_magic_armor + tier.base_magic_armor
+
+func get_effective_base_heal() -> float:
+	var tier = get_active_tier()
+	if tier == null:
+		return base_heal
+	if tier.is_effect_override:
+		return tier.base_heal if tier.base_heal > 0.0 else base_heal
+	return base_heal + tier.base_heal
+
+func get_effective_moves_to_give() -> int:
+	var tier = get_active_tier()
+	if tier == null:
+		return moves_to_give
+	if tier.is_effect_override:
+		return tier.moves_to_give if tier.moves_to_give > 0 else moves_to_give
+	return moves_to_give + tier.moves_to_give
+
+func get_effective_gold_to_give() -> int:
+	var tier = get_active_tier()
+	if tier == null:
+		return gold_to_give
+	if tier.is_effect_override:
+		return tier.gold_to_give if tier.gold_to_give > 0 else gold_to_give
+	return gold_to_give + tier.gold_to_give
+
+func get_effective_combo_points_before() -> int:
+	var tier = get_active_tier()
+	if tier == null:
+		return combo_points_before
+	if tier.is_effect_override:
+		return tier.combo_points_before if tier.combo_points_before != 0 else combo_points_before
+	return combo_points_before + tier.combo_points_before
+
+func get_effective_combo_points_after() -> int:
+	var tier = get_active_tier()
+	if tier == null:
+		return combo_points_after
+	if tier.is_effect_override:
+		return tier.combo_points_after if tier.combo_points_after != 0 else combo_points_after
+	return combo_points_after + tier.combo_points_after
+
+func get_effective_cooldown_turns() -> int:
+	var tier = get_active_tier()
+	if tier != null and tier.cooldown_override >= 0:
+		return tier.cooldown_override
+	return cooldown_turns
+
+## Dynamically sets this equipment instance's rarity and notifies player to recalculate passives.
+func set_rarity(new_rarity: Rarity) -> void:
+	rarity = new_rarity
+	if Engine.get_main_loop() != null and Global != null and Global.cur_char != null:
+		Global.cur_char.recalculate_equipment_passives()
+
+## Creates an independent clone of this equipment initialized to a specific rarity tier.
+## Designed for Reward Trees, Combat Drops, and Shop inventories.
+func duplicate_with_rarity(target_rarity: Rarity) -> Equipment:
+	var dup: Equipment = duplicate(true)
+	dup.rarity = target_rarity
+	return dup
+
 ## Executes all active effects configured on this equipment.
 func activate(context = null) -> void:
 	var cur_char: PlayerResource = _resolve_char(context)
@@ -219,21 +392,24 @@ func activate(context = null) -> void:
 	var crit_factor: float = (1.0 + cur_char.crit_mutly / 100.0) if is_crit else 1.0
 
 	# 1. Pre-Effect Hand Combo
-	if combo_points_before != 0:
-		cur_char.modify_stat("hand_combo", combo_points_before)
+	var eff_combo_before: int = get_effective_combo_points_before()
+	if eff_combo_before != 0:
+		cur_char.modify_stat("hand_combo", eff_combo_before)
 
 	# 2. Attack & Damage Effect
-	if base_damage > 0.0 or damage_combo_multiplier > 0.0:
+	var eff_dmg: float = get_effective_base_damage()
+	var eff_combo_mult: float = get_effective_damage_combo_multiplier()
+	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
 		if cur_enemy != null:
-			var loops: int = max(1, hit_count)
+			var loops: int = get_effective_hit_count()
 			var stat_bonus: float = _get_stat_value(cur_char, damage_stat_scaling)
 			var flat_upg: float = float(upgrade) if not upgrade_scales_combo_mult else 0.0
-			var combo_mult: float = damage_combo_multiplier + (float(upgrade) if upgrade_scales_combo_mult else 0.0)
+			var total_combo_mult: float = eff_combo_mult + (float(upgrade) if upgrade_scales_combo_mult else 0.0)
 
 			for i in loops:
-				var dmg_val: float = base_damage + stat_bonus + flat_upg
-				if combo_mult > 0.0:
-					dmg_val += cur_char.hand_combo * combo_mult
+				var dmg_val: float = eff_dmg + stat_bonus + flat_upg
+				if total_combo_mult > 0.0:
+					dmg_val += cur_char.hand_combo * total_combo_mult
 				dmg_val = max(1.0, roundf(dmg_val * mult * crit_factor))
 				cur_enemy.take_dmg(dmg_val, int(damage_type))
 				if ctx != null and ctx.lifesteal_bonus > 0.0:
@@ -241,43 +417,49 @@ func activate(context = null) -> void:
 					cur_char.modify_stat("cur_health", heal_amt)
 
 	# 3. Physical Armor Effect
-	if base_armor > 0.0:
-		var arm_val: float = base_armor + float(upgrade) + _get_stat_value(cur_char, armor_stat_scaling)
+	var eff_arm: float = get_effective_base_armor()
+	if eff_arm > 0.0:
+		var arm_val: float = eff_arm + float(upgrade) + _get_stat_value(cur_char, armor_stat_scaling)
 		if multiply_armor_by_combo:
 			arm_val *= max(1, cur_char.hand_combo)
 		arm_val = roundf(arm_val * mult * crit_factor)
 		cur_char.modify_stat("cur_armor", arm_val)
 
 	# 4. Magic Armor Effect
-	if base_magic_armor > 0.0:
-		var m_arm_val: float = base_magic_armor + float(upgrade) + _get_stat_value(cur_char, magic_armor_stat_scaling)
+	var eff_m_arm: float = get_effective_base_magic_armor()
+	if eff_m_arm > 0.0:
+		var m_arm_val: float = eff_m_arm + float(upgrade) + _get_stat_value(cur_char, magic_armor_stat_scaling)
 		if multiply_magic_armor_by_combo:
 			m_arm_val *= max(1, cur_char.hand_combo)
 		m_arm_val = roundf(m_arm_val * mult * crit_factor)
 		cur_char.modify_stat("cur_mage_armor", m_arm_val)
 
 	# 5. Heal HP Effect
-	if base_heal > 0.0:
-		var heal_val: float = base_heal + float(upgrade) + _get_stat_value(cur_char, heal_stat_scaling)
+	var eff_heal: float = get_effective_base_heal()
+	if eff_heal > 0.0:
+		var heal_val: float = eff_heal + float(upgrade) + _get_stat_value(cur_char, heal_stat_scaling)
 		heal_val = roundf(heal_val * mult * crit_factor)
 		cur_char.modify_stat("cur_health", heal_val)
 
 	# 6. Utility Effects (Moves, Dodge, Gold)
-	if moves_to_give > 0:
-		var total_moves: int = moves_to_give + upgrade
+	var eff_moves: int = get_effective_moves_to_give()
+	if eff_moves > 0:
+		var total_moves: int = eff_moves + upgrade
 		cur_char.modify_stat("moves_left", total_moves * 2 if is_crit else total_moves)
 
 	if grant_dodge:
 		cur_char.modify_stat("dodging", true, false)
 
-	if gold_to_give > 0:
-		cur_char.modify_stat("gold", gold_to_give + upgrade)
+	var eff_gold: int = get_effective_gold_to_give()
+	if eff_gold > 0:
+		cur_char.modify_stat("gold", eff_gold + upgrade)
 
 	# 7. Post-Effect Hand Combo / Finisher Consumption
+	var eff_combo_after: int = get_effective_combo_points_after()
 	if consume_all_combo:
 		cur_char.modify_stat("hand_combo", 0, false)
-	elif combo_points_after != 0:
-		cur_char.modify_stat("hand_combo", combo_points_after)
+	elif eff_combo_after != 0:
+		cur_char.modify_stat("hand_combo", eff_combo_after)
 
 	_on_custom_activate(cur_char, cur_enemy, ctx)
 
@@ -285,21 +467,32 @@ func activate(context = null) -> void:
 func _on_custom_activate(_cur_char: PlayerResource, _cur_enemy: EnemyResource, _ctx: MatchContext) -> void:
 	pass
 
-## Builds a rich BBCode description reflecting current player stats and upgrades across all active effects.
+## Builds a rich BBCode description reflecting current player stats, rarity bonuses, and upgrades across all active effects.
 func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 	var upg: int = upgrade if upgrades < 0 else upgrades
 	var c_res = char_resource if char_resource != null else Global.cur_char
 	var parts: Array[String] = []
 
-	if combo_points_before > 0:
-		parts.append("[color=#7a3045]+%d Combo[/color]" % combo_points_before)
+	var tier = get_active_tier()
+	if tier != null:
+		var stat_bbcode: String = tier.get_stat_boosts_bbcode()
+		if stat_bbcode != "":
+			parts.append(stat_bbcode)
+		if tier.custom_description != "":
+			parts.append(tier.custom_description)
 
-	if base_damage > 0.0 or damage_combo_multiplier > 0.0:
+	var eff_combo_before: int = get_effective_combo_points_before()
+	if eff_combo_before > 0:
+		parts.append("[color=#7a3045]+%d Combo[/color]" % eff_combo_before)
+
+	var eff_dmg: float = get_effective_base_damage()
+	var eff_combo_mult: float = get_effective_damage_combo_multiplier()
+	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
 		var stat_bonus: float = _get_stat_value(c_res, damage_stat_scaling)
 		var flat_upg: float = float(upg) if not upgrade_scales_combo_mult else 0.0
-		var dmg: float = base_damage + stat_bonus + flat_upg
-		var combo_mult: float = damage_combo_multiplier + (float(upg) if upgrade_scales_combo_mult else 0.0)
-		var count: int = max(1, hit_count)
+		var dmg: float = eff_dmg + stat_bonus + flat_upg
+		var combo_mult: float = eff_combo_mult + (float(upg) if upgrade_scales_combo_mult else 0.0)
+		var count: int = get_effective_hit_count()
 		var color_str: String = "#3ca370" if damage_type == DamageType.MAGIC else "#ae2334"
 		var type_label: String = " Magic" if damage_type == DamageType.MAGIC else ""
 
@@ -313,35 +506,41 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 		else:
 			parts.append("Deals: [color=%s]%s[/color]%s DMG" % [color_str, _fmt(dmg), type_label])
 
-	if base_armor > 0.0:
-		var total_armor: float = base_armor + float(upg) + _get_stat_value(c_res, armor_stat_scaling)
+	var eff_arm: float = get_effective_base_armor()
+	if eff_arm > 0.0:
+		var total_armor: float = eff_arm + float(upg) + _get_stat_value(c_res, armor_stat_scaling)
 		if multiply_armor_by_combo:
 			parts.append("Gives: [color=#4d65b4]%s[/color] Armor * [color=#7a3045]Combo[/color]" % [_fmt(total_armor)])
 		else:
 			parts.append("Gives: [color=#4d65b4]%s[/color] Armor" % [_fmt(total_armor)])
 
-	if base_magic_armor > 0.0:
-		var total_m_armor: float = base_magic_armor + float(upg) + _get_stat_value(c_res, magic_armor_stat_scaling)
+	var eff_m_arm: float = get_effective_base_magic_armor()
+	if eff_m_arm > 0.0:
+		var total_m_armor: float = eff_m_arm + float(upg) + _get_stat_value(c_res, magic_armor_stat_scaling)
 		if multiply_magic_armor_by_combo:
 			parts.append("Gives: [color=#0b8a8f]%s[/color] Magic Armor * [color=#7a3045]Combo[/color]" % [_fmt(total_m_armor)])
 		else:
 			parts.append("Gives: [color=#0b8a8f]%s[/color] Magic Armor" % [_fmt(total_m_armor)])
 
-	if base_heal > 0.0:
-		var total_heal: float = base_heal + float(upg) + _get_stat_value(c_res, heal_stat_scaling)
+	var eff_heal: float = get_effective_base_heal()
+	if eff_heal > 0.0:
+		var total_heal: float = eff_heal + float(upg) + _get_stat_value(c_res, heal_stat_scaling)
 		parts.append("Heals: [color=#a854a8]%s[/color] HP" % [_fmt(total_heal)])
 
-	if moves_to_give > 0:
-		parts.append("Gives: [color=#639bff]+%d[/color] Move(s)" % [moves_to_give + upg])
+	var eff_moves: int = get_effective_moves_to_give()
+	if eff_moves > 0:
+		parts.append("Gives: [color=#639bff]+%d[/color] Move(s)" % [eff_moves + upg])
 
 	if grant_dodge:
 		parts.append("Grants: [color=#5ac54f]Dodge[/color]")
 
-	if gold_to_give > 0:
-		parts.append("Gives: [color=#f2c94c]+%d[/color] Gold" % [gold_to_give + upg])
+	var eff_gold: int = get_effective_gold_to_give()
+	if eff_gold > 0:
+		parts.append("Gives: [color=#f2c94c]+%d[/color] Gold" % [eff_gold + upg])
 
-	if combo_points_after > 0:
-		parts.append("Then [color=#7a3045]+%d Combo[/color]" % combo_points_after)
+	var eff_combo_after: int = get_effective_combo_points_after()
+	if eff_combo_after > 0:
+		parts.append("Then [color=#7a3045]+%d Combo[/color]" % eff_combo_after)
 
 	if consume_all_combo:
 		parts.append("Consumes all [color=#7a3045]Combo[/color]")
@@ -373,6 +572,9 @@ func _fmt(val: float) -> String:
 	return str(snappedf(val, 0.1))
 
 func is_colorless() -> bool:
+	var tier = get_active_tier()
+	if tier != null and tier.allow_all_colors:
+		return true
 	return bound_color == 0 and allowed_colors.is_empty()
 
 func is_allowed_on_color(target_color: int) -> bool:
@@ -384,6 +586,13 @@ func is_allowed_on_color(target_color: int) -> bool:
 	for c in allowed_colors:
 		if int(c) == 0 or int(int(c) / 100) * 100 == target_base:
 			return true
+	var tier = get_active_tier()
+	if tier != null:
+		if tier.allow_all_colors:
+			return true
+		for c in tier.extra_allowed_colors:
+			if int(c) == 0 or int(int(c) / 100) * 100 == target_base:
+				return true
 	return false
 
 func get_effective_allowed_colors() -> Array[int]:
@@ -391,12 +600,21 @@ func get_effective_allowed_colors() -> Array[int]:
 		if Engine.get_main_loop() != null and Global != null and Global.cur_char != null and not Global.cur_char.active_color_pool.is_empty():
 			return Global.cur_char.active_color_pool
 		return [100, 200, 300, 400, 500]
+	var res: Array[int] = []
 	if not allowed_colors.is_empty():
-		var res: Array[int] = []
 		for c in allowed_colors:
-			res.append(int(c))
-		return res
-	return [bound_color]
+			if not res.has(int(c)):
+				res.append(int(c))
+	elif bound_color > 0:
+		res.append(bound_color)
+	var tier = get_active_tier()
+	if tier != null:
+		for c in tier.extra_allowed_colors:
+			if not res.has(int(c)):
+				res.append(int(c))
+	if res.is_empty():
+		return [100, 200, 300, 400, 500]
+	return res
 
 func get_trigger_badge_text() -> String:
 	match trigger_condition:

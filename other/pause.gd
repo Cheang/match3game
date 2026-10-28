@@ -152,7 +152,7 @@ func _on_options_pressed() -> void:
 
 func _on_back_to_mm_pressed() -> void:
 	await get_tree().create_timer(.1).timeout
-	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+	SceneManager.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func set_title(text: String):
 	var titletxt: Label = title.get_child(0)

@@ -121,7 +121,7 @@ func create_default_choice(text: String = "Proceed") -> Dictionary:
 		"reward_stat_amount": 25.0,
 		"reward_piece_path": "res://tiles/equipment/short_sword.tres",
 		"enemy_path": "res://enemies/minion/pesents/pesent_1.tres",
-		"next_scene": "res://locations_screen.tscn",
+		"next_scene": "res://scenes/locations_screen.tscn",
 		"gold_cost": 0,
 		"req_class": "None",
 		"req_stat": "None",
@@ -851,7 +851,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 						
 						var cur_scene = c_data.get("next_scene", "")
 						if cur_scene == "":
-							cur_scene = "res://locations_screen.tscn"
+							cur_scene = "res://scenes/locations_screen.tscn"
 							c_data["next_scene"] = cur_scene
 						
 						var sc_edit = LineEdit.new()
@@ -1089,7 +1089,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			
 			var cur_scene = c_data.get("next_scene", "")
 			if cur_scene == "":
-				cur_scene = "res://locations_screen.tscn"
+				cur_scene = "res://scenes/locations_screen.tscn"
 				c_data["next_scene"] = cur_scene
 			
 			var sc_edit = LineEdit.new()
@@ -1174,24 +1174,32 @@ func save_event_to_file(file_path: String) -> bool:
 					
 				"reward":
 					var c_rew = EvtChoiseReward.new()
+					var rew = Reward.new()
+					rew.name = c.get("reward_name", "Reward")
+					rew.description = c.get("reward_desc", "")
 					if c.get("reward_type", "stat") == "piece":
-						var r_p = R_Piece.new()
-						r_p.name = c.get("reward_name", "Reward")
-						r_p.description = c.get("reward_desc", "")
 						if c.get("reward_piece_path", "") != "" and ResourceLoader.exists(c["reward_piece_path"]):
 							var p_scene = load(c["reward_piece_path"])
 							if p_scene is Equipment:
-								r_p.modifiers_to_add.append(p_scene)
-							elif p_scene is PackedScene:
-								r_p.piece_to_add.append(p_scene)
-						c_rew.reward = r_p
+								rew.equipment_to_grant.append(p_scene)
 					else:
-						var r_s = R_Stat.new()
-						r_s.name = c.get("reward_name", "Reward")
-						r_s.description = c.get("reward_desc", "")
-						r_s.stats.append(c.get("reward_stat", "gold"))
-						r_s.increase.append(c.get("reward_stat_amount", 25.0))
-						c_rew.reward = r_s
+						var stat_name = c.get("reward_stat", "gold")
+						var stat_val = c.get("reward_stat_amount", 25.0)
+						if stat_name == "gold":
+							rew.gold = int(stat_val)
+						elif stat_name == "max_health":
+							rew.max_health = float(stat_val)
+						elif stat_name == "cur_health" or stat_name == "health":
+							rew.heal_hp = float(stat_val)
+						elif stat_name == "might":
+							rew.might = float(stat_val)
+						elif stat_name == "grit":
+							rew.grit = float(stat_val)
+						elif stat_name == "spirit":
+							rew.spirit = float(stat_val)
+						elif stat_name == "speed":
+							rew.speed = int(stat_val)
+					c_rew.reward = rew
 					
 					var after_act = c.get("after_reward", "scene_change")
 					match after_act:
@@ -1212,13 +1220,13 @@ func save_event_to_file(file_path: String) -> bool:
 						"scene_change":
 							c_rew.fight_overwrite = false
 							c_rew.next_event = null
-							c_rew.next_scene = c.get("next_scene", "res://locations_screen.tscn")
+							c_rew.next_scene = c.get("next_scene", "res://scenes/locations_screen.tscn")
 					
 					choice_res = c_rew
 					
 				"scene_change":
 					var c_sc = EvtChoiseSceneChange.new()
-					c_sc.next_scene = c.get("next_scene", "res://locations_screen.tscn")
+					c_sc.next_scene = c.get("next_scene", "res://scenes/locations_screen.tscn")
 					choice_res = c_sc
 			
 			if choice_res != null:
@@ -1324,15 +1332,36 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 		elif c is EvtChoiseReward:
 			c_data["outcome_type"] = "reward"
 			if c.reward != null:
-				c_data["reward_name"] = c.reward.name
-				c_data["reward_desc"] = c.reward.description
-				if c.reward is R_Piece:
-					c_data["reward_type"] = "piece"
-					if not c.reward.modifiers_to_add.is_empty() and c.reward.modifiers_to_add[0] != null:
-						c_data["reward_piece_path"] = c.reward.modifiers_to_add[0].resource_path
-					elif not c.reward.piece_to_add.is_empty() and c.reward.piece_to_add[0] != null:
-						c_data["reward_piece_path"] = c.reward.piece_to_add[0].resource_path
-				elif c.reward is R_Stat:
+				c_data["reward_name"] = c.reward.name if "name" in c.reward else ""
+				c_data["reward_desc"] = c.reward.description if "description" in c.reward else ""
+				if c.reward is Reward:
+					if not c.reward.equipment_to_grant.is_empty() and c.reward.equipment_to_grant[0] != null:
+						c_data["reward_type"] = "piece"
+						c_data["reward_piece_path"] = c.reward.equipment_to_grant[0].resource_path
+					else:
+						c_data["reward_type"] = "stat"
+						if c.reward.gold > 0:
+							c_data["reward_stat"] = "gold"
+							c_data["reward_stat_amount"] = float(c.reward.gold)
+						elif c.reward.heal_hp > 0:
+							c_data["reward_stat"] = "cur_health"
+							c_data["reward_stat_amount"] = float(c.reward.heal_hp)
+						elif c.reward.max_health > 0:
+							c_data["reward_stat"] = "max_health"
+							c_data["reward_stat_amount"] = float(c.reward.max_health)
+						elif c.reward.might > 0:
+							c_data["reward_stat"] = "might"
+							c_data["reward_stat_amount"] = float(c.reward.might)
+						elif c.reward.grit > 0:
+							c_data["reward_stat"] = "grit"
+							c_data["reward_stat_amount"] = float(c.reward.grit)
+						elif c.reward.spirit > 0:
+							c_data["reward_stat"] = "spirit"
+							c_data["reward_stat_amount"] = float(c.reward.spirit)
+						elif c.reward.speed > 0:
+							c_data["reward_stat"] = "speed"
+							c_data["reward_stat_amount"] = float(c.reward.speed)
+				elif "stats" in c.reward:
 					c_data["reward_type"] = "stat"
 					if not c.reward.stats.is_empty():
 						c_data["reward_stat"] = c.reward.stats[0]

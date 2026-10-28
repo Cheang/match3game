@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://erupfs4b6wm8"]
+[gd_scene format=3 uid="uid://erupfs4b6wm8"]
 
 [ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_iwqhq"]
 [ext_resource type="Script" uid="uid://cfgktauab7xd0" path="res://scripts/reward_screen.gd" id="1_tc7lg"]

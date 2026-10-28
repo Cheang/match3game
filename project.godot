@@ -33,8 +33,10 @@ MusicManager="*uid://klqktsr2spx7"
 
 window/size/viewport_width=576
 window/size/viewport_height=1024
-window/size/mode=3
+window/size/mode=0
 window/size/initial_screen=3
+window/size/window_width_override=427
+window/size/window_height_override=952
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/handheld/orientation=1

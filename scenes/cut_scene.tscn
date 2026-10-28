@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dxdqwb08tp1i4"]
+[gd_scene format=3 uid="uid://dxdqwb08tp1i4"]
 
 [ext_resource type="Script" uid="uid://dq6p0nr40adn1" path="res://scripts/cut_scene.gd" id="1_6c3w6"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/level_ui/event/cutscene_bg_kruchma_outside.png" id="2_lpdc2"]

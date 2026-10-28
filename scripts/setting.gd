@@ -68,4 +68,4 @@ func _on_sfx_mute_toggled(toggled_on: bool) -> void:
 
 func _on_back_pressed() -> void:
 	await get_tree().create_timer(.1).timeout
-	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+	SceneManager.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })

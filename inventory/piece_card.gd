@@ -27,14 +27,21 @@ func set_card_modifier(mod: Equipment) -> void:
 	if slot_cost_numb != null:
 		slot_cost_numb.text = str(mod.slot_cost)
 
-	cd_numb.text = str(mod.cooldown_turns)
+	cd_numb.text = str(mod.get_effective_cooldown_turns())
 	p_name.text = mod.piece_name
+	if mod.rarity > Equipment.Rarity.COMMON:
+		p_name.add_theme_color_override("font_color", Equipment.get_rarity_color(mod.rarity))
+	else:
+		p_name.remove_theme_color_override("font_color")
 
 	var badge: String = mod.get_trigger_badge_text()
+	var r_prefix: String = (Equipment.get_rarity_name(mod.rarity) + " ") if mod.rarity > Equipment.Rarity.COMMON else ""
 	if mod.once_per_battle:
-		piece_type.text = "1/Battle" + ((" [" + badge + "]") if badge != "" else "")
+		piece_type.text = r_prefix + "1/Battle" + ((" [" + badge + "]") if badge != "" else "")
 	elif badge != "":
-		piece_type.text = badge
+		piece_type.text = r_prefix + badge
+	elif mod.rarity > Equipment.Rarity.COMMON:
+		piece_type.text = Equipment.get_rarity_name(mod.rarity)
 	else:
 		piece_type.text = "Always"
 

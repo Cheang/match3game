@@ -7,7 +7,7 @@ func _ready() -> void:
 	
 	load_settings()
 	
-	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	SceneManager.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func load_settings():
 	if Global.setting_res == null:

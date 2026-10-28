@@ -6,17 +6,18 @@
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_tl81x"]
 [ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://event/_other/event_resource.gd" id="2_x4t16"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="3_nht5e"]
-[ext_resource type="Script" path="res://rewards/reward.gd" id="4_1sg0h"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="4_1sg0h"]
 [ext_resource type="Resource" uid="uid://duwwp183j67gq" path="res://enemies/minion/wild_boar/wild_boar_2.tres" id="4_jy64e"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="6_obeb2"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="7_5ffkd"]
 [ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="9_yrxgu"]
 
 [sub_resource type="Resource" id="Resource_4vsok"]
 script = ExtResource("4_1sg0h")
-gold = 5
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("3_nht5e")
+gold = 5
 
 [sub_resource type="Resource" id="Resource_s7dvr"]
 script = ExtResource("7_5ffkd")

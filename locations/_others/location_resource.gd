@@ -5,7 +5,7 @@ class_name Location
 @export var name: String
 @export_multiline var description: String
 @export var pic: Texture2D
-@export var next_scene: String = "res://main_menu.tscn"
+@export var next_scene: String = "res://scenes/main_menu.tscn"
 @export var transition_color: Color = Color('#2e222f')
 
 @export_category("Enemy")

@@ -127,7 +127,10 @@ func setup_slot(mod: Equipment, color_tint: Color, owner_track: ColorLoadoutTrac
 		else:
 			name_label.visible = true
 			name_label.text = mod.piece_name if mod.piece_name != "" else "Item"
-			name_label.add_theme_color_override("font_color", Color(0.92, 0.94, 0.9))
+			if mod.rarity > Equipment.Rarity.COMMON:
+				name_label.add_theme_color_override("font_color", Equipment.get_rarity_color(mod.rarity))
+			else:
+				name_label.add_theme_color_override("font_color", Color(0.92, 0.94, 0.9))
 
 		badge_label.text = mod.get_trigger_badge_text()
 		if not interactive_drag and mod.once_per_battle and mod.used_this_battle:
@@ -140,8 +143,16 @@ func setup_slot(mod: Equipment, color_tint: Color, owner_track: ColorLoadoutTrac
 			state_label.text = ""
 			modulate = Color.WHITE
 		sb.bg_color = color_tint.darkened(0.58)
-		sb.border_color = color_tint.lightened(0.12)
-		tooltip_text = "%s (%d-Slot)\n%s" % [mod.piece_name, slot_cost, mod.get_effect_description()]
+		if mod.rarity > Equipment.Rarity.COMMON:
+			sb.border_color = Equipment.get_rarity_color(mod.rarity)
+			sb.border_width_left = 2
+			sb.border_width_top = 2
+			sb.border_width_right = 2
+			sb.border_width_bottom = 2
+			tooltip_text = "%s [%s] (%d-Slot)\n%s" % [mod.piece_name, Equipment.get_rarity_name(mod.rarity), slot_cost, mod.get_effect_description()]
+		else:
+			sb.border_color = color_tint.lightened(0.12)
+			tooltip_text = "%s (%d-Slot)\n%s" % [mod.piece_name, slot_cost, mod.get_effect_description()]
 	add_theme_stylebox_override("panel", sb)
 
 func _gui_input(event: InputEvent) -> void:

@@ -41,11 +41,11 @@ func _on_start_pressed() -> void:
 		Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
 		if Global.area_cur_boss != null and Global.area_cur_boss.cut_scene:
 			Global.cur_cutscene = Global.area_cur_boss.cut_scene
-			Global.cur_scene = "res://cut_scene.tscn"
-			SceneManager.change_scene("res://cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+			Global.cur_scene = "res://scenes/cut_scene.tscn"
+			SceneManager.change_scene("res://scenes/cut_scene.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 		else:
-			Global.cur_scene = "res://locations_screen.tscn"
-			SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+			Global.cur_scene = "res://scenes/locations_screen.tscn"
+			SceneManager.change_scene("res://scenes/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_load_pressed() -> void:
 	if not choise_made:
@@ -66,7 +66,7 @@ func _on_char_select_pressed() -> void:
 func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
-		SceneManager.change_scene("res://setting.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/setting.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_quit_pressed() -> void:
 	Global.save()
 	get_tree().quit()

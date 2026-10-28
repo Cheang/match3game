@@ -131,7 +131,7 @@ func _on_enemy_enemy_attacked() -> void:
 
 func _on_back_to_mm_pressed() -> void:
 	Global.post_combat_event = null
-	SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+	SceneManager.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 
 func _on_tree_entered() -> void:
 	if Global.cur_char != null:
@@ -186,9 +186,9 @@ func enemy_died():
 			Global.bosses_killed += 1
 			if Global.bosses_killed >= Global.bosses_killed_needed:
 				Global.game_is_over = true
-				SceneManager.change_scene("res://thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
+				SceneManager.change_scene("res://scenes/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 				return
-		SceneManager.change_scene("res://reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
+		SceneManager.change_scene("res://scenes/reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 
 func destroy_tile(space_to_destroy: Array[Vector2]):
 	grd.mark_for_destruction(space_to_destroy)

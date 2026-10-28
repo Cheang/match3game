@@ -96,9 +96,9 @@ func _on_skip_pressed() -> void:
 	if Global.post_combat_event != null:
 		Global.area_cur_event = Global.post_combat_event
 		Global.post_combat_event = null
-		SceneManager.change_scene("res://event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	else:
-		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _on_reroll_pressed() -> void:
 	if Global.cur_char != null and Global.cur_char.rerolls > 0:

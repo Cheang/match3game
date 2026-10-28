@@ -5,18 +5,19 @@
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="2_f35as"]
 [ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://event/_other/event_resource.gd" id="2_x30kn"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/white_0_sq.png" id="4_6gs8v"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="4_v23nn"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="5_drwhw"]
-[ext_resource type="Script" path="res://rewards/reward.gd" id="5_lr1ko"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_lr1ko"]
 [ext_resource type="Resource" uid="uid://8koqx7511051" path="res://enemies/minion/pesents/pesent_1.tres" id="7_4nv4i"]
 [ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://event/_other/event_choise_varients/evt_choise_event.gd" id="7_h0m8j"]
 [ext_resource type="Script" uid="uid://bng6oewrwnmlg" path="res://event/_other/event_choise_varients/evt_choise_fight.gd" id="9_18ry6"]
 
 [sub_resource type="Resource" id="Resource_75jmv"]
 script = ExtResource("5_lr1ko")
-gold = 2
 name = "Gold Pieces"
 description = "Get 2 Gold"
 base = ExtResource("4_6gs8v")
+gold = 2
 
 [sub_resource type="Resource" id="Resource_olbvy"]
 script = ExtResource("5_drwhw")
@@ -68,8 +69,6 @@ text = "Join in the Fight"
 
 [sub_resource type="Resource" id="Resource_0qer2"]
 script = ExtResource("5_lr1ko")
-stats = Array[String](["gold"])
-increase = [5]
 name = "Gold Pouch"
 description = "Get 5 Gold"
 base = ExtResource("4_6gs8v")

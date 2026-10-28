@@ -44,7 +44,8 @@ var cur_enemy: EnemyResource
 var cur_scene: String
 var actual_cur_scene: String:
 	set(new_scene):
-		if new_scene == "res://setting.tscn" or new_scene == "res://main_menu.tscn" or new_scene == "res://reward_screen.tscn" or new_scene == "res://event_screen.tscn":
+		var file_name: String = new_scene.get_file()
+		if file_name in ["setting.tscn", "main_menu.tscn", "reward_screen.tscn", "event_screen.tscn"]:
 			actual_cur_scene = new_scene
 		else:
 			cur_scene = new_scene

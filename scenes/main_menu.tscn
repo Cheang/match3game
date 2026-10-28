@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://857yjlwtnl4h"]
+[gd_scene format=3 uid="uid://857yjlwtnl4h"]
 
 [ext_resource type="Script" uid="uid://ct6wwrp2oytjw" path="res://scripts/main_menu.gd" id="1_m0wtd"]
 [ext_resource type="Script" uid="uid://dwl0c4xoyd7ha" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]

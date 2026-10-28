@@ -37,13 +37,13 @@ func _on_choise_btn_pressed() -> void:
 
 func _proceed_after_reward() -> void:
 	if Global.boss_beaten:
-		SceneManager.change_scene("res://main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	elif Global.post_combat_event != null:
 		Global.area_cur_event = Global.post_combat_event
 		Global.post_combat_event = null
-		SceneManager.change_scene("res://event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	else:
-		SceneManager.change_scene("res://locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 static var cached_styleboxes: Dictionary = {}
 

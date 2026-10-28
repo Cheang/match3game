@@ -18,7 +18,7 @@ You nod solemnly, setting your cup down.
 You promise the old man to look into this creature a put it down for good."])
 npc = Array[Texture2D]([null, ExtResource("2_s82tq"), ExtResource("2_s82tq"), ExtResource("2_s82tq")])
 background = ExtResource("1_ykgu2")
-next_location = "res://locations_screen.tscn"
+next_location = "res://scenes/locations_screen.tscn"
 
 [resource]
 script = ExtResource("1_pkour")

@@ -177,6 +177,58 @@ signal loadoutChanged
 signal playerDied
 signal playerFinishedTurn
 
+## Internal tracking of currently active stat boosts from equipped equipment.
+var _active_equipment_stat_contributions: Dictionary = {}
+var _is_recalculating_passives: bool = false
+
+func _init() -> void:
+	if not loadoutChanged.is_connected(_on_loadout_changed):
+		loadoutChanged.connect(_on_loadout_changed)
+
+func _on_loadout_changed() -> void:
+	recalculate_equipment_passives()
+
+## Recalculates all passive stat boosts from all equipped equipment across all active tracks.
+## Reconciles against previously applied contributions with zero stat drift.
+func recalculate_equipment_passives() -> void:
+	if _is_recalculating_passives:
+		return
+	_is_recalculating_passives = true
+
+	var new_totals: Dictionary = {}
+	for k in color_loadouts.keys():
+		var track: ColorLoadoutTrack = color_loadouts[k]
+		if track == null:
+			continue
+		for mod in track.equipped_modifiers:
+			if mod == null:
+				continue
+			var boosts: Dictionary = mod.get_stat_boosts()
+			for stat_name in boosts.keys():
+				var val = boosts[stat_name]
+				new_totals[stat_name] = new_totals.get(stat_name, 0.0) + val
+
+	# Reconcile previously boosted stats
+	for stat_name in _active_equipment_stat_contributions.keys():
+		var old_val = _active_equipment_stat_contributions[stat_name]
+		var new_val = new_totals.get(stat_name, 0.0)
+		var diff = new_val - old_val
+		if not is_zero_approx(diff):
+			modify_stat(stat_name, diff)
+
+	# Apply new stats not in previous contributions
+	for stat_name in new_totals.keys():
+		if not _active_equipment_stat_contributions.has(stat_name):
+			var new_val = new_totals[stat_name]
+			if not is_zero_approx(new_val):
+				modify_stat(stat_name, new_val)
+
+	_active_equipment_stat_contributions = new_totals
+	_is_recalculating_passives = false
+
+func refresh_equipment_stats() -> void:
+	recalculate_equipment_passives()
+
 #==============================================================================#
 # COLOR POOL & LOADOUT FUNCTIONS
 #==============================================================================#
@@ -451,6 +503,7 @@ func reset_stats_at_beginning_of_game() -> void:
 	deck_in_game.clear()
 	color_loadouts.clear()
 	modifier_inventory.clear()
+	_active_equipment_stat_contributions.clear()
 	ensure_loadout_tracks()
 
 	if reward_tree != null:

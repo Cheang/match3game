@@ -190,7 +190,12 @@ func _refresh_modal_view() -> void:
 			color_names.append(Global.get_color_name(c))
 		color_label_str = ", ".join(color_names)
 
-	mod_summary_label.text = "[color=#f2e6b6][b]%s[/b][/color]  [color=#b2b8a3](%d-Slot • %s%s)[/color]\n%s" % [
+	var r_name: String = Equipment.get_rarity_name(current_mod.rarity)
+	var r_hex: String = Equipment.get_rarity_hex(current_mod.rarity)
+	var r_str: String = ("[color=%s][%s][/color] " % [r_hex, r_name]) if current_mod.rarity > Equipment.Rarity.COMMON else ""
+
+	mod_summary_label.text = "%s[color=#f2e6b6][b]%s[/b][/color]  [color=#b2b8a3](%d-Slot • %s%s)[/color]\n%s" % [
+		r_str,
 		current_mod.piece_name,
 		current_mod.slot_cost,
 		color_label_str,

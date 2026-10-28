@@ -7,8 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/red_0_sq.png" id="3_o1m3v"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://event/_other/event_choise_varients/evt_choise_scene_change.gd" id="4_qxlvy"]
 [ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="5_bfl87"]
-[ext_resource type="Script" path="res://tiles/equipment/equipment.gd" id="5_gc0j7"]
-[ext_resource type="Script" path="res://rewards/reward.gd" id="5_qn67d"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="5_gc0j7"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_qn67d"]
 [ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/_red_icons/red_icon_1.png" id="6_isglo"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://event/_other/event_choise_varients/evt_choise_reward.gd" id="6_r32wb"]
 [ext_resource type="Resource" uid="uid://e6scwl0nfeok" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres" id="11_on8bi"]
@@ -16,11 +16,11 @@
 
 [sub_resource type="Resource" id="Resource_h7tar"]
 script = ExtResource("5_qn67d")
-equipment_to_grant = Array[Resource]([ExtResource("5_bfl87")])
 name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"
-base = ExtResource("3_o1m3v")
 icon = ExtResource("6_isglo")
+base = ExtResource("3_o1m3v")
+equipment_to_grant = Array[ExtResource("5_gc0j7")]([ExtResource("5_bfl87")])
 
 [sub_resource type="Resource" id="Resource_cb017"]
 script = ExtResource("6_r32wb")
