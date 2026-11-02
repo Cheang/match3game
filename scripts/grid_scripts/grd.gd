@@ -7,6 +7,7 @@ var state
 signal match_resolved(ctx: MatchContext)
 signal drag_preview_updated(sim_contexts: Array[MatchContext])
 signal drag_preview_cleared
+signal action_cycle_finished
 
 #Grid Variables
 var grd_x_start: int = Global.grd_x_start
@@ -35,6 +36,13 @@ var is_player_swap_phase: bool = false
 var cascade_step: int = 0
 var color_match_counts_this_turn: Dictionary = {}
 var temp_cascade_momentum_bonus: int = 0
+var current_actor: EntityResource = null
+var current_target: EntityResource = null
+var is_resolving_action: bool = false
+var is_aoe_destruction_resolving: bool = false
+var aoe_initial_resolved: bool = false
+var planned_enemy_target_center: Vector2i = Vector2i(-1, -1)
+var current_enemy_target_cells: Array[Vector2i] = []
 
 #obstacles
 var empty_spaces: Array[Vector2]
@@ -255,14 +263,16 @@ func touch_input():
 		return
 
 	if Input.is_action_just_pressed("ui_touch"):
-		var mouse_grd = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+		var mouse_pos: Vector2 = get_local_mouse_position()
+		var mouse_grd = Global.pixel_to_grd(mouse_pos.x, mouse_pos.y)
 		if is_in_grd(mouse_grd):
 			first_touch = mouse_grd
 			current_drag_target = mouse_grd
 			controling_grd = true
 
 	elif controling_grd and Input.is_action_pressed("ui_touch"):
-		var hover_grd = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+		var hover_pos: Vector2 = get_local_mouse_position()
+		var hover_grd = Global.pixel_to_grd(hover_pos.x, hover_pos.y)
 		hover_grd = Vector2(clamp(hover_grd.x, 0, grd_width - 1), clamp(hover_grd.y, 0, grd_height - 1))
 		var target_cell = _get_adjacent_drag_target(first_touch, hover_grd)
 		if target_cell != current_drag_target:
@@ -275,7 +285,8 @@ func touch_input():
 	elif Input.is_action_just_released("ui_touch"):
 		if controling_grd:
 			controling_grd = false
-			final_touch = Global.pixel_to_grd(get_global_mouse_position().x, get_global_mouse_position().y)
+			var release_pos: Vector2 = get_local_mouse_position()
+			final_touch = Global.pixel_to_grd(release_pos.x, release_pos.y)
 			final_touch = Vector2(clamp(final_touch.x, 0, grd_width - 1), clamp(final_touch.y, 0, grd_height - 1))
 			var target_cell = _get_adjacent_drag_target(first_touch, final_touch)
 			clear_drag_preview()
@@ -379,6 +390,10 @@ func swap_pieces(col, row, direction):
 			first_piece.move(Global.grd_to_pixel(target_col, target_row), 0.2)
 			other_piece.move(Global.grd_to_pixel(col, row), 0.2)
 			if !move_checked:
+				if not enemy_attacked:
+					current_actor = Global.cur_char
+					current_target = Global.cur_enemy
+				is_resolving_action = true
 				is_player_swap_phase = true
 				cascade_step = 0
 				color_match_counts_this_turn.clear()
@@ -499,6 +514,8 @@ func _evaluate_board_matches(manual_swap: bool, simulation_only: bool = false) -
 
 		# Build MatchContext for this connected match group
 		var ctx := MatchContext.new()
+		ctx.actor = current_actor if current_actor != null else Global.cur_char
+		ctx.target = current_target if current_target != null else Global.cur_enemy
 		ctx.base_color = group_base_color
 		ctx.is_manual_swap = manual_swap
 		ctx.cascade_step = 0 if manual_swap else cascade_step
@@ -630,19 +647,122 @@ func _update_timer_pacing() -> void:
 	refill_timer.wait_time = delay * 0.75
 
 func get_bombed_pieces():
+	var bomb_blast_dict: Dictionary = {}
 	for i in grd_width:
 		for j in grd_height:
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].matched:
 					if all_pieces[i][j].is_col_bomb:
+						for r in range(grd_height):
+							bomb_blast_dict[Vector2(i, r)] = true
 						match_all_in_col(i)
 					elif all_pieces[i][j].is_row_bomb:
+						for c in range(grd_width):
+							bomb_blast_dict[Vector2(c, j)] = true
 						match_all_in_row(j)
 					elif all_pieces[i][j].is_adj_bomb:
-						match_all_adj(i,j)
+						for dx in range(-1, 2):
+							for dy in range(-1, 2):
+								var bpos := Vector2(i + dx, j + dy)
+								if is_in_grd(bpos):
+									bomb_blast_dict[bpos] = true
+						match_all_adj(i, j)
+	if not bomb_blast_dict.is_empty():
+		var blast_positions: Array[Vector2] = []
+		for k in bomb_blast_dict.keys():
+			blast_positions.append(k)
+		var bomb_ctx: MatchContext = build_majority_color_context(blast_positions, current_actor, current_target, true)
+		if bomb_ctx != null:
+			pending_match_contexts.append(bomb_ctx)
+
+## Counts destroyed tile colors across `positions`, picks the majority color,
+## and builds a MatchContext where match_count = majority color count
+## (so trigger budget = max(1, count - 2), matching Beast monster and Bomb rules).
+func build_majority_color_context(
+	positions: Array[Vector2],
+	actor_override: EntityResource = null,
+	target_override: EntityResource = null,
+	is_bomb: bool = false
+) -> MatchContext:
+	var color_counts: Dictionary = {}
+	var color_order: Array[int] = []
+	var valid_positions: Array[Vector2] = []
+	var has_crit_tile: bool = false
+	var gold_tiles: int = 0
+	var exotic_tiles: int = 0
+	var max_spec_row: int = 0
+	var sum_momentum: int = temp_cascade_momentum_bonus
+	var hazards: Array[String] = []
+
+	for pos in positions:
+		if not is_in_grd(pos):
+			continue
+		var col := int(pos.x)
+		var row := int(pos.y)
+		var p: PieceClass = all_pieces[col][row]
+		if p == null:
+			continue
+		valid_positions.append(pos)
+		var base_c: int = get_base_family(p.color_id)
+		if not color_counts.has(base_c):
+			color_counts[base_c] = 0
+			color_order.append(base_c)
+		color_counts[base_c] = int(color_counts[base_c]) + 1
+		if is_exotic_color(p.color_id):
+			exotic_tiles += 1
+		if p.is_criting:
+			has_crit_tile = true
+		if p.is_gold:
+			gold_tiles += 1
+		sum_momentum += p.fall_distance
+		var spec_r: int = Global.to_spec_row(row)
+		if spec_r > max_spec_row:
+			max_spec_row = spec_r
+		_collect_adjacent_hazards_for_cell(col, row, hazards)
+
+	if color_order.is_empty():
+		return null
+
+	var majority_color: int = color_order[0]
+	var majority_count: int = int(color_counts[majority_color])
+	for c in color_order:
+		var cnt: int = int(color_counts[c])
+		if cnt > majority_count:
+			majority_count = cnt
+			majority_color = c
+
+	var ctx := MatchContext.new()
+	ctx.actor = actor_override if actor_override != null else (current_actor if current_actor != null else Global.cur_char)
+	ctx.target = target_override if target_override != null else (current_target if current_target != null else Global.cur_enemy)
+	ctx.base_color = majority_color
+	ctx.primary_color = majority_color
+	ctx.match_count = majority_count
+	ctx.shape_type = "BOMB" if is_bomb else "BEAST"
+	ctx.is_bomb_clear = is_bomb
+	ctx.is_manual_swap = false
+	ctx.cascade_step = cascade_step
+	ctx.matched_positions = valid_positions
+	ctx.has_crit = has_crit_tile
+	ctx.gold_count = gold_tiles
+	ctx.exotic_count = exotic_tiles
+	ctx.lowest_row = max_spec_row
+	ctx.total_fall_momentum = sum_momentum
+	ctx.hazards_cleared = hazards
+	var prev_count: int = int(color_match_counts_this_turn.get(majority_color, 0)) + 1
+	color_match_counts_this_turn[majority_color] = prev_count
+	ctx.match_index_for_color_this_turn = prev_count
+	return ctx
 
 func mark_for_destruction(space_to_destroy: Array[Vector2], activate_piece = false):
+	is_aoe_destruction_resolving = true
+	aoe_initial_resolved = false
 	enemy_attacked = true
+	is_resolving_action = true
+	current_actor = Global.cur_enemy
+	current_target = Global.cur_char
+	var ctx: MatchContext = build_majority_color_context(space_to_destroy, current_actor, current_target, false)
+	if ctx != null:
+		pending_match_contexts.append(ctx)
 	for i in space_to_destroy.size():
 		var pos: Vector2 = space_to_destroy[i]
 		if is_in_grd(pos) and all_pieces[pos.x][pos.y] != null:
@@ -650,6 +770,9 @@ func mark_for_destruction(space_to_destroy: Array[Vector2], activate_piece = fal
 	destroy_timer.start()
 
 func find_bombs():
+	var acting_entity: EntityResource = current_actor if current_actor != null else Global.cur_char
+	if acting_entity != null and not (acting_entity is PlayerResource):
+		return
 	for ctx in pending_match_contexts:
 		var color_str: String = Global.get_color_name(ctx.base_color).to_lower()
 		if ctx.shape_type == "LINE_5":
@@ -669,12 +792,13 @@ func destroy_matched(should_collapse: bool = true):
 	find_bombs()
 	var was_matched = false
 	active_turn_hazards.clear()
+	var acting_entity: EntityResource = current_actor if current_actor != null else Global.cur_char
 
 	for i in grd_width:
 		for j in grd_height:
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].matched:
-					if all_pieces[i][j].is_gold and Global.cur_char != null:
+					if all_pieces[i][j].is_gold and Global.cur_char != null and (acting_entity == null or acting_entity is PlayerResource):
 						Global.cur_char.modify_stat("gold", 1)
 					damage_specials(i, j)
 					was_matched = true
@@ -691,7 +815,15 @@ func destroy_matched(should_collapse: bool = true):
 					ctx.hazards_cleared.append(h)
 			if ctx.hazards_cleared.has("ice"):
 				temp_cascade_momentum_bonus += 1
+			if is_aoe_destruction_resolving and aoe_initial_resolved and ctx.actor is EnemyResource:
+				# Secondary cascade from monster AOE destruction:
+				# Monsters benefit only from their first tiles destroyed.
+				ctx.is_secondary_cascade = true
+				ctx.ignore_equipment_triggers = true
+				continue
 			match_resolved.emit(ctx)
+		if is_aoe_destruction_resolving:
+			aoe_initial_resolved = true
 		pending_match_contexts.clear()
 
 	move_checked = true
@@ -702,6 +834,10 @@ func destroy_matched(should_collapse: bool = true):
 		collapse_timer.start()
 	else:
 		swap_back()
+		is_resolving_action = false
+		is_aoe_destruction_resolving = false
+		aoe_initial_resolved = false
+		action_cycle_finished.emit()
 	cur_matches.clear()
 
 func collapse_col():
@@ -736,12 +872,15 @@ func after_refill():
 	is_player_swap_phase = false
 	cascade_step = 0
 	temp_cascade_momentum_bonus = 0
+	is_aoe_destruction_resolving = false
+	aoe_initial_resolved = false
 
-	if not enemy_attacked:
+	var was_enemy_turn: bool = enemy_attacked or (current_actor is EnemyResource)
+	if not was_enemy_turn:
 		if Global.cur_char != null:
 			Global.cur_char.modify_stat("moves_left", -1)
 	enemy_attacked = false
-	if !damaged_flesh:
+	if not was_enemy_turn and !damaged_flesh:
 		await generate_flesh()
 	if Global.cur_char != null:
 		if flesh_spaces.size() >= 5:
@@ -750,12 +889,225 @@ func after_refill():
 			Global.cur_char.modify_stat("flg_flesh_coruption", false, false)
 	move_checked = false
 	damaged_flesh = false
-	if Global.cur_char != null and Global.cur_char.moves_left <= 0:
+	is_resolving_action = false
+	if was_enemy_turn:
+		state = wait
+	elif Global.cur_char != null and Global.cur_char.moves_left <= 0:
 		state = wait
 	elif not Global.game_is_played:
 		state = wait
 	else:
 		state = move
+		update_enemy_target_preview()
+	action_cycle_finished.emit()
+	current_actor = null
+	current_target = null
+
+#==============================================================================#
+# MONSTER BOARD AI HELPERS
+#==============================================================================#
+
+## Returns all legal adjacent swaps on the current board that produce at least one match.
+## Each entry is {"origin": Vector2, "direction": Vector2, "contexts": Array[MatchContext]}.
+func find_all_valid_swaps() -> Array[Dictionary]:
+	var valid_swaps: Array[Dictionary] = []
+	var dirs := [Vector2(1, 0), Vector2(0, 1)]
+	for col in range(grd_width):
+		for row in range(grd_height):
+			var p1: PieceClass = all_pieces[col][row]
+			if p1 == null or restricted_move(Vector2(col, row)):
+				continue
+			for dir in dirs:
+				var col2 := int(col + dir.x)
+				var row2 := int(row + dir.y)
+				if not is_in_grd(Vector2(col2, row2)):
+					continue
+				if restricted_move(Vector2(col2, row2)):
+					continue
+				var p2: PieceClass = all_pieces[col2][row2]
+				if p2 == null:
+					continue
+				all_pieces[col][row] = p2
+				all_pieces[col2][row2] = p1
+				var sim_contexts: Array[MatchContext] = _evaluate_board_matches(true, true)
+				all_pieces[col][row] = p1
+				all_pieces[col2][row2] = p2
+				if not sim_contexts.is_empty():
+					valid_swaps.append({
+						"origin": Vector2(col, row),
+						"direction": dir,
+						"contexts": sim_contexts
+					})
+	return valid_swaps
+
+## Chooses a legal swap for a SMART monster, preferring swaps that match an explicit track
+## color or maximize trigger budget.
+func choose_smart_monster_swap(monster: EnemyResource) -> Dictionary:
+	var swaps: Array[Dictionary] = find_all_valid_swaps()
+	if swaps.is_empty():
+		return {}
+	swaps.shuffle()
+	var best_swap: Dictionary = swaps[0]
+	var best_score: int = -1
+	for s in swaps:
+		var score: int = 0
+		var ctxs: Array = s["contexts"]
+		for ctx in ctxs:
+			var c_ctx: MatchContext = ctx
+			var track: ColorLoadoutTrack = monster.get_track_for_color(c_ctx.base_color) if monster != null else null
+			var budget: int = track.get_trigger_budget(c_ctx) if track != null else maxi(1, c_ctx.match_count - 2)
+			score += budget * 10
+			if monster != null and monster.has_explicit_track_for_color(c_ctx.base_color):
+				score += 5
+		if score > best_score:
+			best_score = score
+			best_swap = s
+	return best_swap
+
+## Executes a board swap on behalf of `actor` against `target` without consuming player moves.
+func execute_external_swap(origin: Vector2, direction: Vector2, actor: EntityResource, target: EntityResource) -> void:
+	current_actor = actor
+	current_target = target
+	enemy_attacked = actor is EnemyResource
+	is_resolving_action = true
+	move_checked = false
+	swap_pieces(int(origin.x), int(origin.y), direction)
+
+## Picks a valid target center for BEAST area destruction.
+func choose_beast_target_center(shape_offsets: Array[Vector2i]) -> Vector2i:
+	var candidates: Array[Vector2i] = []
+	for col in range(grd_width):
+		for row in range(grd_height):
+			if all_pieces[col][row] == null:
+				continue
+			var valid_tiles: int = 0
+			for ofs in shape_offsets:
+				var p := Vector2(col + ofs.x, row + ofs.y)
+				if is_in_grd(p) and all_pieces[int(p.x)][int(p.y)] != null:
+					valid_tiles += 1
+			if valid_tiles >= min(3, shape_offsets.size()):
+				candidates.append(Vector2i(col, row))
+	if candidates.is_empty():
+		return Vector2i(grd_width / 2, grd_height / 2)
+	return candidates.pick_random()
+
+## Validates whether a given center coordinate can still serve as a Beast destruction center.
+func is_valid_beast_center(center: Vector2i, shape_offsets: Array[Vector2i]) -> bool:
+	if center.x < 0 or center.x >= grd_width or center.y < 0 or center.y >= grd_height:
+		return false
+	var valid_tiles: int = 0
+	for ofs in shape_offsets:
+		var p := Vector2(center.x + ofs.x, center.y + ofs.y)
+		if is_in_grd(p) and all_pieces[int(p.x)][int(p.y)] != null:
+			valid_tiles += 1
+	return valid_tiles >= min(3, shape_offsets.size())
+
+## Returns the planned center if still valid, or picks a new center.
+func get_or_choose_beast_target_center(shape_offsets: Array[Vector2i]) -> Vector2i:
+	if is_valid_beast_center(planned_enemy_target_center, shape_offsets):
+		return planned_enemy_target_center
+	planned_enemy_target_center = choose_beast_target_center(shape_offsets)
+	return planned_enemy_target_center
+
+## Returns grid coordinates of tiles targeted by the enemy's upcoming action.
+func get_planned_enemy_target_cells() -> Array[Vector2i]:
+	if Global.cur_enemy == null or not Global.game_is_played:
+		return []
+	var mode: EnemyResource.BehaviorCategory = Global.cur_enemy.get_current_action_behavior()
+	var cells: Array[Vector2i] = []
+	if mode == EnemyResource.BehaviorCategory.SMART:
+		var chosen_swap: Dictionary = choose_smart_monster_swap(Global.cur_enemy)
+		if not chosen_swap.is_empty():
+			var orig: Vector2 = chosen_swap["origin"]
+			var dir: Vector2 = chosen_swap["direction"]
+			cells.append(Vector2i(int(orig.x), int(orig.y)))
+			cells.append(Vector2i(int(orig.x + dir.x), int(orig.y + dir.y)))
+			return cells
+	# BEAST or fallback
+	var offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
+	var center: Vector2i = get_or_choose_beast_target_center(offsets)
+	for ofs in offsets:
+		var p := Vector2i(center.x + ofs.x, center.y + ofs.y)
+		if is_in_grd(Vector2(p.x, p.y)) and all_pieces[p.x][p.y] != null:
+			cells.append(p)
+	return cells
+
+## Updates the enemy upcoming attack visual indicator on board tiles.
+func update_enemy_target_preview() -> void:
+	if Global.cur_enemy == null or not Global.game_is_played:
+		clear_enemy_target_preview()
+		return
+	var target_cells: Array[Vector2i] = get_planned_enemy_target_cells()
+	preview_enemy_target_cells(target_cells)
+
+## Highlights specified cells with the enemy target visual indicator.
+func preview_enemy_target_cells(cells: Array[Vector2i]) -> void:
+	for old_cell in current_enemy_target_cells:
+		if not cells.has(old_cell) and is_in_grd(Vector2(old_cell.x, old_cell.y)):
+			var p: PieceClass = all_pieces[old_cell.x][old_cell.y]
+			if p != null:
+				p.set_enemy_target_highlight(false)
+
+	current_enemy_target_cells = cells.duplicate()
+	for cell in current_enemy_target_cells:
+		if is_in_grd(Vector2(cell.x, cell.y)):
+			var p: PieceClass = all_pieces[cell.x][cell.y]
+			if p != null:
+				p.set_enemy_target_highlight(true)
+
+## Clears all enemy target visual indicators from board tiles.
+func clear_enemy_target_preview() -> void:
+	for cell in current_enemy_target_cells:
+		if is_in_grd(Vector2(cell.x, cell.y)):
+			var p: PieceClass = all_pieces[cell.x][cell.y]
+			if p != null:
+				p.set_enemy_target_highlight(false)
+	current_enemy_target_cells.clear()
+
+## Executes a BEAST area destruction centered at `center` using `shape_offsets`,
+## routing the majority destroyed color to `actor`'s track against `target`.
+func execute_beast_destruction(
+	center: Vector2i,
+	shape_offsets: Array[Vector2i],
+	actor: EntityResource,
+	target: EntityResource
+) -> MatchContext:
+	is_aoe_destruction_resolving = true
+	aoe_initial_resolved = false
+	planned_enemy_target_center = Vector2i(-1, -1)
+	current_actor = actor
+	current_target = target
+	enemy_attacked = actor is EnemyResource
+	is_resolving_action = true
+	is_player_swap_phase = false
+	state = wait
+	cascade_step = 0
+	color_match_counts_this_turn.clear()
+	temp_cascade_momentum_bonus = 0
+	reset_all_fall_distances()
+
+	var target_positions: Array[Vector2] = []
+	for ofs in shape_offsets:
+		var pos := Vector2(center.x + ofs.x, center.y + ofs.y)
+		if is_in_grd(pos) and all_pieces[int(pos.x)][int(pos.y)] != null:
+			if not target_positions.has(pos):
+				target_positions.append(pos)
+
+	pending_match_contexts.clear()
+	var ctx: MatchContext = build_majority_color_context(target_positions, actor, target, false)
+	if ctx != null:
+		pending_match_contexts.append(ctx)
+
+	for pos in target_positions:
+		var p: PieceClass = all_pieces[int(pos.x)][int(pos.y)]
+		if p != null:
+			p.mark(false)
+		add_to_array(pos, cur_matches)
+
+	get_bombed_pieces()
+	_update_timer_pacing()
+	destroy_timer.start()
+	return ctx
 
 func generate_flesh():
 	if flesh_spaces.size() > 0:
@@ -805,6 +1157,8 @@ func damage_specials(col, row):
 	check_flesh(col, row)
 
 func clear_board():
+	clear_enemy_target_preview()
+	planned_enemy_target_center = Vector2i(-1, -1)
 	for i in range(grd_width):
 		for j in range(grd_height):
 			if all_pieces[i][j] != null:

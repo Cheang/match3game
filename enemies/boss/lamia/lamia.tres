@@ -8,11 +8,28 @@
 [ext_resource type="Texture2D" uid="uid://cdh1ejimm1oir" path="res://assets/level_ui/enemy_health_green.png" id="6_vvsti"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="7_fkeyq"]
 [ext_resource type="PackedScene" uid="uid://c48fmwq3lbdm2" path="res://enemies/boss/lamia/lamia.tscn" id="8_c4omb"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="9_eq_scr"]
+[ext_resource type="Resource" path="res://tiles/equipment/uppercut.tres" id="10_upper"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="11_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/dodge.tres" id="12_smoke"]
+[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="13_rush"]
+[ext_resource type="Resource" path="res://tiles/equipment/healing_potion.tres" id="14_hpot"]
+[ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="15_punch"]
+[ext_resource type="Resource" path="res://tiles/equipment/block.tres" id="16_block"]
+[ext_resource type="Resource" path="res://tiles/equipment/holy_shield.tres" id="17_hshield"]
+[ext_resource type="Resource" path="res://rewards/cards/sword/sword0-sword_practice.tres" id="18_spractice"]
 
 [resource]
 script = ExtResource("7_fkeyq")
 name = "Lamia"
 type = 1
+behavior_category = 2
+explicit_track_colors = Array[int]([100, 300, 400])
+red_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("10_upper"), ExtResource("11_ssword")])
+green_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("12_smoke"), ExtResource("13_rush")])
+purple_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("14_hpot")])
+colorless_fallback_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("15_punch"), ExtResource("16_block")])
+loot_table = Array[Resource]([ExtResource("17_hshield"), ExtResource("10_upper"), ExtResource("12_smoke"), ExtResource("18_spractice")])
 max_health = 65.0
 cur_health = 0.0
 physical_dmg_reduction = 0.0

@@ -11,7 +11,22 @@ const CHOISE_BTN_N = preload("res://event/_other/choise_btn_n.tres")
 
 var resource: EventChoise
 
+func _ready() -> void:
+	if btn != null:
+		if not btn.mouse_entered.is_connected(_on_btn_mouse_entered):
+			btn.mouse_entered.connect(_on_btn_mouse_entered)
+		if not btn.mouse_exited.is_connected(_on_btn_mouse_exited):
+			btn.mouse_exited.connect(_on_btn_mouse_exited)
+
+func _on_btn_mouse_entered() -> void:
+	if btn != null and not btn.disabled:
+		modulate = Color(1.07, 1.07, 1.07, 1.0)
+
+func _on_btn_mouse_exited() -> void:
+	modulate = Color.WHITE
+
 func set_btn():
+	modulate = Color.WHITE
 	if resource != null:
 		title.text = resource.text
 		if resource.description == "None":
@@ -20,12 +35,12 @@ func set_btn():
 			description.visible = true
 			description.text = resource.description
 		if resource.gold_cost > 0:
-			if resource.gold_cost > Global.cur_char.gold:
+			if Global.cur_char != null and resource.gold_cost > Global.cur_char.gold:
 				btn.disabled = true
 				self.add_theme_stylebox_override("panel", CHOISE_BTN_D)
 				title.add_theme_color_override("font_color", Color8(127, 112, 138))
 				description.add_theme_color_override("default_color", Color8(127, 112, 138))
-			else: 
+			else:
 				btn.disabled = false
 				self.add_theme_stylebox_override("panel", CHOISE_BTN_N)
 				title.add_theme_color_override("font_color", Color8(55, 78, 74))
@@ -61,8 +76,10 @@ func _remove_matching_modifiers(filter_str: String, blacklist_str: String, max_t
 			var mod: Equipment = track.equipped_modifiers[idx]
 			if _matches_piece_filter(mod, filter_str, blacklist_str):
 				track.equipped_modifiers.remove_at(idx)
+				track.clamp_cursor()
 				removed_count += 1
 				if max_to_remove != 0 and removed_count >= max_to_remove:
+					Global.cur_char.recalculate_equipment_passives()
 					Global.cur_char.loadoutChanged.emit()
 					return removed_count
 			else:
@@ -83,6 +100,7 @@ func _remove_matching_modifiers(filter_str: String, blacklist_str: String, max_t
 
 func _on_btn_pressed() -> void:
 	if Global.game_is_played == true:
+		modulate = Color.WHITE
 		if resource.gold_cost > 0:
 			Global.cur_char.modify_stat("gold", -resource.gold_cost)
 		if resource.req_piece_remove:
@@ -102,16 +120,24 @@ func _on_btn_pressed() -> void:
 			2:
 				pass
 			3:
-				_show_reward(resource.reward.base, resource.reward.name, resource.reward.icon, resource.reward.description)
-				var mods: Array[Equipment] = resource.reward.get_resolved_modifiers() if (resource.reward != null and resource.reward.has_method("get_resolved_modifiers")) else []
+				_show_reward(
+					RewardGrantHandler.get_base_texture(resource.reward),
+					RewardGrantHandler.get_display_name(resource.reward),
+					RewardGrantHandler.get_icon(resource.reward),
+					RewardGrantHandler.get_description(resource.reward)
+				)
+				var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(resource.reward)
 				if not mods.is_empty():
-					resource.reward.apply_progression()
+					if resource is EvtChoiseReward:
+						(resource as EvtChoiseReward).equipment_already_prompted = true
+					RewardGrantHandler.grant_reward(resource.reward, false)
 					var modal := SlotEquipModal.new()
 					get_tree().current_scene.add_child(modal)
 					modal.prompt_modifiers(mods)
 					await modal.modal_closed
 					if resource is EvtChoiseReward:
 						var evt_rew: EvtChoiseReward = resource as EvtChoiseReward
+						evt_rew.equipment_already_prompted = false
 						if evt_rew.fight_overwrite and not evt_rew.enemy.is_empty():
 							Global.post_combat_event = evt_rew.next_event
 							Global.set_up_enemy(evt_rew.enemy.pick_random())

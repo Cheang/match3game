@@ -9,6 +9,8 @@ const BTN_LIGHT_TEX = preload("res://assets/level_ui/btn/btn_2_light.png")
 
 var pending_queue: Array[Equipment] = []
 var current_mod: Equipment = null
+var _total_prompted: int = 0
+var _current_index: int = 0
 
 var root_panel: PanelContainer
 var title_label: Label
@@ -123,7 +125,7 @@ func _build_modal_ui() -> void:
 
 	# 2. Color Loadout Tracks Section
 	var tracks_lbl := Label.new()
-	tracks_lbl.text = "Color Loadout Tracks (Drag tile onto slot or tap +Equip)"
+	tracks_lbl.text = "Compatible Loadout Tracks (Drag tile onto slot or tap +Equip)"
 	tracks_lbl.add_theme_font_size_override("font_size", 14)
 	tracks_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.72))
 	content_vbox.add_child(tracks_lbl)
@@ -157,6 +159,8 @@ func prompt_modifiers(mods: Array[Equipment]) -> void:
 	for m in mods:
 		if m != null:
 			pending_queue.append(m.duplicate(true))
+	_total_prompted = pending_queue.size()
+	_current_index = 0
 	_show_next_modifier()
 
 func _show_next_modifier() -> void:
@@ -165,12 +169,18 @@ func _show_next_modifier() -> void:
 		queue_free()
 		return
 	current_mod = pending_queue.pop_front()
+	_current_index += 1
 	_refresh_modal_view()
 
 func _refresh_modal_view() -> void:
 	if current_mod == null or Global.cur_char == null:
 		_show_next_modifier()
 		return
+
+	if _total_prompted > 1:
+		title_label.text = "New Equipment Acquired (%d/%d)" % [_current_index, _total_prompted]
+	else:
+		title_label.text = "New Equipment Acquired"
 
 	Global.cur_char.ensure_loadout_tracks()
 	for child in pickup_tile_holder.get_children():
@@ -192,7 +202,7 @@ func _refresh_modal_view() -> void:
 
 	var r_name: String = Equipment.get_rarity_name(current_mod.rarity)
 	var r_hex: String = Equipment.get_rarity_hex(current_mod.rarity)
-	var r_str: String = ("[color=%s][%s][/color] " % [r_hex, r_name]) if current_mod.rarity > Equipment.Rarity.COMMON else ""
+	var r_str: String = "[color=%s][%s][/color] " % [r_hex, r_name]
 
 	mod_summary_label.text = "%s[color=#f2e6b6][b]%s[/b][/color]  [color=#b2b8a3](%d-Slot • %s%s)[/color]\n%s" % [
 		r_str,
@@ -219,10 +229,15 @@ func _refresh_modal_view() -> void:
 		row_preview.modifier_dropped_on_row.connect(_on_dropped_on_track_row)
 
 		var quick_btn := Button.new()
-		quick_btn.custom_minimum_size = Vector2(68, 34)
-		quick_btn.text = "+Equip"
+		quick_btn.custom_minimum_size = Vector2(78, 34)
+		var fits: bool = track.can_equip(current_mod)
+		quick_btn.text = "+Equip" if fits else "Swap In"
 		_style_pixel_button(quick_btn, 13)
-		quick_btn.tooltip_text = "Auto-equip into %s Track" % Global.get_color_name(track.color)
+		quick_btn.tooltip_text = ("Equip into %s Track (%d/%d Slots)" if fits else "Swap into %s Track (displaces last item to Bag)") % [
+			Global.get_color_name(track.color),
+			track.get_used_slots(),
+			track.max_slots
+		]
 		quick_btn.pressed.connect(_on_quick_slot_pressed.bind(track))
 		row_hbox.add_child(quick_btn)
 

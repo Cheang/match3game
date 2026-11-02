@@ -83,8 +83,8 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export_multiline var description: String = ""
 ## Synergy tag chosen from defined equipment families. Determines auto-slotting color and triggers passives/synergies.
 @export_enum("sword", "fists", "shields", "mobility", "healing") var family: String = "sword"
-## Number of slots this equipment occupies on a 3-slot color track (1 = small, 2 = medium, 3 = full track).
-@export_range(1, 3) var slot_cost: int = 1
+## Number of slots this equipment occupies on a 6-slot color track (1 = small, 2 = medium, 3 = large, up to 6).
+@export_range(1, 6) var slot_cost: int = 1
 
 # ==============================================================================
 # 2. RARITY & SCALING
@@ -175,12 +175,64 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var upgrade_scales_combo_mult: bool = false
 
 # ==============================================================================
+# 7. REWARD POOL & PROGRESSION
+# ==============================================================================
+@export_group("Reward Pool & Progression")
+## Progression tags emitted when this equipment is claimed from a reward draft.
+@export var unlock_tags: Array[String] = []
+## If true, this equipment is removed from the active draft pool once chosen.
+@export var remove_from_pool_when_picked: bool = true
+
+# ==============================================================================
 # RUNTIME STATE (Non-exported)
 # ==============================================================================
 var bound_color: int = 0
 var criting: bool = false
 var current_cooldown: int = 0
 var used_this_battle: bool = false
+var source_template: Resource = null
+
+## Direct-resource reward presentation accessors (compatible with RewardCard and Event UI)
+var name: String:
+	get:
+		return piece_name
+	set(val):
+		piece_name = val
+
+var base: Texture2D:
+	get:
+		if not Engine.is_editor_hint() and is_instance_valid(Global) and ("get_color_base_texture" in Global):
+			var eff_colors: Array[int] = get_effective_allowed_colors()
+			if not eff_colors.is_empty() and not is_colorless():
+				return Global.get_color_base_texture(eff_colors[0])
+			var fam_c: int = Global.get_family_default_color(family)
+			return Global.get_color_base_texture(fam_c)
+		match family.to_lower():
+			"sword", "fists": return preload("res://assets/red_0_sq.png")
+			"shields": return preload("res://assets/blue_0_sq.png")
+			"mobility": return preload("res://assets/green_0_sq.png")
+			"healing": return preload("res://assets/purple_0_sq.png")
+		return preload("res://assets/white_0_sq.png")
+
+var rearity: String:
+	get:
+		match rarity:
+			Rarity.COMMON: return "COMMON"
+			Rarity.UNCOMMON: return "UNCOMMON"
+			Rarity.RARE: return "RARE"
+			Rarity.EPIC: return "EPIC"
+			Rarity.LEGENDARY: return "LEGENDARY"
+			Rarity.GODLY: return "GODLY"
+		return "COMMON"
+	set(val):
+		match str(val).to_upper():
+			"COMMON": rarity = Rarity.COMMON
+			"UNCOMMON": rarity = Rarity.UNCOMMON
+			"RARE": rarity = Rarity.RARE
+			"EPIC": rarity = Rarity.EPIC
+			"LEGENDARY": rarity = Rarity.LEGENDARY
+			"GODLY": rarity = Rarity.GODLY
+			_: rarity = Rarity.COMMON
 
 func can_trigger(ctx: MatchContext) -> bool:
 	if once_per_battle and used_this_battle:
@@ -190,7 +242,9 @@ func can_trigger(ctx: MatchContext) -> bool:
 	if ctx == null:
 		return trigger_condition == TriggerCondition.ALWAYS
 
-	var grid_h: int = Global.grd_height if (Engine.get_main_loop() != null and Global != null) else 9
+	var grid_h: int = 9
+	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("grd_height" in Global):
+		grid_h = Global.grd_height
 	var half_row: int = int(grid_h / 2)
 
 	match trigger_condition:
@@ -218,19 +272,22 @@ func get_context_potency_multiplier(ctx: MatchContext) -> float:
 	if ctx == null:
 		return 1.0
 	var mult: float = ctx.get_momentum_multiplier() * ctx.potency_multiplier
-	var grid_h: int = Global.grd_height if (Engine.get_main_loop() != null and Global != null) else 9
+	var grid_h: int = 9
+	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("grd_height" in Global):
+		grid_h = Global.grd_height
 	if trigger_condition == TriggerCondition.BOTTOM_HALF_GRID and ctx.lowest_row >= int(grid_h / 2):
 		mult *= 1.5
 	return mult
 
-func on_triggered() -> void:
+func on_triggered(actor: EntityResource = null) -> void:
 	if once_per_battle:
 		used_this_battle = true
 	var eff_cd: int = get_effective_cooldown_turns()
 	if eff_cd > 0:
 		var cdr: int = 0
-		if Global.cur_char != null:
-			cdr = Global.cur_char.cooldown_reduction + int(floor(Global.cur_char.spirit * 0.25))
+		var owner_entity: EntityResource = actor if actor != null else _safe_get_global_char()
+		if owner_entity != null:
+			cdr = owner_entity.cooldown_reduction + int(floor(owner_entity.spirit * 0.25))
 		current_cooldown = max(0, eff_cd - cdr)
 
 func reset_for_battle() -> void:
@@ -369,20 +426,46 @@ func get_effective_cooldown_turns() -> int:
 ## Dynamically sets this equipment instance's rarity and notifies player to recalculate passives.
 func set_rarity(new_rarity: Rarity) -> void:
 	rarity = new_rarity
-	if Engine.get_main_loop() != null and Global != null and Global.cur_char != null:
-		Global.cur_char.recalculate_equipment_passives()
+	var p = _safe_get_global_char()
+	if p != null:
+		p.recalculate_equipment_passives()
 
 ## Creates an independent clone of this equipment initialized to a specific rarity tier.
 ## Designed for Reward Trees, Combat Drops, and Shop inventories.
 func duplicate_with_rarity(target_rarity: Rarity) -> Equipment:
 	var dup: Equipment = duplicate(true)
 	dup.rarity = target_rarity
+	dup.source_template = source_template if source_template != null else self
+	dup.reset_for_battle()
 	return dup
+
+## Returns an independent owned instance of this equipment for reward granting.
+func get_resolved_modifiers() -> Array[Equipment]:
+	var inst: Equipment = duplicate_with_rarity(rarity)
+	return [inst]
+
+## Applies reward progression (unlock tags and pool removal) when this equipment is claimed directly.
+func apply_progression() -> void:
+	var p = _safe_get_global_char()
+	if p == null:
+		return
+	for tag in unlock_tags:
+		p.set_flag(tag, true)
+	if p.active_reward_tree != null:
+		p.active_reward_tree.on_reward_chosen(self, p)
+	if p.rewards_piece != null:
+		var tpl: Resource = source_template if source_template != null else self
+		if remove_from_pool_when_picked:
+			p.rewards_piece.erase(self)
+			p.rewards_piece.erase(tpl)
+
+func boost() -> void:
+	apply_progression()
 
 ## Executes all active effects configured on this equipment.
 func activate(context = null) -> void:
-	var cur_char: PlayerResource = _resolve_char(context)
-	var cur_enemy: EnemyResource = _resolve_enemy(context)
+	var cur_char: EntityResource = _resolve_char(context)
+	var cur_enemy: EntityResource = _resolve_enemy(context)
 	var ctx: MatchContext = _resolve_match_ctx(context)
 	if cur_char == null:
 		return
@@ -411,7 +494,7 @@ func activate(context = null) -> void:
 				if total_combo_mult > 0.0:
 					dmg_val += cur_char.hand_combo * total_combo_mult
 				dmg_val = max(1.0, roundf(dmg_val * mult * crit_factor))
-				cur_enemy.take_dmg(dmg_val, int(damage_type))
+				cur_enemy.take_damage(dmg_val, false, int(damage_type), cur_char)
 				if ctx != null and ctx.lifesteal_bonus > 0.0:
 					var heal_amt: float = max(1.0, roundf(dmg_val * ctx.lifesteal_bonus))
 					cur_char.modify_stat("cur_health", heal_amt)
@@ -451,7 +534,7 @@ func activate(context = null) -> void:
 		cur_char.modify_stat("dodging", true, false)
 
 	var eff_gold: int = get_effective_gold_to_give()
-	if eff_gold > 0:
+	if eff_gold > 0 and "gold" in cur_char:
 		cur_char.modify_stat("gold", eff_gold + upgrade)
 
 	# 7. Post-Effect Hand Combo / Finisher Consumption
@@ -464,13 +547,13 @@ func activate(context = null) -> void:
 	_on_custom_activate(cur_char, cur_enemy, ctx)
 
 ## Optional virtual hook for unique one-off equipment scripts.
-func _on_custom_activate(_cur_char: PlayerResource, _cur_enemy: EnemyResource, _ctx: MatchContext) -> void:
+func _on_custom_activate(_cur_char: EntityResource, _cur_enemy: EntityResource, _ctx: MatchContext) -> void:
 	pass
 
 ## Builds a rich BBCode description reflecting current player stats, rarity bonuses, and upgrades across all active effects.
 func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 	var upg: int = upgrade if upgrades < 0 else upgrades
-	var c_res = char_resource if char_resource != null else Global.cur_char
+	var c_res = char_resource if char_resource != null else _safe_get_global_char()
 	var parts: Array[String] = []
 
 	var tier = get_active_tier()
@@ -549,15 +632,37 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 		return " | ".join(parts)
 	return description
 
-func _resolve_char(context) -> PlayerResource:
+func _resolve_char(context) -> EntityResource:
 	if context is Dictionary and context.has("attacker"):
 		return context["attacker"]
-	return Global.cur_char
+	if context is MatchContext and context.actor != null:
+		return context.actor
+	return _safe_get_global_char()
 
-func _resolve_enemy(context) -> EnemyResource:
+func _resolve_enemy(context) -> EntityResource:
 	if context is Dictionary and context.has("target"):
 		return context["target"]
-	return Global.cur_enemy
+	if context is MatchContext and context.target != null:
+		return context.target
+	return _safe_get_global_enemy()
+
+func _safe_get_global_char() -> EntityResource:
+	if Engine.is_editor_hint():
+		return null
+	if Engine.get_main_loop() != null and is_instance_valid(Global):
+		var val = Global.get("cur_char")
+		if val is EntityResource:
+			return val
+	return null
+
+func _safe_get_global_enemy() -> EntityResource:
+	if Engine.is_editor_hint():
+		return null
+	if Engine.get_main_loop() != null and is_instance_valid(Global):
+		var val = Global.get("cur_enemy")
+		if val is EntityResource:
+			return val
+	return null
 
 func _resolve_match_ctx(context) -> MatchContext:
 	if context is MatchContext:
@@ -597,8 +702,9 @@ func is_allowed_on_color(target_color: int) -> bool:
 
 func get_effective_allowed_colors() -> Array[int]:
 	if is_colorless():
-		if Engine.get_main_loop() != null and Global != null and Global.cur_char != null and not Global.cur_char.active_color_pool.is_empty():
-			return Global.cur_char.active_color_pool
+		var p = _safe_get_global_char()
+		if p != null and not p.active_color_pool.is_empty():
+			return p.active_color_pool
 		return [100, 200, 300, 400, 500]
 	var res: Array[int] = []
 	if not allowed_colors.is_empty():

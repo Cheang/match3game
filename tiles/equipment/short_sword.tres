@@ -21,3 +21,4 @@ damage_stat_scaling = 1
 damage_combo_multiplier = 0.0
 can_upgrade = true
 upgrade = 0
+remove_from_pool_when_picked = false

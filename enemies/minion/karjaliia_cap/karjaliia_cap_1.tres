@@ -7,11 +7,25 @@
 [ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://enemies/attacks/strong_attack.tres" id="4_pdeom"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="5_ck8d1"]
 [ext_resource type="PackedScene" uid="uid://3j3pvno8yhem" path="res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tscn" id="7_duoj2"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="8_eq_scr"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="9_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/uppercut.tres" id="10_upper"]
+[ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="11_rshield"]
+[ext_resource type="Resource" path="res://tiles/equipment/block.tres" id="12_block"]
+[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="13_rush"]
+[ext_resource type="Resource" path="res://tiles/equipment/dodge.tres" id="14_smoke"]
 
 [resource]
 script = ExtResource("2_3jfvh")
 name = "Kardzaliia Capitan"
 type = 0
+behavior_category = 2
+explicit_track_colors = Array[int]([100, 200, 300])
+red_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("9_ssword"), ExtResource("10_upper")])
+blue_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("11_rshield"), ExtResource("12_block")])
+green_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("13_rush")])
+colorless_fallback_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("9_ssword")])
+loot_table = Array[Resource]([ExtResource("9_ssword"), ExtResource("10_upper"), ExtResource("14_smoke")])
 max_health = 27.0
 cur_health = 0.0
 physical_dmg_reduction = 0.0

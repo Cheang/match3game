@@ -5,11 +5,23 @@
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://scripts/enemies/enemy_resource.gd" id="2_owds6"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="2_oygvr"]
 [ext_resource type="PackedScene" uid="uid://bcmfqa5aviot1" path="res://enemies/minion/wild_boar/wild_boar.tscn" id="4_u6v4h"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="5_eq_scr"]
+[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="6_rush"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="7_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="8_rshield"]
+[ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="9_punch"]
+[ext_resource type="Resource" path="res://rewards/cards/body/body0_strong_body_1.tres" id="10_body1"]
 
 [resource]
 script = ExtResource("2_owds6")
 name = "Gligan"
 type = 0
+behavior_category = 1
+explicit_track_colors = Array[int]([100, 200])
+red_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("6_rush"), ExtResource("7_ssword")])
+blue_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("8_rshield")])
+colorless_fallback_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("9_punch")])
+loot_table = Array[Resource]([ExtResource("6_rush"), ExtResource("9_punch"), ExtResource("10_body1")])
 max_health = 25.0
 cur_health = 0.0
 physical_dmg_reduction = 0.0

@@ -133,9 +133,11 @@ func get_resolved_modifiers() -> Array[Equipment]:
 ## Activates all effects of this reward on the current player.
 ## If grant_equipment is false (e.g. when already slotted via SlotEquipModal), equipment is skipped.
 func activate(grant_equipment: bool = true) -> void:
-	if Global.cur_char == null:
+	if Engine.is_editor_hint() or not is_instance_valid(Global):
 		return
-	var p = Global.cur_char
+	var p = Global.get("cur_char")
+	if p == null:
+		return
 
 	# 1. Apply Stats
 	if might != 0.0: p.modify_stat("might", might)
@@ -165,9 +167,11 @@ func activate(grant_equipment: bool = true) -> void:
 
 ## Emits unlock tags to the player's active RewardTree and records flags.
 func apply_progression() -> void:
-	if Global.cur_char == null:
+	if Engine.is_editor_hint() or not is_instance_valid(Global):
 		return
-	var p = Global.cur_char
+	var p = Global.get("cur_char")
+	if p == null:
+		return
 	for f in custom_flags:
 		p.set_flag(f, true)
 	if p.active_reward_tree != null:

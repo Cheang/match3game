@@ -68,6 +68,7 @@ var area_locations: Array[Location]
 var area_cur_boss: Location
 var area_cur_event: Event
 var post_combat_event: Resource = null
+var pending_reward_context: Dictionary = {}
 var event_pieces_removed: int
 
 #for boss spawning
@@ -163,6 +164,8 @@ func color_string_to_id(color_str: String) -> int:
 
 #Player_functions --------------------------------------------------------------
 func set_up_player():
+	if def_char == null and ResourceLoader.exists("res://players/warrior/warrior.tres"):
+		def_char = load("res://players/warrior/warrior.tres")
 	if selected_char == null:
 		selected_char = def_char
 	if selected_char != null:
@@ -178,6 +181,21 @@ func set_up_enemy(specific_enemy: EnemyResource):
 	if !is_null(specific_enemy):
 		cur_enemy = specific_enemy.duplicate()
 		cur_enemy.cur_health = cur_enemy.max_health
+		cur_enemy.reset_stats_at_beginning_of_fight()
+		prepare_post_combat_rewards(cur_enemy)
+
+func prepare_post_combat_rewards(defeated_enemy: EnemyResource = null) -> void:
+	var enemy_res: EnemyResource = defeated_enemy if defeated_enemy != null else cur_enemy
+	var monster_loot: Array[Resource] = []
+	if enemy_res != null and enemy_res.loot_table != null:
+		for item in enemy_res.loot_table:
+			if item != null:
+				monster_loot.append(item)
+	pending_reward_context = {
+		"monster_name": enemy_res.name if enemy_res != null else "",
+		"monster_loot": monster_loot,
+		"is_boss": (enemy_res != null and enemy_res.type == 1) or boss_beaten
+	}
 
 #Game_functions ----------------------------------------------------------------
 func reset_variable():
@@ -186,6 +204,7 @@ func reset_variable():
 	boss_added = false
 	boss_beaten = false
 	post_combat_event = null
+	pending_reward_context.clear()
 	current_level += 1
 
 func compare_deck_pieces(a, b):
@@ -255,15 +274,39 @@ func remove_from_array(array: Array, item) -> void:
 
 func save():
 	var save_file = Serializer.new()
+	save_file.save_path = save_path
 	if cur_char:
 		save_file.cur_char = cur_char.duplicate(true)
 		save_file.cur_char_deck = get_tiles_from_player()
+		save_file.saved_color_loadouts.clear()
+		for k in cur_char.color_loadouts.keys():
+			var trk: ColorLoadoutTrack = cur_char.color_loadouts[k]
+			if trk != null:
+				save_file.saved_color_loadouts[k] = trk.duplicate(true)
+		save_file.saved_modifier_inventory.clear()
+		for eq in cur_char.modifier_inventory:
+			if eq != null:
+				save_file.saved_modifier_inventory.append(eq.duplicate(true))
+		if cur_char.active_reward_tree != null:
+			save_file.saved_unlocked_tags = cur_char.active_reward_tree.unlocked_tags.duplicate(true)
+			save_file.saved_activated_node_ids = cur_char.active_reward_tree.activated_node_ids.duplicate(true)
+			save_file.saved_active_combat_pool = cur_char.active_reward_tree.active_combat_pool.duplicate()
+			save_file.saved_active_passive_pool = cur_char.active_reward_tree.active_passive_pool.duplicate()
 	if selected_char:
 		save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
 	save_file.cur_scene = cur_scene
 	if cur_enemy:
 		save_file.cur_enemy = cur_enemy.duplicate(true)
+		save_file.saved_enemy_hybrid_next_is_beast = cur_enemy.hybrid_next_is_beast
+		save_file.saved_enemy_track_cursors.clear()
+		for k in cur_enemy.color_loadouts.keys():
+			var etrk: ColorLoadoutTrack = cur_enemy.color_loadouts[k]
+			if etrk != null:
+				save_file.saved_enemy_track_cursors[k] = etrk.next_entry_cursor
+		if cur_enemy.colorless_fallback_track != null:
+			save_file.saved_enemy_track_cursors[0] = cur_enemy.colorless_fallback_track.next_entry_cursor
+	save_file.saved_pending_reward_context = pending_reward_context.duplicate(true)
 	
 	save_file.game_is_over = game_is_over
 	save_file.cur_cutscene = cur_cutscene
@@ -293,6 +336,7 @@ func save():
 
 func load_data():
 	var save_file = Serializer.new()
+	save_file.save_path = save_path
 	if FileAccess.file_exists(save_path):
 		save_file.load_data()
 		if save_file.selected_char:
@@ -306,10 +350,49 @@ func load_data():
 		
 		if save_file.cur_char and save_file.cur_scene:
 			cur_char = save_file.cur_char.duplicate(true)
+			if not save_file.saved_color_loadouts.is_empty():
+				cur_char.color_loadouts.clear()
+				for k in save_file.saved_color_loadouts.keys():
+					var trk: ColorLoadoutTrack = save_file.saved_color_loadouts[k]
+					if trk != null:
+						var dup_trk: ColorLoadoutTrack = trk.duplicate(true)
+						dup_trk.max_slots = max(dup_trk.max_slots, ColorLoadoutTrack.DEFAULT_MAX_SLOTS)
+						dup_trk.clamp_cursor()
+						cur_char.color_loadouts[int(k)] = dup_trk
 			cur_char.ensure_loadout_tracks()
+			if not save_file.saved_modifier_inventory.is_empty():
+				cur_char.modifier_inventory.clear()
+				for eq in save_file.saved_modifier_inventory:
+					if eq != null:
+						cur_char.modifier_inventory.append(eq.duplicate(true))
+			if cur_char.reward_tree != null and cur_char.active_reward_tree == null:
+				cur_char.active_reward_tree = cur_char.reward_tree.duplicate(true)
+				cur_char.active_reward_tree.initialize_run(cur_char)
+			if cur_char.active_reward_tree != null:
+				if not save_file.saved_unlocked_tags.is_empty():
+					cur_char.active_reward_tree.unlocked_tags = save_file.saved_unlocked_tags.duplicate(true)
+				if not save_file.saved_activated_node_ids.is_empty():
+					cur_char.active_reward_tree.activated_node_ids = save_file.saved_activated_node_ids.duplicate(true)
+				if not save_file.saved_active_combat_pool.is_empty():
+					cur_char.active_reward_tree.active_combat_pool = save_file.saved_active_combat_pool.duplicate()
+				if not save_file.saved_active_passive_pool.is_empty():
+					cur_char.active_reward_tree.active_passive_pool = save_file.saved_active_passive_pool.duplicate()
+			cur_char.recalculate_equipment_passives()
 			cur_scene = save_file.cur_scene
 			if save_file.cur_enemy:
 				cur_enemy = save_file.cur_enemy.duplicate(true)
+				cur_enemy.ensure_loadout_tracks()
+				cur_enemy.hybrid_next_is_beast = save_file.saved_enemy_hybrid_next_is_beast
+				for k in save_file.saved_enemy_track_cursors.keys():
+					var cursor_val: int = int(save_file.saved_enemy_track_cursors[k])
+					if int(k) == 0 and cur_enemy.colorless_fallback_track != null:
+						cur_enemy.colorless_fallback_track.next_entry_cursor = cursor_val
+						cur_enemy.colorless_fallback_track.clamp_cursor()
+					elif cur_enemy.color_loadouts.has(int(k)):
+						var etrk: ColorLoadoutTrack = cur_enemy.color_loadouts[int(k)]
+						etrk.next_entry_cursor = cursor_val
+						etrk.clamp_cursor()
+			pending_reward_context = save_file.saved_pending_reward_context.duplicate(true) if save_file.saved_pending_reward_context != null else {}
 			game_is_over = save_file.game_is_over
 			cur_cutscene = save_file.cur_cutscene
 			current_wave = save_file.current_wave

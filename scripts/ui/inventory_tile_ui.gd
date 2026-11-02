@@ -8,6 +8,9 @@ var modifier: Equipment = null
 var bag_index: int = -1
 var source_type: String = "bag" # "bag" or "pickup"
 var drag_enabled: bool = true
+var is_selected_tile: bool = false
+var _is_hovered: bool = false
+var _cached_tint: Color = Color.WHITE
 
 var base_rect: TextureRect
 var icon_rect: TextureRect
@@ -16,7 +19,7 @@ var badge_label: Label
 var name_label: Label
 
 func _init() -> void:
-	custom_minimum_size = Vector2(96, 86)
+	custom_minimum_size = Vector2(98, 88)
 	size_flags_horizontal = Control.SIZE_FILL
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_build_ui()
@@ -33,8 +36,8 @@ func _build_ui() -> void:
 	sb.corner_radius_top_right = 6
 	sb.corner_radius_bottom_left = 6
 	sb.corner_radius_bottom_right = 6
-	sb.content_margin_left = 4
-	sb.content_margin_right = 4
+	sb.content_margin_left = 5
+	sb.content_margin_right = 5
 	sb.content_margin_top = 4
 	sb.content_margin_bottom = 4
 	add_theme_stylebox_override("panel", sb)
@@ -50,8 +53,10 @@ func _build_ui() -> void:
 	vbox.add_child(top_bar)
 
 	cost_label = Label.new()
-	cost_label.add_theme_font_size_override("font_size", 11)
-	cost_label.add_theme_color_override("font_color", Color(0.85, 0.88, 0.95))
+	cost_label.add_theme_font_size_override("font_size", 10)
+	cost_label.add_theme_color_override("font_color", Color(0.88, 0.9, 0.96))
+	cost_label.add_theme_color_override("font_outline_color", Color(0.06, 0.05, 0.08, 0.95))
+	cost_label.add_theme_constant_override("outline_size", 2)
 	cost_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_bar.add_child(cost_label)
 
@@ -61,8 +66,10 @@ func _build_ui() -> void:
 	top_bar.add_child(spacer)
 
 	badge_label = Label.new()
-	badge_label.add_theme_font_size_override("font_size", 11)
-	badge_label.add_theme_color_override("font_color", Color(0.98, 0.82, 0.32))
+	badge_label.add_theme_font_size_override("font_size", 10)
+	badge_label.add_theme_color_override("font_color", Color(0.98, 0.84, 0.34))
+	badge_label.add_theme_color_override("font_outline_color", Color(0.06, 0.05, 0.08, 0.95))
+	badge_label.add_theme_constant_override("outline_size", 2)
 	badge_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_bar.add_child(badge_label)
 
@@ -89,9 +96,14 @@ func _build_ui() -> void:
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.add_theme_font_size_override("font_size", 12)
 	name_label.add_theme_color_override("font_color", Color(0.92, 0.94, 0.88))
+	name_label.add_theme_color_override("font_outline_color", Color(0.06, 0.05, 0.08, 0.9))
+	name_label.add_theme_constant_override("outline_size", 2)
 	name_label.clip_text = true
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(name_label)
+
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
 
 func setup_tile(mod: Equipment, idx_in_bag: int = -1, interactive: bool = true, src_type: String = "bag") -> void:
 	modifier = mod
@@ -104,26 +116,97 @@ func setup_tile(mod: Equipment, idx_in_bag: int = -1, interactive: bool = true, 
 		return
 	visible = true
 	var c_id: int = 0
-	if not mod.is_colorless():
-		c_id = mod.bound_color if mod.bound_color >= 100 else (mod.allowed_colors[0] if not mod.allowed_colors.is_empty() else 0)
-	var tint: Color = Global.get_color_ui_tint(c_id)
-	var sb: StyleBoxFlat = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	sb.bg_color = tint.darkened(0.68)
-	sb.border_color = tint.lightened(0.15)
-	add_theme_stylebox_override("panel", sb)
+	var eff_colors: Array[int] = mod.get_effective_allowed_colors()
+	if not mod.is_colorless() and not eff_colors.is_empty():
+		c_id = eff_colors[0]
+	_cached_tint = Global.get_color_ui_tint(c_id)
+	_apply_style()
 
 	base_rect.texture = Global.get_color_base_texture(c_id)
 	icon_rect.texture = mod.icon
-	cost_label.text = "%dS" % clampi(mod.slot_cost, 1, 3)
-	badge_label.text = mod.get_trigger_badge_text()
-	name_label.text = mod.piece_name if mod.piece_name != "" else "Item"
+
+	var short_color_tag: String = "ANY"
+	if not mod.is_colorless():
+		var tags: Array[String] = []
+		for ec in eff_colors:
+			var sl: String = Global.get_color_short_label(ec)
+			if not tags.has(sl):
+				tags.append(sl)
+		short_color_tag = "/".join(tags)
+
+	cost_label.text = "%dS•%s" % [clampi(mod.slot_cost, 1, 6), short_color_tag]
+
+	var b_txt: String = mod.get_trigger_badge_text()
+	if b_txt == "":
+		if mod.once_per_battle:
+			b_txt = "1x"
+		elif mod.get_effective_cooldown_turns() > 0:
+			b_txt = "%dT" % mod.get_effective_cooldown_turns()
+	badge_label.text = b_txt
+
+	var upg_str: String = ("+%d" % mod.upgrade) if mod.upgrade > 0 else ""
+	name_label.text = (mod.piece_name if mod.piece_name != "" else "Item") + upg_str
+	if mod.rarity > Equipment.Rarity.COMMON:
+		name_label.add_theme_color_override("font_color", Equipment.get_rarity_color(mod.rarity).lightened(0.18))
+	else:
+		name_label.add_theme_color_override("font_color", Color(0.92, 0.94, 0.88))
+
 	var color_desc: String = "Colorless (Any Track)" if mod.is_colorless() else Global.get_color_name(c_id)
-	tooltip_text = "%s (%s, %d-Slot)\n%s" % [
+	var rarity_prefix: String = ("[%s] " % Equipment.get_rarity_name(mod.rarity)) if mod.rarity > Equipment.Rarity.COMMON else ""
+	tooltip_text = "%s%s%s (%s, %d-Slot)\n%s" % [
+		rarity_prefix,
 		mod.piece_name,
+		upg_str,
 		color_desc,
 		mod.slot_cost,
-		mod.get_effect_description(Global.cur_char)
+		_strip_bbcode(mod.get_effect_description(Global.cur_char))
 	]
+
+func _strip_bbcode(src: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("\\[/?[^\\]]+\\]")
+	return regex.sub(src, "", true)
+
+func set_selected(selected: bool) -> void:
+	is_selected_tile = selected
+	_apply_style()
+
+func _apply_style() -> void:
+	if modifier == null:
+		return
+	var sb: StyleBoxFlat = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	var bg: Color = _cached_tint.darkened(0.65)
+	if _is_hovered:
+		bg = bg.lightened(0.14)
+	sb.bg_color = bg
+
+	if is_selected_tile:
+		sb.border_color = Color(1.0, 0.92, 0.35, 1.0)
+		sb.border_width_left = 3
+		sb.border_width_top = 3
+		sb.border_width_right = 3
+		sb.border_width_bottom = 3
+	elif modifier.rarity > Equipment.Rarity.COMMON:
+		sb.border_color = Equipment.get_rarity_color(modifier.rarity)
+		sb.border_width_left = 2
+		sb.border_width_top = 2
+		sb.border_width_right = 2
+		sb.border_width_bottom = 2
+	else:
+		sb.border_color = _cached_tint.lightened(0.18)
+		sb.border_width_left = 2
+		sb.border_width_top = 2
+		sb.border_width_right = 2
+		sb.border_width_bottom = 2
+	add_theme_stylebox_override("panel", sb)
+
+func _on_mouse_entered() -> void:
+	_is_hovered = true
+	_apply_style()
+
+func _on_mouse_exited() -> void:
+	_is_hovered = false
+	_apply_style()
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

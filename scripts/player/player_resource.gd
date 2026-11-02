@@ -1,4 +1,4 @@
-extends Resource
+extends EntityResource
 class_name PlayerResource
 
 #==============================================================================#
@@ -8,65 +8,17 @@ class_name PlayerResource
 @export_category("Character Identity")
 ## Display name of the character class shown in the UI and checked by class-specific event choices.
 @export var player_class: String = "Warrior"
-## Character portrait and animation scene instantiated in combat.
-@export var sprite: PackedScene
 
-#------------------------------------------------------------------------------#
-@export_category("Core Attributes")
-## Red Pillar: Increases physical attack damage and scales with fall momentum.
-@export var might: float = 1.0
-## Blue Pillar: Increases physical armor and magic armor granted by defensive equipment.
-@export var grit: float = 0.0
-## Green Pillar: Determines base tile swaps (moves) per turn and scales mobility effects.
-@export var speed: int = 2
-## Purple/White Pillar: Increases healing potency, magic effects, and status scaling.
-@export var spirit: float = 0.0
-
-#------------------------------------------------------------------------------#
 @export_category("Combat Stats")
-@export_group("Health & Sustain")
-## Maximum health points the character starts the run with.
-@export var max_health: float = 20.0:
-	set(new_max_health):
-		var diff = new_max_health - max_health
-		max_health = new_max_health
-		cur_health += diff
-## Fraction of physical attack damage restored as health (e.g. 0.25 = 25% lifesteal).
-@export var life_steal: float = 0.0
-
-@export_group("Defense & Mitigation")
-## Physical armor granted automatically at the start of every battle.
-@export var start_armor: float = 0.0
-## Magic armor granted automatically at the start of every battle.
-@export var start_mage_armor: float = 0.0
-## Flat amount of damage subtracted from every incoming enemy hit before percentage reduction.
-@export var dmg_reduction_flat: float = 0.0
-## Percentage of incoming enemy damage reduced (0% to max_dmg_reduction).
-@export var dmg_reduction: float = 0.0
-## Upper cap on percentage-based damage reduction (default 90%).
-@export var max_dmg_reduction: float = 90.0
-
-@export_group("Critical & Combo")
-## Base chance (0% to 100%) for spawned grid tiles to roll as critical strike tiles.
-@export_range(0, 100) var crit_chance: int = 5:
-	set(new_crit_chance):
-		crit_chance = clamp(new_crit_chance, 0, 100)
-## Bonus critical damage percentage added when a match includes a critical tile (100.0 = +100% damage).
-@export var crit_mutly: float = 100.0
-## Starting hand combo points at the beginning of each turn for Fists-family equipment.
-@export var start_hand_combo: int = 0
-## Baseline damage dealt per matched tile when a color track triggers no equipment modifiers.
-@export var fluf_damage: float = 0.0
-
 @export_group("Economy & Utility")
-## Flat reduction (in turns) applied to equipment cooldowns when triggered.
-@export var cooldown_reduction: int = 0
 ## Amount of gold the character starts a new run with.
 @export var start_gold: int = 100
 ## Chance (0% to 100%) for a newly spawned grid tile to carry a gold bonus border.
 @export_range(0, 100) var gold_chance: int = 1
 ## Number of reward screen rerolls the character starts a new run with.
 @export var start_reroll: int = 1
+## Bonus added to reward rarity rolls (0 to 100).
+@export var rarity_bonus: int = 0
 
 #------------------------------------------------------------------------------#
 @export_category("Loadout & Rewards")
@@ -77,11 +29,11 @@ class_name PlayerResource
 ## Standalone reward tree resource that manages this character class's combat and passive rewards.
 @export var reward_tree: RewardTree
 
-var _raw_rewards_piece: Array[Reward] = []
-var _raw_rewards_passive: Array[Reward] = []
+var _raw_rewards_piece: Array = []
+var _raw_rewards_passive: Array = []
 
-## Pool of equipment modifier rewards that can be offered to this character after combat.
-var rewards_piece: Array[Reward]:
+## Pool of combat/equipment rewards that can be offered to this character after combat.
+var rewards_piece: Array:
 	get:
 		if active_reward_tree != null:
 			return active_reward_tree.get_combat_pool()
@@ -89,8 +41,8 @@ var rewards_piece: Array[Reward]:
 	set(val):
 		_raw_rewards_piece = val
 
-## Pool of passive stat rewards that can be offered to this character after combat.
-var rewards_passive: Array[Reward]:
+## Pool of passive/talent rewards that can be offered to this character after combat.
+var rewards_passive: Array:
 	get:
 		if active_reward_tree != null:
 			return active_reward_tree.get_passive_pool()
@@ -103,30 +55,11 @@ var rewards_passive: Array[Reward]:
 #==============================================================================#
 var active_reward_tree: RewardTree = null
 
-## Current health points during a run. Clamped between 0 and max_health; emits playerDied at 0.
-var cur_health: float = 20.0:
-	set(new_cur_health):
-		cur_health = clamp(new_cur_health, 0, max_health)
-		if cur_health <= 0:
-			playerDied.emit()
-
-## Current physical armor during combat. Resets at the start of each player turn.
-var cur_armor: float = 0.0
-## Current magic armor during combat. Persists across turns within a battle.
-var cur_mage_armor: float = 0.0
-## Remaining tile swaps (moves) in the current combat turn.
-var moves_left: int = 0
-## Whether the character will dodge the next incoming physical enemy attack.
-var dodging: bool = false
 ## Current reward rerolls remaining in the run.
 var rerolls: int = 0
 ## Current gold carried in the run.
 var gold: int = 0
-## Current accumulated hand combo points in the active combat turn.
-var hand_combo: int = 0
 
-## Runtime dictionary mapping color ID (int) to its 3-slot ColorLoadoutTrack.
-var color_loadouts: Dictionary = {}
 ## Unslotted equipment modifiers stored in the player's inventory bag.
 var modifier_inventory: Array[Equipment] = []
 
@@ -171,63 +104,25 @@ var flg_rew_fists_lvl_2: bool = false
 var flg_rew_fists_irn_body: bool = false
 
 #------------------------------------------------------------------------------#
-# Signals
+# Legacy Player-Specific Signals (bridged from EntityResource)
 signal updateUIPlayer(stat: String)
-signal loadoutChanged
 signal playerDied
 signal playerFinishedTurn
 
-## Internal tracking of currently active stat boosts from equipped equipment.
-var _active_equipment_stat_contributions: Dictionary = {}
-var _is_recalculating_passives: bool = false
-
 func _init() -> void:
-	if not loadoutChanged.is_connected(_on_loadout_changed):
-		loadoutChanged.connect(_on_loadout_changed)
+	super._init()
+	speed = 2
 
-func _on_loadout_changed() -> void:
-	recalculate_equipment_passives()
+func _on_entity_died() -> void:
+	super._on_entity_died()
+	playerDied.emit()
 
-## Recalculates all passive stat boosts from all equipped equipment across all active tracks.
-## Reconciles against previously applied contributions with zero stat drift.
-func recalculate_equipment_passives() -> void:
-	if _is_recalculating_passives:
-		return
-	_is_recalculating_passives = true
+func _on_stat_modified(stat: String) -> void:
+	updateUIPlayer.emit(stat)
 
-	var new_totals: Dictionary = {}
-	for k in color_loadouts.keys():
-		var track: ColorLoadoutTrack = color_loadouts[k]
-		if track == null:
-			continue
-		for mod in track.equipped_modifiers:
-			if mod == null:
-				continue
-			var boosts: Dictionary = mod.get_stat_boosts()
-			for stat_name in boosts.keys():
-				var val = boosts[stat_name]
-				new_totals[stat_name] = new_totals.get(stat_name, 0.0) + val
-
-	# Reconcile previously boosted stats
-	for stat_name in _active_equipment_stat_contributions.keys():
-		var old_val = _active_equipment_stat_contributions[stat_name]
-		var new_val = new_totals.get(stat_name, 0.0)
-		var diff = new_val - old_val
-		if not is_zero_approx(diff):
-			modify_stat(stat_name, diff)
-
-	# Apply new stats not in previous contributions
-	for stat_name in new_totals.keys():
-		if not _active_equipment_stat_contributions.has(stat_name):
-			var new_val = new_totals[stat_name]
-			if not is_zero_approx(new_val):
-				modify_stat(stat_name, new_val)
-
-	_active_equipment_stat_contributions = new_totals
-	_is_recalculating_passives = false
-
-func refresh_equipment_stats() -> void:
-	recalculate_equipment_passives()
+func _on_moves_exhausted() -> void:
+	super._on_moves_exhausted()
+	playerFinishedTurn.emit()
 
 #==============================================================================#
 # COLOR POOL & LOADOUT FUNCTIONS
@@ -241,22 +136,17 @@ func ensure_loadout_tracks() -> void:
 		if not color_loadouts.has(c) and not color_loadouts.has(base_c):
 			var track := ColorLoadoutTrack.new()
 			track.color = c
-			track.max_slots = 3
+			track.max_slots = ColorLoadoutTrack.DEFAULT_MAX_SLOTS
 			color_loadouts[c] = track
 
 func get_track_for_color(color_id: int) -> ColorLoadoutTrack:
-	ensure_loadout_tracks()
-	if color_loadouts.has(color_id):
-		return color_loadouts[color_id]
+	var found: ColorLoadoutTrack = super.get_track_for_color(color_id)
+	if found != null:
+		return found
 	var base_c: int = get_base_family(color_id)
-	if color_loadouts.has(base_c):
-		return color_loadouts[base_c]
-	for k in color_loadouts.keys():
-		if get_base_family(int(k)) == base_c:
-			return color_loadouts[k]
 	var new_track := ColorLoadoutTrack.new()
 	new_track.color = base_c
-	new_track.max_slots = 3
+	new_track.max_slots = ColorLoadoutTrack.DEFAULT_MAX_SLOTS
 	color_loadouts[base_c] = new_track
 	return new_track
 
@@ -266,7 +156,7 @@ func add_color_to_pool(new_color: int) -> void:
 	if not color_loadouts.has(new_color):
 		var track := ColorLoadoutTrack.new()
 		track.color = new_color
-		track.max_slots = 3
+		track.max_slots = ColorLoadoutTrack.DEFAULT_MAX_SLOTS
 		color_loadouts[new_color] = track
 	loadoutChanged.emit()
 
@@ -300,15 +190,9 @@ func transmute_color(old_color: int, exotic_color: int) -> void:
 	elif not color_loadouts.has(exotic_color):
 		var track := ColorLoadoutTrack.new()
 		track.color = exotic_color
-		track.max_slots = 3
+		track.max_slots = ColorLoadoutTrack.DEFAULT_MAX_SLOTS
 		color_loadouts[exotic_color] = track
 	loadoutChanged.emit()
-
-func is_exotic_color(color: int) -> bool:
-	return (int(color) % 100) != 0
-
-func get_base_family(color: int) -> int:
-	return int(color / 100) * 100
 
 func _get_preferred_auto_equip_color(mod: Equipment) -> int:
 	if mod == null:
@@ -317,7 +201,7 @@ func _get_preferred_auto_equip_color(mod: Equipment) -> int:
 		return mod.bound_color if mod.bound_color >= 100 else mod.allowed_colors[0]
 	
 	# Special check for magic-oriented shields
-	if mod.family == "shields" and mod.base_magic_armor > 0.0:
+	if mod.family == "shields" and mod.get_effective_base_magic_armor() > 0.0:
 		return 500 if active_color_pool.has(500) else 200
 
 	# Query the central registry in Global
@@ -372,6 +256,7 @@ func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoa
 			target_track.equipped_modifiers.insert(target_mod_index, dragged_mod)
 		else:
 			target_track.equipped_modifiers.append(dragged_mod)
+		target_track.clamp_cursor()
 		loadoutChanged.emit()
 		return true
 
@@ -398,6 +283,7 @@ func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoa
 		var displaced_end: Equipment = target_track.equipped_modifiers.pop_back()
 		if displaced_end != null:
 			modifier_inventory.append(displaced_end)
+		target_track.clamp_cursor()
 
 	if not target_track.equip_modifier(dragged_mod, insert_pos):
 		modifier_inventory.append(dragged_mod)
@@ -458,11 +344,7 @@ func get_all_owned_modifiers() -> Array[Equipment]:
 	return list
 
 func reset_modifiers_for_battle() -> void:
-	ensure_loadout_tracks()
-	for k in color_loadouts.keys():
-		var track: ColorLoadoutTrack = color_loadouts[k]
-		if track != null:
-			track.reset_for_battle()
+	super.reset_modifiers_for_battle()
 	for mod in modifier_inventory:
 		if mod != null:
 			mod.reset_for_battle()
@@ -470,34 +352,6 @@ func reset_modifiers_for_battle() -> void:
 #==============================================================================#
 # COMBAT & LIFECYCLE FUNCTIONS
 #==============================================================================#
-
-func take_damage(enemy_damage, piercing: bool = false, type: int = 0):
-	if dodging and type == 0:
-		dodging = false
-		updateUIPlayer.emit("dodging")
-		return
-
-	if dmg_reduction_flat > 0:
-		enemy_damage -= clamp(dmg_reduction_flat, 0, enemy_damage - 1)
-	if dmg_reduction > 0:
-		enemy_damage = round(enemy_damage * (1 - clamp(dmg_reduction, 0, max_dmg_reduction) / 100.0))
-
-	if cur_mage_armor > 0 and enemy_damage > 0 and not piercing:
-		enemy_damage = apply_armor_reduction(enemy_damage, "cur_mage_armor")
-	if cur_armor > 0 and enemy_damage > 0:
-		enemy_damage = apply_armor_reduction(enemy_damage, "cur_armor")
-
-	if enemy_damage > 0:
-		modify_stat("cur_health", -enemy_damage)
-
-func modify_stat(stat: String, value, increment: bool = true) -> void:
-	if not stat in self:
-		print("Stat does not exist:", stat)
-		return
-	set(stat, get(stat) + value if increment else value)
-	if stat == "moves_left" and moves_left <= 0:
-		playerFinishedTurn.emit()
-	updateUIPlayer.emit(stat)
 
 func reset_stats_at_beginning_of_game() -> void:
 	deck_in_game.clear()
@@ -530,11 +384,7 @@ func reset_stats_at_beginning_of_fight() -> void:
 	modify_stat("cur_mage_armor", start_mage_armor, false)
 
 func reset_stats_at_beginning_of_turn() -> void:
-	ensure_loadout_tracks()
-	for k in color_loadouts.keys():
-		var track: ColorLoadoutTrack = color_loadouts[k]
-		if track != null:
-			track.tick_cooldowns(1)
+	tick_all_track_cooldowns(1)
 	modify_stat("cur_armor", 0, false)
 	modify_stat("hand_combo", start_hand_combo, false)
 	modify_stat("moves_left", speed, false)
@@ -553,17 +403,6 @@ func reset_stats_at_beging_of_turn() -> void:
 #==============================================================================#
 # HELPER FUNCTIONS
 #==============================================================================#
-
-func apply_armor_reduction(damage: float, armor_property: String) -> float:
-	var armor_value = get(armor_property)
-	var remaining_armor = armor_value - damage
-	if remaining_armor >= 0:
-		set(armor_property, remaining_armor)
-		updateUIPlayer.emit(armor_property)
-		return 0.0
-	set(armor_property, 0)
-	updateUIPlayer.emit(armor_property)
-	return abs(remaining_armor)
 
 func set_flag(flag: String, value = true):
 	if active_reward_tree != null and value:

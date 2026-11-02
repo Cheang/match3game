@@ -27,7 +27,7 @@ script = ExtResource("2_5u2am")
 name = "MM"
 track = SubResource("AudioStreamPlaylist_gqk43")
 
-[node name="main_menu" type="Control"]
+[node name="main_menu" type="Control" unique_id=2036192885]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,7 +40,7 @@ script = ExtResource("1_m0wtd")
 song = SubResource("Resource_12eda")
 def_area = ExtResource("6_h344n")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=2012815701]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,7 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_3j6ne")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1354293868]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -70,17 +70,17 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 2
 
-[node name="Control2" type="Control" parent="VBoxContainer"]
+[node name="Control2" type="Control" parent="VBoxContainer" unique_id=310290370]
 custom_minimum_size = Vector2(400, 250)
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer" unique_id=1976566993]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 texture = ExtResource("3_jb5a2")
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/TextureRect"]
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/TextureRect" unique_id=1662326693]
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 8
@@ -97,16 +97,16 @@ grow_vertical = 2
 texture = ExtResource("9_qvpqg")
 stretch_mode = 3
 
-[node name="Control" type="Control" parent="VBoxContainer"]
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=866454943]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=1415307309]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
-[node name="start" parent="VBoxContainer/VBoxContainer" instance=ExtResource("4_ah0x7")]
+[node name="start" parent="VBoxContainer/VBoxContainer" unique_id=163436496 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -122,7 +122,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "New Story"
 
-[node name="load" parent="VBoxContainer/VBoxContainer" instance=ExtResource("4_ah0x7")]
+[node name="load" parent="VBoxContainer/VBoxContainer" unique_id=14626523 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -138,7 +138,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Continue a Story"
 
-[node name="char_select" parent="VBoxContainer/VBoxContainer" instance=ExtResource("4_ah0x7")]
+[node name="char_select" parent="VBoxContainer/VBoxContainer" unique_id=1857413465 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -155,7 +155,7 @@ theme_override_styles/disabled = ExtResource("10_qd8a3")
 disabled = true
 text = "Select a Character"
 
-[node name="settings" parent="VBoxContainer/VBoxContainer" instance=ExtResource("4_ah0x7")]
+[node name="settings" parent="VBoxContainer/VBoxContainer" unique_id=348716662 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -171,7 +171,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Settings"
 
-[node name="quit" parent="VBoxContainer/VBoxContainer" instance=ExtResource("4_ah0x7")]
+[node name="quit" parent="VBoxContainer/VBoxContainer" unique_id=669840106 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -187,11 +187,11 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Retire"
 
-[node name="Control3" type="Control" parent="VBoxContainer"]
+[node name="Control3" type="Control" parent="VBoxContainer" unique_id=915208213]
 custom_minimum_size = Vector2(0, 65)
 layout_mode = 2
 
-[node name="Control4" type="Control" parent="VBoxContainer"]
+[node name="Control4" type="Control" parent="VBoxContainer" unique_id=1867560635]
 layout_mode = 2
 size_flags_vertical = 3
 

@@ -3,7 +3,7 @@ class_name EvtChoiseReward
 
 var type: int = 3
 
-@export var reward: Reward
+@export var reward: Resource
 
 @export var fight_overwrite: bool = false
 @export var enemy: Array[EnemyResource] = []
@@ -11,12 +11,13 @@ var type: int = 3
 @export var next_scene: String = "res://locations_screen.tscn"
 
 var handled_in_place: bool = false
+var equipment_already_prompted: bool = false
 
 func activate():
 	Global.game_is_played = false
 	if reward != null:
-		reward.activate()
-		reward.boost()
+		RewardGrantHandler.grant_reward(reward, not equipment_already_prompted)
+	equipment_already_prompted = false
 	if fight_overwrite and not enemy.is_empty():
 		Global.post_combat_event = next_event
 		Global.set_up_enemy(enemy.pick_random())

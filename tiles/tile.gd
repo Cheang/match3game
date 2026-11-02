@@ -47,6 +47,9 @@ var matched: bool = false
 var is_criting: bool = false
 var is_gold: bool = false
 var is_preview_highlighted: bool = false
+var is_enemy_target_highlighted: bool = false
+var _enemy_target_border: Sprite2D = null
+var _enemy_target_tween: Tween = null
 
 var is_row_bomb: bool = false
 var is_col_bomb: bool = false
@@ -136,6 +139,10 @@ func _apply_exotic_tint() -> void:
 		base.modulate = Color(1.35, 1.35, 1.35, 1.0)
 		scale = Vector2(1.08, 1.08)
 		return
+	if is_enemy_target_highlighted:
+		scale = Vector2.ONE
+		base.modulate = Color(1.25, 0.75, 0.75, 1.0)
+		return
 	scale = Vector2.ONE
 	if Global.is_exotic_color(color_id):
 		match color_id:
@@ -158,6 +165,36 @@ func set_preview_highlight(active: bool) -> void:
 	is_preview_highlighted = active
 	_apply_exotic_tint()
 
+## Visual indicator for upcoming monster attacks targeting this tile.
+func set_enemy_target_highlight(active: bool) -> void:
+	is_enemy_target_highlighted = active
+	if active:
+		if _enemy_target_border == null or not is_instance_valid(_enemy_target_border):
+			_enemy_target_border = Sprite2D.new()
+			_enemy_target_border.name = "EnemyTargetBorder"
+			_enemy_target_border.texture = preload("res://assets/gold_border_sq.png")
+			_enemy_target_border.z_index = 2
+			add_child(_enemy_target_border)
+		_enemy_target_border.visible = true
+		_enemy_target_border.modulate = Color(1.0, 0.2, 0.2, 0.85)
+		if _enemy_target_tween != null and _enemy_target_tween.is_valid():
+			_enemy_target_tween.kill()
+		_enemy_target_tween = create_tween().set_loops()
+		_enemy_target_tween.tween_property(_enemy_target_border, "modulate:a", 0.35, 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_enemy_target_tween.tween_property(_enemy_target_border, "modulate:a", 0.95, 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	else:
+		if _enemy_target_tween != null and _enemy_target_tween.is_valid():
+			_enemy_target_tween.kill()
+			_enemy_target_tween = null
+		if _enemy_target_border != null and is_instance_valid(_enemy_target_border):
+			_enemy_target_border.visible = false
+	_apply_exotic_tint()
+
+func _exit_tree() -> void:
+	if _enemy_target_tween != null and _enemy_target_tween.is_valid():
+		_enemy_target_tween.kill()
+		_enemy_target_tween = null
+
 func move(target, time = 0.3):
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "position", target, time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
@@ -165,6 +202,7 @@ func move(target, time = 0.3):
 func mark(_activate: bool = true):
 	matched = true
 	is_preview_highlighted = false
+	set_enemy_target_highlight(false)
 	scale = Vector2.ONE
 	if base != null:
 		base.modulate = Color(1, 1, 1, 0.5)
@@ -172,6 +210,7 @@ func mark(_activate: bool = true):
 func unmark():
 	matched = false
 	is_preview_highlighted = false
+	set_enemy_target_highlight(false)
 	scale = Vector2.ONE
 	if icon != null:
 		icon.texture = icon_texture

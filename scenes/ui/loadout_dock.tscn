@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scripts/ui/loadout_dock.gd" id="1_dock"]
 
 [node name="loadout_dock" type="PanelContainer"]
-offset_left = 28.0
-offset_top = 838.0
-offset_right = 548.0
-offset_bottom = 874.0
+offset_left = 24.0
+offset_top = 834.0
+offset_right = 552.0
+offset_bottom = 886.0
 script = ExtResource("1_dock")

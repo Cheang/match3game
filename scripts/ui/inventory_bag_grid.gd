@@ -7,17 +7,18 @@ signal bag_tile_clicked(mod: Equipment, bag_index: int)
 var flow_grid: HFlowContainer
 var empty_label: Label
 var interactive_drag: bool = true
+var tile_widgets: Array[InventoryTileUI] = []
 
 func _init() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	custom_minimum_size = Vector2(440, 220)
+	custom_minimum_size = Vector2(440, 200)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_build_ui()
 
 func _build_ui() -> void:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.11, 0.09, 0.14, 0.85)
+	sb.bg_color = Color(0.11, 0.09, 0.14, 0.88)
 	sb.border_width_left = 2
 	sb.border_width_top = 2
 	sb.border_width_right = 2
@@ -42,9 +43,9 @@ func _build_ui() -> void:
 	empty_label = Label.new()
 	empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	empty_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	empty_label.add_theme_font_size_override("font_size", 14)
-	empty_label.add_theme_color_override("font_color", Color(0.55, 0.52, 0.6))
-	empty_label.text = "Inventory Bag is empty (Drag equipped items here to unequip)"
+	empty_label.add_theme_font_size_override("font_size", 13)
+	empty_label.add_theme_color_override("font_color", Color(0.58, 0.54, 0.64))
+	empty_label.text = "Equipment Bag is empty (Tap an equipped slot or drag here to unequip)"
 	empty_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(empty_label)
 
@@ -60,6 +61,7 @@ func populate_bag(items: Array[Equipment], enable_drag: bool = true) -> void:
 	interactive_drag = enable_drag
 	for child in flow_grid.get_children():
 		child.queue_free()
+	tile_widgets.clear()
 
 	empty_label.visible = items.is_empty()
 	for idx in range(items.size()):
@@ -71,6 +73,12 @@ func populate_bag(items: Array[Equipment], enable_drag: bool = true) -> void:
 		tile.setup_tile(mod, idx, interactive_drag, "bag")
 		tile.tile_clicked.connect(_on_tile_clicked)
 		tile.modifier_dropped_on_bag.connect(_on_tile_dropped)
+		tile_widgets.append(tile)
+
+func highlight_selected_mod(selected_mod: Equipment) -> void:
+	for tile in tile_widgets:
+		if is_instance_valid(tile):
+			tile.set_selected(selected_mod != null and tile.modifier == selected_mod)
 
 func _on_tile_clicked(mod: Equipment, idx: int) -> void:
 	bag_tile_clicked.emit(mod, idx)

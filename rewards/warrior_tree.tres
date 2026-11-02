@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="2_asoqv"]
 [ext_resource type="Resource" path="res://rewards/cards/utility/faith_weak.tres" id="2_faith"]
 [ext_resource type="Resource" path="res://rewards/cards/utility/general_healing_potion.tres" id="3_hp"]
-[ext_resource type="Resource" path="res://rewards/cards/sword/sword0_small_sword.tres" id="4_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="4_ssword"]
 [ext_resource type="Resource" path="res://rewards/cards/utility/general_rush.tres" id="5_rush"]
-[ext_resource type="Resource" path="res://rewards/cards/utility/shields_up.tres" id="6_shields"]
+[ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="6_shields"]
 [ext_resource type="Resource" path="res://rewards/cards/body/body0_strong_body_1.tres" id="7_body1"]
 [ext_resource type="Resource" path="res://rewards/cards/fists/fists0-way_of_the_fist.tres" id="8_fist0"]
 [ext_resource type="Resource" path="res://rewards/cards/utility/bomb0_hbombs.tres" id="9_hbomb"]
@@ -32,8 +32,8 @@ id = "node_fists_1"
 title = "Way of the Fist Mastery"
 graph_pos = Vector2(360, 80)
 required_tags = Array[String](["flg_rew_fists_lvl_1"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("13_punch"), ExtResource("14_block"), ExtResource("15_cfist"), ExtResource("16_wfists")])
-removed_rewards = Array[ExtResource("2_asoqv")]([ExtResource("8_fist0")])
+unlocked_rewards = Array[Resource]([ExtResource("13_punch"), ExtResource("14_block"), ExtResource("15_cfist"), ExtResource("16_wfists")])
+removed_rewards = Array[Resource]([ExtResource("8_fist0")])
 incoming_connections = Array[String](["start_node"])
 
 [sub_resource type="Resource" id="Node_fists_1_5"]
@@ -42,7 +42,7 @@ id = "node_fists_1_5"
 title = "Iron Fist Conditioning"
 graph_pos = Vector2(720, 80)
 required_tags = Array[String](["flg_rew_fists_lvl_1_5"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("17_muscles"), ExtResource("18_will")])
+unlocked_rewards = Array[Resource]([ExtResource("17_muscles"), ExtResource("18_will")])
 incoming_connections = Array[String](["node_fists_1"])
 
 [sub_resource type="Resource" id="Node_fists_2"]
@@ -51,7 +51,7 @@ id = "node_fists_2"
 title = "Pure Fist Devotion"
 graph_pos = Vector2(1080, 80)
 required_tags = Array[String](["flg_rew_fists_lvl_2"])
-removed_rewards = Array[ExtResource("2_asoqv")]([ExtResource("4_ssword"), ExtResource("12_spractice")])
+removed_rewards = Array[Resource]([ExtResource("4_ssword"), ExtResource("12_spractice")])
 incoming_connections = Array[String](["node_fists_1_5"])
 
 [sub_resource type="Resource" id="Node_body_1"]
@@ -60,8 +60,8 @@ id = "node_body_1"
 title = "Hardened Physique"
 graph_pos = Vector2(360, 320)
 required_tags = Array[String](["flg_rew_body_1"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("19_body2"), ExtResource("20_body3")])
-removed_rewards = Array[ExtResource("2_asoqv")]([ExtResource("7_body1")])
+unlocked_rewards = Array[Resource]([ExtResource("19_body2"), ExtResource("20_body3")])
+removed_rewards = Array[Resource]([ExtResource("7_body1")])
 incoming_connections = Array[String](["start_node"])
 
 [sub_resource type="Resource" id="Node_body_2"]
@@ -70,7 +70,7 @@ id = "node_body_2"
 title = "Titan's Vitality"
 graph_pos = Vector2(720, 320)
 required_tags = Array[String](["flg_rew_body_2"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("22_body5")])
+unlocked_rewards = Array[Resource]([ExtResource("22_body5")])
 incoming_connections = Array[String](["node_body_1"])
 
 [sub_resource type="Resource" id="Node_iron_body"]
@@ -79,7 +79,7 @@ id = "node_iron_body"
 title = "Iron Body Convergence"
 graph_pos = Vector2(900, 200)
 required_tags = Array[String](["flg_rew_fists_lvl_1_5_picked", "flg_rew_body_1"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("21_body4")])
+unlocked_rewards = Array[Resource]([ExtResource("21_body4")])
 incoming_connections = Array[String](["node_fists_1_5", "node_body_1"])
 
 [sub_resource type="Resource" id="Node_mobility_1"]
@@ -88,12 +88,12 @@ id = "node_mobility_1"
 title = "Ghost Step"
 graph_pos = Vector2(360, 560)
 required_tags = Array[String](["flg_rew_rush"])
-unlocked_rewards = Array[ExtResource("2_asoqv")]([ExtResource("23_smoke")])
+unlocked_rewards = Array[Resource]([ExtResource("23_smoke")])
 incoming_connections = Array[String](["start_node"])
 
 [resource]
 script = ExtResource("1_tree")
 tree_name = "Warrior Arsenal & Might"
-starting_combat_rewards = Array[ExtResource("2_asoqv")]([ExtResource("2_faith"), ExtResource("3_hp"), ExtResource("4_ssword"), ExtResource("5_rush"), ExtResource("6_shields"), ExtResource("7_body1"), ExtResource("8_fist0"), ExtResource("9_hbomb"), ExtResource("10_vbomb"), ExtResource("11_abomb")])
-starting_passive_rewards = Array[ExtResource("2_asoqv")]([ExtResource("7_body1"), ExtResource("12_spractice")])
+starting_combat_rewards = Array[Resource]([ExtResource("2_faith"), ExtResource("3_hp"), ExtResource("4_ssword"), ExtResource("5_rush"), ExtResource("6_shields"), ExtResource("7_body1"), ExtResource("8_fist0"), ExtResource("9_hbomb"), ExtResource("10_vbomb"), ExtResource("11_abomb")])
+starting_passive_rewards = Array[Resource]([ExtResource("7_body1"), ExtResource("12_spractice")])
 nodes = Array[ExtResource("1_node")]([SubResource("Node_fists_1"), SubResource("Node_fists_1_5"), SubResource("Node_fists_2"), SubResource("Node_body_1"), SubResource("Node_body_2"), SubResource("Node_iron_body"), SubResource("Node_mobility_1")])

@@ -4,8 +4,8 @@ extends Control
 # Data structures
 var current_tree_path: String = ""
 var tree_name: String = "Default Reward Tree"
-var starting_combat_rewards: Array[Reward] = []
-var starting_passive_rewards: Array[Reward] = []
+var starting_combat_rewards: Array[Resource] = []
+var starting_passive_rewards: Array[Resource] = []
 var branch_nodes: Array[Dictionary] = [] # [{ "id": "", "title": "", "pos": Vector2, "req_tags": [], "unlocks": [], "removes": [], "incoming": [] }]
 var selected_node_id: String = ""
 var is_dirty: bool = false
@@ -127,9 +127,9 @@ func save_tree_to_path(path: String) -> void:
 		n.required_tags.clear()
 		for t in d["req_tags"]: n.required_tags.append(str(t))
 		n.unlocked_rewards.clear()
-		for r in d["unlocks"]: if r is Reward: n.unlocked_rewards.append(r)
+		for r in d["unlocks"]: if r is Reward or r is Equipment: n.unlocked_rewards.append(r)
 		n.removed_rewards.clear()
-		for r in d["removes"]: if r is Reward: n.removed_rewards.append(r)
+		for r in d["removes"]: if r is Reward or r is Equipment: n.removed_rewards.append(r)
 		n.incoming_connections.clear()
 		for inc in d["incoming"]: n.incoming_connections.append(str(inc))
 		tree_res.nodes.append(n)
@@ -393,9 +393,9 @@ func _render_card_list_items(container: VBoxContainer, card_list: Array) -> void
 		row.add_child(icon_rect)
 
 		var name_lbl := Label.new()
-		var card_name = rew.get("name")
-		if card_name == null or str(card_name) == "":
-			card_name = rew.resource_path.get_file()
+		var card_name: String = RewardGrantHandler.get_display_name(rew)
+		if rew is Equipment:
+			card_name = "[EQ] " + card_name
 		name_lbl.text = str(card_name)
 		name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		name_lbl.tooltip_text = _get_card_desc_str(rew)
@@ -419,8 +419,8 @@ func _open_card_picker(target_list: Array) -> void:
 	active_card_target_list = target_list
 	file_dialog_mode = "pick_card"
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	file_dialog.current_dir = "res://rewards/cards"
-	file_dialog.filters = PackedStringArray(["*.tres ; Reward Resources"])
+	file_dialog.current_dir = "res://"
+	file_dialog.filters = PackedStringArray(["*.tres ; Reward or Equipment Resources"])
 	file_dialog.popup_centered(Vector2i(800, 500))
 
 # ==============================================================================
@@ -554,15 +554,15 @@ func _on_file_dialog_file_selected(path: String) -> void:
 		"pick_card":
 			if ResourceLoader.exists(path):
 				var res = load(path)
-				if res is Reward:
+				if res is Reward or res is Equipment:
 					active_card_target_list.append(res)
 					is_dirty = true
 					update_file_label()
 					rebuild_graph_ui()
 					load_selected_node_into_inspector()
-					set_status("Added reward card: " + path.get_file())
+					set_status("Added reward resource: " + path.get_file())
 				else:
-					set_status("File is not a Reward resource.")
+					set_status("File is not a Reward or Equipment resource.")
 
 # ==============================================================================
 # TEST DRAFT SIMULATION
@@ -587,8 +587,8 @@ func _reset_simulation_state() -> void:
 		n.title = d["title"]
 		n.graph_pos = d["pos"]
 		for t in d["req_tags"]: n.required_tags.append(str(t))
-		for r in d["unlocks"]: if r is Reward: n.unlocked_rewards.append(r)
-		for r in d["removes"]: if r is Reward: n.removed_rewards.append(r)
+		for r in d["unlocks"]: if r is Reward or r is Equipment: n.unlocked_rewards.append(r)
+		for r in d["removes"]: if r is Reward or r is Equipment: n.removed_rewards.append(r)
 		sim_tree.nodes.append(n)
 
 	sim_tree.initialize_run()
@@ -614,7 +614,7 @@ func _roll_simulation_draft() -> void:
 		draft_result_label.text = "Active combat pool is empty!"
 		return
 
-	var rolled_cards: Array[Reward] = []
+	var rolled_cards: Array[Resource] = []
 	var pool_copy = pool.duplicate()
 	pool_copy.shuffle()
 
@@ -624,9 +624,7 @@ func _roll_simulation_draft() -> void:
 	for rew in rolled_cards:
 		var card_btn := Button.new()
 		card_btn.custom_minimum_size = Vector2(180, 140)
-		var card_name = rew.get("name")
-		if card_name == null or str(card_name) == "":
-			card_name = rew.resource_path.get_file()
+		var card_name: String = RewardGrantHandler.get_display_name(rew)
 		var r_str = _get_card_rarity_str(rew)
 		var d_str = _get_card_desc_str(rew)
 		card_btn.text = "%s\n[%s]\n\n%s" % [card_name, r_str, d_str]
@@ -638,27 +636,15 @@ func _roll_simulation_draft() -> void:
 	draft_result_label.text = "Showing 3 cards drawn from active tree pool."
 
 func _get_card_rarity_str(rew) -> String:
-	if rew == null: return "COMMON"
-	var r = rew.get("rarity")
-	if r != null:
-		var idx = int(r)
-		if idx >= 0 and idx < Reward.Rarity.size():
-			return Reward.Rarity.keys()[idx]
-	return "COMMON"
+	return RewardGrantHandler.get_rarity_name(rew)
 
 func _get_card_desc_str(rew) -> String:
-	if rew == null: return ""
-	var d = rew.get("description")
-	if d != null and str(d) != "":
-		return str(d)
-	return ""
+	return RewardGrantHandler.get_description(rew)
 
 func _pick_simulation_card(rew) -> void:
 	if not sim_tree: return
 	sim_tree.on_reward_chosen(rew)
 	_update_sim_tags_display()
-	var card_name = rew.get("name")
-	if card_name == null or str(card_name) == "":
-		card_name = rew.resource_path.get_file()
+	var card_name: String = RewardGrantHandler.get_display_name(rew)
 	draft_result_label.text = "Picked '%s'! Tags updated. Rolling next combat reward draft..." % card_name
 	_roll_simulation_draft()

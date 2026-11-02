@@ -330,7 +330,7 @@ offset_bottom = 254.0
 theme = ExtResource("12_tovol")
 theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
 theme_override_font_sizes/font_size = 22
-text = "Moves Remaing: 2"
+text = "Moves Remaining: 2"
 horizontal_alignment = 1
 
 [node name="foreground" type="Node2D" parent="." unique_id=1973101239]

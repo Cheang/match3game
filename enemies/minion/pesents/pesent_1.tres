@@ -8,6 +8,11 @@
 [ext_resource type="AudioStream" uid="uid://bfyeq52qeuolx" path="res://sounds/slash_1.wav" id="5_xnje7"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="6_ykc4h"]
 [ext_resource type="PackedScene" uid="uid://edbwrl52wbsb" path="res://enemies/minion/pesents/pesent_1.tscn" id="8_3ygr2"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="9_eq_scr"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="10_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="11_rshield"]
+[ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="12_punch"]
+[ext_resource type="Resource" path="res://rewards/cards/utility/general_healing_potion.tres" id="13_hp"]
 
 [sub_resource type="Resource" id="Resource_uao6c"]
 script = ExtResource("2_xas1u")
@@ -36,11 +41,15 @@ sound = ExtResource("5_xnje7")
 [resource]
 script = ExtResource("2_6orxw")
 name = "Villager"
-max_health = 18.0
-damage = 1.0
+explicit_track_colors = Array[int]([100, 200])
+red_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("10_ssword")])
+blue_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("11_rshield")])
+colorless_fallback_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("12_punch")])
+loot_table = Array[Resource]([ExtResource("10_ssword"), ExtResource("11_rshield"), ExtResource("13_hp")])
 has_phases = true
 attacks = Array[ExtResource("1_lkmlp")]([SubResource("Resource_uao6c")])
 attacks_p2 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_0cb8h")])
 attacks_p3 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_7efn5")])
 attacks_p4 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_n8rpl")])
 sprite = ExtResource("8_3ygr2")
+max_health = 18.0

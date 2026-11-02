@@ -1174,15 +1174,19 @@ func save_event_to_file(file_path: String) -> bool:
 					
 				"reward":
 					var c_rew = EvtChoiseReward.new()
-					var rew = Reward.new()
-					rew.name = c.get("reward_name", "Reward")
-					rew.description = c.get("reward_desc", "")
-					if c.get("reward_type", "stat") == "piece":
-						if c.get("reward_piece_path", "") != "" and ResourceLoader.exists(c["reward_piece_path"]):
-							var p_scene = load(c["reward_piece_path"])
-							if p_scene is Equipment:
-								rew.equipment_to_grant.append(p_scene)
+					if c.get("reward_type", "stat") == "piece" and c.get("reward_piece_path", "") != "" and ResourceLoader.exists(c["reward_piece_path"]):
+						var p_scene = load(c["reward_piece_path"])
+						if p_scene is Equipment:
+							c_rew.reward = p_scene
+						else:
+							var rew_fallback = Reward.new()
+							rew_fallback.name = c.get("reward_name", "Reward")
+							rew_fallback.description = c.get("reward_desc", "")
+							c_rew.reward = rew_fallback
 					else:
+						var rew = Reward.new()
+						rew.name = c.get("reward_name", "Reward")
+						rew.description = c.get("reward_desc", "")
 						var stat_name = c.get("reward_stat", "gold")
 						var stat_val = c.get("reward_stat_amount", 25.0)
 						if stat_name == "gold":
@@ -1199,7 +1203,7 @@ func save_event_to_file(file_path: String) -> bool:
 							rew.spirit = float(stat_val)
 						elif stat_name == "speed":
 							rew.speed = int(stat_val)
-					c_rew.reward = rew
+						c_rew.reward = rew
 					
 					var after_act = c.get("after_reward", "scene_change")
 					match after_act:
@@ -1332,9 +1336,12 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 		elif c is EvtChoiseReward:
 			c_data["outcome_type"] = "reward"
 			if c.reward != null:
-				c_data["reward_name"] = c.reward.name if "name" in c.reward else ""
-				c_data["reward_desc"] = c.reward.description if "description" in c.reward else ""
-				if c.reward is Reward:
+				c_data["reward_name"] = RewardGrantHandler.get_display_name(c.reward)
+				c_data["reward_desc"] = RewardGrantHandler.get_description(c.reward)
+				if c.reward is Equipment:
+					c_data["reward_type"] = "piece"
+					c_data["reward_piece_path"] = c.reward.resource_path
+				elif c.reward is Reward:
 					if not c.reward.equipment_to_grant.is_empty() and c.reward.equipment_to_grant[0] != null:
 						c_data["reward_type"] = "piece"
 						c_data["reward_piece_path"] = c.reward.equipment_to_grant[0].resource_path

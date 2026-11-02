@@ -14,24 +14,47 @@ const REWARD_PANELS = {
 @onready var reward_icon: TextureRect = $HBoxContainer/reward_texture/reward_icon
 @onready var reward_name: Label = $HBoxContainer/MarginContainer/VBoxContainer/reward_name
 @onready var reward_description: RichTextLabel = $HBoxContainer/MarginContainer/VBoxContainer/reward_decription
+@onready var choise_btn: Button = $choise_btn
 
-var reward_resource: Reward
+var reward_resource: Resource
 var index: int
+var draft_source: String = ""
+var is_boss_reward: bool = false
+var _is_claiming: bool = false
+
+func _ready() -> void:
+	if choise_btn != null:
+		if not choise_btn.mouse_entered.is_connected(_on_btn_mouse_entered):
+			choise_btn.mouse_entered.connect(_on_btn_mouse_entered)
+		if not choise_btn.mouse_exited.is_connected(_on_btn_mouse_exited):
+			choise_btn.mouse_exited.connect(_on_btn_mouse_exited)
+
+func _on_btn_mouse_entered() -> void:
+	if not _is_claiming:
+		modulate = Color(1.08, 1.08, 1.08, 1.0)
+
+func _on_btn_mouse_exited() -> void:
+	modulate = Color.WHITE
 
 func _on_choise_btn_pressed() -> void:
-	if reward_resource == null:
+	if reward_resource == null or _is_claiming:
 		return
+	if not RewardGrantHandler.is_supported_reward(reward_resource):
+		push_error("reward_card: Unsupported reward resource: %s" % [str(reward_resource)])
+		return
+	_is_claiming = true
+	modulate = Color.WHITE
 	Global.game_is_played = false
 
-	var mods: Array[Equipment] = reward_resource.get_resolved_modifiers()
+	var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(reward_resource)
 	if not mods.is_empty():
 		var modal := SlotEquipModal.new()
 		get_tree().current_scene.add_child(modal)
 		modal.prompt_modifiers(mods)
 		await modal.modal_closed
-		reward_resource.activate(false)
+		RewardGrantHandler.grant_reward(reward_resource, false)
 	else:
-		reward_resource.activate(true)
+		RewardGrantHandler.grant_reward(reward_resource, true)
 
 	_proceed_after_reward()
 
@@ -64,13 +87,59 @@ static func get_rarity_stylebox(rarity: String) -> StyleBoxTexture:
 	cached_styleboxes[rarity] = sb
 	return sb
 
+func _build_meta_header(res: Resource, r_key: String) -> String:
+	var r_enum: Equipment.Rarity = RewardGrantHandler.rarity_name_to_equipment_enum(r_key)
+	var r_hex: String = Equipment.get_rarity_hex(r_enum)
+	var r_label: String = Equipment.get_rarity_name(r_enum)
+	var tags: Array[String] = ["[color=%s][b][%s][/b][/color]" % [r_hex, r_label]]
+
+	if draft_source == "monster":
+		tags.append("[color=#f2a65a]Monster Loot[/color]")
+	elif draft_source == "class":
+		tags.append("[color=#9ec4d6]%s[/color]" % ("Boss Relic" if is_boss_reward else "Class Pool"))
+
+	if res is Equipment:
+		var eq := res as Equipment
+		tags.append("%d-Slot" % clampi(eq.slot_cost, 1, 6))
+		if eq.is_colorless():
+			tags.append("Any Track")
+		else:
+			var c_names: Array[String] = []
+			for c in eq.get_effective_allowed_colors():
+				var cn: String = Global.get_color_name(c)
+				if not c_names.has(cn):
+					c_names.append(cn)
+			tags.append("/".join(c_names))
+		var trig: String = eq.get_trigger_badge_text()
+		if trig != "":
+			tags.append("[color=#fad65a]Trig:%s[/color]" % trig)
+		if eq.once_per_battle:
+			tags.append("[color=#f29d4c]1/Battle[/color]")
+		elif eq.get_effective_cooldown_turns() > 0:
+			tags.append("[color=#f29d4c]CD:%dT[/color]" % eq.get_effective_cooldown_turns())
+	else:
+		tags.append("Passive / Bonus")
+
+	return "[color=#b5baa8]" + " • ".join(tags) + "[/color]"
+
 func load_btn():
+	_is_claiming = false
+	modulate = Color.WHITE
 	if reward_resource == null:
 		return
-	reward_base.texture = reward_resource.base if reward_resource.base != null else null
-	reward_icon.texture = reward_resource.icon if reward_resource.icon != null else null
-	reward_name.text = reward_resource.name
-	reward_description.text = reward_resource.get_effect_description() if reward_resource.has_method("get_effect_description") else reward_resource.description
+	var r_key: String = RewardGrantHandler.get_rarity_name(reward_resource)
+	var r_enum: Equipment.Rarity = RewardGrantHandler.rarity_name_to_equipment_enum(r_key)
 
-	var r_key: String = reward_resource.rearity if reward_resource.rearity != null and reward_resource.rearity != "" else "COMMON"
+	reward_base.texture = RewardGrantHandler.get_base_texture(reward_resource)
+	reward_icon.texture = RewardGrantHandler.get_icon(reward_resource)
+	reward_name.text = RewardGrantHandler.get_display_name(reward_resource)
+	if r_enum > Equipment.Rarity.COMMON:
+		reward_name.add_theme_color_override("font_color", Equipment.get_rarity_color(r_enum).lightened(0.22))
+	else:
+		reward_name.add_theme_color_override("font_color", Color(0.92, 0.94, 0.88))
+
+	var meta_line: String = _build_meta_header(reward_resource, r_key)
+	var body_desc: String = RewardGrantHandler.get_description(reward_resource)
+	reward_description.text = "%s\n%s" % [meta_line, body_desc]
+
 	add_theme_stylebox_override("panel", get_rarity_stylebox(r_key))

@@ -6,6 +6,13 @@
 [ext_resource type="Script" uid="uid://b3owsyml48h8d" path="res://enemies/attacks/bases/enrage_attack.gd" id="3_2m4mv"]
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/level_ui/enemy_health.png" id="4_oxslg"]
 [ext_resource type="PackedScene" uid="uid://dhauif6v32uf3" path="res://enemies/minion/bear_stravnica/bear_stravnica.tscn" id="6_blujc"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="7_eq_scr"]
+[ext_resource type="Resource" path="res://tiles/equipment/uppercut.tres" id="8_upper"]
+[ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="9_punch"]
+[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="10_rush"]
+[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="11_ssword"]
+[ext_resource type="Resource" path="res://tiles/equipment/block.tres" id="12_block"]
+[ext_resource type="Resource" path="res://rewards/cards/body/body0_strong_body_1.tres" id="13_body1"]
 
 [sub_resource type="Resource" id="Resource_po0pf"]
 script = ExtResource("2_r7b1o")
@@ -31,7 +38,13 @@ tooltip = "Bite"
 [resource]
 script = ExtResource("2_idlbb")
 name = "Stravnica Bear"
-max_health = 35.0
+behavior_category = 1
+explicit_track_colors = Array[int]([100, 300])
+red_track_modifiers = Array[ExtResource("7_eq_scr")]([ExtResource("8_upper"), ExtResource("9_punch")])
+green_track_modifiers = Array[ExtResource("7_eq_scr")]([ExtResource("10_rush")])
+colorless_fallback_modifiers = Array[ExtResource("7_eq_scr")]([ExtResource("11_ssword")])
+loot_table = Array[Resource]([ExtResource("8_upper"), ExtResource("12_block"), ExtResource("13_body1")])
 damage = 2.0
 attacks = Array[ExtResource("1_uqo0m")]([SubResource("Resource_po0pf"), SubResource("Resource_vlli0"), SubResource("Resource_iiu06"), SubResource("Resource_xxduf")])
 sprite = ExtResource("6_blujc")
+max_health = 35.0

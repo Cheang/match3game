@@ -5,18 +5,18 @@ class_name RewardTree
 @export_group("Tree Configuration")
 ## Display name of this reward tree (e.g. "Warrior Arsenal", "Arcane Paths").
 @export var tree_name: String = "Default Reward Tree"
-## Starting cards available in standard combat reward drafts from the start of the run.
-@export var starting_combat_rewards: Array[Reward] = []
-## Starting cards available in post-boss passive/talent reward drafts.
-@export var starting_passive_rewards: Array[Reward] = []
+## Starting cards/equipment available in standard combat reward drafts from the start of the run.
+@export var starting_combat_rewards: Array[Resource] = []
+## Starting cards/equipment available in post-boss passive/talent reward drafts.
+@export var starting_passive_rewards: Array[Resource] = []
 ## Visual progression nodes representing branching paths and conditional unlocks.
 @export var nodes: Array[RewardTreeNode] = []
 
 # ==============================================================================
 # RUNTIME PROGRESSION STATE
 # ==============================================================================
-var active_combat_pool: Array[Reward] = []
-var active_passive_pool: Array[Reward] = []
+var active_combat_pool: Array[Resource] = []
+var active_passive_pool: Array[Resource] = []
 var unlocked_tags: Dictionary = {}
 var activated_node_ids: Dictionary = {}
 
@@ -35,22 +35,42 @@ func initialize_run(_player = null) -> void:
 		if r != null:
 			active_passive_pool.append(r)
 
-## Called when any reward card is chosen by the player.
+## Called when any reward card or direct Equipment is chosen by the player.
 func on_reward_chosen(reward: Resource, _player = null) -> void:
 	if reward == null:
 		return
 
-	# Record tags emitted by this reward
+	var tpl: Resource = RewardGrantHandler.get_source_template(reward)
+
+	# Record tags emitted by this reward or its template
 	var tags = reward.get("unlock_tags")
 	if tags is Array:
 		for tag in tags:
 			unlocked_tags[str(tag)] = true
+	if tpl != reward and tpl != null:
+		var tpl_tags = tpl.get("unlock_tags")
+		if tpl_tags is Array:
+			for tag in tpl_tags:
+				unlocked_tags[str(tag)] = true
 
 	# Remove reward from pool if configured
 	var rem = reward.get("remove_from_pool_when_picked")
+	if rem == null and tpl != null:
+		rem = tpl.get("remove_from_pool_when_picked")
 	if rem == null or rem == true:
 		active_combat_pool.erase(reward)
 		active_passive_pool.erase(reward)
+		if tpl != null:
+			active_combat_pool.erase(tpl)
+			active_passive_pool.erase(tpl)
+		var id_key: String = RewardGrantHandler.get_identity_key(reward)
+		if id_key != "":
+			for i in range(active_combat_pool.size() - 1, -1, -1):
+				if RewardGrantHandler.get_identity_key(active_combat_pool[i]) == id_key:
+					active_combat_pool.remove_at(i)
+			for i in range(active_passive_pool.size() - 1, -1, -1):
+				if RewardGrantHandler.get_identity_key(active_passive_pool[i]) == id_key:
+					active_passive_pool.remove_at(i)
 
 	# Evaluate progression nodes to unlock new branches
 	check_progression()
@@ -104,13 +124,13 @@ func check_progression() -> void:
 		check_progression()
 
 ## Returns all currently available combat rewards for draft generation.
-func get_combat_pool() -> Array[Reward]:
+func get_combat_pool() -> Array[Resource]:
 	if active_combat_pool.is_empty() and not starting_combat_rewards.is_empty():
 		initialize_run()
 	return active_combat_pool
 
 ## Returns all currently available passive rewards for draft generation.
-func get_passive_pool() -> Array[Reward]:
+func get_passive_pool() -> Array[Resource]:
 	if active_passive_pool.is_empty() and not starting_passive_rewards.is_empty():
 		initialize_run()
 	return active_passive_pool

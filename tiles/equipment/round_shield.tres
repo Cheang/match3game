@@ -19,3 +19,4 @@ armor_stat_scaling = 2
 multiply_armor_by_combo = false
 can_upgrade = true
 upgrade = 0
+remove_from_pool_when_picked = false
