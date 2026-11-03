@@ -183,7 +183,7 @@ func setup_track(track_color: int, mods: Array[Equipment]) -> void:
 
 func _apply_palette(track_color: int) -> void:
 	_ensure_hierarchy()
-	var base_c: int = Global.get_base_family(track_color) if track_color > 0 else 0
+	var base_c: int = int(track_color / 100) * 100 if track_color > 0 else 0
 	var pal: Dictionary = PALETTES.get(base_c, PALETTES[0])
 	
 	for mat: ShaderMaterial in [mat_bottom, mat_middle]:

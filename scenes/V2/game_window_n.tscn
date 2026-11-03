@@ -31,6 +31,7 @@
 [ext_resource type="Script" uid="uid://ubrv4prv25xe" path="res://scripts/ui/attack_dock.gd" id="26_dock"]
 [ext_resource type="Script" uid="uid://c5m0f4aui0sgr" path="res://scripts/ui/monster_track_diamond.gd" id="27_diamond"]
 [ext_resource type="Texture2D" uid="uid://bd6eq3mb2t26k" path="res://assets/scene-assets/combat/enm-armor-middle.png" id="28_armor"]
+[ext_resource type="Material" uid="uid://dmh4v4ckp1u2w" path="res://assets/shaders/cloth_health_bar.tres" id="29_cloth_mat"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -126,8 +127,17 @@ offset_right = 570.0
 offset_bottom = 231.0
 value = 50.0
 texture_under = ExtResource("14_08rcu")
-texture_over = ExtResource("15_mujdl")
-texture_progress = ExtResource("16_sdgpx")
+
+[node name="clothFill" type="TextureRect" parent="enemy/healthBar" unique_id=1282832203]
+material = ExtResource("29_cloth_mat")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("16_sdgpx")
 
 [node name="armorBar" type="TextureProgressBar" parent="enemy/healthBar" unique_id=1282832202]
 layout_mode = 1
@@ -137,8 +147,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture_over = ExtResource("15_mujdl")
 texture_progress = ExtResource("28_armor")
+
+[node name="topFrame" type="TextureRect" parent="enemy/healthBar" unique_id=1282832204]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("15_mujdl")
 
 [node name="attackDock" type="Control" parent="enemy" unique_id=98712345]
 z_index = 250
@@ -370,7 +389,6 @@ centered = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1082063967]
 layer = 2
-visible = false
 
 [node name="pause" parent="CanvasLayer" unique_id=1718140589 instance=ExtResource("19_ryfr5")]
 
