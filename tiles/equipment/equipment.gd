@@ -26,7 +26,8 @@ enum StatScaling {
 	NONE = 0,               ## Flat value only (no stat scaling).
 	MIGHT = 1,              ## Adds the player's Might stat.
 	GRIT = 2,               ## Adds the player's Grit stat.
-	SPEED = 3,              ## Adds the player's Speed stat.
+	AGILITY = 3,            ## Adds the player's Agility stat.
+	SPEED = 3,              ## Backward compatibility alias for AGILITY.
 	SPIRIT = 4,             ## Adds the player's Spirit stat.
 	CURRENT_ARMOR = 5       ## Adds the player's current Physical Armor in combat.
 }
@@ -311,7 +312,9 @@ func _get_stat_value(c_res, scaling: StatScaling) -> float:
 			return float(c_res.might) if "might" in c_res else 0.0
 		StatScaling.GRIT:
 			return float(c_res.grit) if "grit" in c_res else 0.0
-		StatScaling.SPEED:
+		StatScaling.AGILITY:
+			if "agility" in c_res:
+				return float(c_res.agility)
 			return float(c_res.speed) if "speed" in c_res else 0.0
 		StatScaling.SPIRIT:
 			return float(c_res.spirit) if "spirit" in c_res else 0.0

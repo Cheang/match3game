@@ -3,6 +3,7 @@ class_name LoadoutDock
 
 var bg_decoration: TextureRect
 var rows_box: HBoxContainer
+var _track_rows: Array[ColorTrackRow] = []
 var row_map: Dictionary = {} # base_color (int) -> ColorTrackRow
 var _inspect_popup: PanelContainer = null
 var _inspect_label: RichTextLabel = null
@@ -34,16 +35,17 @@ func _ensure_structure() -> void:
 		rows_box = get_node_or_null("RowsBox")
 
 func get_track_rows() -> Array[ColorTrackRow]:
-	var list: Array[ColorTrackRow] = []
+	if not _track_rows.is_empty():
+		return _track_rows
 	if rows_box == null:
 		_ensure_structure()
 	if rows_box != null:
 		for child in rows_box.get_children():
 			if child is ColorTrackRow:
-				list.append(child)
-	return list
+				_track_rows.append(child)
+	return _track_rows
 
-func refresh_dock(_force_rebuild: bool = false) -> void:
+func refresh_dock(force_rebuild: bool = false) -> void:
 	_ensure_structure()
 	if Global.cur_char == null:
 		return
@@ -54,6 +56,19 @@ func refresh_dock(_force_rebuild: bool = false) -> void:
 		return
 
 	var current_pool: Array[int] = Global.cur_char.active_color_pool
+	if not force_rebuild and not row_map.is_empty():
+		var pool_matches: bool = true
+		for slot_idx in range(rows.size()):
+			var row: ColorTrackRow = rows[slot_idx]
+			var expected_color: int = current_pool[slot_idx] if slot_idx < current_pool.size() else 0
+			if row.track_color != expected_color:
+				pool_matches = false
+				break
+		if pool_matches:
+			for row in rows:
+				row.update_row_state()
+			return
+
 	row_map.clear()
 
 	for slot_idx in range(rows.size()):

@@ -1,11 +1,9 @@
-@tool
 extends Control
 class_name AttackDock
 
 func _ready() -> void:
-	if not Engine.is_editor_hint():
-		if Global.cur_enemy != null:
-			refresh_tracks(Global.cur_enemy)
+	if Global.cur_enemy != null:
+		refresh_tracks(Global.cur_enemy)
 
 func get_diamond_slots() -> Array[MonsterTrackDiamond]:
 	var list: Array[MonsterTrackDiamond] = []

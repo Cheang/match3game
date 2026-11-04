@@ -18,13 +18,6 @@ var grd_offset: int = Global.grd_offset
 
 const CHROMATIC_PIECE_SCENE = preload("res://tiles/tile.tscn")
 
-#legacy variables retained for external compatibility
-var deck : Array[PieceClass] = []
-var deck_one_per_btl: Array[PieceClass] = []
-var deck_on_cd : Array[PieceClass] = []
-var deck_to_dest : Array[PieceClass] = []
-var fluf : Array[PackedScene] = []
-
 #the current pieces in the game
 var all_pieces = []
 var cur_matches = []
@@ -33,6 +26,7 @@ var active_turn_hazards: Array[String] = []
 
 #turn & cascade state tracking
 var is_player_swap_phase: bool = false
+var _player_move_deducted_this_action: bool = false
 var cascade_step: int = 0
 var color_match_counts_this_turn: Dictionary = {}
 var temp_cascade_momentum_bonus: int = 0
@@ -150,26 +144,15 @@ func can_color_ids_match(color_a: int, color_b: int, is_manual_swap: bool) -> bo
 		return true
 	return false
 
-func restricted_fill(place: Vector2):
-	if Global.is_in_array(empty_spaces, place):
-		return true
-	if Global.is_in_array(rock_spaces, place):
-		return true
-	if Global.is_in_array(flesh_spaces, place):
-		return true
-	return false
+func restricted_fill(place: Vector2) -> bool:
+	return empty_spaces.has(place) or rock_spaces.has(place) or flesh_spaces.has(place)
 
-func restricted_move(place: Vector2):
-	if Global.is_in_array(freeze_spaces, place):
-		return true
-	return false
+func restricted_move(place: Vector2) -> bool:
+	return freeze_spaces.has(place)
 
 func spawn_obstacles(ob_spaces, signal_str: String):
 	for i in ob_spaces.size():
 		emit_signal(signal_str, ob_spaces[i])
-
-func overwrite_obstacles():
-	pass
 
 func spawn_color_tiles() -> void:
 	var pool: Array[int] = get_active_color_pool()
@@ -341,23 +324,27 @@ func update_drag_preview(origin: Vector2, direction: Vector2) -> void:
 	for ctx in sim_contexts:
 		for pos in ctx.matched_positions:
 			var tile: PieceClass = all_pieces[int(pos.x)][int(pos.y)]
-			if tile == p2 and int(pos.x) == col1 and int(pos.y) == row1:
-				tile = p2
-			elif tile == p1 and int(pos.x) == col2 and int(pos.y) == row2:
-				tile = p1
 			if tile != null:
 				tile.set_preview_highlight(true)
 			previewed_cells.append(pos)
 
-	p1.set_preview_highlight(not sim_contexts.is_empty())
-	p2.set_preview_highlight(not sim_contexts.is_empty())
+	if not sim_contexts.is_empty():
+		p1.set_preview_highlight(true)
+		p2.set_preview_highlight(true)
+		var pos1 := Vector2(col1, row1)
+		var pos2 := Vector2(col2, row2)
+		if not previewed_cells.has(pos1):
+			previewed_cells.append(pos1)
+		if not previewed_cells.has(pos2):
+			previewed_cells.append(pos2)
 	drag_preview_updated.emit(sim_contexts)
 
 func clear_drag_preview(emit_clear_signal: bool = true) -> void:
-	for i in range(grd_width):
-		for j in range(grd_height):
-			if all_pieces[i][j] != null:
-				all_pieces[i][j].set_preview_highlight(false)
+	for pos in previewed_cells:
+		var cx := int(pos.x)
+		var cy := int(pos.y)
+		if cx >= 0 and cx < grd_width and cy >= 0 and cy < grd_height and all_pieces[cx][cy] != null:
+			all_pieces[cx][cy].set_preview_highlight(false)
 	previewed_cells.clear()
 	current_drag_target = Vector2(-1, -1)
 	if emit_clear_signal:
@@ -400,6 +387,7 @@ func swap_pieces(col, row, direction):
 					current_target = Global.cur_enemy
 				is_resolving_action = true
 				is_player_swap_phase = true
+				_player_move_deducted_this_action = false
 				cascade_step = 0
 				color_match_counts_this_turn.clear()
 				temp_cascade_momentum_bonus = 0
@@ -409,6 +397,7 @@ func swap_pieces(col, row, direction):
 func swap_back():
 	if piece_one != null and piece_two != null:
 		is_player_swap_phase = false
+		_player_move_deducted_this_action = false
 		swap_pieces(last_place.x, last_place.y, last_direction)
 		state = move
 		move_checked = false
@@ -605,10 +594,10 @@ func _evaluate_board_matches(manual_swap: bool, simulation_only: bool = false) -
 
 func _collect_adjacent_hazards_for_cell(col: int, row: int, out_hazards: Array[String]) -> void:
 	var cell := Vector2(col, row)
-	if Global.is_in_array(ice_spaces, cell) or (grd_ice != null and grd_ice.ice_pieces.size() > col and grd_ice.ice_pieces[col][row] != null):
+	if ice_spaces.has(cell) or (grd_ice != null and grd_ice.ice_pieces.size() > col and grd_ice.ice_pieces[col][row] != null):
 		if not out_hazards.has("ice"):
 			out_hazards.append("ice")
-	if Global.is_in_array(freeze_spaces, cell):
+	if freeze_spaces.has(cell):
 		if not out_hazards.has("freeze"):
 			out_hazards.append("freeze")
 	var neighbors := [
@@ -618,11 +607,11 @@ func _collect_adjacent_hazards_for_cell(col: int, row: int, out_hazards: Array[S
 		Vector2(col, row - 1)
 	]
 	for n in neighbors:
-		if Global.is_in_array(freeze_spaces, n) and not out_hazards.has("freeze"):
+		if freeze_spaces.has(n) and not out_hazards.has("freeze"):
 			out_hazards.append("freeze")
-		if Global.is_in_array(rock_spaces, n) and not out_hazards.has("rock"):
+		if rock_spaces.has(n) and not out_hazards.has("rock"):
 			out_hazards.append("rock")
-		if Global.is_in_array(flesh_spaces, n) and not out_hazards.has("flesh"):
+		if flesh_spaces.has(n) and not out_hazards.has("flesh"):
 			out_hazards.append("flesh")
 
 func find_matches():
@@ -807,6 +796,10 @@ func destroy_matched(should_collapse: bool = true):
 					p.queue_free()
 
 	if was_matched:
+		var was_enemy_turn: bool = enemy_attacked or (current_actor is EnemyResource)
+		if not was_enemy_turn and is_player_swap_phase and not _player_move_deducted_this_action and Global.cur_char != null:
+			_player_move_deducted_this_action = true
+			Global.cur_char.modify_stat("moves_left", -1)
 		audio_player.play_on_destruction(cascade_step)
 		for ctx in pending_match_contexts:
 			for h in active_turn_hazards:
@@ -875,9 +868,10 @@ func after_refill():
 	aoe_initial_resolved = false
 
 	var was_enemy_turn: bool = enemy_attacked or (current_actor is EnemyResource)
-	if not was_enemy_turn:
+	if not was_enemy_turn and not _player_move_deducted_this_action:
 		if Global.cur_char != null:
 			Global.cur_char.modify_stat("moves_left", -1)
+	_player_move_deducted_this_action = false
 	enemy_attacked = false
 	if not was_enemy_turn and !damaged_flesh:
 		await generate_flesh()
@@ -928,7 +922,10 @@ func find_all_valid_swaps() -> Array[Dictionary]:
 					continue
 				all_pieces[col][row] = p2
 				all_pieces[col2][row2] = p1
-				var sim_contexts: Array[MatchContext] = _evaluate_board_matches(true, true)
+				var has_local_match: bool = match_at_color_id(col, row, p2.color_id, true) or match_at_color_id(col2, row2, p1.color_id, true)
+				var sim_contexts: Array[MatchContext] = []
+				if has_local_match:
+					sim_contexts = _evaluate_board_matches(true, true)
 				all_pieces[col][row] = p1
 				all_pieces[col2][row2] = p2
 				if not sim_contexts.is_empty():
@@ -1212,12 +1209,6 @@ func clear_board():
 			if all_pieces[i][j] != null:
 				all_pieces[i][j].queue_free()
 				all_pieces[i][j] = null
-
-func clean_deck_to_dest():
-	for piece in deck_to_dest:
-		if is_instance_valid(piece):
-			piece.queue_free()
-	deck_to_dest.clear()
 
 func check_freeze(col, row):
 	emit_signal("damage_freeze", Vector2(col, row))

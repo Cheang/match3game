@@ -422,10 +422,5 @@ func load_data():
 			def_char = load("res://players/warrior/warrior.tres")
 		selected_char = def_char
 
-func get_tiles_from_player():
-	var array_to_return: Array = []
-	if cur_char != null:
-		for tile in cur_char.deck_in_game:
-			if tile != null and tile.has_method("set_node_values"):
-				array_to_return.append(tile.set_node_values())
-	return array_to_return
+func get_tiles_from_player() -> Array:
+	return []

@@ -166,10 +166,13 @@ func _update_tooltips() -> void:
 	else:
 		tooltip_text = "%s Skill Slot (Empty)" % ColorLoadoutTrack.get_color_name(_cached_color)
 
+static var _bbcode_regex: RegEx = null
+
 func _strip_bbcode(src: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("\\[/?[^\\]]+\\]")
-	return regex.sub(src, "", true)
+	if _bbcode_regex == null:
+		_bbcode_regex = RegEx.new()
+		_bbcode_regex.compile("\\[/?[^\\]]+\\]")
+	return _bbcode_regex.sub(src, "", true)
 
 func set_selected(selected: bool) -> void:
 	is_selected_slot = selected

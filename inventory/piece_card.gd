@@ -51,23 +51,3 @@ func set_card_modifier(mod: Equipment) -> void:
 func set_card(piece):
 	if piece is Equipment:
 		set_card_modifier(piece)
-		return
-	if piece is PieceClass:
-		base.texture = piece.base_texture
-		icon.texture = piece.icon_texture
-		if piece.can_upgrade == false:
-			upgrade_numb.text = "-X-"
-		else:
-			upgrade_numb.text = str(piece.upgrades)
-		cd_numb.text = str(piece.cooldown)
-		p_name.text = piece.piece_name
-		p_desc.text = piece.description
-		match piece.type:
-			1: piece_type.text = "Normal"
-			2: piece_type.text = "Heavy"
-			3: piece_type.text = "Glass"
-		var dyn_desc = piece.get_dynamic_description(Global.cur_char)
-		if dyn_desc != "":
-			p_desc.text = dyn_desc
-		else:
-			p_desc.text = piece.description

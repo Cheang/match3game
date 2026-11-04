@@ -1,90 +1,63 @@
 extends Node2D
 class_name PieceClass
 
-@export_category("Main")
-@export var id: int = 100
-@export var piece_name: String = ""
-@export var description: String = ""
+@export_category("Identity")
+@export var color_id: int = 100
 @export var color: String = "red"
-@export var family: String = ""
-@export_enum("fluf", "normal", "one_per_battle", "glass") var type: int = 0
-@export var action: Array[Equipment] = []
-@export_category("Art")
-@export var base_texture: Texture
-@export var icon_texture: Texture
+
+@export_category("Bomb Art")
 @export var row_texture: Texture2D
 @export var col_texture: Texture2D
 @export var adj_texture: Texture2D
-
-var row_teture: Texture2D:
-	get: return row_texture
-	set(v): row_texture = v
-var col_teture: Texture2D:
-	get: return col_texture
-	set(v): col_texture = v
-var adj_teture: Texture2D:
-	get: return adj_texture
-	set(v): adj_texture = v
-@export_category("Other")
-@export var cooldown: int = 0
-var original_cd: int = 0
-@export var can_upgrade: bool = true
-@export var upgrades_to_increse_cd: int = 3
-@export_group("Other")
-@export var upgrades: int = 0
-@export_group("Autofill")
-@export var location: String = ""
 
 @onready var icon: Sprite2D = $icon
 @onready var base: Sprite2D = $base
 @onready var gold_border: Sprite2D = $gold_border
 
-var color_id: int = 100
-var fall_distance: int = 0
+var id: int:
+	get: return color_id
+	set(val): color_id = val
 
+var fall_distance: int = 0
 var matched: bool = false
 var is_gold: bool = false
 var is_preview_highlighted: bool = false
 var is_enemy_target_highlighted: bool = false
-var _enemy_target_border: Sprite2D = null
-var _enemy_target_tween: Tween = null
 
 var is_row_bomb: bool = false
 var is_col_bomb: bool = false
 var is_adj_bomb: bool = false
 
+const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
+static var _shared_palette_materials: Dictionary = {}
+
 const COLOR_SCENE_ASSETS := {
 	100: {
 		"name": "red",
-		"base": preload("res://assets/red_0_sq.png"),
 		"row": preload("res://assets/_red_icons/red_icon_6_1.png"),
 		"col": preload("res://assets/_red_icons/red_icon_6_2.png"),
 		"adj": preload("res://assets/_red_icons/red_icon_6_3.png"),
 	},
 	200: {
 		"name": "blue",
-		"base": preload("res://assets/blue_0_sq.png"),
 		"row": preload("res://assets/_blue_icons/blue_icon_7_1.png"),
 		"col": preload("res://assets/_blue_icons/blue_icon_7_2.png"),
 		"adj": preload("res://assets/_blue_icons/blue_icon_7_3.png"),
 	},
 	300: {
 		"name": "green",
-		"base": preload("res://assets/green_0_sq.png"),
 		"row": preload("res://assets/_green_icons/green_icon_6_1.png"),
 		"col": preload("res://assets/_green_icons/green_icon_6_2.png"),
 		"adj": preload("res://assets/_green_icons/green_icon_6_3.png"),
 	},
 	400: {
 		"name": "purple",
-		"base": preload("res://assets/purple_0_sq.png"),
 		"row": preload("res://assets/_purple_icons/purprle_icon_4_1.png"),
 		"col": preload("res://assets/_purple_icons/purprle_icon_4_2.png"),
 		"adj": preload("res://assets/_purple_icons/purprle_icon_4_3.png"),
 	},
 	500: {
 		"name": "white",
-		"base": preload("res://assets/white_0_sq.png"),
 		"row": preload("res://assets/_white_icons/white_icon_2_1.png"),
 		"col": preload("res://assets/_white_icons/white_icon_2_2.png"),
 		"adj": preload("res://assets/_white_icons/white_icon_2_3.png"),
@@ -92,36 +65,46 @@ const COLOR_SCENE_ASSETS := {
 }
 
 func _ready() -> void:
-	original_cd = cooldown
-	if color_id == 100 and id >= 100:
-		color_id = id
-	elif color != "":
+	if color != "" and color_id == 100 and color != "red":
 		color_id = Global.color_string_to_id(color)
 	apply_color_visuals(color_id)
 	will_gold()
 
+static func _get_shared_palette_material(c_id: int) -> ShaderMaterial:
+	var base_fam: int = ColorLoadoutTrack.get_base_family(c_id)
+	if _shared_palette_materials.has(base_fam):
+		return _shared_palette_materials[base_fam]
+	var mat := ShaderMaterial.new()
+	mat.shader = PALETTE_SHADER
+	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(base_fam)
+	mat.set_shader_parameter("target_color_1", pal.highlight)
+	mat.set_shader_parameter("target_color_2", pal.lightbase)
+	mat.set_shader_parameter("target_color_3", pal.base)
+	mat.set_shader_parameter("target_color_4", pal.shadebase)
+	mat.set_shader_parameter("target_color_5", pal.deepshade)
+	_shared_palette_materials[base_fam] = mat
+	return mat
+
 func setup_chromatic(new_color_id: int) -> void:
 	color_id = new_color_id
-	id = new_color_id
-	type = 0
 	fall_distance = 0
 	apply_color_visuals(color_id)
 	if is_inside_tree():
 		will_gold()
 
 func apply_color_visuals(c_id: int) -> void:
-	var base_fam: int = Global.get_base_family(c_id)
+	var base_fam: int = ColorLoadoutTrack.get_base_family(c_id)
 	var cfg: Dictionary = COLOR_SCENE_ASSETS.get(base_fam, COLOR_SCENE_ASSETS[100])
 	color = cfg["name"]
-	base_texture = cfg["base"]
 	row_texture = cfg["row"]
 	col_texture = cfg["col"]
 	adj_texture = cfg["adj"]
 
-	if base != null and base_texture != null:
-		base.texture = base_texture
+	var base_node: Sprite2D = base if base != null else get_node_or_null("base")
+	if base_node != null:
+		base_node.material = _get_shared_palette_material(c_id)
 	if icon != null and not is_row_bomb and not is_col_bomb and not is_adj_bomb:
-		icon.texture = icon_texture
+		icon.texture = null
 
 	_apply_exotic_tint()
 
@@ -164,18 +147,7 @@ func set_preview_highlight(active: bool) -> void:
 ## Target state for upcoming monster attacks. Visual outlines are managed by EnemyAttackOverlay on grd.
 func set_enemy_target_highlight(active: bool) -> void:
 	is_enemy_target_highlighted = active
-	if _enemy_target_tween != null and _enemy_target_tween.is_valid():
-		_enemy_target_tween.kill()
-		_enemy_target_tween = null
-	if _enemy_target_border != null and is_instance_valid(_enemy_target_border):
-		_enemy_target_border.queue_free()
-		_enemy_target_border = null
 	_apply_exotic_tint()
-
-func _exit_tree() -> void:
-	if _enemy_target_tween != null and _enemy_target_tween.is_valid():
-		_enemy_target_tween.kill()
-		_enemy_target_tween = null
 
 func move(target, time = 0.3):
 	var tween: Tween = create_tween()
@@ -195,8 +167,7 @@ func unmark():
 	set_enemy_target_highlight(false)
 	scale = Vector2.ONE
 	if icon != null:
-		icon.texture = icon_texture
-	cooldown = original_cd
+		icon.texture = null
 	is_gold = false
 	will_gold()
 	if is_row_bomb or is_col_bomb or is_adj_bomb:
@@ -208,24 +179,17 @@ func unmark():
 func will_gold():
 	if Global.cur_char == null or gold_border == null:
 		return
-	var rand = floor(randf_range(1, 100))
-	if rand <= Global.cur_char.gold_chance:
+	var chance: int = Global.cur_char.gold_chance
+	if chance <= 0:
+		gold_border.visible = false
+		is_gold = false
+		return
+	if randi_range(1, 100) <= chance:
 		gold_border.visible = true
 		is_gold = true
 	else:
 		gold_border.visible = false
-
-func lower_cooldown():
-	cooldown -= 1
-
-func set_node_values():
-	var node_values = {
-		"scene_path": location,
-		"cooldown": cooldown,
-		"upgrades": upgrades,
-		"color_id": color_id
-	}
-	return node_values
+		is_gold = false
 
 func make_col_bomb():
 	is_col_bomb = true
@@ -244,15 +208,3 @@ func make_adj_bomb():
 	if icon != null:
 		icon.texture = adj_texture
 	_apply_exotic_tint()
-
-func get_dynamic_description(char_resource = null) -> String:
-	if not action.is_empty():
-		var desc_parts: Array[String] = []
-		for act in action:
-			if act != null:
-				var d: String = act.get_effect_description(char_resource, upgrades)
-				if d != "":
-					desc_parts.append(d)
-		if not desc_parts.is_empty():
-			return "\n".join(desc_parts)
-	return description

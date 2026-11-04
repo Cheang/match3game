@@ -76,7 +76,7 @@ signal enemyDied
 
 func _init() -> void:
 	super._init()
-	speed = 1
+	agility = 1
 
 func _on_entity_died() -> void:
 	super._on_entity_died()
@@ -216,7 +216,7 @@ func reset_stats_at_beginning_of_fight() -> void:
 	reset_modifiers_for_battle()
 	recalculate_equipment_passives()
 	modify_stat("dodging", false, false)
-	modify_stat("moves_left", max(1, speed), false)
+	modify_stat("moves_left", max_energy, false)
 	modify_stat("hand_combo", start_hand_combo, false)
 	modify_stat("cur_armor", start_armor, false)
 	modify_stat("cur_mage_armor", start_mage_armor, false)
@@ -225,7 +225,7 @@ func reset_stats_at_beginning_of_turn() -> void:
 	tick_all_track_cooldowns(1)
 	modify_stat("cur_armor", 0, false)
 	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("moves_left", max(1, speed), false)
+	modify_stat("moves_left", max_energy, false)
 
 #==============================================================================#
 # LEGACY HELPER FUNCTIONS

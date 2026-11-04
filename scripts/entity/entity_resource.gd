@@ -15,8 +15,24 @@ class_name EntityResource
 @export var might: float = 1.0
 ## Blue Pillar: Increases physical armor and magic armor granted by defensive equipment.
 @export var grit: float = 0.0
-## Green Pillar: Determines base tile swaps / actions per turn and scales mobility effects.
-@export var speed: int = 1
+## Green Pillar: Determines base actions / energy per turn and scales mobility effects.
+@export var agility: int = 1:
+	set(new_val):
+		agility = new_val
+		moves_left = clamp(moves_left, 0, max_energy)
+## Legacy alias pointing to agility
+var speed: int:
+	get: return agility
+	set(v): agility = v
+
+## Maximum energy (actions / moves per turn), derived from Agility with a hard floor of 1.
+## Formula: Base 1 + 1 for every 2 Agility, clamped with minimum 1.
+var max_energy: int:
+	get: return get_max_energy()
+
+func get_max_energy() -> int:
+	return max(1, 1 + int(floor(float(agility) / 2.0)))
+
 ## Purple/White Pillar: Increases healing potency, magic effects, and status scaling.
 @export var spirit: float = 0.0
 
@@ -75,8 +91,10 @@ class_name EntityResource
 var cur_armor: float = 0.0
 ## Current magic armor during combat. Persists across turns within a battle.
 var cur_mage_armor: float = 0.0
-## Remaining actions / tile swaps in the current combat turn.
-var moves_left: int = 0
+## Remaining actions / tile swaps in the current combat turn. Clamped between 0 and max_energy.
+var moves_left: int = 0:
+	set(new_moves):
+		moves_left = clamp(new_moves, 0, max_energy)
 ## Whether the entity will dodge the next incoming physical attack.
 var dodging: bool = false
 ## Current accumulated hand combo points in the active combat turn.

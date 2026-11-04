@@ -73,9 +73,6 @@ var proficiency: float:
 var toughness: float:
 	get: return grit
 	set(v): grit = v
-var agility: float:
-	get: return float(speed)
-	set(v): speed = int(v)
 var faith: float:
 	get: return spirit
 	set(v): spirit = v
@@ -111,7 +108,7 @@ signal playerFinishedTurn
 
 func _init() -> void:
 	super._init()
-	speed = 2
+	agility = 2
 
 func _on_entity_died() -> void:
 	super._on_entity_died()
@@ -337,6 +334,8 @@ func get_all_owned_modifiers() -> Array[Equipment]:
 	for k in color_loadouts.keys():
 		var track: ColorLoadoutTrack = color_loadouts[k]
 		if track != null:
+			if track.ultimate_skill != null:
+				list.append(track.ultimate_skill)
 			for m in track.equipped_modifiers:
 				if m != null:
 					list.append(m)
@@ -380,7 +379,7 @@ func reset_stats_at_beginning_of_game() -> void:
 func reset_stats_at_beginning_of_fight() -> void:
 	reset_modifiers_for_battle()
 	modify_stat("dodging", false, false)
-	modify_stat("moves_left", speed, false)
+	modify_stat("moves_left", max_energy, false)
 	modify_stat("hand_combo", start_hand_combo, false)
 	modify_stat("cur_armor", start_armor, false)
 	modify_stat("cur_mage_armor", start_mage_armor, false)
@@ -389,7 +388,7 @@ func reset_stats_at_beginning_of_turn() -> void:
 	tick_all_track_cooldowns(1)
 	modify_stat("cur_armor", 0, false)
 	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("moves_left", speed, false)
+	modify_stat("moves_left", max_energy, false)
 	loadoutChanged.emit()
 
 # Backward-compatibility aliases for legacy typos

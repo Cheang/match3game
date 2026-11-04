@@ -9,60 +9,21 @@
 [ext_resource type="Script" uid="uid://dbrsxsx8qng24" path="res://scripts/enemies/enemy.gd" id="5_7ysvn"]
 [ext_resource type="Script" uid="uid://by0vdb4vankfd" path="res://scripts/grid_scripts/grd_rock.gd" id="7_hc5va"]
 [ext_resource type="Script" uid="uid://dtq63oa1n61a" path="res://scripts/grid_scripts/grd_flesh.gd" id="8_jpie2"]
-[ext_resource type="Texture2D" uid="uid://cwxcky6npvfh8" path="res://assets/level_ui/enemy_health_back.png" id="9_a7vs4"]
 [ext_resource type="Script" uid="uid://b6437wq8214s7" path="res://scripts/player/player.gd" id="11_ghvty"]
-[ext_resource type="Texture2D" uid="uid://dbg7s86dsv7pt" path="res://assets/level_ui/player_health.png" id="12_88ip3"]
-[ext_resource type="Theme" uid="uid://t0ar7qhxkey" path="res://assets/theme/mainTheme.tres" id="12_tovol"]
 [ext_resource type="Texture2D" uid="uid://bcj6ku3kjxpq" path="res://assets/scene-assets/combat/enm-hp-bottom.png" id="14_08rcu"]
-[ext_resource type="Texture2D" uid="uid://bpqfvevnr854i" path="res://assets/level_ui/grd_border_addon.png" id="14_bu8h0"]
 [ext_resource type="Texture2D" uid="uid://c21q332rc3s4s" path="res://assets/scene-assets/combat/enm-hp-top.png" id="15_mujdl"]
-[ext_resource type="Texture2D" uid="uid://bst0j7bc0uucb" path="res://assets/level_ui/buffs/armor_buff.png" id="15_pubo4"]
 [ext_resource type="Texture2D" uid="uid://baajhs5ptl13b" path="res://assets/scene-assets/combat/enm-hp-middle.png" id="16_sdgpx"]
-[ext_resource type="Texture2D" uid="uid://cu8lnlqe11jsn" path="res://assets/level_ui/buffs/marmor_buff.png" id="18_khhg0"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
-[ext_resource type="Texture2D" uid="uid://bubx02s4hu5xd" path="res://assets/level_ui/buffs/combo_buff.png" id="19_em2v6"]
-[ext_resource type="Texture2D" uid="uid://bjvil74aajvtt" path="res://assets/level_ui/buffs/dodge_buff.png" id="20_mpwyg"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="22_kmwuu"]
 [ext_resource type="PackedScene" uid="uid://df7w0q8a1k2e" path="res://scenes/ui/loadout_dock.tscn" id="23_ldock"]
 [ext_resource type="Texture2D" uid="uid://cc4vrptuwgtoe" path="res://assets/scene-assets/combat/grid-border.png" id="25_6cqcu"]
-[ext_resource type="Script" uid="uid://ubrv4prv25xe" path="res://scripts/ui/attack_dock.gd" id="26_dock"]
-[ext_resource type="Script" uid="uid://c5m0f4aui0sgr" path="res://scripts/ui/monster_track_diamond.gd" id="27_diamond"]
+[ext_resource type="PackedScene" path="res://scenes/ui/attack_dock.tscn" id="26_dock"]
 [ext_resource type="Texture2D" uid="uid://bd6eq3mb2t26k" path="res://assets/scene-assets/combat/enm-armor-middle.png" id="28_armor"]
 [ext_resource type="Material" uid="uid://dmh4v4ckp1u2w" path="res://assets/shaders/cloth_health_bar.tres" id="29_cloth_mat"]
 [ext_resource type="Material" uid="uid://dfy42m1b0q3vx" path="res://assets/shaders/metal_glint.tres" id="30_glint_mat"]
 [ext_resource type="Texture2D" uid="uid://clohsirk7wr8j" path="res://assets/scene-assets/btn-new.png" id="31_btn_new"]
-
-[sub_resource type="Gradient" id="Gradient_0drn5"]
-offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
-colors = PackedColorArray(0.976471, 0.760784, 0.168627, 1, 0.960784, 0.490196, 0.290196, 1, 0.917647, 0.309804, 0.211765, 1, 0.701961, 0.219608, 0.192157, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_fxgpp"]
-gradient = SubResource("Gradient_0drn5")
-
-[sub_resource type="Curve" id="Curve_i0e58"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.208791), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_raivq"]
-curve = SubResource("Curve_i0e58")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_im0vd"]
-particle_flag_disable_z = true
-emission_shape = 3
-emission_box_extents = Vector3(-2, 26, 1)
-direction = Vector3(0, -1, 0)
-spread = 30.0
-initial_velocity_min = 90.0
-initial_velocity_max = 120.0
-gravity = Vector3(0, 0, 0)
-scale_min = 3.0
-scale_max = 4.0
-scale_curve = SubResource("CurveTexture_raivq")
-color_ramp = SubResource("GradientTexture1D_fxgpp")
-turbulence_enabled = true
-turbulence_noise_strength = 0.88
-turbulence_noise_scale = 2.825
+[ext_resource type="PackedScene" uid="uid://cx6g3k7x5l14m" path="res://scenes/ui/player_globes.tscn" id="32_globes"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
@@ -182,224 +143,25 @@ text = "Enemy"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="attackDock" type="Control" parent="enemy" unique_id=98712345]
-z_index = 250
-layout_mode = 3
-anchors_preset = 0
-offset_left = 9.0
-offset_top = 85.0
-offset_right = 281.0
-offset_bottom = 187.0
-script = ExtResource("26_dock")
-
-[node name="Slot1" type="Control" parent="enemy/attackDock" unique_id=98710001]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_top = 34.0
-offset_right = 68.0
-offset_bottom = 102.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-
-[node name="Slot2" type="Control" parent="enemy/attackDock" unique_id=98710002]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 34.0
-offset_right = 102.0
-offset_bottom = 68.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-default_color = 400
-
-[node name="Slot3" type="Control" parent="enemy/attackDock" unique_id=98710003]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 68.0
-offset_top = 34.0
-offset_right = 136.0
-offset_bottom = 102.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-default_color = 200
-
-[node name="Slot4" type="Control" parent="enemy/attackDock" unique_id=98710004]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 102.0
-offset_right = 170.0
-offset_bottom = 68.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-default_color = 500
-
-[node name="Slot5" type="Control" parent="enemy/attackDock" unique_id=98710005]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 136.0
-offset_top = 34.0
-offset_right = 204.0
-offset_bottom = 102.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-default_color = 300
-
-[node name="Slot6" type="Control" parent="enemy/attackDock" unique_id=98710006]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 170.0
-offset_right = 238.0
-offset_bottom = 68.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
-default_color = 0
-
-[node name="Slot7" type="Control" parent="enemy/attackDock" unique_id=98710007]
-custom_minimum_size = Vector2(68, 68)
-anchors_preset = 0
-offset_left = 204.0
-offset_top = 34.0
-offset_right = 272.0
-offset_bottom = 102.0
-mouse_filter = 1
-script = ExtResource("27_diamond")
+[node name="attackDock" parent="enemy" unique_id=98712345 instance=ExtResource("26_dock")]
 
 [node name="enemy_audio" type="AudioStreamPlayer" parent="enemy" unique_id=1782627126]
 
-[node name="player" type="Node2D" parent="." unique_id=21942865 node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
+[node name="player" type="Node2D" parent="." unique_id=21942865]
 z_index = 700
 script = ExtResource("11_ghvty")
-bool_buff_texture = [NodePath("health_buffs/buff_container/dodging")]
-bool_buff_stat = Array[String](["dodging"])
-buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_buffs/buff_container/marmor"), NodePath("health_buffs/buff_container/hndcombo")]
-buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
 
 [node name="loadout_dock" parent="player" unique_id=328135268 instance=ExtResource("23_ldock")]
 z_index = 850
 
+[node name="player_globes" parent="player" unique_id=1160756187 instance=ExtResource("32_globes")]
+z_index = 860
+offset_left = 221.0
+offset_top = 883.0
+offset_right = 355.0
+offset_bottom = 947.0
+
 [node name="art" type="Node2D" parent="player" unique_id=1247743326]
-
-[node name="health_buffs" type="VBoxContainer" parent="player" unique_id=883629848]
-offset_left = 200.0
-offset_top = 894.0
-offset_right = 485.0
-offset_bottom = 984.0
-
-[node name="player_healthbar" type="TextureProgressBar" parent="player/health_buffs" unique_id=1628175777]
-layout_mode = 2
-value = 100.0
-texture_under = ExtResource("9_a7vs4")
-texture_progress = ExtResource("12_88ip3")
-
-[node name="fire_particles" type="GPUParticles2D" parent="player/health_buffs/player_healthbar" unique_id=968827709]
-visible = false
-position = Vector2(285, 23)
-amount = 150
-lifetime = 0.5
-speed_scale = 0.7
-randomness = 1.0
-fixed_fps = 60
-process_material = SubResource("ParticleProcessMaterial_im0vd")
-
-[node name="health" type="Label" parent="player/health_buffs/player_healthbar" unique_id=1460991713]
-layout_mode = 0
-offset_top = 15.0
-offset_right = 285.0
-offset_bottom = 47.0
-theme = ExtResource("12_tovol")
-theme_override_font_sizes/font_size = 20
-text = "Health : "
-horizontal_alignment = 1
-
-[node name="buff_container" type="HFlowContainer" parent="player/health_buffs" unique_id=545210759]
-layout_mode = 2
-alignment = 2
-
-[node name="armor" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=38076845]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-texture = ExtResource("15_pubo4")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="armorlabel" type="Label" parent="player/health_buffs/buff_container/armor" unique_id=2085406834]
-layout_mode = 0
-offset_right = 38.0
-offset_bottom = 40.0
-theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_constants/outline_size = 2
-text = "12"
-horizontal_alignment = 2
-vertical_alignment = 2
-
-[node name="marmor" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=48446432]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-texture = ExtResource("18_khhg0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/marmor" unique_id=850611669]
-layout_mode = 0
-offset_right = 38.0
-offset_bottom = 40.0
-theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_constants/outline_size = 2
-text = "12"
-horizontal_alignment = 2
-vertical_alignment = 2
-
-[node name="hndcombo" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=2123916141]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-texture = ExtResource("19_em2v6")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/hndcombo" unique_id=1391305553]
-layout_mode = 0
-offset_right = 38.0
-offset_bottom = 40.0
-theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0.215686, 0.305882, 0.290196, 1)
-theme_override_constants/outline_size = 2
-text = "12"
-horizontal_alignment = 2
-vertical_alignment = 2
-
-[node name="dodging" type="TextureRect" parent="player/health_buffs/buff_container" unique_id=1578865766]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-texture = ExtResource("20_mpwyg")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="marmorlabel" type="Label" parent="player/health_buffs/buff_container/dodging" unique_id=2097307235]
-visible = false
-layout_mode = 0
-offset_right = 38.0
-offset_bottom = 40.0
-theme = ExtResource("12_tovol")
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
-text = "12"
-horizontal_alignment = 2
-vertical_alignment = 2
-
-[node name="moves_border" type="Sprite2D" parent="player" unique_id=1148409741]
-texture = ExtResource("14_bu8h0")
-centered = false
-
-[node name="move_remaing" type="Label" parent="player" unique_id=2108802396]
-offset_top = 232.0
-offset_right = 576.0
-offset_bottom = 254.0
-theme = ExtResource("12_tovol")
-theme_override_colors/font_color = Color(0.780392, 0.862745, 0.815686, 1)
-theme_override_font_sizes/font_size = 22
-text = "Moves Remaining: 2"
-horizontal_alignment = 1
 
 [node name="foreground" type="Node2D" parent="." unique_id=1973101239]
 z_index = 800
@@ -478,5 +240,4 @@ text = "Main Menu"
 [connection signal="value_changed" from="enemy/healthBar" to="enemy" method="_on_health_bar_value_changed"]
 [connection signal="tree_entered" from="player" to="player" method="_on_tree_entered"]
 [connection signal="tree_exiting" from="player" to="player" method="_on_tree_exiting"]
-[connection signal="value_changed" from="player/health_buffs/player_healthbar" to="player" method="_on_player_healthbar_value_changed"]
 [connection signal="pressed" from="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

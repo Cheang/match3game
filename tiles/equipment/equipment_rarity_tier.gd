@@ -32,8 +32,12 @@ enum Rarity {
 @export var might: float = 0.0
 ## Passive Grit granted to the hero (Blue Pillar: boosts armor).
 @export var grit: float = 0.0
-## Passive Speed granted to the hero (Green Pillar: extra tile swaps per turn).
-@export var speed: int = 0
+## Passive Agility granted to the hero (Green Pillar: determines actions per turn / Max Energy).
+@export var agility: int = 0
+## Legacy alias pointing to agility
+var speed: int:
+	get: return agility
+	set(v): agility = v
 ## Passive Spirit granted to the hero (Purple/White Pillar: boosts healing and magic).
 @export var spirit: float = 0.0
 ## Passive Max Health added to the hero.
@@ -112,7 +116,9 @@ func get_stat_boosts() -> Dictionary:
 	var boosts: Dictionary = {}
 	if might != 0.0: boosts["might"] = might
 	if grit != 0.0: boosts["grit"] = grit
-	if speed != 0: boosts["speed"] = speed
+	if agility != 0:
+		boosts["agility"] = agility
+		boosts["speed"] = agility
 	if spirit != 0.0: boosts["spirit"] = spirit
 	if max_health != 0.0: boosts["max_health"] = max_health
 	if crit_chance != 0: boosts["crit_chance"] = crit_chance
@@ -134,8 +140,8 @@ func get_stat_boosts_bbcode() -> String:
 		parts.append("[color=#d84343]%s Might[/color]" % ("+" + str(might) if might > 0 else str(might)))
 	if grit != 0.0:
 		parts.append("[color=#4d65b4]%s Grit[/color]" % ("+" + str(grit) if grit > 0 else str(grit)))
-	if speed != 0:
-		parts.append("[color=#3ca370]%s Speed[/color]" % ("+" + str(speed) if speed > 0 else str(speed)))
+	if agility != 0:
+		parts.append("[color=#3ca370]%s Agility[/color]" % ("+" + str(agility) if agility > 0 else str(agility)))
 	if spirit != 0.0:
 		parts.append("[color=#a854a8]%s Spirit[/color]" % ("+" + str(spirit) if spirit > 0 else str(spirit)))
 	if max_health != 0.0:

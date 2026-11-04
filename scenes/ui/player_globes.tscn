@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://cx6g3k7x5l14m"]
+
+[ext_resource type="Script" uid="uid://ctm0h20jskwad" path="res://scripts/ui/player_globes.gd" id="1_globes"]
+[ext_resource type="Texture2D" uid="uid://c2ho2tvbfti1" path="res://assets/scene-assets/combat/plr-hp-energy-bottom.png" id="2_bottom"]
+[ext_resource type="Shader" uid="uid://cpxn6rcb7w1xt" path="res://assets/shaders/pixel_liquid_globe.gdshader" id="3_shader"]
+[ext_resource type="Texture2D" uid="uid://5588hc6rmyws" path="res://assets/scene-assets/combat/plr-hp-energy-top.png" id="4_top"]
+[ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_font"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hp"]
+shader = ExtResource("3_shader")
+shader_parameter/fill_amount = 1.0
+shader_parameter/col_highlight = Color(0.976471, 0.760784, 0.168627, 1)
+shader_parameter/col_base = Color(0.909804, 0.231373, 0.231373, 1)
+shader_parameter/col_shadow = Color(0.478431, 0.188235, 0.270588, 1)
+shader_parameter/wave_amplitude = 0.022
+shader_parameter/wave_frequency = 13.0
+shader_parameter/wave_speed = 3.2
+shader_parameter/time_offset = 0.0
+shader_parameter/pixel_grid_size = 64.0
+shader_parameter/radius = 0.4765
+shader_parameter/enable_specks = true
+shader_parameter/speck_rise_speed = 0.28
+shader_parameter/col_speck = Color(0, 0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_energy"]
+shader = ExtResource("3_shader")
+shader_parameter/fill_amount = 1.0
+shader_parameter/col_highlight = Color(0.8039216, 0.8745098, 0.42352942, 1)
+shader_parameter/col_base = Color(0.117647, 0.737255, 0.45098, 1)
+shader_parameter/col_shadow = Color(0.13725491, 0.5647059, 0.3882353, 1)
+shader_parameter/wave_amplitude = 0.022
+shader_parameter/wave_frequency = 15.0
+shader_parameter/wave_speed = 3.8
+shader_parameter/time_offset = 2.7
+shader_parameter/pixel_grid_size = 64.0
+shader_parameter/radius = 0.4765
+shader_parameter/enable_specks = true
+shader_parameter/speck_rise_speed = 0.28
+shader_parameter/col_speck = Color(0, 0, 0, 0)
+
+[node name="PlayerGlobes" type="Control" unique_id=1177550745]
+custom_minimum_size = Vector2(134, 64)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 134.0
+offset_bottom = 64.0
+script = ExtResource("1_globes")
+
+[node name="Background" type="TextureRect" parent="." unique_id=319312042]
+layout_mode = 0
+offset_right = 134.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("2_bottom")
+
+[node name="LiquidContainer" type="Control" parent="." unique_id=952037260]
+anchors_preset = 0
+offset_right = 134.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="HPLiquid" type="ColorRect" parent="LiquidContainer" unique_id=152610776]
+material = SubResource("ShaderMaterial_hp")
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="EnergyLiquid" type="ColorRect" parent="LiquidContainer" unique_id=409053338]
+material = SubResource("ShaderMaterial_energy")
+layout_mode = 0
+offset_left = 70.0
+offset_right = 134.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="TopFrame" type="TextureRect" parent="." unique_id=165268096]
+layout_mode = 0
+offset_right = 134.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("4_top")
+
+[node name="ValueLabels" type="Control" parent="." unique_id=1404230071]
+anchors_preset = 0
+offset_right = 134.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="HPLabel" type="Label" parent="ValueLabels" unique_id=1833344275]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_colors/font_outline_color = Color(0.121569, 0.0823529, 0.14902, 1)
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 22
+text = "20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnergyLabel" type="Label" parent="ValueLabels" unique_id=393524201]
+layout_mode = 0
+offset_left = 70.0
+offset_right = 134.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_colors/font_outline_color = Color(0.121569, 0.0823529, 0.14902, 1)
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 22
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1

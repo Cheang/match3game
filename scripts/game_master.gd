@@ -11,7 +11,6 @@ signal enemy_attacking
 @onready var defeat_overlay: PanelContainer = get_node_or_null("CanvasLayer/defeat_overlay")
 @onready var pause: Control = get_node_or_null("CanvasLayer/pause")
 
-var last_enemy_health: float
 var enemy_attacked_once: bool = false
 var execution_queue: Array[MatchContext] = []
 var is_executing_matches: bool = false
@@ -23,7 +22,6 @@ func _ready() -> void:
 		defeat_overlay.visible = false
 	if Global.cur_enemy != null:
 		Global.cur_enemy.reset_stats_at_beginning_of_fight()
-		last_enemy_health = Global.cur_enemy.cur_health
 	if pause != null and pause.has_method("set_title"):
 		pause.set_title("Paused")
 
@@ -129,8 +127,11 @@ func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool, is_
 	var slot_ofs: int = _toast_seq % 2
 	_toast_seq += 1
 	var anchor_pos := Vector2(340.0, 805.0 if is_player else 195.0)
-	if is_player and player != null and player.player_healthbar != null:
-		anchor_pos = player.player_healthbar.global_position + Vector2(20.0, -32.0)
+	if is_player and player != null:
+		if player.globes != null:
+			anchor_pos = player.globes.global_position + Vector2(20.0, -32.0)
+		elif "player_healthbar" in player and player.player_healthbar != null:
+			anchor_pos = player.player_healthbar.global_position + Vector2(20.0, -32.0)
 	elif not is_player and enemy != null and enemy.healthBar != null:
 		anchor_pos = enemy.healthBar.global_position + Vector2(20.0, -32.0)
 	var start_pos := Vector2(anchor_pos.x, anchor_pos.y - slot_ofs * 24.0)
@@ -220,7 +221,6 @@ func _execute_match_context(ctx: MatchContext) -> void:
 				_spawn_action_toast(mod, ctx, actor is PlayerResource, did_crit)
 				if actor is PlayerResource and loadout_dock != null:
 					loadout_dock.pulse_slot(ctx.base_color, mod)
-					loadout_dock.refresh_dock(false)
 				if is_inside_tree():
 					await get_tree().create_timer(0.1).timeout
 			else:
@@ -263,6 +263,7 @@ func execute_enemy_turn() -> void:
 		Global.cur_enemy.advance_hybrid_action_state()
 
 		if grd != null:
+			var swapped: bool = false
 			if mode == EnemyResource.BehaviorCategory.SMART:
 				var chosen_swap: Dictionary = grd.choose_smart_monster_swap(Global.cur_enemy)
 				if not chosen_swap.is_empty():
@@ -273,12 +274,8 @@ func execute_enemy_turn() -> void:
 						Global.cur_enemy,
 						Global.cur_char
 					)
-				else:
-					var fallback_offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
-					var fallback_center: Vector2i = grd.get_or_choose_beast_target_center(fallback_offsets)
-					grd.clear_enemy_target_preview()
-					grd.execute_beast_destruction(fallback_center, fallback_offsets, Global.cur_enemy, Global.cur_char)
-			else:
+					swapped = true
+			if not swapped:
 				var beast_offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
 				var beast_center: Vector2i = grd.get_or_choose_beast_target_center(beast_offsets)
 				grd.clear_enemy_target_preview()
@@ -341,6 +338,11 @@ func player_finished_turn():
 	grd.state = grd.wait
 	while (grd != null and grd.is_resolving_action) or is_executing_matches or not execution_queue.is_empty():
 		await get_tree().process_frame
+	if Global.cur_char != null and Global.cur_char.moves_left > 0:
+		if grd != null:
+			grd.state = grd.move
+			grd.update_enemy_target_preview()
+		return
 	if !enemy_attacked_once and Global.game_is_played and Global.cur_enemy != null and Global.cur_enemy.cur_health > 0 and Global.cur_char != null and Global.cur_char.cur_health > 0:
 		enemy_attacked_once = true
 		if trun_changer != null and trun_changer.has_method("change_turn"):
@@ -366,7 +368,6 @@ func enemy_died():
 		grd.state = grd.wait
 		SceneManager.fade_in_place( {"pattern": "diagonal", "color": Color('#2e222f')} )
 		await SceneManager.fade_complete
-		grd.clean_deck_to_dest()
 		grd.clear_board()
 		if Global.cur_enemy.type == 1:
 			Global.boss_beaten = true

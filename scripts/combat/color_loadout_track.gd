@@ -103,7 +103,6 @@ func get_cycle_length() -> int:
 	return total
 
 func clamp_cursor() -> void:
-	_compact_null_entries()
 	var total: int = get_cycle_length()
 	if total == 0:
 		next_entry_cursor = 0
@@ -232,14 +231,23 @@ func get_modifier_at_slot_index(slot_index: int) -> Equipment:
 func is_modifier_activated(mod: Equipment) -> bool:
 	if mod == null:
 		return false
-	var slots: Array[int] = get_slot_indices_for_modifier(mod)
-	if slots.is_empty():
-		return false
-	for s in slots:
-		if s >= 0 and s < activated_slot_flags.size():
-			if not activated_slot_flags[s]:
-				return false
-	return true
+	var cur_slot: int = 0
+	var flag_count: int = activated_slot_flags.size()
+	for m in equipped_modifiers:
+		if m == null:
+			continue
+		var cost: int = clampi(m.slot_cost, 1, max_slots)
+		if m == mod:
+			var checked_any: bool = false
+			for s in range(cost):
+				var idx: int = cur_slot + s
+				if idx < NORMAL_MAX_SLOTS and idx < flag_count:
+					checked_any = true
+					if not activated_slot_flags[idx]:
+						return false
+			return checked_any
+		cur_slot += cost
+	return false
 
 func get_next_normal_entry() -> Equipment:
 	if equipped_modifiers.is_empty():
@@ -277,10 +285,19 @@ func check_ultimate_ready_at_cycle_start() -> void:
 func record_skill_activated(mod: Equipment) -> void:
 	if mod == null or mod == ultimate_skill:
 		return
-	var slots: Array[int] = get_slot_indices_for_modifier(mod)
-	for s in slots:
-		if s >= 0 and s < activated_slot_flags.size():
-			activated_slot_flags[s] = true
+	var cur_slot: int = 0
+	var flag_count: int = activated_slot_flags.size()
+	for m in equipped_modifiers:
+		if m == null:
+			continue
+		var cost: int = clampi(m.slot_cost, 1, max_slots)
+		if m == mod:
+			for s in range(cost):
+				var idx: int = cur_slot + s
+				if idx < NORMAL_MAX_SLOTS and idx < flag_count:
+					activated_slot_flags[idx] = true
+			return
+		cur_slot += cost
 
 func record_ultimate_activated() -> void:
 	ultimate_activated_this_cycle = true
@@ -328,7 +345,9 @@ func can_trigger_ultimate(ctx: MatchContext) -> bool:
 
 func reset_activation_cycle() -> void:
 	tick_cooldowns(1)
-	activated_slot_flags = [false, false, false, false, false]
+	if activated_slot_flags.size() != NORMAL_MAX_SLOTS:
+		activated_slot_flags.resize(NORMAL_MAX_SLOTS)
+	activated_slot_flags.fill(false)
 	ultimate_activated_this_cycle = false
 	next_entry_cursor = 0
 	check_ultimate_ready_at_cycle_start()
@@ -465,7 +484,9 @@ func peek_firing_indices(ctx: MatchContext, actor: Resource = null) -> Array[int
 
 func reset_for_battle() -> void:
 	next_entry_cursor = 0
-	activated_slot_flags = [false, false, false, false, false]
+	if activated_slot_flags.size() != NORMAL_MAX_SLOTS:
+		activated_slot_flags.resize(NORMAL_MAX_SLOTS)
+	activated_slot_flags.fill(false)
 	ultimate_activated_this_cycle = false
 	for mod in equipped_modifiers:
 		if mod != null:

@@ -1201,8 +1201,8 @@ func save_event_to_file(file_path: String) -> bool:
 							rew.grit = float(stat_val)
 						elif stat_name == "spirit":
 							rew.spirit = float(stat_val)
-						elif stat_name == "speed":
-							rew.speed = int(stat_val)
+						elif stat_name == "speed" or stat_name == "agility":
+							rew.agility = int(stat_val)
 						c_rew.reward = rew
 					
 					var after_act = c.get("after_reward", "scene_change")
@@ -1365,9 +1365,9 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 						elif c.reward.spirit > 0:
 							c_data["reward_stat"] = "spirit"
 							c_data["reward_stat_amount"] = float(c.reward.spirit)
-						elif c.reward.speed > 0:
-							c_data["reward_stat"] = "speed"
-							c_data["reward_stat_amount"] = float(c.reward.speed)
+						elif c.reward.agility > 0:
+							c_data["reward_stat"] = "agility"
+							c_data["reward_stat_amount"] = float(c.reward.agility)
 				elif "stats" in c.reward:
 					c_data["reward_type"] = "stat"
 					if not c.reward.stats.is_empty():

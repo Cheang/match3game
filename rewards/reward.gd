@@ -52,8 +52,12 @@ enum RewardCategory {
 @export var grit: float = 0.0
 ## Permanent increase to the player's Spirit stat (boosts magic and healing).
 @export var spirit: float = 0.0
-## Permanent increase to the player's Speed stat (grants extra moves per turn).
-@export var speed: int = 0
+## Permanent increase to the player's Agility stat (determines actions per turn / Max Energy).
+@export var agility: int = 0
+## Legacy alias pointing to agility
+var speed: int:
+	get: return agility
+	set(v): agility = v
 ## Permanent increase to the player's Maximum Health.
 @export var max_health: float = 0.0
 ## Immediate restoration of current HP.
@@ -143,7 +147,7 @@ func activate(grant_equipment: bool = true) -> void:
 	if might != 0.0: p.modify_stat("might", might)
 	if grit != 0.0: p.modify_stat("grit", grit)
 	if spirit != 0.0: p.modify_stat("spirit", spirit)
-	if speed != 0: p.modify_stat("speed", speed)
+	if agility != 0: p.modify_stat("agility", agility)
 	if max_health != 0.0: p.modify_stat("max_health", max_health)
 	if heal_hp != 0.0: p.modify_stat("cur_health", heal_hp)
 	if gold != 0: p.modify_stat("gold", gold)
@@ -195,7 +199,7 @@ func get_effect_description() -> String:
 	if might != 0.0: lines.append("[color=#ae2334]Might +%s[/color]" % _fmt(might))
 	if grit != 0.0: lines.append("[color=#4d65b4]Grit +%s[/color]" % _fmt(grit))
 	if spirit != 0.0: lines.append("[color=#a854a8]Spirit +%s[/color]" % _fmt(spirit))
-	if speed != 0: lines.append("[color=#3ca370]Speed +%d[/color]" % speed)
+	if agility != 0: lines.append("[color=#3ca370]Agility +%d[/color]" % agility)
 	if max_health != 0.0: lines.append("[color=#e06f8b]Max Health +%s[/color]" % _fmt(max_health))
 	if heal_hp != 0.0: lines.append("[color=#5ac54f]Heal %s HP[/color]" % _fmt(heal_hp))
 	if gold != 0: lines.append("[color=#f2c94c]+%d Gold[/color]" % gold)

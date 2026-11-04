@@ -43,13 +43,14 @@ func expand():
 	if cat_offence_prof != null:
 		cat_offence_prof.visible = false
 	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true, "Unarmed Track DMG", eq_bonuses.get("fluf_damage", 0.0))
-	var eff_crit: int = Global.cur_char.crit_chance + max(0, (Global.cur_char.speed - 2) * 2)
+	var eff_crit: int = Global.cur_char.crit_chance + max(0, (Global.cur_char.agility - 2) * 2)
 	get_stat_and_set(eff_crit, cat_offence_crit, false, "Crit Chance", eq_bonuses.get("crit_chance", 0.0))
 	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg, false, "Crit Bonus DMG", eq_bonuses.get("crit_mutly", 0.0))
 
 	get_stat_and_set(Global.cur_char.spirit, cat_magic_mana, false, "Spirit (Purple/White)", eq_bonuses.get("spirit", 0.0))
 
-	get_stat_and_set(Global.cur_char.speed, cat_utility_spd, false, "Speed (Moves/Turn)", eq_bonuses.get("speed", 0.0))
+	var agi_bonus: float = eq_bonuses.get("agility", eq_bonuses.get("speed", 0.0))
+	get_stat_and_set(Global.cur_char.agility, cat_utility_spd, false, "Agility (Max Energy: %d)" % Global.cur_char.max_energy, agi_bonus)
 	if cat_utility_agility != null:
 		cat_utility_agility.visible = false
 	get_stat_and_set(Global.cur_char.rerolls, cat_utility_rerolls, false, "Draft Rerolls")

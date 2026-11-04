@@ -28,6 +28,7 @@ Global="*res://scripts/Global.gd"
 Locations="*res://scripts/Locations.gd"
 SceneManager="*uid://j20v4cg7v8m1"
 MusicManager="*uid://klqktsr2spx7"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -42,7 +43,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/event_editor/plugin.cfg", "res://addons/godot_mcp/plugin.cfg", "res://addons/reward_tree_editor/plugin.cfg", "res://addons/scene_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/event_editor/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/reward_tree_editor/plugin.cfg", "res://addons/scene_manager/plugin.cfg")
 
 [gui]
 

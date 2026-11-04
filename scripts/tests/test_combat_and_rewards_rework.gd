@@ -54,8 +54,52 @@ func _test_shared_entity_resource() -> void:
 	var enemy := EnemyResource.new()
 	_assert(player is EntityResource, "PlayerResource extends EntityResource")
 	_assert(enemy is EntityResource, "EnemyResource extends EntityResource")
-	_assert(player.speed == 2, "PlayerResource defaults to speed = 2")
-	_assert(enemy.speed == 1, "EnemyResource defaults to speed = 1")
+	_assert(player.agility == 2, "PlayerResource defaults to agility = 2")
+	_assert(player.speed == 2, "PlayerResource speed alias returns agility (2)")
+	_assert(player.max_energy == 2, "PlayerResource default max_energy = 2 (1 + floor(2/2))")
+	_assert(enemy.agility == 1, "EnemyResource defaults to agility = 1")
+	_assert(enemy.speed == 1, "EnemyResource speed alias returns agility (1)")
+	_assert(enemy.max_energy == 1, "EnemyResource default max_energy = 1 (1 + floor(1/2))")
+
+	# Max energy scaling formula tests: max(1, 1 + int(floor(agility / 2.0)))
+	player.agility = 0
+	_assert(player.max_energy == 1, "Agility 0 -> max_energy = 1")
+	player.agility = 1
+	_assert(player.max_energy == 1, "Agility 1 -> max_energy = 1")
+	player.agility = 2
+	_assert(player.max_energy == 2, "Agility 2 -> max_energy = 2")
+	player.agility = 3
+	_assert(player.max_energy == 2, "Agility 3 -> max_energy = 2")
+	player.agility = 4
+	_assert(player.max_energy == 3, "Agility 4 -> max_energy = 3")
+	player.agility = 6
+	_assert(player.max_energy == 4, "Agility 6 -> max_energy = 4")
+	player.agility = -5
+	_assert(player.max_energy == 1, "Agility negative (-5) respects hard floor of 1")
+
+	# Backward compat setter alias test
+	player.speed = 4
+	_assert(player.agility == 4, "Setting speed=4 updates agility to 4")
+	_assert(player.max_energy == 3, "Agility 4 derived max_energy = 3")
+	player.agility = 2
+
+	# Moves_left strict clamping to max_energy
+	player.agility = 2 # max_energy = 2
+	player.moves_left = 10
+	_assert(player.moves_left == 2, "moves_left capped at max_energy (2) when assigned 10")
+	player.modify_stat("moves_left", 5)
+	_assert(player.moves_left == 2, "modify_stat('moves_left', +5) capped at max_energy (2)")
+	player.modify_stat("moves_left", -1)
+	_assert(player.moves_left == 1, "modify_stat('moves_left', -1) decrements to 1")
+	player.modify_stat("moves_left", -10)
+	_assert(player.moves_left == 0, "modify_stat('moves_left', -10) clamps floor to 0")
+
+	# Agility change clamps existing moves_left if exceeding new max_energy
+	player.agility = 4 # max_energy = 3
+	player.moves_left = 3
+	_assert(player.moves_left == 3, "moves_left can reach 3 when max_energy is 3")
+	player.agility = 2 # max_energy = 2
+	_assert(player.moves_left == 2, "Reducing agility from 4 to 2 automatically clamps moves_left down to 2")
 
 	# Verify enemy lifesteal heals the enemy (attacker) and NOT Global.cur_char
 	player.max_health = 30.0
