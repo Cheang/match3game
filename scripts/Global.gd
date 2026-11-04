@@ -356,7 +356,7 @@ func load_data():
 					var trk: ColorLoadoutTrack = save_file.saved_color_loadouts[k]
 					if trk != null:
 						var dup_trk: ColorLoadoutTrack = trk.duplicate(true)
-						dup_trk.max_slots = max(dup_trk.max_slots, ColorLoadoutTrack.DEFAULT_MAX_SLOTS)
+						dup_trk.max_slots = ColorLoadoutTrack.DEFAULT_MAX_SLOTS
 						dup_trk.clamp_cursor()
 						cur_char.color_loadouts[int(k)] = dup_trk
 			cur_char.ensure_loadout_tracks()

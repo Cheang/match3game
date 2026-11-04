@@ -1,14 +1,13 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://dmh4v4ckp1u2w"]
 
-[ext_resource type="Shader" path="res://assets/shaders/cloth_health_bar.gdshader" id="1_cloth"]
+[ext_resource type="Shader" uid="uid://dcwyh0h5kcx0v" path="res://assets/shaders/cloth_health_bar.gdshader" id="1_cloth"]
 
 [resource]
 shader = ExtResource("1_cloth")
-shader_parameter/progress = 1.0
-shader_parameter/wave_amplitude = 6.0
-shader_parameter/wave_frequency = 15.0
-shader_parameter/wave_speed = 6.0
-shader_parameter/flutter_depth = 32.0
-shader_parameter/vertical_flutter = 1.5
-shader_parameter/fold_shading = 0.12
+shader_parameter/wave_amplitude = 3.50000016625
+shader_parameter/wave_frequency = 6.0000002375
+shader_parameter/wave_speed = 3.20000012825
+shader_parameter/flutter_depth = 80.0
+shader_parameter/vertical_flutter = 0.0
+shader_parameter/fold_shading = 0.0650000030875
 shader_parameter/pixel_art_snap = true

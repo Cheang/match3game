@@ -21,17 +21,17 @@
 [ext_resource type="Texture2D" uid="uid://cu8lnlqe11jsn" path="res://assets/level_ui/buffs/marmor_buff.png" id="18_khhg0"]
 [ext_resource type="Texture2D" uid="uid://c0c874jmo7k4j" path="res://assets/level_ui/defeated_icon.png" id="18_xnkws"]
 [ext_resource type="Texture2D" uid="uid://bubx02s4hu5xd" path="res://assets/level_ui/buffs/combo_buff.png" id="19_em2v6"]
-[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://other/pause.tscn" id="19_ryfr5"]
-[ext_resource type="PackedScene" uid="uid://3dq060p7gv6e" path="res://other/trun_changer.tscn" id="20_gybn7"]
 [ext_resource type="Texture2D" uid="uid://bjvil74aajvtt" path="res://assets/level_ui/buffs/dodge_buff.png" id="20_mpwyg"]
 [ext_resource type="PackedScene" uid="uid://xk3yxmsbjk11" path="res://other/cam.tscn" id="20_sxuy2"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://other/btn_general.tscn" id="22_kmwuu"]
-[ext_resource type="PackedScene" path="res://scenes/ui/loadout_dock.tscn" id="23_ldock"]
+[ext_resource type="PackedScene" uid="uid://df7w0q8a1k2e" path="res://scenes/ui/loadout_dock.tscn" id="23_ldock"]
 [ext_resource type="Texture2D" uid="uid://cc4vrptuwgtoe" path="res://assets/scene-assets/combat/grid-border.png" id="25_6cqcu"]
 [ext_resource type="Script" uid="uid://ubrv4prv25xe" path="res://scripts/ui/attack_dock.gd" id="26_dock"]
 [ext_resource type="Script" uid="uid://c5m0f4aui0sgr" path="res://scripts/ui/monster_track_diamond.gd" id="27_diamond"]
 [ext_resource type="Texture2D" uid="uid://bd6eq3mb2t26k" path="res://assets/scene-assets/combat/enm-armor-middle.png" id="28_armor"]
 [ext_resource type="Material" uid="uid://dmh4v4ckp1u2w" path="res://assets/shaders/cloth_health_bar.tres" id="29_cloth_mat"]
+[ext_resource type="Material" uid="uid://dfy42m1b0q3vx" path="res://assets/shaders/metal_glint.tres" id="30_glint_mat"]
+[ext_resource type="Texture2D" uid="uid://clohsirk7wr8j" path="res://assets/scene-assets/btn-new.png" id="31_btn_new"]
 
 [sub_resource type="Gradient" id="Gradient_0drn5"]
 offsets = PackedFloat32Array(0, 0.257353, 0.503676, 1)
@@ -121,25 +121,17 @@ script = ExtResource("5_7ysvn")
 
 [node name="healthBar" type="TextureProgressBar" parent="enemy" unique_id=1282832201]
 z_index = 200
+material = ExtResource("29_cloth_mat")
 offset_left = 6.0
 offset_top = 193.0
 offset_right = 570.0
 offset_bottom = 231.0
 value = 50.0
 texture_under = ExtResource("14_08rcu")
-
-[node name="clothFill" type="TextureRect" parent="enemy/healthBar" unique_id=1282832203]
-material = ExtResource("29_cloth_mat")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("16_sdgpx")
+texture_progress = ExtResource("16_sdgpx")
 
 [node name="armorBar" type="TextureProgressBar" parent="enemy/healthBar" unique_id=1282832202]
+material = ExtResource("30_glint_mat")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -147,9 +139,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+value = 25.0
 texture_progress = ExtResource("28_armor")
 
-[node name="topFrame" type="TextureRect" parent="enemy/healthBar" unique_id=1282832204]
+[node name="topBar" type="TextureRect" parent="enemy/healthBar" unique_id=1282832203]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -159,13 +152,43 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("15_mujdl")
 
+[node name="name_box" type="NinePatchRect" parent="enemy" unique_id=1282832204]
+z_index = 210
+offset_left = 288.0
+offset_top = 158.0
+offset_right = 528.0
+offset_bottom = 188.0
+texture = ExtResource("31_btn_new")
+region_rect = Rect2(0, 0, 124, 36)
+patch_margin_left = 12
+patch_margin_top = 13
+patch_margin_right = 12
+patch_margin_bottom = 13
+
+[node name="name" type="Label" parent="enemy/name_box" unique_id=1282832205]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.88, 0.92, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.18, 0.13, 0.18, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "Enemy"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="attackDock" type="Control" parent="enemy" unique_id=98712345]
 z_index = 250
 layout_mode = 3
 anchors_preset = 0
 offset_left = 9.0
 offset_top = 85.0
-offset_right = 275.0
+offset_right = 281.0
 offset_bottom = 187.0
 script = ExtResource("26_dock")
 
@@ -181,8 +204,8 @@ script = ExtResource("27_diamond")
 [node name="Slot2" type="Control" parent="enemy/attackDock" unique_id=98710002]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 33.0
-offset_right = 101.0
+offset_left = 34.0
+offset_right = 102.0
 offset_bottom = 68.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
@@ -191,9 +214,9 @@ default_color = 400
 [node name="Slot3" type="Control" parent="enemy/attackDock" unique_id=98710003]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 66.0
+offset_left = 68.0
 offset_top = 34.0
-offset_right = 134.0
+offset_right = 136.0
 offset_bottom = 102.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
@@ -202,8 +225,8 @@ default_color = 200
 [node name="Slot4" type="Control" parent="enemy/attackDock" unique_id=98710004]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 99.0
-offset_right = 167.0
+offset_left = 102.0
+offset_right = 170.0
 offset_bottom = 68.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
@@ -212,9 +235,9 @@ default_color = 500
 [node name="Slot5" type="Control" parent="enemy/attackDock" unique_id=98710005]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 132.0
+offset_left = 136.0
 offset_top = 34.0
-offset_right = 200.0
+offset_right = 204.0
 offset_bottom = 102.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
@@ -223,8 +246,8 @@ default_color = 300
 [node name="Slot6" type="Control" parent="enemy/attackDock" unique_id=98710006]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 165.0
-offset_right = 233.0
+offset_left = 170.0
+offset_right = 238.0
 offset_bottom = 68.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
@@ -233,18 +256,14 @@ default_color = 0
 [node name="Slot7" type="Control" parent="enemy/attackDock" unique_id=98710007]
 custom_minimum_size = Vector2(68, 68)
 anchors_preset = 0
-offset_left = 198.0
+offset_left = 204.0
 offset_top = 34.0
-offset_right = 266.0
+offset_right = 272.0
 offset_bottom = 102.0
 mouse_filter = 1
 script = ExtResource("27_diamond")
 
 [node name="enemy_audio" type="AudioStreamPlayer" parent="enemy" unique_id=1782627126]
-
-[node name="loadout_dock" parent="." unique_id=328135268 instance=ExtResource("23_ldock")]
-visible = false
-z_index = 850
 
 [node name="player" type="Node2D" parent="." unique_id=21942865 node_paths=PackedStringArray("bool_buff_texture", "buff_texture")]
 z_index = 700
@@ -253,6 +272,9 @@ bool_buff_texture = [NodePath("health_buffs/buff_container/dodging")]
 bool_buff_stat = Array[String](["dodging"])
 buff_texture = [NodePath("health_buffs/buff_container/armor"), NodePath("health_buffs/buff_container/marmor"), NodePath("health_buffs/buff_container/hndcombo")]
 buff_stat = Array[String](["cur_armor", "cur_mage_armor", "hand_combo"])
+
+[node name="loadout_dock" parent="player" unique_id=328135268 instance=ExtResource("23_ldock")]
+z_index = 850
 
 [node name="art" type="Node2D" parent="player" unique_id=1247743326]
 
@@ -390,8 +412,6 @@ centered = false
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1082063967]
 layer = 2
 
-[node name="pause" parent="CanvasLayer" unique_id=1718140589 instance=ExtResource("19_ryfr5")]
-
 [node name="defeat_overlay" type="PanelContainer" parent="CanvasLayer" unique_id=486033591]
 visible = false
 offset_right = 576.0
@@ -432,8 +452,6 @@ horizontal_alignment = 1
 [node name="back_to_mm" parent="CanvasLayer/defeat_overlay/MarginContainer/CenterContainer/VBoxContainer" unique_id=317826915 instance=ExtResource("22_kmwuu")]
 layout_mode = 2
 text = "Main Menu"
-
-[node name="trun_changer" parent="CanvasLayer" unique_id=1485023123 instance=ExtResource("20_gybn7")]
 
 [node name="cam" parent="." unique_id=608592563 instance=ExtResource("20_sxuy2")]
 

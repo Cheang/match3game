@@ -47,11 +47,11 @@ class_name EntityResource
 @export var physical_dmg_reduction: float = 0.0
 
 @export_group("Critical & Combo")
-## Base chance (0% to 100%) for spawned grid tiles or actions to roll as critical strikes.
+## Base chance (0% to 100%) for an action or attack to critically strike.
 @export_range(0, 100) var crit_chance: int = 5:
 	set(new_crit_chance):
 		crit_chance = clamp(new_crit_chance, 0, 100)
-## Bonus critical damage percentage added when a match includes a critical tile (100.0 = +100% damage).
+## Bonus critical damage percentage added when an action critically strikes (100.0 = +100% damage / 2x multiplier).
 @export var crit_mutly: float = 100.0
 ## Starting hand combo points at the beginning of each turn for Fists-family equipment.
 @export var start_hand_combo: int = 0
@@ -189,6 +189,23 @@ func tick_all_track_cooldowns(amount: int = 1) -> void:
 	for track in get_all_tracks():
 		if track != null:
 			track.tick_cooldowns(amount)
+
+#==============================================================================#
+# CRITICAL STRIKE RESOLUTION
+#==============================================================================#
+
+## Returns the clamped critical strike chance (0% to 100%) for this entity.
+func get_effective_crit_chance() -> int:
+	return clampi(crit_chance, 0, 100)
+
+## Rolls whether an individual action or attack from this entity critically strikes.
+func roll_crit() -> bool:
+	var chance: int = get_effective_crit_chance()
+	if chance <= 0:
+		return false
+	if chance >= 100:
+		return true
+	return randi_range(1, 100) <= chance
 
 #==============================================================================#
 # UNIFIED DAMAGE & STAT MUTATION API

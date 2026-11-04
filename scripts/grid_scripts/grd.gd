@@ -41,8 +41,11 @@ var current_target: EntityResource = null
 var is_resolving_action: bool = false
 var is_aoe_destruction_resolving: bool = false
 var aoe_initial_resolved: bool = false
+const EnemyAttackOverlayScript = preload("res://scripts/grid_scripts/enemy_attack_overlay.gd")
+
 var planned_enemy_target_center: Vector2i = Vector2i(-1, -1)
 var current_enemy_target_cells: Array[Vector2i] = []
+var enemy_attack_overlay = null
 
 #obstacles
 var empty_spaces: Array[Vector2]
@@ -113,6 +116,8 @@ func on_startup() -> void:
 	spawn_obstacles(freeze_spaces, "make_freeze")
 	spawn_obstacles(rock_spaces, "make_rock")
 	spawn_obstacles(flesh_spaces, "make_flesh")
+	state = move
+	update_enemy_target_preview()
 
 func _process(_delta: float) -> void:
 	if state == move:
@@ -573,8 +578,6 @@ func _evaluate_board_matches(manual_swap: bool, simulation_only: bool = false) -
 				else:
 					base_tile_count += 1
 				sum_momentum += p.fall_distance
-				if p.is_criting:
-					ctx.has_crit = true
 				if p.is_gold:
 					ctx.gold_count += 1
 			var spec_r: int = Global.to_spec_row(c.y)
@@ -687,7 +690,6 @@ func build_majority_color_context(
 	var color_counts: Dictionary = {}
 	var color_order: Array[int] = []
 	var valid_positions: Array[Vector2] = []
-	var has_crit_tile: bool = false
 	var gold_tiles: int = 0
 	var exotic_tiles: int = 0
 	var max_spec_row: int = 0
@@ -710,8 +712,6 @@ func build_majority_color_context(
 		color_counts[base_c] = int(color_counts[base_c]) + 1
 		if is_exotic_color(p.color_id):
 			exotic_tiles += 1
-		if p.is_criting:
-			has_crit_tile = true
 		if p.is_gold:
 			gold_tiles += 1
 		sum_momentum += p.fall_distance
@@ -742,7 +742,6 @@ func build_majority_color_context(
 	ctx.is_manual_swap = false
 	ctx.cascade_step = cascade_step
 	ctx.matched_positions = valid_positions
-	ctx.has_crit = has_crit_tile
 	ctx.gold_count = gold_tiles
 	ctx.exotic_count = exotic_tiles
 	ctx.lowest_row = max_spec_row
@@ -973,32 +972,66 @@ func execute_external_swap(origin: Vector2, direction: Vector2, actor: EntityRes
 	move_checked = false
 	swap_pieces(int(origin.x), int(origin.y), direction)
 
-## Picks a valid target center for BEAST area destruction.
+## Picks a valid target center for BEAST area destruction, guaranteeing the shape stays strictly within grid boundaries.
 func choose_beast_target_center(shape_offsets: Array[Vector2i]) -> Vector2i:
-	var candidates: Array[Vector2i] = []
+	var perfect_candidates: Array[Vector2i] = []
+	var partial_candidates: Array[Dictionary] = []
+
 	for col in range(grd_width):
 		for row in range(grd_height):
-			if all_pieces[col][row] == null:
-				continue
-			var valid_tiles: int = 0
+			# Entire shape MUST stay strictly within grid boundaries
+			var fits_in_grid: bool = true
 			for ofs in shape_offsets:
 				var p := Vector2(col + ofs.x, row + ofs.y)
-				if is_in_grd(p) and all_pieces[int(p.x)][int(p.y)] != null:
+				if not is_in_grd(p):
+					fits_in_grid = false
+					break
+			if not fits_in_grid:
+				continue
+
+			# Count how many playable pieces are under the shape
+			var valid_tiles: int = 0
+			for ofs in shape_offsets:
+				var px: int = col + ofs.x
+				var py: int = row + ofs.y
+				if all_pieces[px][py] != null and not restricted_move(Vector2(px, py)):
 					valid_tiles += 1
-			if valid_tiles >= min(3, shape_offsets.size()):
-				candidates.append(Vector2i(col, row))
-	if candidates.is_empty():
-		return Vector2i(grd_width / 2, grd_height / 2)
-	return candidates.pick_random()
+
+			if valid_tiles == shape_offsets.size():
+				perfect_candidates.append(Vector2i(col, row))
+			elif valid_tiles > 0:
+				partial_candidates.append({"center": Vector2i(col, row), "count": valid_tiles})
+
+	if not perfect_candidates.is_empty():
+		return perfect_candidates.pick_random()
+
+	if not partial_candidates.is_empty():
+		partial_candidates.sort_custom(func(a, b): return a["count"] > b["count"])
+		var best_count: int = partial_candidates[0]["count"]
+		var best_candidates: Array[Vector2i] = []
+		for entry in partial_candidates:
+			if entry["count"] == best_count:
+				best_candidates.append(entry["center"])
+			else:
+				break
+		return best_candidates.pick_random()
+
+	return Vector2i(grd_width / 2, grd_height / 2)
 
 ## Validates whether a given center coordinate can still serve as a Beast destruction center.
 func is_valid_beast_center(center: Vector2i, shape_offsets: Array[Vector2i]) -> bool:
 	if center.x < 0 or center.x >= grd_width or center.y < 0 or center.y >= grd_height:
 		return false
-	var valid_tiles: int = 0
+	# All offsets MUST be strictly within grid bounds
 	for ofs in shape_offsets:
 		var p := Vector2(center.x + ofs.x, center.y + ofs.y)
-		if is_in_grd(p) and all_pieces[int(p.x)][int(p.y)] != null:
+		if not is_in_grd(p):
+			return false
+	var valid_tiles: int = 0
+	for ofs in shape_offsets:
+		var px: int = center.x + ofs.x
+		var py: int = center.y + ofs.y
+		if all_pieces[px][py] != null and not restricted_move(Vector2(px, py)):
 			valid_tiles += 1
 	return valid_tiles >= min(3, shape_offsets.size())
 
@@ -1028,7 +1061,7 @@ func get_planned_enemy_target_cells() -> Array[Vector2i]:
 	var center: Vector2i = get_or_choose_beast_target_center(offsets)
 	for ofs in offsets:
 		var p := Vector2i(center.x + ofs.x, center.y + ofs.y)
-		if is_in_grd(Vector2(p.x, p.y)) and all_pieces[p.x][p.y] != null:
+		if is_in_grd(Vector2(p.x, p.y)):
 			cells.append(p)
 	return cells
 
@@ -1040,7 +1073,16 @@ func update_enemy_target_preview() -> void:
 	var target_cells: Array[Vector2i] = get_planned_enemy_target_cells()
 	preview_enemy_target_cells(target_cells)
 
-## Highlights specified cells with the enemy target visual indicator.
+func _ensure_enemy_attack_overlay() -> Node2D:
+	if enemy_attack_overlay == null or not is_instance_valid(enemy_attack_overlay):
+		enemy_attack_overlay = get_node_or_null("EnemyAttackOverlay")
+		if enemy_attack_overlay == null:
+			enemy_attack_overlay = EnemyAttackOverlayScript.new()
+			enemy_attack_overlay.name = "EnemyAttackOverlay"
+			add_child(enemy_attack_overlay)
+	return enemy_attack_overlay
+
+## Highlights specified cells with the enemy target visual indicator overlay.
 func preview_enemy_target_cells(cells: Array[Vector2i]) -> void:
 	for old_cell in current_enemy_target_cells:
 		if not cells.has(old_cell) and is_in_grd(Vector2(old_cell.x, old_cell.y)):
@@ -1055,6 +1097,10 @@ func preview_enemy_target_cells(cells: Array[Vector2i]) -> void:
 			if p != null:
 				p.set_enemy_target_highlight(true)
 
+	var overlay := _ensure_enemy_attack_overlay()
+	if overlay != null:
+		overlay.update_targets(current_enemy_target_cells, Global.grd_to_pixel)
+
 ## Clears all enemy target visual indicators from board tiles.
 func clear_enemy_target_preview() -> void:
 	for cell in current_enemy_target_cells:
@@ -1063,6 +1109,8 @@ func clear_enemy_target_preview() -> void:
 			if p != null:
 				p.set_enemy_target_highlight(false)
 	current_enemy_target_cells.clear()
+	if enemy_attack_overlay != null and is_instance_valid(enemy_attack_overlay):
+		enemy_attack_overlay.clear_targets()
 
 ## Executes a BEAST area destruction centered at `center` using `shape_offsets`,
 ## routing the majority destroyed color to `actor`'s track against `target`.

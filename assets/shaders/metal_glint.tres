@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dfy42m1b0q3vx"]
+
+[ext_resource type="Shader" uid="uid://coth1xpic7rrc" path="res://assets/shaders/metal_glint.gdshader" id="1_glint"]
+
+[resource]
+shader = ExtResource("1_glint")
+shader_parameter/glint_color = Color(0.78039217, 0.8627451, 0.8156863, 1)
+shader_parameter/glint_intensity = 0.400000019
+shader_parameter/glint_width = 0.30000001285297
+shader_parameter/glint_angle = 30.000004274999995
+shader_parameter/cycle_duration = 5.00000021375
+shader_parameter/sweep_duration = 1.50000006473023
+shader_parameter/dual_beam = true
+shader_parameter/secondary_offset = 0.08
+shader_parameter/secondary_intensity = 0.5
+shader_parameter/ambient_metallic = 0.0400000019

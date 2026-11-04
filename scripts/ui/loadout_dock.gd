@@ -1,19 +1,20 @@
-extends PanelContainer
+extends Control
 class_name LoadoutDock
 
-var rows_box: GridContainer
+var bg_decoration: TextureRect
+var rows_box: HBoxContainer
 var row_map: Dictionary = {} # base_color (int) -> ColorTrackRow
-var _active_pool_signature: Array[int] = []
 var _inspect_popup: PanelContainer = null
 var _inspect_label: RichTextLabel = null
 var _inspect_tween: Tween = null
 
 func _init() -> void:
-	_build_dock()
+	custom_minimum_size = Vector2(576, 38)
+	size = custom_minimum_size
+	mouse_filter = Control.MOUSE_FILTER_PASS
 
 func _ready() -> void:
-	if rows_box == null:
-		_build_dock()
+	_ensure_structure()
 	if Global.cur_char != null:
 		if not Global.cur_char.loadoutChanged.is_connected(_on_char_loadout_changed):
 			Global.cur_char.loadoutChanged.connect(_on_char_loadout_changed)
@@ -24,70 +25,50 @@ func _exit_tree() -> void:
 		Global.cur_char.loadoutChanged.disconnect(_on_char_loadout_changed)
 
 func _on_char_loadout_changed() -> void:
-	refresh_dock(true)
+	refresh_dock(false)
 
-func _build_dock() -> void:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.11, 0.09, 0.13, 0.92)
-	sb.border_width_left = 1
-	sb.border_width_top = 1
-	sb.border_width_right = 1
-	sb.border_width_bottom = 1
-	sb.border_color = Color(0.38, 0.32, 0.44, 0.95)
-	sb.corner_radius_top_left = 5
-	sb.corner_radius_top_right = 5
-	sb.corner_radius_bottom_left = 5
-	sb.corner_radius_bottom_right = 5
-	sb.content_margin_left = 6
-	sb.content_margin_right = 6
-	sb.content_margin_top = 3
-	sb.content_margin_bottom = 3
-	add_theme_stylebox_override("panel", sb)
-
-	rows_box = GridContainer.new()
-	rows_box.columns = 2
-	rows_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rows_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	rows_box.add_theme_constant_override("h_separation", 8)
-	rows_box.add_theme_constant_override("v_separation", 3)
-	add_child(rows_box)
-
-func refresh_dock(force_rebuild: bool = false) -> void:
+func _ensure_structure() -> void:
+	if bg_decoration == null:
+		bg_decoration = get_node_or_null("BgDecoration")
 	if rows_box == null:
-		_build_dock()
+		rows_box = get_node_or_null("RowsBox")
+
+func get_track_rows() -> Array[ColorTrackRow]:
+	var list: Array[ColorTrackRow] = []
+	if rows_box == null:
+		_ensure_structure()
+	if rows_box != null:
+		for child in rows_box.get_children():
+			if child is ColorTrackRow:
+				list.append(child)
+	return list
+
+func refresh_dock(_force_rebuild: bool = false) -> void:
+	_ensure_structure()
 	if Global.cur_char == null:
 		return
 	Global.cur_char.ensure_loadout_tracks()
 
+	var rows := get_track_rows()
+	if rows.is_empty():
+		return
+
 	var current_pool: Array[int] = Global.cur_char.active_color_pool
-	rows_box.columns = 2 if current_pool.size() >= 3 else max(1, current_pool.size())
-
-	if not force_rebuild and _active_pool_signature == current_pool and row_map.size() == current_pool.size():
-		var all_valid: bool = true
-		for c_id in current_pool:
-			var base_c: int = Global.get_base_family(c_id)
-			if not row_map.has(base_c) or not is_instance_valid(row_map[base_c]):
-				all_valid = false
-				break
-		if all_valid:
-			for c_id in current_pool:
-				var base_c: int = Global.get_base_family(c_id)
-				var existing_row: ColorTrackRow = row_map[base_c]
-				existing_row.update_row_state()
-			return
-
-	for child in rows_box.get_children():
-		child.queue_free()
 	row_map.clear()
-	_active_pool_signature = current_pool.duplicate()
 
-	for c_id in current_pool:
-		var track: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
-		var row := ColorTrackRow.new()
-		rows_box.add_child(row)
-		row.setup_row(c_id, track, false, true)
-		row.row_slot_selected.connect(_on_combat_slot_tapped)
-		row_map[Global.get_base_family(c_id)] = row
+	for slot_idx in range(rows.size()):
+		var row: ColorTrackRow = rows[slot_idx]
+		if slot_idx < current_pool.size():
+			var c_id: int = current_pool[slot_idx]
+			var track: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
+			row.setup_row(c_id, track, false, false)
+			row_map[ColorLoadoutTrack.get_base_family(c_id)] = row
+		else:
+			# Unassigned module slot on tray: base metal plate with empty sockets
+			row.setup_row(0, null, false, false)
+
+		if not row.row_slot_selected.is_connected(_on_combat_slot_tapped):
+			row.row_slot_selected.connect(_on_combat_slot_tapped)
 
 func _on_combat_slot_tapped(mod: Equipment, track: ColorLoadoutTrack, mod_index: int) -> void:
 	if mod == null:
@@ -134,13 +115,14 @@ func _show_inspect_popup(mod: Equipment, track: ColorLoadoutTrack, mod_index: in
 	var r_name: String = Equipment.get_rarity_name(mod.rarity)
 	var trig_badge: String = mod.get_trigger_badge_text()
 	var trig_str: String = (" • Trigger: [color=#fad65a]%s[/color]" % trig_badge) if trig_badge != "" else ""
-	var c_name: String = Global.get_color_name(track.color) if track != null else "Track"
+	var c_name: String = ColorLoadoutTrack.get_color_name(track.color) if track != null else "Track"
 	var state_str: String = ""
 	if mod.once_per_battle and mod.used_this_battle:
 		state_str = " • [color=#f26b6b]USED[/color]"
 	elif mod.current_cooldown > 0:
 		state_str = " • [color=#f29d4c]CD: %dT[/color]" % mod.current_cooldown
 
+	var char_res: Resource = Global.cur_char
 	_inspect_label.text = "[color=%s][b]%s[/b][/color] [color=#b2b8a3](%s • %d-Slot • %s%s%s)[/color]%s\n%s" % [
 		r_hex,
 		mod.piece_name,
@@ -150,7 +132,7 @@ func _show_inspect_popup(mod: Equipment, track: ColorLoadoutTrack, mod_index: in
 		trig_str,
 		state_str,
 		next_tag,
-		mod.get_effect_description(Global.cur_char)
+		mod.get_effect_description(char_res)
 	]
 
 	_inspect_popup.visible = true

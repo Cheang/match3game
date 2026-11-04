@@ -41,12 +41,12 @@ const PALETTES: Dictionary = {
 		"deepshade": Color("#6B3E75")
 	},
 	# White (500)
-	500: {
+	500: { 
 		"highlight": Color("#FFFFFF"),
-		"lightbase": Color("#C7DCD0"),
-		"base": Color("#9BABB2"),
-		"shadebase": Color("#7F708A"),
-		"deepshade": Color("#2D222F")
+		"lightbase": Color("#FFFFFF"),
+		"base": Color("#c7dcd0"),
+		"shadebase": Color("#9babb2"),
+		"deepshade": Color("#694f62")
 	},
 	# Wild / Colorless (0)
 	0: {

@@ -168,6 +168,8 @@ func remove_color_from_pool(target_color: int) -> bool:
 	active_color_pool.erase(target_color)
 	if color_loadouts.has(target_color):
 		var track: ColorLoadoutTrack = color_loadouts[target_color]
+		if track.ultimate_skill != null:
+			modifier_inventory.append(track.ultimate_skill)
 		for mod in track.equipped_modifiers:
 			if mod != null:
 				modifier_inventory.append(mod)

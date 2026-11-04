@@ -40,6 +40,9 @@ var save_path = "user://save1.tres"
 @export var saved_enemy_track_cursors: Dictionary = {}
 
 func save_data() -> void:
+	var dir_path: String = save_path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(dir_path):
+		DirAccess.make_dir_recursive_absolute(dir_path)
 	var error = ResourceSaver.save(self, save_path)
 	if error != OK:
 		print_debug("Error saving game: ", error)

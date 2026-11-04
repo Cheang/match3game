@@ -6,10 +6,10 @@ signal enemy_attacking
 @onready var grd: Node2D = $grd
 @onready var enemy: Enemy = $enemy
 @onready var player: Player = $player
-@onready var loadout_dock: LoadoutDock = get_node_or_null("loadout_dock")
-@onready var trun_changer: Control = $CanvasLayer/trun_changer
-@onready var defeat_overlay: PanelContainer = $CanvasLayer/defeat_overlay
-@onready var pause: Control = $CanvasLayer/pause
+@onready var loadout_dock: LoadoutDock = get_node_or_null("player/loadout_dock") if has_node("player/loadout_dock") else get_node_or_null("loadout_dock")
+@onready var trun_changer: Control = get_node_or_null("CanvasLayer/trun_changer")
+@onready var defeat_overlay: PanelContainer = get_node_or_null("CanvasLayer/defeat_overlay")
+@onready var pause: Control = get_node_or_null("CanvasLayer/pause")
 
 var last_enemy_health: float
 var enemy_attacked_once: bool = false
@@ -19,13 +19,15 @@ var _toast_seq: int = 0
 
 func _ready() -> void:
 	Global.save()
-	defeat_overlay.visible = false
+	if defeat_overlay != null:
+		defeat_overlay.visible = false
 	if Global.cur_enemy != null:
 		Global.cur_enemy.reset_stats_at_beginning_of_fight()
-		pause.set_title(Global.cur_enemy.name)
 		last_enemy_health = Global.cur_enemy.cur_health
-	else:
-		pause.set_title("Battle")
+	if pause != null and pause.has_method("set_title"):
+		pause.set_title("Paused")
+
+	Global.game_is_played = true
 
 	if grd != null:
 		if grd.has_signal("match_resolved") and not grd.match_resolved.is_connected(_on_grd_match_resolved):
@@ -34,14 +36,12 @@ func _ready() -> void:
 			grd.drag_preview_updated.connect(loadout_dock.preview_matches)
 		if grd.has_signal("drag_preview_cleared") and loadout_dock != null and not grd.drag_preview_cleared.is_connected(loadout_dock.clear_preview):
 			grd.drag_preview_cleared.connect(loadout_dock.clear_preview)
-		grd.on_startup()
+		await grd.on_startup()
 		grd.state = grd.move
 		grd.update_enemy_target_preview()
 
 	if loadout_dock != null:
 		loadout_dock.refresh_dock(true)
-
-	Global.game_is_played = true
 
 func _on_grd_match_resolved(ctx: MatchContext) -> void:
 	if ctx == null:
@@ -65,7 +65,7 @@ func _process_execution_queue() -> void:
 	if loadout_dock != null:
 		loadout_dock.refresh_dock(false)
 
-func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool) -> void:
+func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool, is_crit: bool = false) -> void:
 	if not is_inside_tree() or mod == null:
 		return
 	var pill := PanelContainer.new()
@@ -80,7 +80,16 @@ func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool) -> 
 	sb.border_width_top = 2
 	sb.border_width_right = 2
 	sb.border_width_bottom = 2
-	sb.border_color = Color(1.0, 0.9, 0.35) if (ctx != null and ctx.has_crit) else c_tint.lightened(0.28)
+	if mod.is_ultimate:
+		sb.border_color = Color(1.0, 0.88, 0.35)
+		sb.border_width_left = 3
+		sb.border_width_top = 3
+		sb.border_width_right = 3
+		sb.border_width_bottom = 3
+	elif is_crit:
+		sb.border_color = Color(1.0, 0.9, 0.35)
+	else:
+		sb.border_color = c_tint.lightened(0.28)
 	sb.corner_radius_top_left = 4
 	sb.corner_radius_top_right = 4
 	sb.corner_radius_bottom_left = 4
@@ -106,11 +115,12 @@ func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool) -> 
 		hbox.add_child(ic)
 
 	var lbl := Label.new()
-	var crit_prefix: String = "CRIT! " if (ctx != null and ctx.has_crit) else ""
+	var crit_prefix: String = "CRIT! " if is_crit else ""
+	var ult_prefix: String = "★ ULTIMATE: " if mod.is_ultimate else ""
 	var actor_prefix: String = "" if is_player else "Enemy: "
-	lbl.text = "%s%s%s" % [actor_prefix, crit_prefix, mod.piece_name]
+	lbl.text = "%s%s%s%s" % [actor_prefix, crit_prefix, ult_prefix, mod.piece_name]
 	lbl.add_theme_font_size_override("font_size", 14)
-	lbl.add_theme_color_override("font_color", Color(1.0, 0.95, 0.72) if (ctx != null and ctx.has_crit) else Color(0.95, 0.96, 0.92))
+	lbl.add_theme_color_override("font_color", Color(1.0, 0.95, 0.72) if is_crit else Color(0.95, 0.96, 0.92))
 	lbl.add_theme_color_override("font_outline_color", Color(0.06, 0.04, 0.08, 0.95))
 	lbl.add_theme_constant_override("outline_size", 3)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -173,26 +183,44 @@ func _execute_match_context(ctx: MatchContext) -> void:
 	var trigger_budget: int = track.get_trigger_budget(ctx) if track != null else maxi(1, ctx.match_count - 2)
 
 	if track_had_entries:
+		if not track.has_activatable_tiles():
+			track.reset_activation_cycle()
+			if actor is PlayerResource and loadout_dock != null:
+				loadout_dock.refresh_dock(false)
+
 		for _trigger_idx in range(trigger_budget):
 			if not Global.game_is_played or actor.cur_health <= 0 or target.cur_health <= 0:
 				break
 			var mod: Equipment = track.step_next_entry()
 			if mod == null:
 				continue
-			if mod.can_trigger(ctx):
+			var can_fire: bool = false
+			if mod.is_ultimate:
+				can_fire = track.can_trigger_ultimate(ctx)
+			else:
+				can_fire = mod.can_trigger(ctx)
+
+			if can_fire:
 				any_modifier_fired = true
+				if not mod.is_ultimate:
+					track.record_skill_activated(mod)
+				else:
+					track.record_ultimate_activated()
 				if mod.family == "fists":
 					fists_triggered = true
-				mod.criting = ctx.has_crit
+				var did_crit: bool = actor.roll_crit()
+				mod.criting = did_crit
 				mod.activate({
 					"attacker": actor,
 					"target": target,
-					"ctx": ctx
+					"ctx": ctx,
+					"is_crit": did_crit
 				})
 				mod.on_triggered(actor)
-				_spawn_action_toast(mod, ctx, actor is PlayerResource)
+				_spawn_action_toast(mod, ctx, actor is PlayerResource, did_crit)
 				if actor is PlayerResource and loadout_dock != null:
 					loadout_dock.pulse_slot(ctx.base_color, mod)
+					loadout_dock.refresh_dock(false)
 				if is_inside_tree():
 					await get_tree().create_timer(0.1).timeout
 			else:
@@ -200,13 +228,23 @@ func _execute_match_context(ctx: MatchContext) -> void:
 				if actor is PlayerResource and loadout_dock != null:
 					loadout_dock.refresh_dock(false)
 
+			# A reset happens when there are no more tiles that can be activated in the color track
+			if not track.has_activatable_tiles():
+				track.reset_activation_cycle()
+				if actor is PlayerResource and loadout_dock != null:
+					loadout_dock.refresh_dock(false)
+
 	# Fallback baseline damage if track has no equipped modifiers
 	if not track_had_entries and not any_modifier_fired and target.cur_health > 0:
+		var did_crit: bool = actor.roll_crit()
+		var crit_factor: float = (1.0 + actor.crit_mutly / 100.0) if did_crit else 1.0
 		if actor.fluf_damage > 0:
-			target.take_damage(actor.fluf_damage * ctx.match_count, false, 0, actor)
+			var dmg: float = max(1.0, roundf(actor.fluf_damage * ctx.match_count * crit_factor))
+			target.take_damage(dmg, false, 0, actor)
 		elif actor is EnemyResource:
 			var enemy_actor := actor as EnemyResource
-			target.take_damage(max(1.0, enemy_actor.damage) * trigger_budget, false, 0, actor)
+			var dmg: float = max(1.0, roundf(max(1.0, enemy_actor.damage) * trigger_budget * crit_factor))
+			target.take_damage(dmg, false, 0, actor)
 
 	# 3. Interactive Hazard Follow-up: Fists-family modifiers hurl cleared grd_rock
 	if fists_triggered and ctx.hazards_cleared.has("rock") and target.cur_health > 0:
@@ -263,7 +301,8 @@ func _on_enemy_enemy_attacked() -> void:
 	if loadout_dock != null:
 		loadout_dock.refresh_dock(false)
 	enemy_attacked_once = false
-	trun_changer.change_turn(0)
+	if trun_changer != null and trun_changer.has_method("change_turn"):
+		trun_changer.change_turn(0)
 	await get_tree().create_timer(0.8).timeout
 	grd.state = grd.move
 	if grd != null:
@@ -304,13 +343,15 @@ func player_finished_turn():
 		await get_tree().process_frame
 	if !enemy_attacked_once and Global.game_is_played and Global.cur_enemy != null and Global.cur_enemy.cur_health > 0 and Global.cur_char != null and Global.cur_char.cur_health > 0:
 		enemy_attacked_once = true
-		trun_changer.change_turn(1)
+		if trun_changer != null and trun_changer.has_method("change_turn"):
+			trun_changer.change_turn(1)
 		await get_tree().create_timer(1.1).timeout
 		enemy_attacking.emit()
 
 func player_died():
 	grd.state = grd.wait
-	defeat_overlay.visible = true
+	if defeat_overlay != null:
+		defeat_overlay.visible = true
 	Global.game_is_played = false
 	Global.game_is_over = true
 	Global.save()

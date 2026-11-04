@@ -31,7 +31,6 @@ var original_cd: int = 0
 @export var can_upgrade: bool = true
 @export var upgrades_to_increse_cd: int = 3
 @export_group("Other")
-@export var crit_shader: Resource
 @export var upgrades: int = 0
 @export_group("Autofill")
 @export var location: String = ""
@@ -44,7 +43,6 @@ var color_id: int = 100
 var fall_distance: int = 0
 
 var matched: bool = false
-var is_criting: bool = false
 var is_gold: bool = false
 var is_preview_highlighted: bool = false
 var is_enemy_target_highlighted: bool = false
@@ -101,7 +99,6 @@ func _ready() -> void:
 		color_id = Global.color_string_to_id(color)
 	apply_color_visuals(color_id)
 	will_gold()
-	will_crit()
 
 func setup_chromatic(new_color_id: int) -> void:
 	color_id = new_color_id
@@ -111,7 +108,6 @@ func setup_chromatic(new_color_id: int) -> void:
 	apply_color_visuals(color_id)
 	if is_inside_tree():
 		will_gold()
-		will_crit()
 
 func apply_color_visuals(c_id: int) -> void:
 	var base_fam: int = Global.get_base_family(c_id)
@@ -165,29 +161,15 @@ func set_preview_highlight(active: bool) -> void:
 	is_preview_highlighted = active
 	_apply_exotic_tint()
 
-## Visual indicator for upcoming monster attacks targeting this tile.
+## Target state for upcoming monster attacks. Visual outlines are managed by EnemyAttackOverlay on grd.
 func set_enemy_target_highlight(active: bool) -> void:
 	is_enemy_target_highlighted = active
-	if active:
-		if _enemy_target_border == null or not is_instance_valid(_enemy_target_border):
-			_enemy_target_border = Sprite2D.new()
-			_enemy_target_border.name = "EnemyTargetBorder"
-			_enemy_target_border.texture = preload("res://assets/gold_border_sq.png")
-			_enemy_target_border.z_index = 2
-			add_child(_enemy_target_border)
-		_enemy_target_border.visible = true
-		_enemy_target_border.modulate = Color(1.0, 0.2, 0.2, 0.85)
-		if _enemy_target_tween != null and _enemy_target_tween.is_valid():
-			_enemy_target_tween.kill()
-		_enemy_target_tween = create_tween().set_loops()
-		_enemy_target_tween.tween_property(_enemy_target_border, "modulate:a", 0.35, 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		_enemy_target_tween.tween_property(_enemy_target_border, "modulate:a", 0.95, 0.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	else:
-		if _enemy_target_tween != null and _enemy_target_tween.is_valid():
-			_enemy_target_tween.kill()
-			_enemy_target_tween = null
-		if _enemy_target_border != null and is_instance_valid(_enemy_target_border):
-			_enemy_target_border.visible = false
+	if _enemy_target_tween != null and _enemy_target_tween.is_valid():
+		_enemy_target_tween.kill()
+		_enemy_target_tween = null
+	if _enemy_target_border != null and is_instance_valid(_enemy_target_border):
+		_enemy_target_border.queue_free()
+		_enemy_target_border = null
 	_apply_exotic_tint()
 
 func _exit_tree() -> void:
@@ -215,26 +197,13 @@ func unmark():
 	if icon != null:
 		icon.texture = icon_texture
 	cooldown = original_cd
-	is_criting = false
 	is_gold = false
 	will_gold()
-	will_crit()
 	if is_row_bomb or is_col_bomb or is_adj_bomb:
 		is_row_bomb = false
 		is_col_bomb = false
 		is_adj_bomb = false
 	_apply_exotic_tint()
-
-func will_crit():
-	if Global.cur_char == null or base == null:
-		return
-	var rand = floor(randf_range(1, 100))
-	var effective_crit: int = Global.cur_char.crit_chance + max(0, (Global.cur_char.speed - 2) * 2)
-	if rand <= effective_crit:
-		base.material = crit_shader
-		is_criting = true
-	else:
-		base.material = null
 
 func will_gold():
 	if Global.cur_char == null or gold_border == null:

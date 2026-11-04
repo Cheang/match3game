@@ -71,7 +71,7 @@ grow_vertical = 2
 alignment = 2
 
 [node name="Control2" type="Control" parent="VBoxContainer" unique_id=310290370]
-custom_minimum_size = Vector2(400, 250)
+custom_minimum_size = Vector2(400, 180)
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer" unique_id=1976566993]
@@ -171,6 +171,22 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Settings"
 
+[node name="test" parent="VBoxContainer/VBoxContainer" unique_id=712498213 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
+theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
+theme_override_styles/normal = ExtResource("10_joudq")
+theme_override_styles/pressed = ExtResource("11_dux4l")
+theme_override_styles/hover = ExtResource("10_o0vf0")
+theme_override_styles/hover_pressed = ExtResource("11_dux4l")
+theme_override_styles/disabled = ExtResource("10_qd8a3")
+text = "Test"
+
 [node name="quit" parent="VBoxContainer/VBoxContainer" unique_id=669840106 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
@@ -199,4 +215,5 @@ size_flags_vertical = 3
 [connection signal="pressed" from="VBoxContainer/VBoxContainer/load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="VBoxContainer/VBoxContainer/char_select" to="." method="_on_char_select_pressed"]
 [connection signal="pressed" from="VBoxContainer/VBoxContainer/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="VBoxContainer/VBoxContainer/test" to="." method="_on_test_pressed"]
 [connection signal="pressed" from="VBoxContainer/VBoxContainer/quit" to="." method="_on_quit_pressed"]

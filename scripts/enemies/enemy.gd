@@ -5,13 +5,14 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 
 @onready var healthBar: TextureProgressBar = get_node_or_null("healthBar") if has_node("healthBar") else get_node_or_null("enemy_healthbar")
 @onready var armorBar: TextureProgressBar = get_node_or_null("healthBar/armorBar") if has_node("healthBar/armorBar") else get_node_or_null("armorBar")
-@onready var clothFill: TextureRect = get_node_or_null("healthBar/clothFill")
 @onready var art: Node2D = $art
 @onready var health: Label = get_node_or_null("healthBar/health") if has_node("healthBar/health") else get_node_or_null("enemy_healthbar/health")
 @onready var attack: Label = get_node_or_null("PanelContainer/HBoxContainer/attack")
 @onready var intent_panel: PanelContainer = get_node_or_null("PanelContainer")
 @onready var enemy_audio: AudioStreamPlayer = $enemy_audio
 @onready var attack_dock: AttackDock = get_node_or_null("attackDock") if has_node("attackDock") else get_node_or_null("monster_attack_dock")
+@onready var name_box: Control = get_node_or_null("name_box")
+@onready var name_label: Label = get_node_or_null("name_box/name") if has_node("name_box/name") else get_node_or_null("name")
 
 var _is_initialized: bool = false
 var _last_hp: float = 0.0
@@ -32,14 +33,24 @@ func _ready() -> void:
 		art.add_child(enemy_sprite)
 	if Global.cur_enemy.shader != null:
 		art.set_material(Global.cur_enemy.shader)
-	if clothFill != null and clothFill.material != null:
-		clothFill.material = clothFill.material.duplicate()
 	if Global.cur_enemy.health_bar != null and healthBar != null and healthBar.name == "enemy_healthbar":
 		healthBar.texture_progress = Global.cur_enemy.health_bar
 	_is_initialized = false
+	update_name()
 	update_health()
 	_last_hp = Global.cur_enemy.cur_health
 	_is_initialized = true
+
+func update_name() -> void:
+	if name_label != null:
+		if Global.cur_enemy != null:
+			name_label.text = Global.cur_enemy.name
+			if name_box != null:
+				name_box.visible = true
+		else:
+			name_label.text = ""
+			if name_box != null:
+				name_box.visible = false
 
 func _on_health_bar_value_changed(value: float) -> void:
 	_on_enemy_healthbar_value_changed(value)
@@ -174,9 +185,6 @@ func update_health():
 	if healthBar != null:
 		healthBar.value = cur_hp * 100.0 / max_hp
 		healthBar.tooltip_text = _build_enemy_tooltip()
-	if clothFill != null and clothFill.material is ShaderMaterial:
-		var ratio: float = clampf(cur_hp / max_hp, 0.0, 1.0)
-		clothFill.material.set_shader_parameter("progress", ratio)
 	if armorBar != null:
 		var total_armor: float = Global.cur_enemy.cur_armor + Global.cur_enemy.cur_mage_armor
 		armorBar.value = clampf(total_armor * 100.0 / max_hp, 0.0, 100.0)

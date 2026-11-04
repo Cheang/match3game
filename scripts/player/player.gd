@@ -13,6 +13,7 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var art: Node2D = $art
 @onready var move_remaing: Label = $move_remaing
 @onready var health: Label = $health_buffs/player_healthbar/health
+@onready var loadout_dock: LoadoutDock = get_node_or_null("loadout_dock")
 
 var one_time_fire = false
 var cur_character = Global.cur_char

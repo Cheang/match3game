@@ -67,6 +67,17 @@ func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
 		SceneManager.change_scene("res://scenes/setting.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+func _on_test_pressed() -> void:
+	if not choise_made:
+		choise_made = true
+		Global.game_seed = int(Time.get_unix_time_from_system() * 2)
+		seed(Global.game_seed)
+		Global.set_up_player()
+		var test_enemy_res: EnemyResource = load("res://enemies/minion/wild_boar/wild_boar_1.tres")
+		if test_enemy_res != null:
+			Global.set_up_enemy(test_enemy_res)
+		Global.cur_scene = "res://scenes/V2/game_window_n.tscn"
+		SceneManager.change_scene("res://scenes/V2/game_window_n.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 func _on_quit_pressed() -> void:
 	Global.save()
 	get_tree().quit()

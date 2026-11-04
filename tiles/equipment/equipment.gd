@@ -83,8 +83,12 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export_multiline var description: String = ""
 ## Synergy tag chosen from defined equipment families. Determines auto-slotting color and triggers passives/synergies.
 @export_enum("sword", "fists", "shields", "mobility", "healing") var family: String = "sword"
-## Number of slots this equipment occupies on a 6-slot color track (1 = small, 2 = medium, 3 = large, up to 6).
-@export_range(1, 6) var slot_cost: int = 1
+## Number of slots this equipment occupies on a color track (1 = small, 2 = medium, 3 = large, up to 5).
+@export_range(1, 5) var slot_cost: int = 1
+## Whether this skill is an Ultimate ability (can ONLY be equipped in the dedicated Ultimate slot 0).
+@export var is_ultimate: bool = false
+## If true, this ultimate does not require all 5 normal skills to be activated before it can trigger.
+@export var bypass_activation_check: bool = false
 
 # ==============================================================================
 # 2. RARITY & SCALING
@@ -471,7 +475,14 @@ func activate(context = null) -> void:
 		return
 
 	var mult: float = get_context_potency_multiplier(ctx)
-	var is_crit: bool = criting or (ctx != null and ctx.has_crit)
+	var is_crit: bool = false
+	if context is Dictionary and context.has("is_crit"):
+		is_crit = bool(context["is_crit"])
+	elif criting:
+		is_crit = true
+	elif cur_char != null:
+		is_crit = cur_char.roll_crit()
+	criting = false
 	var crit_factor: float = (1.0 + cur_char.crit_mutly / 100.0) if is_crit else 1.0
 
 	# 1. Pre-Effect Hand Combo

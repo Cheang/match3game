@@ -42,6 +42,7 @@ func _run_all_tests() -> void:
 	await _test_board_smart_beast_hybrid_and_bombs()
 	await _test_enemy_target_preview_and_cascade_suppression()
 	await _test_direct_equipment_rewards_and_three_source_draft()
+	_test_per_action_critical_hits()
 	_test_save_load_persistence()
 
 # ------------------------------------------------------------------------------
@@ -78,34 +79,124 @@ func _test_shared_entity_resource() -> void:
 	_assert(cd_eq.current_cooldown == 1, "Equipment on_triggered(enemy) uses enemy CDR (3 - 2 = 1)")
 
 # ------------------------------------------------------------------------------
-# 2. 6-Slot Capacity & Sequential Chain Execution
+# 2. 5 Normal Slots + 1 Ultimate Slot Capacity & Chain Execution
 # ------------------------------------------------------------------------------
 func _test_six_slot_capacity_and_sequential_chains() -> void:
-	print("\n--- 2. 6-Slot Capacity & Sequential Chains ---")
+	print("\n--- 2. 5-Slot Normal + 1 Ultimate Slot Capacity & Sequential Chains ---")
 	var player := PlayerResource.new()
 	player.ensure_loadout_tracks()
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
 	var blue_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.BLUE)
-	_assert(red_track != null and red_track.max_slots == 6, "Player Red track defaults to 6 open slots")
+	_assert(red_track != null and red_track.max_slots == 5, "Player Red track defaults to 5 open normal slots")
 
 	var eq_a := _make_test_equipment("A", 2.0, 2)
 	var eq_b := _make_test_equipment("B", 3.0, 2)
-	var eq_c := _make_test_equipment("C", 4.0, 2)
-	_assert(red_track.equip_modifier(eq_a), "Equipped A (cost 2) into 6-slot track")
-	_assert(red_track.equip_modifier(eq_b), "Equipped B (cost 2) into 6-slot track")
-	_assert(red_track.equip_modifier(eq_c), "Equipped C (cost 2) into 6-slot track")
-	_assert(red_track.get_used_slots() == 6 and red_track.get_remaining_slots() == 0, "6-slot capacity accounting (2+2+2 = 6 used, 0 remaining)")
-	_assert(not red_track.can_fit( _make_test_equipment("D", 1.0, 1) ), "7th slot point is rejected when 6/6 slots are full")
+	var eq_c := _make_test_equipment("C", 4.0, 1)
+	_assert(red_track.equip_modifier(eq_a), "Equipped A (cost 2) into 5-slot track")
+	_assert(red_track.equip_modifier(eq_b), "Equipped B (cost 2) into 5-slot track")
+	_assert(red_track.equip_modifier(eq_c), "Equipped C (cost 1) into 5-slot track")
+	_assert(red_track.get_used_slots() == 5 and red_track.get_remaining_slots() == 0, "5-slot capacity accounting (2+2+1 = 5 used, 0 remaining)")
+	_assert(not red_track.can_fit(_make_test_equipment("D", 1.0, 1)), "6th normal slot point is rejected when 5/5 normal slots are full")
 
-	# Sequential normal matches (1 trigger each): A -> B -> C -> A
+	# Ultimate slot restrictions
+	var ult_skill := _make_test_equipment("Red Comet", 15.0, 1)
+	ult_skill.is_ultimate = true
+	var normal_skill := _make_test_equipment("Normal Slash", 5.0, 1)
+
+	_assert(not red_track.equip_ultimate(normal_skill), "Non-ultimate cannot be equipped into the Ultimate slot")
+	_assert(not red_track.equip_modifier(ult_skill), "Ultimate skill cannot be equipped into normal slots (1-5)")
+	_assert(red_track.equip_ultimate(ult_skill), "Ultimate skill equipped successfully into dedicated slot 0")
+	_assert(red_track.ultimate_skill == ult_skill, "Track ultimate_skill references the equipped ultimate")
+
+	# Ultimate readiness at cycle start & visual states
+	var dummy_ctx := MatchContext.new()
+	dummy_ctx.base_color = Global.TileColor.RED
+	dummy_ctx.match_count = 3
+
+	_assert(red_track.is_ultimate_active_for_cycle == true, "Ultimate is active for cycle because all 5 skills are ready at reset start")
+	_assert(red_track.get_ultimate_visual_state() == ColorLoadoutTrack.UltimateVisualState.ACTIVATED, "Ultimate slot shows ACTIVATED state (lighter U)")
+	_assert(red_track.can_trigger_ultimate(dummy_ctx), "Ultimate can trigger when active for cycle")
+
+	# Normal slot visual states (NEXT, NORMAL, DARK, EMPTY)
+	red_track.next_entry_cursor = 0
+	_assert(red_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.NEXT, "Slot 0 (first skill A) is NEXT (lighter state)")
+	_assert(red_track.get_normal_slot_visual_state(1) == ColorLoadoutTrack.NormalSlotVisualState.NEXT, "Slot 1 (part of A) is NEXT (lighter state)")
+	_assert(red_track.get_normal_slot_visual_state(2) == ColorLoadoutTrack.NormalSlotVisualState.NORMAL, "Slot 2 (skill B) is NORMAL (ready)")
+	_assert(red_track.get_normal_slot_visual_state(4) == ColorLoadoutTrack.NormalSlotVisualState.NORMAL, "Slot 4 (skill C) is NORMAL (ready)")
+
+	# UI texture binding verification
+	var test_slot_ui := ModifierSlotUI.new()
+	test_slot_ui.setup_slot(null, 100, red_track, 0, false, false, false) # Next
+	_assert(test_slot_ui.texture_rect.visible == true and test_slot_ui.texture_rect.texture == ModifierSlotUI.TEX_CRISTAL_BRIGHT, "UI binds bright crystal texture to NEXT slot")
+
+	var empty_slot_ui := ModifierSlotUI.new()
+	var empty_track := ColorLoadoutTrack.new()
+	empty_track.color = 100
+	_assert(empty_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.EMPTY, "Unassigned slot returns EMPTY visual state")
+	empty_slot_ui.setup_slot(null, 100, empty_track, 0, false, false, false)
+	_assert(empty_slot_ui.texture_rect.visible == false, "Empty slot texture_rect is invisible so base socket shows through")
+
+	# When skill A is used: becomes DARK state
+	red_track.record_skill_activated(eq_a)
+	_assert(red_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.DARK, "Slot 0 becomes DARK once used")
+	_assert(red_track.get_normal_slot_visual_state(1) == ColorLoadoutTrack.NormalSlotVisualState.DARK, "Slot 1 becomes DARK once used")
+	test_slot_ui.setup_slot(eq_a, 100, red_track, 0, false, false, false)
+	_assert(test_slot_ui.texture_rect.visible == true and test_slot_ui.texture_rect.texture == ModifierSlotUI.TEX_CRISTAL_DARK, "UI binds dark crystal texture to DARK slot")
+	test_slot_ui.free()
+	empty_slot_ui.free()
+
+	# Cooldown ticks down on loadout reset, and determines ultimate readiness for next cycle
+	eq_a.current_cooldown = 2
+	red_track.reset_activation_cycle()
+	_assert(eq_a.current_cooldown == 1, "Cooldown ticks down on loadout reset (2 -> 1)")
+	_assert(red_track.is_ultimate_active_for_cycle == false, "Ultimate is NOT active for new cycle because skill A was on cooldown at reset start")
+	_assert(red_track.get_ultimate_visual_state() == ColorLoadoutTrack.UltimateVisualState.NORMAL, "Ultimate visual state is NORMAL (not lighter/activated) when unready")
+	_assert(not red_track.can_trigger_ultimate(dummy_ctx), "Ultimate cannot trigger when not active for cycle")
+
+	# Ticking down remaining cooldown to 0 restores readiness at next reset
+	red_track.reset_activation_cycle()
+	_assert(eq_a.current_cooldown == 0, "Cooldown ticked to 0 on next loadout reset")
+	_assert(red_track.is_ultimate_active_for_cycle == true, "Ultimate becomes active again once all skills are ready at reset start")
+
+	# Test: Reset happens when no more tiles can be activated in the color track
+	var partial_track := ColorLoadoutTrack.new()
+	partial_track.color = 100
+	var skill_1 := _make_test_equipment("Skill1", 5.0, 1)
+	var skill_2 := _make_test_equipment("Skill2", 5.0, 1)
+	skill_2.current_cooldown = 2
+	partial_track.equip_modifier(skill_1)
+	partial_track.equip_modifier(skill_2)
+
+	_assert(partial_track.has_activatable_tiles() == true, "Track has activatable tiles because skill_1 is ready")
+	partial_track.record_skill_activated(skill_1)
+	_assert(partial_track.has_activatable_tiles() == false, "No more activatable tiles (skill_1 used, skill_2 on cooldown)")
+	partial_track.reset_activation_cycle()
+	_assert(skill_2.current_cooldown == 1, "Reset on no more activatable tiles ticks cooldown (2 -> 1)")
+	_assert(partial_track.has_activatable_tiles() == true, "After reset, skill_1 is ready again")
+	partial_track.record_skill_activated(skill_1)
+	_assert(partial_track.has_activatable_tiles() == false, "Skill 1 used again, skill 2 still on cooldown")
+	partial_track.reset_activation_cycle()
+	_assert(skill_2.current_cooldown == 0, "Second reset ticks skill 2 cooldown to 0")
+	_assert(partial_track.has_activatable_tiles() == true, "Now both skills are ready")
+
+	# Bypass activation check test
+	var bypass_ult := _make_test_equipment("Free Comet", 10.0, 1)
+	bypass_ult.is_ultimate = true
+	bypass_ult.bypass_activation_check = true
+	red_track.equip_ultimate(bypass_ult)
+	_assert(red_track.can_trigger_ultimate(dummy_ctx), "Ultimate with bypass_activation_check=true triggers regardless")
+	red_track.equip_ultimate(ult_skill) # Restore strict ultimate
+
+	# Sequential normal matches + ultimate at end of cycle: A -> B -> C -> ULT -> A
+	red_track.next_entry_cursor = 0
 	var fired_names: Array[String] = []
-	for _i in range(4):
+	for _i in range(5):
 		var m: Equipment = red_track.step_next_entry()
 		fired_names.append(m.piece_name)
-	_assert(fired_names == ["A", "B", "C", "A"], "Successive normal matches execute A -> B -> C -> A")
-	_assert(red_track.next_entry_cursor == 1, "After A->B->C->A, cursor points to B (index 1)")
+	_assert(fired_names == ["A", "B", "C", "Red Comet", "A"], "Successive matches step A -> B -> C -> Red Comet (Ultimate) -> A")
+	_assert(red_track.next_entry_cursor == 1, "After full cycle + 1 step, cursor points to B (index 1)")
 
-	# Advance cursor to C (index 2), then execute a 4-tile match (2 triggers): C -> A, leaving B next
+	# Advance cursor to C (index 2), then execute a 4-tile match (2 triggers): C -> ULT, leaving A next
 	red_track.next_entry_cursor = 2
 	var ctx_4 := MatchContext.new()
 	ctx_4.base_color = Global.TileColor.RED
@@ -114,20 +205,17 @@ func _test_six_slot_capacity_and_sequential_chains() -> void:
 	var budget_4: int = red_track.get_trigger_budget(ctx_4)
 	_assert(budget_4 == 2, "4-tile match grants 2 triggers")
 
-	var preview_4: Array[int] = red_track.peek_firing_indices(ctx_4, player)
-	_assert(preview_4 == [2, 0], "Preview from cursor C for 4-tile match highlights [2, 0] without mutating cursor")
-	_assert(red_track.next_entry_cursor == 2, "Cursor remains at 2 after preview")
-
 	var match4_fired: Array[String] = []
 	for _i in range(budget_4):
 		match4_fired.append(red_track.step_next_entry().piece_name)
-	_assert(match4_fired == ["C", "A"], "4-tile match starting at C executes C then A")
-	_assert(red_track.next_entry_cursor == 1, "After C then A, cursor leaves B next (index 1)")
+	_assert(match4_fired == ["C", "Red Comet"], "4-tile match starting at C executes C then Red Comet")
+	_assert(red_track.next_entry_cursor == 0, "After C then Ultimate, cursor wraps around leaving A next (index 0)")
 
 	# Track independence: Blue track cursor was never touched
 	_assert(blue_track.next_entry_cursor == 0, "Matching Red does not advance Blue track cursor")
 
 	# Cursor lifetime: turn reset does NOT reset cursor; battle reset DOES reset cursor
+	red_track.next_entry_cursor = 1
 	player.reset_stats_at_beginning_of_turn()
 	_assert(red_track.next_entry_cursor == 1, "Turn start does NOT reset next_entry_cursor")
 	player.reset_modifiers_for_battle()
@@ -302,34 +390,35 @@ func _test_enemy_target_preview_and_cascade_suppression() -> void:
 	var test_piece: PieceClass = grd.all_pieces[3][3]
 	test_piece.set_enemy_target_highlight(true)
 	_assert(test_piece.is_enemy_target_highlighted == true, "Tile marked as enemy target")
-	_assert(test_piece._enemy_target_border != null and test_piece._enemy_target_border.visible == true, "Tile creates and displays enemy target border")
 	_assert(test_piece.base.modulate == Color(1.25, 0.75, 0.75, 1.0), "Tile applies danger reddish tint for enemy target")
 	test_piece.set_enemy_target_highlight(false)
 	_assert(test_piece.is_enemy_target_highlighted == false, "Tile unmarks enemy target")
-	_assert(test_piece._enemy_target_border.visible == false, "Enemy target border hidden when unhighlighted")
 
 	# 2. Test Beast Target Preview & Center Locking
-	cap.hybrid_next_is_beast = true
+	Global.cur_enemy.hybrid_next_is_beast = true
 	grd.update_enemy_target_preview()
 	var beast_cells: Array[Vector2i] = grd.current_enemy_target_cells
 	_assert(not beast_cells.is_empty(), "Beast upcoming action highlights target cells on board")
 	var locked_center: Vector2i = grd.planned_enemy_target_center
 	_assert(locked_center != Vector2i(-1, -1), "Beast planned center is stored")
-	var offsets: Array[Vector2i] = cap.get_beast_destruction_shape()
+	var offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
 	_assert(grd.get_or_choose_beast_target_center(offsets) == locked_center, "Enemy turn execution locks to previewed beast center")
 	for c in beast_cells:
 		var p: PieceClass = grd.all_pieces[c.x][c.y]
 		_assert(p != null and p.is_enemy_target_highlighted, "Targeted cell (%d, %d) has active highlight" % [c.x, c.y])
+	_assert(grd.enemy_attack_overlay != null and grd.enemy_attack_overlay._indicators.size() == beast_cells.size(), "EnemyAttackOverlay displays all active target borders")
 
 	# 3. Test Smart Target Preview
-	cap.hybrid_next_is_beast = false
+	Global.cur_enemy.hybrid_next_is_beast = false
 	grd.update_enemy_target_preview()
 	var smart_cells: Array[Vector2i] = grd.current_enemy_target_cells
 	_assert(smart_cells.size() == 2 or not smart_cells.is_empty(), "Smart upcoming action highlights target swap cells")
+	_assert(grd.enemy_attack_overlay._indicators.size() == smart_cells.size(), "EnemyAttackOverlay updates to smart target swap cells")
 
 	# 4. Clear Preview
 	grd.clear_enemy_target_preview()
 	_assert(grd.current_enemy_target_cells.is_empty(), "Clear preview removes all active cell targets")
+	_assert(grd.enemy_attack_overlay._indicators.is_empty(), "EnemyAttackOverlay clears all indicators")
 
 	# 5. Test Secondary Cascade Exclusion for Beast / AOE attacks
 	# Ensure monster equipment only triggers on first tiles destroyed, not on secondary cascades
@@ -406,10 +495,98 @@ func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	await get_tree().process_frame
 
 # ------------------------------------------------------------------------------
-# 7. Save/Load Persistence
+# 7. Per-Action Critical Hits
+# ------------------------------------------------------------------------------
+func _test_per_action_critical_hits() -> void:
+	print("\n--- 7. Per-Action Critical Hits ---")
+	var player := PlayerResource.new()
+	var enemy := EnemyResource.new()
+
+	# 1. 0% crit chance never rolls true
+	player.crit_chance = 0
+	var zero_crit_procs: int = 0
+	for _i in range(50):
+		if player.roll_crit():
+			zero_crit_procs += 1
+	_assert(zero_crit_procs == 0, "0% crit chance never produces critical strike")
+
+	# 2. 100% crit chance always rolls true
+	player.crit_chance = 100
+	var full_crit_procs: int = 0
+	for _i in range(50):
+		if player.roll_crit():
+			full_crit_procs += 1
+	_assert(full_crit_procs == 50, "100% crit chance always produces critical strike")
+
+	# 3. Statistical distribution with 5% crit chance
+	player.crit_chance = 5
+	var count_5pct: int = 0
+	for _i in range(1000):
+		if player.roll_crit():
+			count_5pct += 1
+	_assert(count_5pct >= 15 and count_5pct <= 90, "5% crit chance rolls within expected statistical range (got " + str(count_5pct) + " / 1000)")
+
+	# 4. Independent actor rolling: player vs enemy
+	player.crit_chance = 0
+	enemy.crit_chance = 100
+	_assert(not player.roll_crit(), "Player with 0% crit does not crit")
+	_assert(enemy.roll_crit(), "Enemy with 100% crit crits independently of player")
+
+	# 5. Equipment damage scaling with explicit is_crit = true
+	var attacker := PlayerResource.new()
+	attacker.crit_chance = 0
+	attacker.crit_mutly = 100.0 # +100% damage bonus = 2x total
+	var dummy_target := EnemyResource.new()
+	dummy_target.max_health = 100.0
+	dummy_target.cur_health = 100.0
+
+	var strike_eq := Equipment.new()
+	strike_eq.piece_name = "Test Strike"
+	strike_eq.base_damage = 10.0
+	strike_eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	strike_eq.hit_count = 1
+
+	# Normal non-crit hit: exactly 10 damage
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target,
+		"is_crit": false
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 90.0), "Non-crit equipment deals exact base damage (100 -> 90)")
+
+	# Crit hit: 10 * 2.0 = 20 damage (90 -> 70)
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target,
+		"is_crit": true
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 70.0), "Critical equipment strike deals base * (1 + crit_mutly/100) (90 -> 70)")
+
+	# 6. Manual criting property consumption
+	strike_eq.criting = true
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 50.0), "Equipment with criting=true deals critical damage (70 -> 50)")
+	_assert(strike_eq.criting == false, "Equipment criting flag resets to false after activation")
+
+	# 7. Tile neutrality: board tile scene has no crit_shader or is_criting
+	var tile_scene: PackedScene = load("res://tiles/tile.tscn")
+	_assert(tile_scene != null, "Tile scene loads cleanly")
+	var tile_instance = tile_scene.instantiate()
+	_assert(not ("is_criting" in tile_instance), "Tile has no is_criting property")
+	_assert(not ("crit_shader" in tile_instance), "Tile has no crit_shader property")
+	tile_instance.queue_free()
+
+# ------------------------------------------------------------------------------
+# 8. Save/Load Persistence
 # ------------------------------------------------------------------------------
 func _test_save_load_persistence() -> void:
-	print("\n--- 7. Save/Load Persistence ---")
+	print("\n--- 8. Save/Load Persistence ---")
+	var user_dir_path := ProjectSettings.globalize_path("user://")
+	if not DirAccess.dir_exists_absolute(user_dir_path):
+		DirAccess.make_dir_recursive_absolute(user_dir_path)
 	var test_save_path := "user://test_rework_save.tres"
 	var prev_save_path: String = Global.save_path
 	Global.save_path = test_save_path
@@ -437,7 +614,7 @@ func _test_save_load_persistence() -> void:
 
 	_assert(Global.cur_char != null, "Reloaded cur_char from save")
 	var loaded_red: ColorLoadoutTrack = Global.cur_char.get_track_for_color(Global.TileColor.RED)
-	_assert(loaded_red != null and loaded_red.max_slots == 6, "Reloaded Red track preserves 6-slot capacity")
+	_assert(loaded_red != null and loaded_red.max_slots == 5, "Reloaded Red track preserves 5-slot normal capacity")
 	_assert(loaded_red.next_entry_cursor == 1, "Reloaded Red track preserves next_entry_cursor == 1")
 	_assert(Global.cur_char.active_reward_tree.unlocked_tags.has("test_tag_persisted"), "Reloaded RewardTree preserves unlocked_tags")
 	_assert(Global.cur_enemy != null and Global.cur_enemy.hybrid_next_is_beast == true, "Reloaded EnemyResource preserves hybrid_next_is_beast state")

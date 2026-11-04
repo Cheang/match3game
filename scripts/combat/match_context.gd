@@ -18,7 +18,7 @@ var total_fall_momentum: int = 0         # Summed fall_distance of all tiles in 
 var hazards_cleared: Array[String] = []  # Identifiers of hazards cleared ("ice", "freeze", "rock", "flesh")
 
 # Additional match metadata
-var has_crit: bool = false               # True if any matched tile had critical proc
+var has_crit: bool = false               # Deprecated: tile crits removed; crits are rolled per action on EntityResource
 var gold_count: int = 0                  # Count of gold border tiles in match
 var matched_positions: Array[Vector2] = [] # Board coordinates in this match
 var potency_multiplier: float = 1.0      # Aggregated potency multiplier (momentum, exotic blend, etc.)
