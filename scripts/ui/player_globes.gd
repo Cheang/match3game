@@ -1,31 +1,54 @@
 extends Control
 class_name PlayerGlobes
 
-## High-performance pixel art liquid HP & Energy globes UI component.
-## Displays HP in the left globe (red liquid) and Energy/Moves in the right globe (green liquid).
+## High-performance pixel art liquid HP & Energy globes UI component with stacked defenses.
+## Displays HP in the left globe (red liquid), Physical Armor (forged steel plate),
+## Magic Armor (animated arcane shield), and Energy/Moves in the right globe (green liquid).
 
 @onready var hp_liquid: ColorRect = $LiquidContainer/HPLiquid
 @onready var energy_liquid: ColorRect = $LiquidContainer/EnergyLiquid
+@onready var armor_plate: TextureRect = $ArmorPlate
+@onready var magic_armor_shield: TextureRect = $MagicArmorShield
 @onready var hp_label: Label = $ValueLabels/HPLabel
 @onready var energy_label: Label = $ValueLabels/EnergyLabel
+@onready var stat_tracker: TextureRect = get_node_or_null("StatTracker")
+@onready var gold_label: Label = get_node_or_null("StatTracker/GoldLabel")
 
 var _hp_mat: ShaderMaterial
 var _energy_mat: ShaderMaterial
+var _armor_mat: ShaderMaterial
+var _magic_mat: ShaderMaterial
 
 var _hp_tween: Tween
 var _energy_tween: Tween
+var _armor_tween: Tween
+var _magic_tween: Tween
 
 var current_hp: float = 20.0
 var max_hp: float = 20.0
+var current_armor: float = 0.0
+var current_mage_armor: float = 0.0
 var current_energy: int = 2
 var max_energy: int = 2
+var current_gold: int = 10
 
 # Base wave amplitudes
 const BASE_WAVE_AMP: float = 0.022
 const SLOSH_WAVE_AMP: float = 0.048
 
+# Label Colors
+const COLOR_HP_TEXT := Color(1.0, 1.0, 1.0)
+const COLOR_HP_OUTLINE := Color(0.12, 0.08, 0.15)
+
+const COLOR_ARMOR_TEXT := Color(1.0, 1.0, 1.0)
+const COLOR_ARMOR_OUTLINE := Color(0.11, 0.15, 0.22)
+
+const COLOR_MAGIC_TEXT := Color(0.72, 0.95, 1.0)
+const COLOR_MAGIC_OUTLINE := Color(0.04, 0.10, 0.26)
+
+
 func _ready() -> void:
-	# Duplicate materials so HP and Energy have independent shader uniforms
+	# Duplicate materials so instances have independent shader parameters
 	if hp_liquid and hp_liquid.material is ShaderMaterial:
 		_hp_mat = hp_liquid.material.duplicate() as ShaderMaterial
 		hp_liquid.material = _hp_mat
@@ -41,6 +64,14 @@ func _ready() -> void:
 		_energy_mat = ShaderMaterial.new()
 		_energy_mat.shader = preload("res://assets/shaders/pixel_liquid_globe.gdshader")
 		energy_liquid.material = _energy_mat
+
+	if armor_plate and armor_plate.material is ShaderMaterial:
+		_armor_mat = armor_plate.material.duplicate() as ShaderMaterial
+		armor_plate.material = _armor_mat
+
+	if magic_armor_shield and magic_armor_shield.material is ShaderMaterial:
+		_magic_mat = magic_armor_shield.material.duplicate() as ShaderMaterial
+		magic_armor_shield.material = _magic_mat
 
 	# Red Palette (HP)
 	if _hp_mat:
@@ -63,44 +94,135 @@ func _ready() -> void:
 		_energy_mat.set_shader_parameter("time_offset", 2.7)
 
 	# Set initial visual state
-	set_hp(current_hp, max_hp, false)
+	set_defenses(current_hp, max_hp, current_armor, current_mage_armor, false)
 	set_energy(current_energy, max_energy, false)
+	set_gold(current_gold)
 
 
-func set_hp(new_hp: float, new_max_hp: float, animate: bool = true) -> void:
+func set_defenses(new_hp: float, new_max_hp: float, new_armor: float, new_mage_armor: float, animate: bool = true) -> void:
 	current_hp = new_hp
 	max_hp = max(1.0, new_max_hp)
+	current_armor = max(0.0, new_armor)
+	current_mage_armor = max(0.0, new_mage_armor)
 
-	var display_val: int = max(0, int(roundf(current_hp)))
-	if hp_label:
-		hp_label.text = str(display_val)
+	# 1. Update Number Display (Priority: Magic Armor -> Armor -> Health)
+	_update_number_display()
 
+	# 2. Update Red Health Liquid Fill Level
 	var target_fill: float = clampf(current_hp / max_hp, 0.0, 1.0)
-	if not _hp_mat:
+	if _hp_mat:
+		if not animate or not is_inside_tree():
+			_hp_mat.set_shader_parameter("fill_amount", target_fill)
+			_hp_mat.set_shader_parameter("wave_amplitude", BASE_WAVE_AMP)
+		else:
+			if _hp_tween and _hp_tween.is_valid():
+				_hp_tween.kill()
+			_hp_tween = create_tween().set_parallel(true)
+			var cur_fill: float = float(_hp_mat.get_shader_parameter("fill_amount"))
+			_hp_tween.tween_method(
+				func(val: float): _hp_mat.set_shader_parameter("fill_amount", val),
+				cur_fill, target_fill, 0.35
+			).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+			_hp_mat.set_shader_parameter("wave_amplitude", SLOSH_WAVE_AMP)
+			var slosh_tween := create_tween()
+			slosh_tween.tween_method(
+				func(val: float): _hp_mat.set_shader_parameter("wave_amplitude", val),
+				SLOSH_WAVE_AMP, BASE_WAVE_AMP, 0.6
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	# 3. Update Stacked Armor Visuals (Steel plate & Magic shield)
+	_update_armor_layers(animate)
+
+
+func _update_number_display() -> void:
+	if not hp_label:
 		return
 
-	if not animate or not is_inside_tree():
-		_hp_mat.set_shader_parameter("fill_amount", target_fill)
-		_hp_mat.set_shader_parameter("wave_amplitude", BASE_WAVE_AMP)
-		return
+	if current_mage_armor > 0.0:
+		# Magic Armor is taking incoming damage first
+		hp_label.text = str(int(roundf(current_mage_armor)))
+		hp_label.add_theme_color_override("font_color", COLOR_MAGIC_TEXT)
+		hp_label.add_theme_color_override("font_outline_color", COLOR_MAGIC_OUTLINE)
+		hp_label.add_theme_constant_override("outline_size", 4)
+	elif current_armor > 0.0:
+		# Physical Armor is taking incoming damage
+		hp_label.text = str(int(roundf(current_armor)))
+		hp_label.add_theme_color_override("font_color", COLOR_ARMOR_TEXT)
+		hp_label.add_theme_color_override("font_outline_color", COLOR_ARMOR_OUTLINE)
+		hp_label.add_theme_constant_override("outline_size", 5)
+	else:
+		# Base Health
+		hp_label.text = str(max(0, int(roundf(current_hp))))
+		hp_label.add_theme_color_override("font_color", COLOR_HP_TEXT)
+		hp_label.add_theme_color_override("font_outline_color", COLOR_HP_OUTLINE)
+		hp_label.add_theme_constant_override("outline_size", 3)
 
-	if _hp_tween and _hp_tween.is_valid():
-		_hp_tween.kill()
 
-	_hp_tween = create_tween().set_parallel(true)
-	var cur_fill: float = float(_hp_mat.get_shader_parameter("fill_amount"))
-	_hp_tween.tween_method(
-		func(val: float): _hp_mat.set_shader_parameter("fill_amount", val),
-		cur_fill, target_fill, 0.35
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+func _update_armor_layers(animate: bool) -> void:
+	var has_armor: bool = current_armor > 0.0
+	var has_mage_armor: bool = current_mage_armor > 0.0
 
-	# Dynamic slosh reaction
-	_hp_mat.set_shader_parameter("wave_amplitude", SLOSH_WAVE_AMP)
-	var slosh_tween := create_tween()
-	slosh_tween.tween_method(
-		func(val: float): _hp_mat.set_shader_parameter("wave_amplitude", val),
-		SLOSH_WAVE_AMP, BASE_WAVE_AMP, 0.6
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	# When Magic Armor is stacked on top of Physical Armor, mask the outer rim of the steel plate
+	if _armor_mat:
+		_armor_mat.set_shader_parameter("hide_outer_rim", 1.0 if has_mage_armor else 0.0)
+
+	# Physical Armor Plate Layer
+	if armor_plate:
+		if _armor_tween and _armor_tween.is_valid():
+			_armor_tween.kill()
+
+		if has_armor:
+			armor_plate.visible = true
+			if animate and is_inside_tree():
+				_armor_tween = create_tween()
+				_armor_tween.tween_property(armor_plate, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			else:
+				armor_plate.modulate.a = 1.0
+		else:
+			if animate and is_inside_tree() and armor_plate.visible:
+				_armor_tween = create_tween()
+				_armor_tween.tween_property(armor_plate, "modulate:a", 0.0, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+				_armor_tween.tween_callback(func(): armor_plate.visible = false)
+			else:
+				armor_plate.visible = false
+				armor_plate.modulate.a = 0.0
+
+	# Magic Armor Shield Layer
+	if magic_armor_shield:
+		if _magic_tween and _magic_tween.is_valid():
+			_magic_tween.kill()
+
+		if has_mage_armor:
+			magic_armor_shield.visible = true
+			if animate and is_inside_tree():
+				_magic_tween = create_tween()
+				_magic_tween.tween_property(magic_armor_shield, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			else:
+				magic_armor_shield.modulate.a = 1.0
+		else:
+			if animate and is_inside_tree() and magic_armor_shield.visible:
+				_magic_tween = create_tween()
+				_magic_tween.tween_property(magic_armor_shield, "modulate:a", 0.0, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+				_magic_tween.tween_callback(func(): magic_armor_shield.visible = false)
+			else:
+				magic_armor_shield.visible = false
+				magic_armor_shield.modulate.a = 0.0
+
+
+# Backward-compatible convenience methods
+func set_hp(new_hp: float, new_max_hp: float, animate: bool = true) -> void:
+	set_defenses(new_hp, new_max_hp, current_armor, current_mage_armor, animate)
+
+
+func set_armor(new_armor: float, new_mage_armor: float, animate: bool = true) -> void:
+	set_defenses(current_hp, max_hp, new_armor, new_mage_armor, animate)
+
+
+func set_gold(new_gold: int) -> void:
+	current_gold = max(0, new_gold)
+	if gold_label != null:
+		gold_label.text = "%dg" % current_gold
 
 
 func set_energy(new_energy: int, new_max_energy: int, animate: bool = true) -> void:

@@ -6,13 +6,7 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var art: Node2D = $art
 @onready var loadout_dock: LoadoutDock = get_node_or_null("loadout_dock")
 @onready var globes: PlayerGlobes = get_node_or_null("player_globes")
-
-# Legacy exports preserved for backward compatibility
-@export var bool_buff_texture: Array = []
-@export var bool_buff_stat: Array = []
-@export var buff_texture: Array = []
-@export var buff_stat: Array = []
-var player_healthbar = null
+@onready var buff_container: Control = get_node_or_null("buff_container")
 
 var cur_character: PlayerResource = null
 
@@ -22,6 +16,7 @@ var _last_armor: float = 0.0
 var _last_mage_armor: float = 0.0
 var _last_combo: int = 0
 var _last_dodging: bool = false
+var _last_gold: int = 0
 var _popup_seq: int = 0
 
 func _ready() -> void:
@@ -32,14 +27,18 @@ func _ready() -> void:
 	if Global.cur_char.sprite != null and art != null:
 		var player_sprite = Global.cur_char.sprite.instantiate()
 		art.add_child(player_sprite)
+	if buff_container != null:
+		buff_container.bind_entity(Global.cur_char)
 	_is_initialized = false
 	update_ui("cur_health")
 	update_ui("moves_left")
+	update_ui("gold")
 	_last_hp = Global.cur_char.cur_health
 	_last_armor = Global.cur_char.cur_armor
 	_last_mage_armor = Global.cur_char.cur_mage_armor
 	_last_combo = Global.cur_char.hand_combo
 	_last_dodging = Global.cur_char.dodging
+	_last_gold = int(Global.cur_char.gold)
 	_is_initialized = true
 
 func update_ui(stat: String) -> void:
@@ -47,20 +46,37 @@ func update_ui(stat: String) -> void:
 		return
 	cur_character = Global.cur_char
 
-	if stat == "cur_health" or stat == "max_health":
+	if stat == "cur_health" or stat == "max_health" or stat == "cur_armor" or stat == "cur_mage_armor":
 		var cur_hp: float = Global.cur_char.cur_health
 		var max_hp: float = max(1.0, Global.cur_char.max_health)
+		var armor: float = Global.cur_char.cur_armor
+		var mage_armor: float = Global.cur_char.cur_mage_armor
 		if globes != null:
-			globes.set_hp(cur_hp, max_hp, _is_initialized)
+			globes.set_defenses(cur_hp, max_hp, armor, mage_armor, _is_initialized)
 
-		if _is_initialized and stat == "cur_health":
-			var diff: float = cur_hp - _last_hp
-			if diff < -0.05:
-				_spawn_combat_popup("-%d HP" % int(roundf(abs(diff))), Color(1.0, 0.34, 0.34))
-				_flash_attacked_glow()
-			elif diff > 0.05:
-				_spawn_combat_popup("+%d HP" % int(roundf(diff)), Color(0.38, 0.96, 0.54))
+		if _is_initialized:
+			if stat == "cur_health":
+				var diff: float = cur_hp - _last_hp
+				if diff < -0.05:
+					_spawn_combat_popup("-%d HP" % int(roundf(abs(diff))), Color(1.0, 0.34, 0.34))
+					_flash_attacked_glow()
+				elif diff > 0.05:
+					_spawn_combat_popup("+%d HP" % int(roundf(diff)), Color(0.38, 0.96, 0.54))
+			elif stat == "cur_armor":
+				var diff_a: float = armor - _last_armor
+				if diff_a > 0.05:
+					_spawn_combat_popup("+%d Armor" % int(roundf(diff_a)), Color(0.42, 0.68, 1.0))
+				elif diff_a < -0.05:
+					_spawn_combat_popup("-%d Armor" % int(roundf(abs(diff_a))), Color(0.65, 0.75, 0.85))
+			elif stat == "cur_mage_armor":
+				var diff_ma: float = mage_armor - _last_mage_armor
+				if diff_ma > 0.05:
+					_spawn_combat_popup("+%d M.Armor" % int(roundf(diff_ma)), Color(0.28, 0.88, 0.98))
+				elif diff_ma < -0.05:
+					_spawn_combat_popup("-%d M.Armor" % int(roundf(abs(diff_ma))), Color(0.28, 0.88, 0.98))
 		_last_hp = cur_hp
+		_last_armor = armor
+		_last_mage_armor = mage_armor
 		return
 
 	if stat == "moves_left" or stat == "agility" or stat == "speed" or stat == "max_energy":
@@ -70,23 +86,29 @@ func update_ui(stat: String) -> void:
 			globes.set_energy(moves, max_moves, _is_initialized)
 		return
 
+	if stat == "gold":
+		var gold_val: int = int(Global.cur_char.gold)
+		if globes != null:
+			globes.set_gold(gold_val)
+		if _is_initialized:
+			var diff_g: int = gold_val - _last_gold
+			if diff_g > 0:
+				_spawn_combat_popup("+%dg" % diff_g, Color(1.0, 0.88, 0.25))
+			elif diff_g < 0:
+				_spawn_combat_popup("-%dg" % abs(diff_g), Color(0.9, 0.75, 0.3))
+		_last_gold = gold_val
+		return
+
+	if buff_container != null:
+		buff_container.refresh(Global.cur_char)
+
 	if _is_initialized:
-		if stat == "cur_armor":
-			var diff_a: float = Global.cur_char.cur_armor - _last_armor
-			if diff_a > 0.05:
-				_spawn_combat_popup("+%d Armor" % int(roundf(diff_a)), Color(0.42, 0.68, 1.0))
-			_last_armor = Global.cur_char.cur_armor
-		elif stat == "cur_mage_armor":
-			var diff_ma: float = Global.cur_char.cur_mage_armor - _last_mage_armor
-			if diff_ma > 0.05:
-				_spawn_combat_popup("+%d M.Armor" % int(roundf(diff_ma)), Color(0.28, 0.88, 0.98))
-			_last_mage_armor = Global.cur_char.cur_mage_armor
-		elif stat == "hand_combo":
+		if stat == "hand_combo":
 			var diff_c: int = Global.cur_char.hand_combo - _last_combo
 			if diff_c > 0:
 				_spawn_combat_popup("+%d Combo" % diff_c, Color(0.98, 0.84, 0.35))
 			_last_combo = Global.cur_char.hand_combo
-		elif stat == "dodging":
+		elif stat == "dodging" or stat == "dodge":
 			if Global.cur_char.dodging and not _last_dodging:
 				_spawn_combat_popup("+Dodge", Color(0.42, 0.94, 0.48))
 			elif not Global.cur_char.dodging and _last_dodging and Global.cur_char.moves_left <= 0:

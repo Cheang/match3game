@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://b7k4m2qax1v8q"]
+
+[ext_resource type="Script" path="res://scripts/ui/buff_container.gd" id="1_buff"]
+
+[node name="BuffContainer" type="Control"]
+custom_minimum_size = Vector2(200, 74)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 74.0
+mouse_filter = 2
+script = ExtResource("1_buff")

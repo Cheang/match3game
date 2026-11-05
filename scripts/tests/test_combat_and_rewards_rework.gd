@@ -43,6 +43,7 @@ func _run_all_tests() -> void:
 	await _test_enemy_target_preview_and_cascade_suppression()
 	await _test_direct_equipment_rewards_and_three_source_draft()
 	_test_per_action_critical_hits()
+	_test_unified_buffs_and_debuffs()
 	_test_save_load_persistence()
 
 # ------------------------------------------------------------------------------
@@ -666,3 +667,109 @@ func _test_save_load_persistence() -> void:
 	if FileAccess.file_exists(test_save_path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(test_save_path))
 	Global.save_path = prev_save_path
+
+# ------------------------------------------------------------------------------
+# 9. Unified Buffs & Debuffs System (Player & Enemy + UI)
+# ------------------------------------------------------------------------------
+func _test_unified_buffs_and_debuffs() -> void:
+	print("\n--- 9. Unified Buffs & Debuffs System ---")
+	var dodge_def: BuffRegistry.BuffDef = BuffRegistry.get_def("dodge")
+	var combo_def: BuffRegistry.BuffDef = BuffRegistry.get_def("hand_combo")
+	_assert(dodge_def != null and dodge_def.get_icon() != null, "BuffRegistry loads buff-dodge.png icon")
+	_assert(combo_def != null and combo_def.get_icon() != null, "BuffRegistry loads buff-combo.png icon")
+	_assert(BuffRegistry.normalize_id("dodging") == "dodge", "BuffRegistry normalizes 'dodging' -> 'dodge'")
+	_assert(BuffRegistry.normalize_id("combo") == "hand_combo", "BuffRegistry normalizes 'combo' -> 'hand_combo'")
+
+	var plr := PlayerResource.new()
+	var enm := EnemyResource.new()
+	plr.max_health = 50.0
+	plr.cur_health = 50.0
+	enm.max_health = 50.0
+	enm.cur_health = 50.0
+
+	# Test Player & Enemy buff API and property bridging
+	plr.add_buff("dodge", 1)
+	plr.add_buff("hand_combo", 3)
+	_assert(plr.has_buff("dodge") and plr.dodging == true, "Player has_buff('dodge') syncs with plr.dodging")
+	_assert(plr.get_buff_stacks("hand_combo") == 3 and plr.hand_combo == 3, "Player get_buff_stacks('hand_combo') syncs with plr.hand_combo")
+
+	enm.modify_stat("dodging", true, false)
+	enm.modify_stat("hand_combo", 4, false)
+	_assert(enm.has_buff("dodge") and enm.dodging == true, "Enemy modify_stat('dodging') activates 'dodge' buff")
+	_assert(enm.get_buff_stacks("hand_combo") == 4, "Enemy modify_stat('hand_combo') sets 'hand_combo' stacks to 4")
+
+	# Test Dodge negating physical damage on both Player and Enemy
+	var dealt_to_plr: float = plr.take_damage(15.0, false, 0, enm)
+	_assert(is_equal_approx(dealt_to_plr, 0.0) and is_equal_approx(plr.cur_health, 50.0), "Player Dodge negates incoming physical attack")
+	_assert(not plr.has_buff("dodge") and plr.dodging == false, "Player Dodge buff is consumed after dodging")
+
+	var dealt_to_enm: float = enm.take_damage(20.0, false, 0, plr)
+	_assert(is_equal_approx(dealt_to_enm, 0.0) and is_equal_approx(enm.cur_health, 50.0), "Enemy Dodge negates incoming physical attack")
+	_assert(not enm.has_buff("dodge") and enm.dodging == false, "Enemy Dodge buff is consumed after dodging")
+
+	# Test Custom Debuff Registration & Turn-Start Decay
+	BuffRegistry.register_buff(
+		"test_bleed",
+		"Bleed",
+		"res://assets/scene-assets/combat/buff-combo.png",
+		true,
+		true,
+		false,
+		1,
+		"Loses stacks each turn."
+	)
+	enm.add_buff("test_bleed", 2)
+	_assert(enm.get_buff_stacks("test_bleed") == 2, "Custom debuff 'test_bleed' applied with 2 stacks on Enemy")
+	enm.tick_buffs_at_turn_start()
+	_assert(enm.get_buff_stacks("test_bleed") == 1, "Turn start decays 'test_bleed' from 2 -> 1 and clears 'hand_combo'")
+	_assert(enm.get_buff_stacks("hand_combo") == 0, "Turn start clears turn-scoped 'hand_combo' buff")
+
+	# Test BuffContainer UI for both Player and Enemy
+	var buff_scene: PackedScene = load("res://scenes/ui/buff_container.tscn")
+	var plr_buff_ui: BuffContainer = buff_scene.instantiate() as BuffContainer
+	var enm_buff_ui: BuffContainer = buff_scene.instantiate() as BuffContainer
+	add_child(plr_buff_ui)
+	add_child(enm_buff_ui)
+
+	plr.clear_all_buffs()
+	plr_buff_ui.bind_entity(plr)
+	_assert(plr_buff_ui.get_active_slot_count() == 0, "BuffContainer shows 0 active slots when entity has no buffs")
+
+	plr.set_buff("dodge", 1)
+	plr.set_buff("hand_combo", 5)
+	_assert(plr_buff_ui.get_active_slot_count() == 2, "BuffContainer reactively shows 2 active slots for Dodge + Combo")
+	_assert(plr_buff_ui.get_slot_buff_id(0) == "dodge", "Slot 0 displays 'dodge'")
+	var slot0_lbl: Label = plr_buff_ui.get_slot_node(0).get_node("StackLabel") as Label
+	_assert(slot0_lbl.visible == false, "Single-stack Dodge hides stack number badge")
+	_assert(plr_buff_ui.get_slot_buff_id(1) == "hand_combo" and plr_buff_ui.get_slot_stacks(1) == 5, "Slot 1 displays 'hand_combo' with 5 stacks")
+	var slot1_lbl: Label = plr_buff_ui.get_slot_node(1).get_node("StackLabel") as Label
+	_assert(slot1_lbl.visible == true and slot1_lbl.text == "5", "Combo slot displays stack count '5'")
+
+	enm_buff_ui.bind_entity(enm)
+	_assert(enm_buff_ui.get_active_slot_count() == 1 and enm_buff_ui.get_slot_buff_id(0) == "test_bleed", "Enemy BuffContainer displays active debuff")
+	enm.remove_buff("test_bleed")
+	_assert(enm_buff_ui.get_active_slot_count() == 0, "Enemy BuffContainer clears slot when debuff is removed")
+
+	# Test 5xX dynamic row expansion when more than 10 buffs/debuffs are active
+	plr.clear_all_buffs()
+	for i in range(12):
+		var extra_id := "test_buff_%d" % i
+		BuffRegistry.register_buff(
+			extra_id,
+			"Test Buff %d" % i,
+			"res://assets/scene-assets/combat/buff-dodge.png",
+			false,
+			false,
+			true,
+			0,
+			"Test buff slot overflow."
+		)
+		plr.set_buff(extra_id, 1)
+	_assert(plr_buff_ui.get_active_slot_count() == 12, "BuffContainer dynamically expands to display all 12 active buffs")
+	var slot_10: Control = plr_buff_ui.get_slot_node(10)
+	var slot_11: Control = plr_buff_ui.get_slot_node(11)
+	_assert(slot_10 != null and slot_10.position == Vector2(0, 84), "11th buff (index 10) creates a new 3rd row at (0, 84)")
+	_assert(slot_11 != null and slot_11.position == Vector2(42, 84), "12th buff (index 11) sits on 3rd row col 1 at (42, 84)")
+
+	plr_buff_ui.queue_free()
+	enm_buff_ui.queue_free()

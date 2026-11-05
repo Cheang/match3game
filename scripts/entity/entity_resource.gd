@@ -1,6 +1,8 @@
 extends Resource
 class_name EntityResource
 
+const BuffRegistryRef = preload("res://scripts/combat/buff_registry.gd")
+
 #==============================================================================#
 # SHARED ENTITY FOUNDATION (Player & Monster Common Contract)
 #==============================================================================#
@@ -95,10 +97,23 @@ var cur_mage_armor: float = 0.0
 var moves_left: int = 0:
 	set(new_moves):
 		moves_left = clamp(new_moves, 0, max_energy)
-## Whether the entity will dodge the next incoming physical attack.
-var dodging: bool = false
-## Current accumulated hand combo points in the active combat turn.
-var hand_combo: int = 0
+
+## Runtime dictionary mapping canonical buff/debuff ID (String) to active stack count (int > 0).
+var active_buffs: Dictionary = {}
+
+## Whether the entity will dodge the next incoming physical attack (backed by the 'dodge' buff).
+var dodging: bool:
+	get:
+		return get_buff_stacks("dodge") > 0
+	set(val):
+		_set_buff_internal("dodge", 1 if bool(val) else 0, false)
+
+## Current accumulated hand combo points in the active combat turn (backed by the 'hand_combo' buff).
+var hand_combo: int:
+	get:
+		return get_buff_stacks("hand_combo")
+	set(val):
+		_set_buff_internal("hand_combo", maxi(0, int(val)), false)
 
 ## Runtime dictionary mapping color ID (int) to its ColorLoadoutTrack.
 var color_loadouts: Dictionary = {}
@@ -111,6 +126,7 @@ var _is_recalculating_passives: bool = false
 # SHARED SIGNALS
 #==============================================================================#
 signal statChanged(stat: String)
+signal buffsChanged
 signal died
 signal finishedTurn
 signal loadoutChanged
@@ -226,14 +242,93 @@ func roll_crit() -> bool:
 	return randi_range(1, 100) <= chance
 
 #==============================================================================#
+# UNIFIED BUFF & DEBUFF SYSTEM
+#==============================================================================#
+
+## Returns the active stack count for the given buff/debuff ID (0 if inactive).
+func get_buff_stacks(buff_id: String) -> int:
+	var norm_id: String = BuffRegistryRef.normalize_id(buff_id)
+	return int(active_buffs.get(norm_id, 0))
+
+## Returns true if the entity currently has at least 1 stack of the given buff/debuff.
+func has_buff(buff_id: String) -> bool:
+	return get_buff_stacks(buff_id) > 0
+
+## Sets the exact stack count for a buff/debuff (removes it if stacks <= 0).
+func set_buff(buff_id: String, stacks: int) -> void:
+	_set_buff_internal(buff_id, stacks, true)
+
+## Adds (or subtracts if negative) stacks to a buff/debuff.
+func add_buff(buff_id: String, delta: int = 1) -> void:
+	var norm_id: String = BuffRegistryRef.normalize_id(buff_id)
+	_set_buff_internal(norm_id, get_buff_stacks(norm_id) + delta, true)
+
+## Removes a buff/debuff completely.
+func remove_buff(buff_id: String) -> void:
+	_set_buff_internal(buff_id, 0, true)
+
+## Clears all active buffs and debuffs from this entity.
+func clear_all_buffs() -> void:
+	if active_buffs.is_empty():
+		return
+	active_buffs.clear()
+	buffsChanged.emit()
+
+## Processes turn-start buff/debuff expiration and per-turn stack decay.
+func tick_buffs_at_turn_start() -> void:
+	var changed: bool = false
+	var keys: Array = active_buffs.keys()
+	for k in keys:
+		var def = BuffRegistryRef.get_def(str(k))
+		if def.clear_on_turn_start:
+			active_buffs.erase(k)
+			changed = true
+		elif def.decay_per_turn > 0:
+			var next_stacks: int = int(active_buffs[k]) - def.decay_per_turn
+			if next_stacks > 0:
+				active_buffs[k] = next_stacks
+			else:
+				active_buffs.erase(k)
+			changed = true
+	if changed:
+		buffsChanged.emit()
+
+## Returns an ordered list of active buff/debuff entries: { "id": String, "stacks": int, "def": BuffDef }
+func get_active_buff_entries() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for k in active_buffs.keys():
+		var stacks: int = int(active_buffs[k])
+		if stacks > 0:
+			var def = BuffRegistryRef.get_def(str(k))
+			result.append({
+				"id": def.id,
+				"stacks": stacks,
+				"def": def,
+			})
+	return result
+
+func _set_buff_internal(buff_id: String, stacks: int, emit_stat_signals: bool) -> void:
+	var norm_id: String = BuffRegistryRef.normalize_id(buff_id)
+	var clamped: int = maxi(0, stacks)
+	var prev: int = int(active_buffs.get(norm_id, 0))
+	if clamped > 0:
+		active_buffs[norm_id] = clamped
+	else:
+		active_buffs.erase(norm_id)
+	if prev != clamped:
+		buffsChanged.emit()
+	if emit_stat_signals:
+		var legacy_stat: String = "dodging" if norm_id == "dodge" else norm_id
+		_on_stat_modified(legacy_stat)
+		statChanged.emit(legacy_stat)
+
+#==============================================================================#
 # UNIFIED DAMAGE & STAT MUTATION API
 #==============================================================================#
 
 func take_damage(incoming_damage: float, piercing: bool = false, type: int = 0, attacker: EntityResource = null) -> float:
-	if dodging and type == 0:
-		dodging = false
-		_on_stat_modified("dodging")
-		statChanged.emit("dodging")
+	if has_buff("dodge") and type == 0:
+		add_buff("dodge", -1)
 		return 0.0
 
 	var net_damage: float = float(incoming_damage)
@@ -276,6 +371,15 @@ func apply_armor_reduction(damage: float, armor_property: String) -> float:
 	return abs(remaining_armor)
 
 func modify_stat(stat: String, value, increment: bool = true) -> void:
+	if BuffRegistryRef.has_buff_def(stat):
+		var norm_id: String = BuffRegistryRef.normalize_id(stat)
+		var next_stacks: int = 0
+		if value is bool:
+			next_stacks = 1 if value else 0
+		else:
+			next_stacks = (get_buff_stacks(norm_id) + int(value)) if increment else int(value)
+		set_buff(norm_id, next_stacks)
+		return
 	if not stat in self:
 		print("Stat does not exist:", stat)
 		return

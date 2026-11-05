@@ -378,6 +378,7 @@ func reset_stats_at_beginning_of_game() -> void:
 
 func reset_stats_at_beginning_of_fight() -> void:
 	reset_modifiers_for_battle()
+	clear_all_buffs()
 	modify_stat("dodging", false, false)
 	modify_stat("moves_left", max_energy, false)
 	modify_stat("hand_combo", start_hand_combo, false)
@@ -386,6 +387,7 @@ func reset_stats_at_beginning_of_fight() -> void:
 
 func reset_stats_at_beginning_of_turn() -> void:
 	tick_all_track_cooldowns(1)
+	tick_buffs_at_turn_start()
 	modify_stat("cur_armor", 0, false)
 	modify_stat("hand_combo", start_hand_combo, false)
 	modify_stat("moves_left", max_energy, false)

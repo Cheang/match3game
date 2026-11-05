@@ -20,5 +20,6 @@ func load_settings():
 	AudioServer.set_bus_mute(2,Global.setting_res.set_audio_sfx_playing)
 
 func set_display_dimentions():
-	var primary_screen_size = DisplayServer.screen_get_size(0)
-	DisplayServer.window_set_size(primary_screen_size)
+	if OS.has_feature("mobile"):
+		var primary_screen_size = DisplayServer.screen_get_size(0)
+		DisplayServer.window_set_size(primary_screen_size)

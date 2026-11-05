@@ -9,6 +9,7 @@ const ATTACKED_GLOW = preload("res://assets/shaders/attacked_glow.tres")
 @onready var health: Label = get_node_or_null("healthBar/health") if has_node("healthBar/health") else get_node_or_null("enemy_healthbar/health")
 @onready var enemy_audio: AudioStreamPlayer = $enemy_audio
 @onready var attack_dock: AttackDock = get_node_or_null("attackDock") if has_node("attackDock") else get_node_or_null("monster_attack_dock")
+@onready var buff_container: Control = get_node_or_null("buff_container")
 @onready var name_box: Control = get_node_or_null("name_box")
 @onready var name_label: Label = get_node_or_null("name_box/name") if has_node("name_box/name") else get_node_or_null("name")
 
@@ -27,6 +28,8 @@ func _ready() -> void:
 	_cache_track_tooltip()
 	if attack_dock != null:
 		attack_dock.refresh_tracks(Global.cur_enemy)
+	if buff_container != null:
+		buff_container.bind_entity(Global.cur_enemy)
 	if Global.cur_enemy.sprite != null:
 		var enemy_sprite = Global.cur_enemy.sprite.instantiate()
 		art.add_child(enemy_sprite)
@@ -197,3 +200,5 @@ func _spawn_enemy_popup(text_str: String, col: Color) -> void:
 func update_ui(stat: String):
 	if stat in ["cur_health", "max_health", "cur_armor", "cur_mage_armor"]:
 		update_health()
+	if buff_container != null and Global.cur_enemy != null:
+		buff_container.refresh(Global.cur_enemy)

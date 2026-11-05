@@ -5,6 +5,11 @@
 [ext_resource type="Shader" uid="uid://cpxn6rcb7w1xt" path="res://assets/shaders/pixel_liquid_globe.gdshader" id="3_shader"]
 [ext_resource type="Texture2D" uid="uid://5588hc6rmyws" path="res://assets/scene-assets/combat/plr-hp-energy-top.png" id="4_top"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_font"]
+[ext_resource type="Shader" uid="uid://0sfeav4u3ig0" path="res://assets/shaders/physical_armor_plate.gdshader" id="6_armor_shader"]
+[ext_resource type="Texture2D" uid="uid://qq6m2gvsi03v" path="res://assets/scene-assets/combat/plr-hp-energy-armor.png" id="7_armor_tex"]
+[ext_resource type="Shader" uid="uid://doldvbuxgcrdb" path="res://assets/shaders/magic_armor_shield.gdshader" id="8_magic_shader"]
+[ext_resource type="Texture2D" uid="uid://cwgkuvafd0is6" path="res://assets/scene-assets/combat/plr-hp-energy-magicarmor.png" id="9_magic_tex"]
+[ext_resource type="Texture2D" uid="uid://rj4jji480q4w" path="res://assets/scene-assets/combat/plr-stat-tracker.png" id="10_tracker_tex"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hp"]
 shader = ExtResource("3_shader")
@@ -38,12 +43,36 @@ shader_parameter/enable_specks = true
 shader_parameter/speck_rise_speed = 0.28
 shader_parameter/col_speck = Color(0, 0, 0, 0)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_armor"]
+shader = ExtResource("6_armor_shader")
+shader_parameter/glint_interval = 4.0
+shader_parameter/glint_speed = 1.0
+shader_parameter/glint_width = 0.12
+shader_parameter/glint_color = Color(0.92, 0.97, 1, 0.55)
+shader_parameter/pixel_grid_size = 64.0
+shader_parameter/armor_alpha = 1.0
+shader_parameter/hide_outer_rim = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_magic"]
+shader = ExtResource("8_magic_shader")
+shader_parameter/wave_amplitude = 0.8
+shader_parameter/wave_frequency = 16.0
+shader_parameter/wave_radial_freq = 10.0
+shader_parameter/wave_speed = 4.0000002086168
+shader_parameter/wave_bias = 0.0
+shader_parameter/pulse_speed = 2.6
+shader_parameter/pulse_amount = 0.12
+shader_parameter/glint_speed = 1.8
+shader_parameter/tint_glow = Color(0.35, 0.88, 1, 1)
+shader_parameter/pixel_grid_size = 64.0
+shader_parameter/shield_alpha = 0.95000001415614
+
 [node name="PlayerGlobes" type="Control" unique_id=1177550745]
-custom_minimum_size = Vector2(134, 64)
+custom_minimum_size = Vector2(134, 105)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 134.0
-offset_bottom = 64.0
+offset_bottom = 105.0
 script = ExtResource("1_globes")
 
 [node name="Background" type="TextureRect" parent="." unique_id=319312042]
@@ -74,12 +103,30 @@ offset_right = 134.0
 offset_bottom = 64.0
 mouse_filter = 2
 
+[node name="ArmorPlate" type="TextureRect" parent="." unique_id=184729104]
+visible = false
+material = SubResource("ShaderMaterial_armor")
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("7_armor_tex")
+
 [node name="TopFrame" type="TextureRect" parent="." unique_id=165268096]
 layout_mode = 0
 offset_right = 134.0
 offset_bottom = 64.0
 mouse_filter = 2
 texture = ExtResource("4_top")
+
+[node name="MagicArmorShield" type="TextureRect" parent="." unique_id=193847201]
+visible = false
+material = SubResource("ShaderMaterial_magic")
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("9_magic_tex")
 
 [node name="ValueLabels" type="Control" parent="." unique_id=1404230071]
 anchors_preset = 0
@@ -89,15 +136,15 @@ mouse_filter = 2
 
 [node name="HPLabel" type="Label" parent="ValueLabels" unique_id=1833344275]
 layout_mode = 0
+offset_top = 3.0
 offset_right = 64.0
-offset_bottom = 64.0
+offset_bottom = 67.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_colors/font_outline_color = Color(0.121569, 0.0823529, 0.14902, 1)
-theme_override_constants/shadow_offset_y = 1
-theme_override_constants/outline_size = 3
+theme_override_colors/font_shadow_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
+theme_override_colors/font_outline_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 26
 text = "20"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -105,15 +152,39 @@ vertical_alignment = 1
 [node name="EnergyLabel" type="Label" parent="ValueLabels" unique_id=393524201]
 layout_mode = 0
 offset_left = 70.0
+offset_top = 3.0
 offset_right = 134.0
-offset_bottom = 64.0
+offset_bottom = 67.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_colors/font_outline_color = Color(0.121569, 0.0823529, 0.14902, 1)
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_shadow_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
+theme_override_colors/font_outline_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 26
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatTracker" type="TextureRect" parent="." unique_id=184918205]
+layout_mode = 0
+offset_top = 65.0
+offset_right = 134.0
+offset_bottom = 105.0
+mouse_filter = 2
+texture = ExtResource("10_tracker_tex")
+
+[node name="GoldLabel" type="Label" parent="StatTracker" unique_id=198421049]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 9.0
+offset_right = 126.0
+offset_bottom = 33.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
+theme_override_colors/font_outline_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 22
-text = "2"
+theme_override_font_sizes/font_size = 18
+text = "10g"
 horizontal_alignment = 1
 vertical_alignment = 1
