@@ -1,4 +1,3 @@
-@tool
 extends Node2D
 
 ## Visual guide for the Godot 2D Editor showing the physical phone's screen boundaries.

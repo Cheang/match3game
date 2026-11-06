@@ -31,6 +31,9 @@ var save_path = "user://save1.tres"
 
 @export var saved_color_loadouts: Dictionary = {}
 @export var saved_modifier_inventory: Array[Equipment] = []
+@export var saved_equipped_passives: Array[Resource] = []
+@export var saved_active_passive_stat_contributions: Dictionary = {}
+@export var saved_active_equipment_stat_contributions: Dictionary = {}
 @export var saved_unlocked_tags: Dictionary = {}
 @export var saved_activated_node_ids: Dictionary = {}
 @export var saved_active_combat_pool: Array[Resource] = []
@@ -88,6 +91,9 @@ func load_data():
 	game_seed = data.game_seed
 	saved_color_loadouts = data.saved_color_loadouts if data.saved_color_loadouts != null else {}
 	saved_modifier_inventory = data.saved_modifier_inventory if data.saved_modifier_inventory != null else []
+	saved_equipped_passives = data.saved_equipped_passives if data.saved_equipped_passives != null else []
+	saved_active_passive_stat_contributions = data.saved_active_passive_stat_contributions if data.saved_active_passive_stat_contributions != null else {}
+	saved_active_equipment_stat_contributions = data.saved_active_equipment_stat_contributions if data.saved_active_equipment_stat_contributions != null else {}
 	saved_unlocked_tags = data.saved_unlocked_tags if data.saved_unlocked_tags != null else {}
 	saved_activated_node_ids = data.saved_activated_node_ids if data.saved_activated_node_ids != null else {}
 	saved_active_combat_pool = data.saved_active_combat_pool if data.saved_active_combat_pool != null else []

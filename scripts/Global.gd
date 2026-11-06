@@ -95,7 +95,7 @@ func is_exotic_color(color: int) -> bool:
 	return (int(color) % 100) != 0
 
 func get_base_family(color: int) -> int:
-	return int(color / 100) * 100
+	return (color - (color % 100)) if color > 0 else 0
 
 func get_color_name(color: int) -> String:
 	match color:
@@ -287,6 +287,12 @@ func save():
 		for eq in cur_char.modifier_inventory:
 			if eq != null:
 				save_file.saved_modifier_inventory.append(eq.duplicate(true))
+		save_file.saved_equipped_passives.clear()
+		for p_res in cur_char.equipped_passives:
+			if p_res != null:
+				save_file.saved_equipped_passives.append(p_res.duplicate(true))
+		save_file.saved_active_passive_stat_contributions = cur_char._active_passive_stat_contributions.duplicate(true)
+		save_file.saved_active_equipment_stat_contributions = cur_char._active_equipment_stat_contributions.duplicate(true)
 		if cur_char.active_reward_tree != null:
 			save_file.saved_unlocked_tags = cur_char.active_reward_tree.unlocked_tags.duplicate(true)
 			save_file.saved_activated_node_ids = cur_char.active_reward_tree.activated_node_ids.duplicate(true)
@@ -365,6 +371,14 @@ func load_data():
 				for eq in save_file.saved_modifier_inventory:
 					if eq != null:
 						cur_char.modifier_inventory.append(eq.duplicate(true))
+			if not save_file.saved_equipped_passives.is_empty():
+				cur_char.equipped_passives.clear()
+				for p_res in save_file.saved_equipped_passives:
+					if p_res != null:
+						cur_char.equipped_passives.append(p_res.duplicate(true))
+				cur_char._active_passive_stat_contributions = save_file.saved_active_passive_stat_contributions.duplicate(true)
+				cur_char.recalculate_passive_bonuses()
+			cur_char._active_equipment_stat_contributions = save_file.saved_active_equipment_stat_contributions.duplicate(true)
 			if cur_char.reward_tree != null and cur_char.active_reward_tree == null:
 				cur_char.active_reward_tree = cur_char.reward_tree.duplicate(true)
 				cur_char.active_reward_tree.initialize_run(cur_char)

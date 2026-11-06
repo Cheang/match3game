@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b87x2raa1k4m0"]
+
+[ext_resource type="Script" uid="uid://cnh4aa5po75ud" path="res://scripts/ui/inventory_overlay_track_row.gd" id="1_row"]
+[ext_resource type="Texture2D" path="res://assets/scene-assets/inventory-overlay/ability-color-track-empty.png" id="2_empty"]
+
+[node name="InventoryOverlayTrackRow" type="Control"]
+custom_minimum_size = Vector2(520, 71)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 520.0
+offset_bottom = 71.0
+mouse_filter = 1
+script = ExtResource("1_row")
+
+[node name="BgTexture" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(520, 71)
+layout_mode = 0
+offset_right = 520.0
+offset_bottom = 71.0
+mouse_filter = 2
+texture = ExtResource("2_empty")

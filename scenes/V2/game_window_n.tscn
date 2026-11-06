@@ -27,7 +27,9 @@
 [ext_resource type="Material" uid="uid://dfy42m1b0q3vx" path="res://assets/shaders/metal_glint.tres" id="30_glint_mat"]
 [ext_resource type="Texture2D" uid="uid://clohsirk7wr8j" path="res://assets/scene-assets/btn-new.png" id="31_btn_new"]
 [ext_resource type="PackedScene" uid="uid://cx6g3k7x5l14m" path="res://scenes/ui/player_globes.tscn" id="32_globes"]
-[ext_resource type="PackedScene" uid="uid://b7k4m2p9x1v8q" path="res://scenes/ui/buff_container.tscn" id="33_buffs"]
+[ext_resource type="PackedScene" uid="uid://b7k4m2qax1v8q" path="res://scenes/ui/buff_container.tscn" id="33_buffs"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_button.tscn" id="34_inv_btn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_overlay.tscn" id="35_inv_overlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11eos"]
 bg_color = Color(0.1758, 0.1296, 0.18, 0.815686)
@@ -179,6 +181,13 @@ offset_top = 888.0
 offset_right = 567.0
 offset_bottom = 962.0
 
+[node name="inventory_button" parent="player" unique_id=185012345 instance=ExtResource("34_inv_btn")]
+z_index = 860
+offset_left = 221.0
+offset_top = 988.0
+offset_right = 355.0
+offset_bottom = 1070.0
+
 [node name="art" type="Node2D" parent="player" unique_id=1247743326]
 
 [node name="foreground" type="Node2D" parent="." unique_id=1973101239]
@@ -251,6 +260,8 @@ position = Vector2(0, 65)
 visible = false
 z_index = 1000
 script = ExtResource("26_1d7ju")
+
+[node name="inventory_overlay" parent="." unique_id=185012347 instance=ExtResource("35_inv_overlay")]
 
 [connection signal="enemy_attacking" from="." to="enemy" method="_on_game_window_enemy_attacking"]
 [connection signal="tree_entered" from="." to="." method="_on_tree_entered"]

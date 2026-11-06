@@ -47,6 +47,7 @@ func get_max_energy() -> int:
 		var diff = new_max_health - max_health
 		max_health = new_max_health
 		cur_health += diff
+		cur_mage_armor = clampf(cur_mage_armor, 0.0, max(0.0, max_health))
 ## Fraction of attack damage restored as health (e.g. 0.25 = 25% lifesteal).
 @export var life_steal: float = 0.0
 
@@ -71,8 +72,11 @@ func get_max_energy() -> int:
 		crit_chance = clamp(new_crit_chance, 0, 100)
 ## Bonus critical damage percentage added when an action critically strikes (100.0 = +100% damage / 2x multiplier).
 @export var crit_mutly: float = 100.0
-## Starting hand combo points at the beginning of each turn for Fists-family equipment.
-@export var start_hand_combo: int = 0
+## Starting combo points at the beginning of each turn for Fists-family equipment.
+@export var start_combo: int = 0
+var start_hand_combo: int:
+	get: return start_combo
+	set(val): start_combo = val
 ## Baseline damage dealt per matched tile when a color track triggers no equipment modifiers.
 @export var fluf_damage: float = 0.0
 ## Flat reduction (in turns) applied to equipment cooldowns when triggered.
@@ -91,8 +95,11 @@ func get_max_energy() -> int:
 
 ## Current physical armor during combat. Resets at the start of the entity's turn.
 var cur_armor: float = 0.0
-## Current magic armor during combat. Persists across turns within a battle.
-var cur_mage_armor: float = 0.0
+## Current magic armor during combat. Persists across turns within a battle; capped at max_health.
+var cur_mage_armor: float = 0.0:
+	set(new_mage_armor):
+		var cap: float = max(0.0, max_health)
+		cur_mage_armor = clampf(new_mage_armor, 0.0, cap)
 ## Remaining actions / tile swaps in the current combat turn. Clamped between 0 and max_energy.
 var moves_left: int = 0:
 	set(new_moves):
@@ -102,18 +109,24 @@ var moves_left: int = 0:
 var active_buffs: Dictionary = {}
 
 ## Whether the entity will dodge the next incoming physical attack (backed by the 'dodge' buff).
-var dodging: bool:
+var dodge: bool:
 	get:
 		return get_buff_stacks("dodge") > 0
 	set(val):
 		_set_buff_internal("dodge", 1 if bool(val) else 0, false)
+var dodging: bool:
+	get: return dodge
+	set(val): dodge = val
 
-## Current accumulated hand combo points in the active combat turn (backed by the 'hand_combo' buff).
-var hand_combo: int:
+## Current accumulated combo points in the active combat turn (backed by the 'combo' buff).
+var combo: int:
 	get:
-		return get_buff_stacks("hand_combo")
+		return get_buff_stacks("combo")
 	set(val):
-		_set_buff_internal("hand_combo", maxi(0, int(val)), false)
+		_set_buff_internal("combo", maxi(0, int(val)), false)
+var hand_combo: int:
+	get: return combo
+	set(val): combo = val
 
 ## Runtime dictionary mapping color ID (int) to its ColorLoadoutTrack.
 var color_loadouts: Dictionary = {}
@@ -146,7 +159,7 @@ func is_exotic_color(color: int) -> bool:
 	return (int(color) % 100) != 0
 
 func get_base_family(color: int) -> int:
-	return int(color / 100) * 100
+	return (color - (color % 100)) if color > 0 else 0
 
 func ensure_loadout_tracks() -> void:
 	pass
@@ -276,21 +289,33 @@ func clear_all_buffs() -> void:
 
 ## Processes turn-start buff/debuff expiration and per-turn stack decay.
 func tick_buffs_at_turn_start() -> void:
-	var changed: bool = false
+	var buffs_changed: bool = false
 	var keys: Array = active_buffs.keys()
 	for k in keys:
 		var def = BuffRegistryRef.get_def(str(k))
 		if def.clear_on_turn_start:
 			active_buffs.erase(k)
-			changed = true
+			buffs_changed = true
 		elif def.decay_per_turn > 0:
 			var next_stacks: int = int(active_buffs[k]) - def.decay_per_turn
 			if next_stacks > 0:
 				active_buffs[k] = next_stacks
 			else:
 				active_buffs.erase(k)
-			changed = true
-	if changed:
+			buffs_changed = true
+	if buffs_changed:
+		buffsChanged.emit()
+
+## Processes turn-end buff/debuff expiration (e.g. combo points, turn-only buffs).
+func tick_buffs_at_turn_end() -> void:
+	var buffs_changed: bool = false
+	var keys: Array = active_buffs.keys()
+	for k in keys:
+		var def = BuffRegistryRef.get_def(str(k))
+		if def.clear_on_turn_end:
+			active_buffs.erase(k)
+			buffs_changed = true
+	if buffs_changed:
 		buffsChanged.emit()
 
 ## Returns an ordered list of active buff/debuff entries: { "id": String, "stacks": int, "def": BuffDef }
@@ -317,10 +342,9 @@ func _set_buff_internal(buff_id: String, stacks: int, emit_stat_signals: bool) -
 		active_buffs.erase(norm_id)
 	if prev != clamped:
 		buffsChanged.emit()
-	if emit_stat_signals:
-		var legacy_stat: String = "dodging" if norm_id == "dodge" else norm_id
-		_on_stat_modified(legacy_stat)
-		statChanged.emit(legacy_stat)
+		if emit_stat_signals:
+			_on_stat_modified(norm_id)
+			statChanged.emit(norm_id)
 
 #==============================================================================#
 # UNIFIED DAMAGE & STAT MUTATION API
@@ -383,8 +407,9 @@ func modify_stat(stat: String, value, increment: bool = true) -> void:
 	if not stat in self:
 		print("Stat does not exist:", stat)
 		return
+	var prev_moves: int = moves_left if stat == "moves_left" else 0
 	set(stat, get(stat) + value if increment else value)
-	if stat == "moves_left" and moves_left <= 0:
+	if stat == "moves_left" and prev_moves > 0 and moves_left <= 0:
 		_on_moves_exhausted()
 	_on_stat_modified(stat)
 	statChanged.emit(stat)
@@ -400,6 +425,61 @@ func set_stat(stat: String, value) -> void:
 	modify_stat(stat, value, false)
 
 #==============================================================================#
+# UNIFIED COMBAT & TURN LIFECYCLE
+#==============================================================================#
+
+## Resets an entity's combat stats at the beginning of a battle.
+func reset_stats_at_beginning_of_fight() -> void:
+	reset_modifiers_for_battle()
+	recalculate_equipment_passives()
+	clear_all_buffs()
+	modify_stat("dodge", false, false)
+	modify_stat("moves_left", max_energy, false)
+	modify_stat("combo", start_combo, false)
+	modify_stat("cur_armor", start_armor, false)
+	modify_stat("cur_mage_armor", start_mage_armor, false)
+	_on_battle_started()
+
+## Processes turn-start upkeep: cooldowns tick, energy refills, physical armor resets, and turn buffs tick.
+func reset_stats_at_beginning_of_turn() -> void:
+	tick_all_track_cooldowns(1)
+	tick_buffs_at_turn_start()
+	modify_stat("cur_armor", 0, false)
+	modify_stat("combo", start_combo, false)
+	modify_stat("moves_left", max_energy, false)
+	loadoutChanged.emit()
+	_on_turn_started()
+
+## Processes turn-end cleanup: clears turn-scoped momentum (combo), residual moves, and turn-end buffs.
+func reset_stats_at_end_of_turn() -> void:
+	tick_buffs_at_turn_end()
+	modify_stat("combo", start_combo, false)
+	if moves_left != 0:
+		moves_left = 0
+		_on_stat_modified("moves_left")
+		statChanged.emit("moves_left")
+	_on_turn_ended()
+
+# Common aliases for clean developer UX and legacy compatibility
+func start_battle() -> void:
+	reset_stats_at_beginning_of_fight()
+
+func start_turn() -> void:
+	reset_stats_at_beginning_of_turn()
+
+func end_turn() -> void:
+	reset_stats_at_end_of_turn()
+
+func reset_stats_at_beging_of_fight() -> void:
+	reset_stats_at_beginning_of_fight()
+
+func reset_stats_at_beging_of_turn() -> void:
+	reset_stats_at_beginning_of_turn()
+
+func reset_stats_at_beging_of_game() -> void:
+	reset_stats_at_beginning_of_fight()
+
+#==============================================================================#
 # SUBCLASS HOOKS
 #==============================================================================#
 
@@ -413,4 +493,13 @@ func _on_moves_exhausted() -> void:
 	finishedTurn.emit()
 
 func _on_after_damage_taken(_net_damage: float, _type: int, _attacker: EntityResource) -> void:
+	pass
+
+func _on_battle_started() -> void:
+	pass
+
+func _on_turn_started() -> void:
+	pass
+
+func _on_turn_ended() -> void:
 	pass

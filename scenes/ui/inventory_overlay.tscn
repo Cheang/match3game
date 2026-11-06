@@ -1,0 +1,145 @@
+[gd_scene format=3 uid="uid://bv92kq7a4m1x0"]
+
+[ext_resource type="Script" path="res://scripts/ui/inventory_overlay.gd" id="1_overlay"]
+[ext_resource type="Texture2D" path="res://assets/scene-assets/combat/inventory-btn-unpressed.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/scene-assets/inventory-overlay/ability-description-panel.png" id="3_desc"]
+[ext_resource type="PackedScene" uid="uid://b87x2raa1k4m0" path="res://scenes/ui/inventory_overlay_track_row.tscn" id="4_row"]
+[ext_resource type="FontFile" path="res://assets/theme/title.ttf" id="5_font"]
+
+[node name="InventoryOverlay" type="CanvasLayer"]
+process_mode = 3
+layer = 50
+visible = false
+script = ExtResource("1_overlay")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.05, 0.09, 0.72)
+
+[node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MainPanel" type="NinePatchRect" parent="Center"]
+custom_minimum_size = Vector2(548, 930)
+layout_mode = 2
+texture = ExtResource("2_bg")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="Center/MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="ContentVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "Loadout"
+horizontal_alignment = 1
+
+[node name="PassivesSection" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="PassivesTitle" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/PassivesSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.352941, 0.282353, 0.352941, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 14
+text = "Passives"
+horizontal_alignment = 1
+
+[node name="PassivesHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/PassivesSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TopSpacer" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="TracksBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TrackRow_0" parent="Center/MainPanel/MarginContainer/ContentVBox/TracksBox" instance=ExtResource("4_row")]
+layout_mode = 2
+
+[node name="TrackRow_1" parent="Center/MainPanel/MarginContainer/ContentVBox/TracksBox" instance=ExtResource("4_row")]
+layout_mode = 2
+
+[node name="TrackRow_2" parent="Center/MainPanel/MarginContainer/ContentVBox/TracksBox" instance=ExtResource("4_row")]
+layout_mode = 2
+
+[node name="TrackRow_3" parent="Center/MainPanel/MarginContainer/ContentVBox/TracksBox" instance=ExtResource("4_row")]
+layout_mode = 2
+
+[node name="TrackRow_4" parent="Center/MainPanel/MarginContainer/ContentVBox/TracksBox" instance=ExtResource("4_row")]
+layout_mode = 2
+
+[node name="DescriptionPanel" type="NinePatchRect" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+custom_minimum_size = Vector2(520, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_desc")
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="Margin" type="MarginContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/DescriptionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Scroll" type="ScrollContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/DescriptionPanel/Margin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="Center/MainPanel/MarginContainer/ContentVBox/DescriptionPanel/Margin/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[center][color=#9babb2]
+Select an ability or passive to view its details.[/color][/center]"
+fit_content = true
+
+[node name="BottomNavBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+custom_minimum_size = Vector2(520, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8

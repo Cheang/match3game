@@ -15,6 +15,7 @@ var enemy_attacked_once: bool = false
 var execution_queue: Array[MatchContext] = []
 var is_executing_matches: bool = false
 var _toast_seq: int = 0
+var _is_finishing_player_turn: bool = false
 
 func _ready() -> void:
 	Global.save()
@@ -189,19 +190,24 @@ func _execute_match_context(ctx: MatchContext) -> void:
 			if actor is PlayerResource and loadout_dock != null:
 				loadout_dock.refresh_dock(false)
 
-		for _trigger_idx in range(trigger_budget):
+		var remaining_budget: int = trigger_budget
+		while remaining_budget > 0:
 			if not Global.game_is_played or actor.cur_health <= 0 or target.cur_health <= 0:
 				break
 			var mod: Equipment = track.step_next_entry()
 			if mod == null:
+				remaining_budget -= 1
 				continue
+			var cost: int = mod.get_trigger_cost() if mod.has_method("get_trigger_cost") else 1
 			var can_fire: bool = false
-			if mod.is_ultimate:
-				can_fire = track.can_trigger_ultimate(ctx)
-			else:
-				can_fire = mod.can_trigger(ctx)
+			if remaining_budget >= cost:
+				if mod.is_ultimate:
+					can_fire = track.can_trigger_ultimate(ctx)
+				else:
+					can_fire = mod.can_trigger(ctx)
 
 			if can_fire:
+				remaining_budget -= cost
 				any_modifier_fired = true
 				if not mod.is_ultimate:
 					track.record_skill_activated(mod)
@@ -224,7 +230,8 @@ func _execute_match_context(ctx: MatchContext) -> void:
 				if is_inside_tree():
 					await get_tree().create_timer(0.1).timeout
 			else:
-				# Blocked equipment consumes the trigger and cursor has already advanced to the next entry.
+				# Blocked equipment consumes 1 trigger and cursor has already advanced to the next entry.
+				remaining_budget -= 1
 				if actor is PlayerResource and loadout_dock != null:
 					loadout_dock.refresh_dock(false)
 
@@ -292,7 +299,12 @@ func execute_enemy_turn() -> void:
 			if is_inside_tree():
 				await get_tree().create_timer(0.25).timeout
 
+	if Global.cur_enemy != null:
+		Global.cur_enemy.reset_stats_at_end_of_turn()
+
 func _on_enemy_enemy_attacked() -> void:
+	if Global.cur_enemy != null:
+		Global.cur_enemy.reset_stats_at_end_of_turn()
 	if Global.cur_char != null:
 		Global.cur_char.reset_stats_at_beginning_of_turn()
 	if loadout_dock != null:
@@ -304,6 +316,7 @@ func _on_enemy_enemy_attacked() -> void:
 	grd.state = grd.move
 	if grd != null:
 		grd.update_enemy_target_preview()
+	_is_finishing_player_turn = false
 
 func _on_back_to_mm_pressed() -> void:
 	Global.post_combat_event = null
@@ -335,6 +348,10 @@ func _on_tree_exiting() -> void:
 
 #Helper_functions --------------------------------------------------------------
 func player_finished_turn():
+	if _is_finishing_player_turn:
+		return
+	_is_finishing_player_turn = true
+
 	grd.state = grd.wait
 	while (grd != null and grd.is_resolving_action) or is_executing_matches or not execution_queue.is_empty():
 		await get_tree().process_frame
@@ -342,13 +359,18 @@ func player_finished_turn():
 		if grd != null:
 			grd.state = grd.move
 			grd.update_enemy_target_preview()
+		_is_finishing_player_turn = false
 		return
+	if Global.cur_char != null:
+		Global.cur_char.reset_stats_at_end_of_turn()
 	if !enemy_attacked_once and Global.game_is_played and Global.cur_enemy != null and Global.cur_enemy.cur_health > 0 and Global.cur_char != null and Global.cur_char.cur_health > 0:
 		enemy_attacked_once = true
 		if trun_changer != null and trun_changer.has_method("change_turn"):
 			trun_changer.change_turn(1)
 		await get_tree().create_timer(1.1).timeout
 		enemy_attacking.emit()
+	else:
+		_is_finishing_player_turn = false
 
 func player_died():
 	grd.state = grd.wait

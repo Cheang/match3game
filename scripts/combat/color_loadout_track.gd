@@ -64,11 +64,11 @@ const PALETTES: Dictionary = {
 }
 
 static func get_palette_for_color(c: int) -> Dictionary:
-	var base_c: int = int(c / 100) * 100 if c > 0 else 0
+	var base_c: int = (c - (c % 100)) if c > 0 else 0
 	return PALETTES.get(base_c, PALETTES[0])
 
 static func get_base_family(c: int) -> int:
-	return int(c / 100) * 100 if c > 0 else 0
+	return (c - (c % 100)) if c > 0 else 0
 
 static func get_color_name(c: int) -> String:
 	var base_c: int = get_base_family(c)
@@ -443,20 +443,26 @@ func peek_firing_indices(ctx: MatchContext, actor: Resource = null) -> Array[int
 		sim_cooldowns[-1] = ultimate_skill.current_cooldown
 		sim_used[-1] = ultimate_skill.used_this_battle
 
-	for _step in range(budget):
+	var remaining_budget: int = budget
+	while remaining_budget > 0:
 		var idx: int = sim_cursor
 		sim_cursor = (sim_cursor + 1) % total
 		if idx < equipped_modifiers.size():
 			var mod: Equipment = equipped_modifiers[idx]
 			if mod == null:
+				remaining_budget -= 1
 				continue
 			if is_modifier_activated(mod):
+				remaining_budget -= 1
 				continue
 			if mod.once_per_battle and sim_used.get(idx, false):
+				remaining_budget -= 1
 				continue
 			if sim_cooldowns.get(idx, 0) > 0:
+				remaining_budget -= 1
 				continue
-			if mod.can_trigger(ctx):
+			var cost: int = mod.get_trigger_cost() if mod.has_method("get_trigger_cost") else 1
+			if remaining_budget >= cost and mod.can_trigger(ctx):
 				if not firing.has(idx):
 					firing.append(idx)
 				if mod.once_per_battle:
@@ -467,18 +473,28 @@ func peek_firing_indices(ctx: MatchContext, actor: Resource = null) -> Array[int
 					if actor != null and "cooldown_reduction" in actor and "spirit" in actor:
 						cdr = int(actor.cooldown_reduction) + int(floor(float(actor.spirit) * 0.25))
 					sim_cooldowns[idx] = max(0, eff_cd - cdr)
+				remaining_budget -= cost
+			else:
+				remaining_budget -= 1
 		elif ultimate_skill != null:
 			var ult: Equipment = ultimate_skill
 			if ultimate_activated_this_cycle:
+				remaining_budget -= 1
 				continue
 			if ult.once_per_battle and sim_used.get(-1, false):
+				remaining_budget -= 1
 				continue
 			if sim_cooldowns.get(-1, 0) > 0:
+				remaining_budget -= 1
 				continue
 			var ready: bool = ult.bypass_activation_check or is_ultimate_active_for_cycle
-			if ready and ult.can_trigger(ctx):
+			var cost: int = ult.get_trigger_cost() if ult.has_method("get_trigger_cost") else 1
+			if ready and remaining_budget >= cost and ult.can_trigger(ctx):
 				if not firing.has(-1):
 					firing.append(-1)
+				remaining_budget -= cost
+			else:
+				remaining_budget -= 1
 
 	return firing
 

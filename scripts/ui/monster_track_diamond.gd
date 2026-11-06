@@ -47,9 +47,9 @@ func setup_track(track_color: int, mods: Array[Equipment]) -> void:
 
 func _apply_palette(track_color: int) -> void:
 	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(track_color)
-	for tr in [bottom_fill, middle_icon]:
-		if tr != null and tr.material is ShaderMaterial:
-			var mat: ShaderMaterial = tr.material
+	for icon_node in [bottom_fill, middle_icon]:
+		if icon_node != null and icon_node.material is ShaderMaterial:
+			var mat: ShaderMaterial = icon_node.material
 			mat.set_shader_parameter("target_color_1", pal.highlight)
 			mat.set_shader_parameter("target_color_2", pal.lightbase)
 			mat.set_shader_parameter("target_color_3", pal.base)

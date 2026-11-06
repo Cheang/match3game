@@ -17,9 +17,7 @@ var title_label: Label
 var pickup_tile_holder: CenterContainer
 var mod_summary_label: RichTextLabel
 var tracks_box: VBoxContainer
-var bag_header_label: Label
-var bag_grid: InventoryBagGrid
-var bag_btn: Button
+var discard_btn: Button
 
 func _init() -> void:
 	layer = 10
@@ -125,35 +123,23 @@ func _build_modal_ui() -> void:
 
 	# 2. Color Loadout Tracks Section
 	var tracks_lbl := Label.new()
-	tracks_lbl.text = "Compatible Loadout Tracks (Drag tile onto slot or tap +Equip)"
+	tracks_lbl.text = "Compatible Loadout Tracks (Tap a slot to replace, or tap +Equip / Replace)"
 	tracks_lbl.add_theme_font_size_override("font_size", 14)
 	tracks_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.72))
 	content_vbox.add_child(tracks_lbl)
 
 	tracks_box = VBoxContainer.new()
 	tracks_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tracks_box.add_theme_constant_override("separation", 5)
+	tracks_box.add_theme_constant_override("separation", 6)
 	content_vbox.add_child(tracks_box)
 
-	# 3. Equipment Bag Section
-	bag_header_label = Label.new()
-	bag_header_label.text = "Equipment Bag (Drop here to store or reorganize)"
-	bag_header_label.add_theme_font_size_override("font_size", 14)
-	bag_header_label.add_theme_color_override("font_color", Color(0.88, 0.84, 0.72))
-	content_vbox.add_child(bag_header_label)
-
-	bag_grid = InventoryBagGrid.new()
-	bag_grid.custom_minimum_size = Vector2(460, 175)
-	bag_grid.modifier_dropped_on_bag_grid.connect(_on_dropped_on_bag)
-	content_vbox.add_child(bag_grid)
-
-	# 4. Bottom Action Button
-	bag_btn = Button.new()
-	bag_btn.custom_minimum_size = Vector2(0, 44)
-	bag_btn.text = "Put in Equipment Bag"
-	_style_pixel_button(bag_btn, 20)
-	bag_btn.pressed.connect(_on_put_in_bag_pressed)
-	outer_vbox.add_child(bag_btn)
+	# 3. Bottom Discard / Skip Button
+	discard_btn = Button.new()
+	discard_btn.custom_minimum_size = Vector2(0, 44)
+	discard_btn.text = "Skip / Discard Equipment"
+	_style_pixel_button(discard_btn, 18)
+	discard_btn.pressed.connect(_on_discard_pressed)
+	outer_vbox.add_child(discard_btn)
 
 func prompt_modifiers(mods: Array[Equipment]) -> void:
 	for m in mods:
@@ -227,23 +213,20 @@ func _refresh_modal_view() -> void:
 		row_hbox.add_child(row_preview)
 		row_preview.setup_row(track.color, track, true, false)
 		row_preview.modifier_dropped_on_row.connect(_on_dropped_on_track_row)
+		row_preview.row_slot_selected.connect(_on_track_slot_clicked_to_replace)
 
 		var quick_btn := Button.new()
-		quick_btn.custom_minimum_size = Vector2(78, 34)
+		quick_btn.custom_minimum_size = Vector2(88, 34)
 		var fits: bool = track.can_equip(current_mod)
-		quick_btn.text = "+Equip" if fits else "Swap In"
-		_style_pixel_button(quick_btn, 13)
-		quick_btn.tooltip_text = ("Equip into %s Track (%d/%d Slots)" if fits else "Swap into %s Track (displaces last item to Bag)") % [
+		quick_btn.text = "+Equip" if fits else "Replace Last"
+		_style_pixel_button(quick_btn, 12)
+		quick_btn.tooltip_text = ("Equip into %s Track (%d/%d Slots)" if fits else "Replace last item in %s Track (displaced item discarded)") % [
 			Global.get_color_name(track.color),
 			track.get_used_slots(),
 			track.max_slots
 		]
 		quick_btn.pressed.connect(_on_quick_slot_pressed.bind(track))
 		row_hbox.add_child(quick_btn)
-
-	if bag_header_label != null:
-		bag_header_label.text = "Equipment Bag (%d) — Drop here to store or reorganize" % Global.cur_char.modifier_inventory.size()
-	bag_grid.populate_bag(Global.cur_char.modifier_inventory, true)
 
 func _on_dropped_on_track_row(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_mod_index: int) -> void:
 	if Global.cur_char == null:
@@ -255,28 +238,23 @@ func _on_dropped_on_track_row(drag_data: Dictionary, target_track: ColorLoadoutT
 	else:
 		_refresh_modal_view()
 
-func _on_dropped_on_bag(drag_data: Dictionary, target_bag_index: int) -> void:
-	if Global.cur_char == null:
+func _on_track_slot_clicked_to_replace(_clicked_mod: Equipment, target_track: ColorLoadoutTrack, mod_index: int) -> void:
+	if Global.cur_char == null or current_mod == null or target_track == null:
 		return
-	var src: String = drag_data.get("source", "")
-	var ok: bool = Global.cur_char.handle_modifier_drop_on_bag(drag_data, target_bag_index)
-	if ok and src == "pickup":
-		_show_next_modifier()
-	else:
-		_refresh_modal_view()
+	Global.cur_char.replace_modifier_on_track(target_track, mod_index, current_mod)
+	_show_next_modifier()
 
 func _on_quick_slot_pressed(track: ColorLoadoutTrack) -> void:
 	if current_mod != null and track != null and Global.cur_char != null:
-		var drag_data := {
-			"type": "modifier_drag",
-			"source": "pickup",
-			"modifier": current_mod
-		}
-		Global.cur_char.handle_modifier_drop_on_track(drag_data, track, -1)
+		if track.can_equip(current_mod):
+			track.equip_modifier(current_mod.duplicate(true))
+			Global.cur_char.loadoutChanged.emit()
+		else:
+			# Replace last item in track
+			var last_idx: int = max(0, track.equipped_modifiers.size() - 1)
+			Global.cur_char.replace_modifier_on_track(track, last_idx, current_mod)
 	_show_next_modifier()
 
-func _on_put_in_bag_pressed() -> void:
-	if current_mod != null and Global.cur_char != null:
-		Global.cur_char.modifier_inventory.append(current_mod)
-		Global.cur_char.loadoutChanged.emit()
+func _on_discard_pressed() -> void:
+	# Discard current equipment and move to next prompted item
 	_show_next_modifier()

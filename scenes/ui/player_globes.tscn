@@ -11,12 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://cwgkuvafd0is6" path="res://assets/scene-assets/combat/plr-hp-energy-magicarmor.png" id="9_magic_tex"]
 [ext_resource type="Texture2D" uid="uid://rj4jji480q4w" path="res://assets/scene-assets/combat/plr-stat-tracker.png" id="10_tracker_tex"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x5xvm"]
 shader = ExtResource("3_shader")
 shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.976471, 0.760784, 0.168627, 1)
-shader_parameter/col_base = Color(0.909804, 0.231373, 0.231373, 1)
-shader_parameter/col_shadow = Color(0.478431, 0.188235, 0.270588, 1)
+shader_parameter/col_highlight = Color(0.9764706, 0.7607843, 0.16862746, 1)
+shader_parameter/col_base = Color(0.9098039, 0.23137255, 0.23137255, 1)
+shader_parameter/col_shadow = Color(0.47843137, 0.1882353, 0.27058825, 1)
 shader_parameter/wave_amplitude = 0.022
 shader_parameter/wave_frequency = 13.0
 shader_parameter/wave_speed = 3.2
@@ -27,12 +27,12 @@ shader_parameter/enable_specks = true
 shader_parameter/speck_rise_speed = 0.28
 shader_parameter/col_speck = Color(0, 0, 0, 0)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_energy"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1utoj"]
 shader = ExtResource("3_shader")
 shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.8039216, 0.8745098, 0.42352942, 1)
-shader_parameter/col_base = Color(0.117647, 0.737255, 0.45098, 1)
-shader_parameter/col_shadow = Color(0.13725491, 0.5647059, 0.3882353, 1)
+shader_parameter/col_highlight = Color(0.9843137, 1, 0.5254902, 1)
+shader_parameter/col_base = Color(0.11764706, 0.7372549, 0.4509804, 1)
+shader_parameter/col_shadow = Color(0.08627451, 0.3529412, 0.29803923, 1)
 shader_parameter/wave_amplitude = 0.022
 shader_parameter/wave_frequency = 15.0
 shader_parameter/wave_speed = 3.8
@@ -43,7 +43,7 @@ shader_parameter/enable_specks = true
 shader_parameter/speck_rise_speed = 0.28
 shader_parameter/col_speck = Color(0, 0, 0, 0)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_armor"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3rst3"]
 shader = ExtResource("6_armor_shader")
 shader_parameter/glint_interval = 4.0
 shader_parameter/glint_speed = 1.0
@@ -53,7 +53,7 @@ shader_parameter/pixel_grid_size = 64.0
 shader_parameter/armor_alpha = 1.0
 shader_parameter/hide_outer_rim = 0.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_magic"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjubo"]
 shader = ExtResource("8_magic_shader")
 shader_parameter/wave_amplitude = 0.8
 shader_parameter/wave_frequency = 16.0
@@ -89,14 +89,14 @@ offset_bottom = 64.0
 mouse_filter = 2
 
 [node name="HPLiquid" type="ColorRect" parent="LiquidContainer" unique_id=152610776]
-material = SubResource("ShaderMaterial_hp")
+material = SubResource("ShaderMaterial_x5xvm")
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0
 mouse_filter = 2
 
 [node name="EnergyLiquid" type="ColorRect" parent="LiquidContainer" unique_id=409053338]
-material = SubResource("ShaderMaterial_energy")
+material = SubResource("ShaderMaterial_1utoj")
 layout_mode = 0
 offset_left = 70.0
 offset_right = 134.0
@@ -105,7 +105,8 @@ mouse_filter = 2
 
 [node name="ArmorPlate" type="TextureRect" parent="." unique_id=184729104]
 visible = false
-material = SubResource("ShaderMaterial_armor")
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_3rst3")
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0
@@ -121,7 +122,8 @@ texture = ExtResource("4_top")
 
 [node name="MagicArmorShield" type="TextureRect" parent="." unique_id=193847201]
 visible = false
-material = SubResource("ShaderMaterial_magic")
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_fjubo")
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0
@@ -141,8 +143,8 @@ offset_right = 64.0
 offset_bottom = 67.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
-theme_override_colors/font_outline_color = Color(0.24313726, 0.20784314, 0.27450982, 1)
-theme_override_constants/outline_size = 4
+theme_override_colors/font_outline_color = Color(0.12, 0.08, 0.15, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 26
 text = "20"

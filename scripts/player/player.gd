@@ -15,15 +15,19 @@ var _last_hp: float = 0.0
 var _last_armor: float = 0.0
 var _last_mage_armor: float = 0.0
 var _last_combo: int = 0
-var _last_dodging: bool = false
+var _last_dodge: bool = false
+var _last_dodging: bool:
+	get: return _last_dodge
+	set(v): _last_dodge = v
 var _last_gold: int = 0
 var _popup_seq: int = 0
+var _is_updating_ui: bool = false
 
 func _ready() -> void:
 	if Global.cur_char == null:
 		return
 	cur_character = Global.cur_char
-	Global.cur_char.reset_stats_at_beging_of_fight()
+	Global.cur_char.reset_stats_at_beginning_of_fight()
 	if Global.cur_char.sprite != null and art != null:
 		var player_sprite = Global.cur_char.sprite.instantiate()
 		art.add_child(player_sprite)
@@ -36,12 +40,19 @@ func _ready() -> void:
 	_last_hp = Global.cur_char.cur_health
 	_last_armor = Global.cur_char.cur_armor
 	_last_mage_armor = Global.cur_char.cur_mage_armor
-	_last_combo = Global.cur_char.hand_combo
-	_last_dodging = Global.cur_char.dodging
+	_last_combo = Global.cur_char.combo
+	_last_dodge = Global.cur_char.dodge
 	_last_gold = int(Global.cur_char.gold)
 	_is_initialized = true
 
 func update_ui(stat: String) -> void:
+	if _is_updating_ui or Global.cur_char == null:
+		return
+	_is_updating_ui = true
+	_update_ui_internal(stat)
+	_is_updating_ui = false
+
+func _update_ui_internal(stat: String) -> void:
 	if Global.cur_char == null:
 		return
 	cur_character = Global.cur_char
@@ -99,21 +110,22 @@ func update_ui(stat: String) -> void:
 		_last_gold = gold_val
 		return
 
-	if buff_container != null:
-		buff_container.refresh(Global.cur_char)
+	if stat == "combo" or stat == "hand_combo" or stat == "dodge" or stat == "dodging":
+		if buff_container != null:
+			buff_container.refresh(Global.cur_char)
 
 	if _is_initialized:
-		if stat == "hand_combo":
-			var diff_c: int = Global.cur_char.hand_combo - _last_combo
+		if stat == "combo" or stat == "hand_combo":
+			var diff_c: int = Global.cur_char.combo - _last_combo
 			if diff_c > 0:
 				_spawn_combat_popup("+%d Combo" % diff_c, Color(0.98, 0.84, 0.35))
-			_last_combo = Global.cur_char.hand_combo
-		elif stat == "dodging" or stat == "dodge":
-			if Global.cur_char.dodging and not _last_dodging:
+			_last_combo = Global.cur_char.combo
+		elif stat == "dodge" or stat == "dodging":
+			if Global.cur_char.dodge and not _last_dodge:
 				_spawn_combat_popup("+Dodge", Color(0.42, 0.94, 0.48))
-			elif not Global.cur_char.dodging and _last_dodging and Global.cur_char.moves_left <= 0:
+			elif not Global.cur_char.dodge and _last_dodge and Global.cur_char.moves_left <= 0:
 				_spawn_combat_popup("-Dodge", Color(0.72, 0.68, 0.75))
-			_last_dodging = Global.cur_char.dodging
+			_last_dodge = Global.cur_char.dodge
 
 func _flash_attacked_glow() -> void:
 	if art == null:

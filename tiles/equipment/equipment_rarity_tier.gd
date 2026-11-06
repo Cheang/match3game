@@ -1,4 +1,3 @@
-@tool
 extends Resource
 class_name EquipmentRarityTier
 
@@ -60,8 +59,11 @@ var speed: int:
 @export var cooldown_reduction: int = 0
 ## Passive bonus gold tile spawn chance (0% to 100%).
 @export_range(0, 100) var gold_chance: int = 0
-## Passive starting hand combo points at the start of combat turns.
-@export var start_hand_combo: int = 0
+## Passive starting combo points at the start of combat turns.
+@export var start_combo: int = 0
+var start_hand_combo: int:
+	get: return start_combo
+	set(val): start_combo = val
 
 # ==============================================================================
 # 3. EFFECT SCALING & OVERRIDES
@@ -130,7 +132,7 @@ func get_stat_boosts() -> Dictionary:
 	if dmg_reduction_flat != 0.0: boosts["dmg_reduction_flat"] = dmg_reduction_flat
 	if cooldown_reduction != 0: boosts["cooldown_reduction"] = cooldown_reduction
 	if gold_chance != 0: boosts["gold_chance"] = gold_chance
-	if start_hand_combo != 0: boosts["start_hand_combo"] = start_hand_combo
+	if start_combo != 0: boosts["start_combo"] = start_combo
 	return boosts
 
 ## Returns formatted BBCode summary of the passive stat boosts.
@@ -164,6 +166,6 @@ func get_stat_boosts_bbcode() -> String:
 		parts.append("[color=#639bff]-%d CD[/color]" % cooldown_reduction)
 	if gold_chance != 0:
 		parts.append("[color=#d4af37]%s%% Gold Chance[/color]" % ("+" + str(gold_chance) if gold_chance > 0 else str(gold_chance)))
-	if start_hand_combo != 0:
-		parts.append("[color=#7a3045]%s Combo[/color]" % ("+" + str(start_hand_combo) if start_hand_combo > 0 else str(start_hand_combo)))
+	if start_combo != 0:
+		parts.append("[color=#7a3045]%s Combo[/color]" % ("+" + str(start_combo) if start_combo > 0 else str(start_combo)))
 	return " | ".join(parts)

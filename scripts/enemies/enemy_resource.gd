@@ -212,21 +212,13 @@ func reset_stats_at_beginning_of_fight() -> void:
 	_tracks_initialized = false
 	ensure_loadout_tracks()
 	hybrid_next_is_beast = hybrid_starts_with_beast
-	reset_modifiers_for_battle()
-	recalculate_equipment_passives()
-	clear_all_buffs()
-	modify_stat("dodging", false, false)
-	modify_stat("moves_left", max_energy, false)
-	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("cur_armor", start_armor, false)
-	modify_stat("cur_mage_armor", start_mage_armor, false)
+	super.reset_stats_at_beginning_of_fight()
 
 func reset_stats_at_beginning_of_turn() -> void:
-	tick_all_track_cooldowns(1)
-	tick_buffs_at_turn_start()
-	modify_stat("cur_armor", 0, false)
-	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("moves_left", max_energy, false)
+	super.reset_stats_at_beginning_of_turn()
+
+func reset_stats_at_end_of_turn() -> void:
+	super.reset_stats_at_end_of_turn()
 
 #==============================================================================#
 # LEGACY HELPER FUNCTIONS

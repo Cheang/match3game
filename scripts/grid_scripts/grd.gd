@@ -237,6 +237,11 @@ func touch_input():
 			clear_drag_preview()
 		controling_grd = false
 		return
+	if InventoryOverlay.is_overlay_open():
+		if controling_grd:
+			clear_drag_preview()
+		controling_grd = false
+		return
 	if Global.cur_char != null and Global.cur_char.moves_left <= 0:
 		if controling_grd:
 			clear_drag_preview()
@@ -1013,7 +1018,7 @@ func choose_beast_target_center(shape_offsets: Array[Vector2i]) -> Vector2i:
 				break
 		return best_candidates.pick_random()
 
-	return Vector2i(grd_width / 2, grd_height / 2)
+	return Vector2i(grd_width >> 1, grd_height >> 1)
 
 ## Validates whether a given center coordinate can still serve as a Beast destruction center.
 func is_valid_beast_center(center: Vector2i, shape_offsets: Array[Vector2i]) -> bool:

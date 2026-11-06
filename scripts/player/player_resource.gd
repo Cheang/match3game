@@ -60,8 +60,16 @@ var rerolls: int = 0
 ## Current gold carried in the run.
 var gold: int = 0
 
-## Unslotted equipment modifiers stored in the player's inventory bag.
+## Unslotted equipment modifiers stored in the player's inventory bag (deprecated: no unequipped inventory storage).
 var modifier_inventory: Array[Equipment] = []
+
+## Maximum number of passive/talent cards the player can equip simultaneously.
+const MAX_PASSIVE_SLOTS: int = 5
+## Currently equipped passive cards (max 5 slots).
+var equipped_passives: Array[Resource] = []
+var _active_passive_stat_contributions: Dictionary = {}
+var _is_recalculating_passive_bonuses: bool = false
+signal passivesChanged
 
 # Legacy Attribute Aliases (maps old stat names used in existing rewards/events to the 4 core pillars)
 var strength: float:
@@ -229,9 +237,33 @@ func add_modifier_reward(mod: Equipment, auto_equip: bool = false) -> bool:
 				track.equip_modifier(dup_mod)
 				loadoutChanged.emit()
 				return true
-	modifier_inventory.append(dup_mod)
-	loadoutChanged.emit()
+	# No unequipped inventory bag storage: equipment must be equipped to tracks or discarded
 	return false
+
+## Replaces the equipment at slot_index in target_track with new_mod.
+## Displaced items are discarded (no unequipped inventory storage).
+func replace_modifier_on_track(target_track: ColorLoadoutTrack, slot_index: int, new_mod: Equipment) -> bool:
+	if target_track == null or new_mod == null:
+		return false
+	if not target_track.is_color_compatible(new_mod):
+		return false
+	var base_c: int = get_base_family(target_track.color)
+	if not active_color_pool.has(target_track.color) and not active_color_pool.has(base_c):
+		add_color_to_pool(base_c)
+
+	var dup_mod: Equipment = new_mod.duplicate(true)
+	if slot_index >= 0 and slot_index < target_track.equipped_modifiers.size():
+		target_track.unequip_at(slot_index)
+
+	while not target_track.can_equip(dup_mod) and not target_track.equipped_modifiers.is_empty():
+		target_track.equipped_modifiers.pop_back()
+		target_track.clamp_cursor()
+
+	var ok: bool = target_track.equip_modifier(dup_mod, slot_index)
+	target_track.clamp_cursor()
+	recalculate_equipment_passives()
+	loadoutChanged.emit()
+	return ok
 
 func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_mod_index: int) -> bool:
 	if target_track == null:
@@ -243,8 +275,8 @@ func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoa
 	var source: String = drag_data.get("source", "")
 	var source_track: ColorLoadoutTrack = drag_data.get("source_track", null)
 	var source_index: int = drag_data.get("source_index", -1)
-	var bag_index: int = drag_data.get("bag_index", -1)
 
+	# Reordering within same track
 	if source == "track" and source_track == target_track:
 		if source_index < 0 or source_index >= target_track.equipped_modifiers.size():
 			return false
@@ -259,13 +291,9 @@ func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoa
 		loadoutChanged.emit()
 		return true
 
+	# Moving from another track
 	if source == "track" and source_track != null:
 		source_track.unequip_modifier(dragged_mod)
-	elif source == "bag":
-		if bag_index >= 0 and bag_index < modifier_inventory.size() and modifier_inventory[bag_index] == dragged_mod:
-			modifier_inventory.remove_at(bag_index)
-		else:
-			modifier_inventory.erase(dragged_mod)
 
 	var base_c: int = get_base_family(target_track.color)
 	if not active_color_pool.has(target_track.color) and not active_color_pool.has(base_c):
@@ -274,59 +302,115 @@ func handle_modifier_drop_on_track(drag_data: Dictionary, target_track: ColorLoa
 	var insert_pos: int = target_mod_index
 	if target_mod_index >= 0 and target_mod_index < target_track.equipped_modifiers.size():
 		if not target_track.can_equip(dragged_mod):
-			var displaced: Equipment = target_track.unequip_at(target_mod_index)
-			if displaced != null:
-				modifier_inventory.append(displaced)
+			# Displace the item at target_mod_index (discarded, no inventory storage)
+			target_track.unequip_at(target_mod_index)
 
 	while not target_track.can_equip(dragged_mod) and not target_track.equipped_modifiers.is_empty():
-		var displaced_end: Equipment = target_track.equipped_modifiers.pop_back()
-		if displaced_end != null:
-			modifier_inventory.append(displaced_end)
+		# Displace from end until it fits (discarded)
+		target_track.equipped_modifiers.pop_back()
 		target_track.clamp_cursor()
 
 	if not target_track.equip_modifier(dragged_mod, insert_pos):
-		modifier_inventory.append(dragged_mod)
 		loadoutChanged.emit()
 		return false
 
 	loadoutChanged.emit()
 	return true
 
-func handle_modifier_drop_on_bag(drag_data: Dictionary, target_bag_index: int = -1) -> bool:
-	var dragged_mod: Equipment = drag_data.get("modifier", null)
-	if dragged_mod == null:
-		return false
-	var source: String = drag_data.get("source", "")
-	var source_track: ColorLoadoutTrack = drag_data.get("source_track", null)
-	var bag_index: int = drag_data.get("bag_index", -1)
+func handle_modifier_drop_on_bag(_drag_data: Dictionary, _target_bag_index: int = -1) -> bool:
+	# Inventory bag removed: dropping to bag is disabled
+	return false
 
-	if source == "track" and source_track != null:
-		source_track.unequip_modifier(dragged_mod)
-		if target_bag_index >= 0 and target_bag_index <= modifier_inventory.size():
-			modifier_inventory.insert(target_bag_index, dragged_mod)
+#==============================================================================#
+# PASSIVES SYSTEM (5 SLOTS)
+#==============================================================================#
+
+## Returns all currently equipped passive cards.
+func get_equipped_passives() -> Array[Resource]:
+	return equipped_passives
+
+## Returns true if the player has at least 1 open passive slot (< 5).
+func can_equip_passive() -> bool:
+	return equipped_passives.size() < MAX_PASSIVE_SLOTS
+
+## Equips a passive card into an open slot or replaces an existing slot (0-4).
+## Reconciles stat contributions cleanly with zero stat drift.
+func equip_passive(passive: Resource, replace_index: int = -1) -> bool:
+	if passive == null:
+		return false
+	var dup: Resource = passive.duplicate(true)
+	if equipped_passives.size() < MAX_PASSIVE_SLOTS:
+		if replace_index >= 0 and replace_index < equipped_passives.size():
+			equipped_passives[replace_index] = dup
 		else:
-			modifier_inventory.append(dragged_mod)
+			equipped_passives.append(dup)
+		recalculate_passive_bonuses()
+		passivesChanged.emit()
 		loadoutChanged.emit()
 		return true
-	elif source == "bag":
-		if bag_index >= 0 and bag_index < modifier_inventory.size():
-			modifier_inventory.remove_at(bag_index)
-		else:
-			modifier_inventory.erase(dragged_mod)
-		if target_bag_index >= 0 and target_bag_index <= modifier_inventory.size():
-			modifier_inventory.insert(target_bag_index, dragged_mod)
-		else:
-			modifier_inventory.append(dragged_mod)
-		loadoutChanged.emit()
-		return true
-	elif source == "pickup":
-		if target_bag_index >= 0 and target_bag_index <= modifier_inventory.size():
-			modifier_inventory.insert(target_bag_index, dragged_mod)
-		else:
-			modifier_inventory.append(dragged_mod)
+	elif replace_index >= 0 and replace_index < MAX_PASSIVE_SLOTS:
+		equipped_passives[replace_index] = dup
+		recalculate_passive_bonuses()
+		passivesChanged.emit()
 		loadoutChanged.emit()
 		return true
 	return false
+
+## Unequips and returns the passive card at slot index, revoking its bonuses.
+func unequip_passive(index: int) -> Resource:
+	if index >= 0 and index < equipped_passives.size():
+		var removed: Resource = equipped_passives.pop_at(index)
+		recalculate_passive_bonuses()
+		passivesChanged.emit()
+		loadoutChanged.emit()
+		return removed
+	return null
+
+## Recalculates all passive stat boosts and perks from all 5 passive slots.
+## Reconciles against previously applied contributions with zero drift.
+func recalculate_passive_bonuses() -> void:
+	if _is_recalculating_passive_bonuses:
+		return
+	_is_recalculating_passive_bonuses = true
+
+	var new_totals: Dictionary = {}
+	for p_res in equipped_passives:
+		if p_res == null:
+			continue
+		if p_res is Reward:
+			var r := p_res as Reward
+			if r.might != 0.0: new_totals["might"] = new_totals.get("might", 0.0) + r.might
+			if r.grit != 0.0: new_totals["grit"] = new_totals.get("grit", 0.0) + r.grit
+			if r.spirit != 0.0: new_totals["spirit"] = new_totals.get("spirit", 0.0) + r.spirit
+			if r.agility != 0: new_totals["agility"] = new_totals.get("agility", 0) + r.agility
+			if r.max_health != 0.0: new_totals["max_health"] = new_totals.get("max_health", 0.0) + r.max_health
+			if r.crit_chance != 0: new_totals["crit_chance"] = new_totals.get("crit_chance", 0) + r.crit_chance
+			if r.unlock_row_bombs: set_flag("flg_can_spawn_row_bombs", true)
+			if r.unlock_col_bombs: set_flag("flg_can_spawn_col_bombs", true)
+			if r.unlock_adj_bombs: set_flag("flg_can_spawn_adj_bombs", true)
+			for f in r.custom_flags:
+				set_flag(f, true)
+		elif p_res.has_method("get_stat_boosts"):
+			var boosts: Dictionary = p_res.get_stat_boosts()
+			for s in boosts.keys():
+				new_totals[s] = new_totals.get(s, 0.0) + boosts[s]
+
+	# Reconcile previously applied passive stats
+	for s in _active_passive_stat_contributions.keys():
+		var old_val = _active_passive_stat_contributions[s]
+		var new_val = new_totals.get(s, 0.0)
+		var diff = new_val - old_val
+		if not is_zero_approx(diff):
+			modify_stat(s, diff)
+
+	for s in new_totals.keys():
+		if not _active_passive_stat_contributions.has(s):
+			var new_val = new_totals[s]
+			if not is_zero_approx(new_val):
+				modify_stat(s, new_val)
+
+	_active_passive_stat_contributions = new_totals
+	_is_recalculating_passive_bonuses = false
 
 func get_all_owned_modifiers() -> Array[Equipment]:
 	ensure_loadout_tracks()
@@ -358,7 +442,9 @@ func reset_stats_at_beginning_of_game() -> void:
 	deck_in_game.clear()
 	color_loadouts.clear()
 	modifier_inventory.clear()
+	equipped_passives.clear()
 	_active_equipment_stat_contributions.clear()
+	_active_passive_stat_contributions.clear()
 	ensure_loadout_tracks()
 
 	if reward_tree != null:
@@ -377,31 +463,24 @@ func reset_stats_at_beginning_of_game() -> void:
 	modify_stat("rerolls", start_reroll, false)
 
 func reset_stats_at_beginning_of_fight() -> void:
-	reset_modifiers_for_battle()
-	clear_all_buffs()
-	modify_stat("dodging", false, false)
-	modify_stat("moves_left", max_energy, false)
-	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("cur_armor", start_armor, false)
-	modify_stat("cur_mage_armor", start_mage_armor, false)
+	super.reset_stats_at_beginning_of_fight()
+	recalculate_passive_bonuses()
 
 func reset_stats_at_beginning_of_turn() -> void:
-	tick_all_track_cooldowns(1)
-	tick_buffs_at_turn_start()
-	modify_stat("cur_armor", 0, false)
-	modify_stat("hand_combo", start_hand_combo, false)
-	modify_stat("moves_left", max_energy, false)
-	loadoutChanged.emit()
+	super.reset_stats_at_beginning_of_turn()
+
+func reset_stats_at_end_of_turn() -> void:
+	super.reset_stats_at_end_of_turn()
 
 # Backward-compatibility aliases for legacy typos
 func reset_stats_at_beging_of_game() -> void:
 	reset_stats_at_beginning_of_game()
 
 func reset_stats_at_beging_of_fight() -> void:
-	reset_stats_at_beginning_of_fight()
+	super.reset_stats_at_beginning_of_fight()
 
 func reset_stats_at_beging_of_turn() -> void:
-	reset_stats_at_beginning_of_turn()
+	super.reset_stats_at_beginning_of_turn()
 
 #==============================================================================#
 # HELPER FUNCTIONS

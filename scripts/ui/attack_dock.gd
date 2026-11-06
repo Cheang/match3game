@@ -30,9 +30,9 @@ func refresh_tracks(enemy_res: EnemyResource) -> void:
 	var standard_colors: Array[int] = [100, 200, 300, 400, 500]
 	for c in standard_colors:
 		if enemy_res.color_loadouts.has(c):
-			var tr: ColorLoadoutTrack = enemy_res.color_loadouts[c]
-			if tr != null and not tr.equipped_modifiers.is_empty():
-				active_tracks.append({ "color": c, "modifiers": tr.equipped_modifiers })
+			var track: ColorLoadoutTrack = enemy_res.color_loadouts[c]
+			if track != null and not track.equipped_modifiers.is_empty():
+				active_tracks.append({ "color": c, "modifiers": track.equipped_modifiers })
 
 	# Fallback / wild track
 	if enemy_res.colorless_fallback_track != null and not enemy_res.colorless_fallback_track.equipped_modifiers.is_empty():

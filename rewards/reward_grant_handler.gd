@@ -140,6 +140,13 @@ static func grant_reward(res: Resource, grant_equipment: bool = true, player: Pl
 
 	if res is Reward:
 		var rew := res as Reward
+		if rew.category == Reward.RewardCategory.PASSIVE:
+			if p != null and not p.equipped_passives.has(rew):
+				p.equip_passive(rew)
+			if p != null and p.active_reward_tree != null:
+				p.active_reward_tree.on_reward_chosen(rew, p)
+			return
+
 		if not Engine.is_editor_hint() and is_instance_valid(Global) and ("cur_char" in Global) and p == Global.cur_char:
 			rew.activate(grant_equipment)
 		else:

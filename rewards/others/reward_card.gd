@@ -46,6 +46,28 @@ func _on_choise_btn_pressed() -> void:
 	modulate = Color.WHITE
 	Global.game_is_played = false
 
+	# 1. Passive Reward Handling (5 passive slots maximum)
+	var is_passive: bool = false
+	if reward_resource is Reward and (reward_resource as Reward).category == Reward.RewardCategory.PASSIVE:
+		is_passive = true
+	elif is_boss_reward:
+		is_passive = true
+
+	if is_passive and Global.cur_char != null:
+		if not Global.cur_char.can_equip_passive():
+			var p_modal := PassiveReplaceModal.new()
+			get_tree().current_scene.add_child(p_modal)
+			p_modal.prompt_passive(reward_resource)
+			await p_modal.modal_closed
+			_proceed_after_reward()
+			return
+		else:
+			Global.cur_char.equip_passive(reward_resource)
+			RewardGrantHandler.grant_reward(reward_resource, false)
+			_proceed_after_reward()
+			return
+
+	# 2. Combat / Equipment Card Handling
 	var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(reward_resource)
 	if not mods.is_empty():
 		var modal := SlotEquipModal.new()

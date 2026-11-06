@@ -36,6 +36,16 @@ var current_gold: int = 10
 const BASE_WAVE_AMP: float = 0.022
 const SLOSH_WAVE_AMP: float = 0.048
 
+# Palette Colors (HP)
+const HP_HIGHLIGHT := Color("#F9C22B")
+const HP_BASE := Color("#E83B3B")
+const HP_SHADOW := Color("#7A3045")
+
+# Palette Colors (Energy)
+const ENERGY_HIGHLIGHT := Color("#FBFF86")
+const ENERGY_BASE := Color("#1EBC73")
+const ENERGY_SHADOW := Color("#165A4C")
+
 # Label Colors
 const COLOR_HP_TEXT := Color(1.0, 1.0, 1.0)
 const COLOR_HP_OUTLINE := Color(0.12, 0.08, 0.15)
@@ -75,9 +85,9 @@ func _ready() -> void:
 
 	# Red Palette (HP)
 	if _hp_mat:
-		_hp_mat.set_shader_parameter("col_highlight", Color("#F9C22B"))
-		_hp_mat.set_shader_parameter("col_base", Color("#E83B3B"))
-		_hp_mat.set_shader_parameter("col_shadow", Color("#7A3045"))
+		_hp_mat.set_shader_parameter("col_highlight", HP_HIGHLIGHT)
+		_hp_mat.set_shader_parameter("col_base", HP_BASE)
+		_hp_mat.set_shader_parameter("col_shadow", HP_SHADOW)
 		_hp_mat.set_shader_parameter("wave_amplitude", BASE_WAVE_AMP)
 		_hp_mat.set_shader_parameter("wave_frequency", 13.0)
 		_hp_mat.set_shader_parameter("wave_speed", 3.2)
@@ -85,9 +95,9 @@ func _ready() -> void:
 
 	# Green Palette (Energy / Moves)
 	if _energy_mat:
-		_energy_mat.set_shader_parameter("col_highlight", Color("#FBFF86"))
-		_energy_mat.set_shader_parameter("col_base", Color("#1EBC73"))
-		_energy_mat.set_shader_parameter("col_shadow", Color("#165A4C"))
+		_energy_mat.set_shader_parameter("col_highlight", ENERGY_HIGHLIGHT)
+		_energy_mat.set_shader_parameter("col_base", ENERGY_BASE)
+		_energy_mat.set_shader_parameter("col_shadow", ENERGY_SHADOW)
 		_energy_mat.set_shader_parameter("wave_amplitude", BASE_WAVE_AMP)
 		_energy_mat.set_shader_parameter("wave_frequency", 15.0)
 		_energy_mat.set_shader_parameter("wave_speed", 3.8)

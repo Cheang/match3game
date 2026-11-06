@@ -128,6 +128,20 @@ func _ready() -> void:
 	assert(globes.gold_label.text == "0g", "Gold label should show '0g'")
 	print("  [PASS] Stat Tracker gold display format (10g, 11g) verified")
 
+	# Test 11: Standalone Inventory Button component
+	const InvBtnScene := preload("res://scenes/ui/inventory_button.tscn")
+	var inv_btn := InvBtnScene.instantiate() as InventoryButton
+	assert(inv_btn != null, "InventoryButton instance must not be null")
+	add_child(inv_btn)
+	assert(inv_btn.icon != null, "InventoryButton icon child must exist")
+	assert(inv_btn.texture_normal != null, "InventoryButton texture_normal must be configured")
+	var pressed_count := [0]
+	inv_btn.pressed.connect(func(): pressed_count[0] += 1)
+	inv_btn.emit_signal("pressed")
+	assert(pressed_count[0] == 1, "Emitting pressed on InventoryButton must fire signal")
+	inv_btn.queue_free()
+	print("  [PASS] Standalone InventoryButton component verified")
+
 	globes.queue_free()
 	print("==================================================")
 	print("ALL PLAYER GLOBES TESTS PASSED")

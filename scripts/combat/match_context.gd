@@ -30,4 +30,4 @@ func get_momentum_multiplier() -> float:
 	return 1.0 + (float(total_fall_momentum) * 0.05)
 
 func is_in_bottom_half(grid_height: int = 8) -> bool:
-	return lowest_row >= int(grid_height / 2)
+	return lowest_row >= (grid_height >> 1)

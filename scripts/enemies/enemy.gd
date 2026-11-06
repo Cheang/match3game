@@ -82,8 +82,11 @@ func _on_game_window_enemy_attacking() -> void:
 	var parent_gm = get_parent()
 	if parent_gm != null and parent_gm.has_method("execute_enemy_turn"):
 		await parent_gm.execute_enemy_turn()
-	elif Global.cur_enemy.next_attack != null:
+	elif Global.cur_enemy != null and Global.cur_enemy.next_attack != null:
 		Global.cur_enemy.next_attack.attack()
+
+	if Global.cur_enemy != null:
+		Global.cur_enemy.reset_stats_at_end_of_turn()
 
 	if art.get_child_count() > 0:
 		var sprite_node = art.get_child(0)
@@ -113,10 +116,10 @@ func _cache_track_tooltip() -> void:
 	var e: EnemyResource = Global.cur_enemy
 	var lines: Array[String] = []
 	for k in e.color_loadouts.keys():
-		var tr: ColorLoadoutTrack = e.color_loadouts[k]
-		if tr != null and not tr.equipped_modifiers.is_empty():
+		var track: ColorLoadoutTrack = e.color_loadouts[k]
+		if track != null and not track.equipped_modifiers.is_empty():
 			var names: Array[String] = []
-			for m in tr.equipped_modifiers:
+			for m in track.equipped_modifiers:
 				if m != null:
 					names.append(m.piece_name)
 			lines.append("%s Track: %s" % [Global.get_color_name(int(k)), " → ".join(names)])
@@ -200,5 +203,6 @@ func _spawn_enemy_popup(text_str: String, col: Color) -> void:
 func update_ui(stat: String):
 	if stat in ["cur_health", "max_health", "cur_armor", "cur_mage_armor"]:
 		update_health()
-	if buff_container != null and Global.cur_enemy != null:
-		buff_container.refresh(Global.cur_enemy)
+	elif stat in ["combo", "hand_combo", "dodge", "dodging"]:
+		if buff_container != null and Global.cur_enemy != null:
+			buff_container.refresh(Global.cur_enemy)

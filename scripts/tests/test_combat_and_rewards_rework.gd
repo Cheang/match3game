@@ -44,6 +44,7 @@ func _run_all_tests() -> void:
 	await _test_direct_equipment_rewards_and_three_source_draft()
 	_test_per_action_critical_hits()
 	_test_unified_buffs_and_debuffs()
+	_test_five_passive_slots_and_inventory_removal()
 	_test_save_load_persistence()
 
 # ------------------------------------------------------------------------------
@@ -309,6 +310,46 @@ func _test_trigger_budgets_and_blocked_entries() -> void:
 	_assert(stepped == eq_b and not did_fire, "Blocked entry B_Blocked fails condition on 3-tile match")
 	_assert(track.next_entry_cursor == 2, "Blocked entry still consumes trigger and advances cursor to C (index 2)")
 
+	# Test 4+ match trigger cost (Rush behavior):
+	_assert(eq_b.get_trigger_cost() == 2, "MATCH_4_PLUS equipment consumes 2 triggers")
+	_assert(eq_a.get_trigger_cost() == 1, "Standard equipment consumes 1 trigger")
+
+	var ctx_4 := MatchContext.new()
+	ctx_4.match_count = 4
+	ctx_4.shape_type = "LINE_4"
+	_assert(track.get_trigger_budget(ctx_4) == 2, "4-tile match = 2 triggers (4 - 2)")
+
+	# Case 1: Solo 4+ skill (Rush) on a 4-match triggers ONCE (not twice)
+	var rush_only_track := ColorLoadoutTrack.new()
+	var rush_eq := _make_test_equipment("Rush", 0.0)
+	rush_eq.trigger_condition = Equipment.TriggerCondition.MATCH_4_PLUS
+	rush_only_track.equip_modifier(rush_eq)
+	var peek_4: Array[int] = rush_only_track.peek_firing_indices(ctx_4)
+	_assert(peek_4 == [0], "Solo 4+ match skill peeks index [0] on 4-match (consumed 2 triggers, fires once)")
+
+	var peek_3: Array[int] = rush_only_track.peek_firing_indices(ctx_3)
+	_assert(peek_3 == [], "4+ match skill peeks empty on 3-match (insufficient budget and match count)")
+
+	# Case 2: Rush + 3-match skill on a 5-match (budget = 3) -> Rush takes 2 triggers, next skill takes 1
+	var combo_track := ColorLoadoutTrack.new()
+	var normal_skill := _make_test_equipment("Punch", 2.0)
+	combo_track.equip_modifier(rush_eq)
+	combo_track.equip_modifier(normal_skill)
+	var peek_5: Array[int] = combo_track.peek_firing_indices(ctx_5)
+	_assert(peek_5 == [0, 1], "Rush + normal skill on 5-match triggers both Rush (index 0) and next skill (index 1)")
+
+	# On a 4-match (budget = 2), Rush consumes all 2 triggers; next skill is not reached
+	var peek_rush_and_norm_4: Array[int] = combo_track.peek_firing_indices(ctx_4)
+	_assert(peek_rush_and_norm_4 == [0], "Rush + normal skill on 4-match triggers only Rush (consumes both triggers)")
+
+	# Case 3: Three normal 3-match skills on a 5-match (budget = 3) -> all three trigger once
+	var three_track := ColorLoadoutTrack.new()
+	three_track.equip_modifier(eq_a)
+	three_track.equip_modifier(_make_test_equipment("B_Normal", 2.0))
+	three_track.equip_modifier(eq_c)
+	var peek_three_5: Array[int] = three_track.peek_firing_indices(ctx_5)
+	_assert(peek_three_5 == [0, 1, 2], "Three normal skills on 5-match trigger all three once ([0, 1, 2])")
+
 # ------------------------------------------------------------------------------
 # 4. Monster Tracks & Colorless Fallback
 # ------------------------------------------------------------------------------
@@ -405,7 +446,10 @@ func _test_board_smart_beast_hybrid_and_bombs() -> void:
 	var armor_before: float = Global.cur_char.cur_armor
 	await gw._execute_match_context(beast_ctx)
 	_assert(Global.cur_char.cur_health < hp_before or Global.cur_char.cur_armor < armor_before, "Monster sequential track execution dealt damage to player")
-	_assert(enemy_red_track.next_entry_cursor == (3 % enemy_red_track.get_filled_entry_count()), "Monster track cursor advanced by 3 triggers with wraparound")
+	# In Boar's red track [Rush (cost 2), Short Sword (cost 1)], a 5-match (budget = 3)
+	# activates Rush (costs 2 triggers) once and Short Sword (costs 1 trigger) once,
+	# taking 2 steps and advancing cursor by 2: (0 + 2) % 2 == 0.
+	_assert(enemy_red_track.next_entry_cursor == (2 % enemy_red_track.get_filled_entry_count()), "Monster track cursor advanced by 2 steps (Rush [2 triggers] + Short Sword [1 trigger] on 5-match)")
 
 	gw.queue_free()
 	await get_tree().process_frame
@@ -641,6 +685,10 @@ func _test_save_load_persistence() -> void:
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
 	red_track.next_entry_cursor = 1
 	player.active_reward_tree.unlocked_tags["test_tag_persisted"] = true
+	var p_saved := Reward.new()
+	p_saved.name = "SavedPassive"
+	p_saved.might = 3.0
+	player.equip_passive(p_saved)
 
 	var cap: EnemyResource = load("res://enemies/minion/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
@@ -662,6 +710,9 @@ func _test_save_load_persistence() -> void:
 	_assert(loaded_red != null and loaded_red.max_slots == 5, "Reloaded Red track preserves 5-slot normal capacity")
 	_assert(loaded_red.next_entry_cursor == 1, "Reloaded Red track preserves next_entry_cursor == 1")
 	_assert(Global.cur_char.active_reward_tree.unlocked_tags.has("test_tag_persisted"), "Reloaded RewardTree preserves unlocked_tags")
+	_assert(Global.cur_char.equipped_passives.size() == 1, "Reloaded cur_char preserves 1 equipped passive")
+	_assert(Global.cur_char.equipped_passives[0].name == "SavedPassive", "Reloaded passive is SavedPassive")
+	_assert(is_equal_approx(Global.cur_char.might, 4.0), "Reloaded passive grants +3 might (total 4.0)")
 	_assert(Global.cur_enemy != null and Global.cur_enemy.hybrid_next_is_beast == true, "Reloaded EnemyResource preserves hybrid_next_is_beast state")
 
 	if FileAccess.file_exists(test_save_path):
@@ -674,11 +725,12 @@ func _test_save_load_persistence() -> void:
 func _test_unified_buffs_and_debuffs() -> void:
 	print("\n--- 9. Unified Buffs & Debuffs System ---")
 	var dodge_def: BuffRegistry.BuffDef = BuffRegistry.get_def("dodge")
-	var combo_def: BuffRegistry.BuffDef = BuffRegistry.get_def("hand_combo")
+	var combo_def: BuffRegistry.BuffDef = BuffRegistry.get_def("combo")
 	_assert(dodge_def != null and dodge_def.get_icon() != null, "BuffRegistry loads buff-dodge.png icon")
 	_assert(combo_def != null and combo_def.get_icon() != null, "BuffRegistry loads buff-combo.png icon")
 	_assert(BuffRegistry.normalize_id("dodging") == "dodge", "BuffRegistry normalizes 'dodging' -> 'dodge'")
-	_assert(BuffRegistry.normalize_id("combo") == "hand_combo", "BuffRegistry normalizes 'combo' -> 'hand_combo'")
+	_assert(BuffRegistry.normalize_id("hand_combo") == "combo", "BuffRegistry normalizes 'hand_combo' -> 'combo'")
+	_assert(BuffRegistry.normalize_id("combo") == "combo", "BuffRegistry normalizes 'combo' -> 'combo'")
 
 	var plr := PlayerResource.new()
 	var enm := EnemyResource.new()
@@ -689,23 +741,23 @@ func _test_unified_buffs_and_debuffs() -> void:
 
 	# Test Player & Enemy buff API and property bridging
 	plr.add_buff("dodge", 1)
-	plr.add_buff("hand_combo", 3)
-	_assert(plr.has_buff("dodge") and plr.dodging == true, "Player has_buff('dodge') syncs with plr.dodging")
-	_assert(plr.get_buff_stacks("hand_combo") == 3 and plr.hand_combo == 3, "Player get_buff_stacks('hand_combo') syncs with plr.hand_combo")
+	plr.add_buff("combo", 3)
+	_assert(plr.has_buff("dodge") and plr.dodge == true and plr.dodging == true, "Player has_buff('dodge') syncs with plr.dodge and plr.dodging")
+	_assert(plr.get_buff_stacks("combo") == 3 and plr.combo == 3 and plr.hand_combo == 3, "Player get_buff_stacks('combo') syncs with plr.combo and plr.hand_combo")
 
-	enm.modify_stat("dodging", true, false)
-	enm.modify_stat("hand_combo", 4, false)
-	_assert(enm.has_buff("dodge") and enm.dodging == true, "Enemy modify_stat('dodging') activates 'dodge' buff")
-	_assert(enm.get_buff_stacks("hand_combo") == 4, "Enemy modify_stat('hand_combo') sets 'hand_combo' stacks to 4")
+	enm.modify_stat("dodge", true, false)
+	enm.modify_stat("combo", 4, false)
+	_assert(enm.has_buff("dodge") and enm.dodge == true, "Enemy modify_stat('dodge') activates 'dodge' buff")
+	_assert(enm.get_buff_stacks("combo") == 4 and enm.combo == 4, "Enemy modify_stat('combo') sets 'combo' stacks to 4")
 
 	# Test Dodge negating physical damage on both Player and Enemy
 	var dealt_to_plr: float = plr.take_damage(15.0, false, 0, enm)
 	_assert(is_equal_approx(dealt_to_plr, 0.0) and is_equal_approx(plr.cur_health, 50.0), "Player Dodge negates incoming physical attack")
-	_assert(not plr.has_buff("dodge") and plr.dodging == false, "Player Dodge buff is consumed after dodging")
+	_assert(not plr.has_buff("dodge") and plr.dodge == false, "Player Dodge buff is consumed after dodging")
 
 	var dealt_to_enm: float = enm.take_damage(20.0, false, 0, plr)
 	_assert(is_equal_approx(dealt_to_enm, 0.0) and is_equal_approx(enm.cur_health, 50.0), "Enemy Dodge negates incoming physical attack")
-	_assert(not enm.has_buff("dodge") and enm.dodging == false, "Enemy Dodge buff is consumed after dodging")
+	_assert(not enm.has_buff("dodge") and enm.dodge == false, "Enemy Dodge buff is consumed after dodging")
 
 	# Test Custom Debuff Registration & Turn-Start Decay
 	BuffRegistry.register_buff(
@@ -721,8 +773,45 @@ func _test_unified_buffs_and_debuffs() -> void:
 	enm.add_buff("test_bleed", 2)
 	_assert(enm.get_buff_stacks("test_bleed") == 2, "Custom debuff 'test_bleed' applied with 2 stacks on Enemy")
 	enm.tick_buffs_at_turn_start()
-	_assert(enm.get_buff_stacks("test_bleed") == 1, "Turn start decays 'test_bleed' from 2 -> 1 and clears 'hand_combo'")
-	_assert(enm.get_buff_stacks("hand_combo") == 0, "Turn start clears turn-scoped 'hand_combo' buff")
+	_assert(enm.get_buff_stacks("test_bleed") == 1, "Turn start decays 'test_bleed' from 2 -> 1 and clears 'combo'")
+	_assert(enm.get_buff_stacks("combo") == 0, "Turn start clears turn-scoped 'combo' buff")
+
+	# Test Unified Turn-End Reset for Player and Enemy
+	plr.reset_stats_at_end_of_turn()
+	plr.add_buff("combo", 4)
+	_assert(plr.combo == 4, "Player has 4 combo stacks")
+	plr.reset_stats_at_end_of_turn()
+	_assert(plr.combo == 0 and not plr.has_buff("combo"), "Player combo resets to 0 on turn end")
+
+	enm.add_buff("combo", 3)
+	_assert(enm.combo == 3, "Enemy has 3 combo stacks")
+	enm.reset_stats_at_end_of_turn()
+	_assert(enm.combo == 0 and not enm.has_buff("combo"), "Enemy combo resets to 0 on turn end")
+
+	# Test Start Combo retention on Turn End
+	plr.start_combo = 1
+	plr.reset_stats_at_end_of_turn()
+	plr.add_buff("combo", 5) # Combo rises 1 + 5 = 6
+	_assert(plr.combo == 6, "Player accumulated 6 combo with start_combo=1")
+	plr.reset_stats_at_end_of_turn()
+	_assert(plr.combo == 1, "Player turn end resets to start_combo (1)")
+	plr.start_combo = 0
+	plr.reset_stats_at_end_of_turn()
+
+	# Test that moves exhaustion only triggers on positive -> zero transition, never during end-of-turn reset
+	var turn_finish_emitted: Array = [0]
+	var count_turn_finish := func(): turn_finish_emitted[0] += 1
+	plr.playerFinishedTurn.connect(count_turn_finish)
+	plr.moves_left = 2
+	plr.modify_stat("moves_left", -1) # moves_left = 1, should not emit
+	_assert(turn_finish_emitted[0] == 0, "Decreasing moves_left (2 -> 1) does not emit playerFinishedTurn")
+	plr.modify_stat("moves_left", -1) # moves_left = 0, should emit once
+	_assert(turn_finish_emitted[0] == 1, "Exhausting moves_left (1 -> 0) emits playerFinishedTurn exactly once")
+	plr.reset_stats_at_end_of_turn() # Should clean up without re-emitting
+	_assert(turn_finish_emitted[0] == 1, "reset_stats_at_end_of_turn() does not re-emit playerFinishedTurn (no infinite recursion)")
+	plr.modify_stat("moves_left", 0, false) # Setting 0 when already 0 should not re-emit
+	_assert(turn_finish_emitted[0] == 1, "Setting moves_left to 0 when already 0 does not re-emit playerFinishedTurn")
+	plr.playerFinishedTurn.disconnect(count_turn_finish)
 
 	# Test BuffContainer UI for both Player and Enemy
 	var buff_scene: PackedScene = load("res://scenes/ui/buff_container.tscn")
@@ -736,12 +825,12 @@ func _test_unified_buffs_and_debuffs() -> void:
 	_assert(plr_buff_ui.get_active_slot_count() == 0, "BuffContainer shows 0 active slots when entity has no buffs")
 
 	plr.set_buff("dodge", 1)
-	plr.set_buff("hand_combo", 5)
+	plr.set_buff("combo", 5)
 	_assert(plr_buff_ui.get_active_slot_count() == 2, "BuffContainer reactively shows 2 active slots for Dodge + Combo")
 	_assert(plr_buff_ui.get_slot_buff_id(0) == "dodge", "Slot 0 displays 'dodge'")
 	var slot0_lbl: Label = plr_buff_ui.get_slot_node(0).get_node("StackLabel") as Label
 	_assert(slot0_lbl.visible == false, "Single-stack Dodge hides stack number badge")
-	_assert(plr_buff_ui.get_slot_buff_id(1) == "hand_combo" and plr_buff_ui.get_slot_stacks(1) == 5, "Slot 1 displays 'hand_combo' with 5 stacks")
+	_assert(plr_buff_ui.get_slot_buff_id(1) == "combo" and plr_buff_ui.get_slot_stacks(1) == 5, "Slot 1 displays 'combo' with 5 stacks")
 	var slot1_lbl: Label = plr_buff_ui.get_slot_node(1).get_node("StackLabel") as Label
 	_assert(slot1_lbl.visible == true and slot1_lbl.text == "5", "Combo slot displays stack count '5'")
 
@@ -773,3 +862,83 @@ func _test_unified_buffs_and_debuffs() -> void:
 
 	plr_buff_ui.queue_free()
 	enm_buff_ui.queue_free()
+
+	# Test Magic Armor capping at max_health
+	plr.max_health = 20.0
+	plr.cur_mage_armor = 0.0
+	plr.modify_stat("cur_mage_armor", 15.0)
+	_assert(plr.cur_mage_armor == 15.0, "Magic armor accumulates to 15 when below max_health (20)")
+	plr.modify_stat("cur_mage_armor", 10.0)
+	_assert(plr.cur_mage_armor == 20.0, "Magic armor caps at max_health (20) when receiving +10 at 15")
+	plr.modify_stat("cur_mage_armor", 50.0)
+	_assert(plr.cur_mage_armor == 20.0, "Magic armor remains capped at max_health (20) even with large bonus")
+	# Clamping when max_health decreases
+	plr.max_health = 16.0
+	_assert(plr.cur_mage_armor == 16.0, "Magic armor clamps down to 16 when max_health drops to 16")
+	# Floor at 0
+	plr.modify_stat("cur_mage_armor", -30.0)
+	_assert(plr.cur_mage_armor == 0.0, "Magic armor cannot drop below 0")
+
+func _test_five_passive_slots_and_inventory_removal() -> void:
+	print("\n--- 10. Five Passive Slots & Inventory Bag Removal ---")
+	var plr := PlayerResource.new()
+	plr.reset_stats_at_beginning_of_game()
+
+	_assert(PlayerResource.MAX_PASSIVE_SLOTS == 5, "PlayerResource.MAX_PASSIVE_SLOTS is exactly 5")
+	_assert(plr.equipped_passives.is_empty(), "equipped_passives starts empty")
+	_assert(plr.can_equip_passive() == true, "can_equip_passive is true when slots are open")
+
+	# Equip 5 passives
+	for i in range(5):
+		var rew := Reward.new()
+		rew.name = "Passive_%d" % i
+		rew.might = 2.0
+		var ok: bool = plr.equip_passive(rew)
+		_assert(ok == true, "Passive %d equipped successfully" % i)
+
+	_assert(plr.equipped_passives.size() == 5, "Player has exactly 5 passives equipped")
+	_assert(plr.can_equip_passive() == false, "can_equip_passive is false when 5/5 slots are full")
+	_assert(is_equal_approx(plr.might, 1.0 + 10.0), "5 passives grant +10 might (total 11.0)")
+
+	# Attempt to equip 6th passive without replace_index -> rejected
+	var rew_6 := Reward.new()
+	rew_6.name = "Passive_6"
+	rew_6.might = 5.0
+	var rejected: bool = plr.equip_passive(rew_6)
+	_assert(rejected == false, "6th passive is rejected without replace_index")
+	_assert(plr.equipped_passives.size() == 5, "Passives count remains 5 after rejected equip")
+
+	# Replace passive at slot index 2 with rew_6
+	var replaced: bool = plr.equip_passive(rew_6, 2)
+	_assert(replaced == true, "Replacing passive at index 2 succeeds")
+	_assert(plr.equipped_passives.size() == 5, "Passives count remains 5 after replacement")
+	_assert(plr.equipped_passives[2].name == "Passive_6", "Passive at slot 2 is now Passive_6")
+	# might: base 1.0 + 4*2.0 (8.0) + 1*5.0 (5.0) = 14.0
+	_assert(is_equal_approx(plr.might, 14.0), "Passive stats reconciled with zero drift: might is 14.0")
+
+	# Unequip passive at slot index 0
+	var unequipped = plr.unequip_passive(0)
+	_assert(unequipped != null and unequipped.name == "Passive_0", "Unequipped Passive_0 from index 0")
+	_assert(plr.equipped_passives.size() == 4, "Passives count is now 4")
+	_assert(plr.can_equip_passive() == true, "can_equip_passive is true again after unequipping")
+	# might: 14.0 - 2.0 = 12.0
+	_assert(is_equal_approx(plr.might, 12.0), "Passive stats correctly revoked after unequipping: might is 12.0")
+
+	# Test replacing equipment on full color line (no inventory bag)
+	var red_track: ColorLoadoutTrack = plr.get_track_for_color(Global.TileColor.RED)
+	red_track.max_slots = 5
+	red_track.equipped_modifiers.clear()
+	for i in range(5):
+		var eq := _make_test_equipment("OldMod_%d" % i, 10.0, 1)
+		eq.allowed_colors = [Global.TileColor.RED]
+		red_track.equipped_modifiers.append(eq)
+
+	_assert(red_track.get_used_slots() == 5, "Red track is full (5/5 slots)")
+	_assert(plr.modifier_inventory.is_empty(), "modifier_inventory bag is empty")
+
+	var new_mod := _make_test_equipment("NewBlade", 25.0, 1)
+	new_mod.allowed_colors = [Global.TileColor.RED]
+	var rep_ok: bool = plr.replace_modifier_on_track(red_track, 1, new_mod)
+	_assert(rep_ok == true, "replace_modifier_on_track successfully replaced slot 1")
+	_assert(red_track.equipped_modifiers[1].piece_name == "NewBlade", "Slot 1 now holds NewBlade")
+	_assert(plr.modifier_inventory.is_empty(), "Displaced item was discarded; modifier_inventory remains empty")

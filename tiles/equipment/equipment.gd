@@ -1,4 +1,3 @@
-@tool
 extends Resource
 class_name Equipment
 
@@ -250,7 +249,7 @@ func can_trigger(ctx: MatchContext) -> bool:
 	var grid_h: int = 9
 	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("grd_height" in Global):
 		grid_h = Global.grd_height
-	var half_row: int = int(grid_h / 2)
+	var half_row: int = grid_h >> 1
 
 	match trigger_condition:
 		TriggerCondition.ALWAYS:
@@ -273,6 +272,13 @@ func can_trigger(ctx: MatchContext) -> bool:
 			return not ctx.hazards_cleared.is_empty()
 	return true
 
+## Returns how many triggers from the trigger budget this equipment consumes to activate.
+## Normal skills take 1 trigger. 4+ match skills (e.g. Rush) take 2 triggers to trigger once.
+func get_trigger_cost() -> int:
+	if trigger_condition == TriggerCondition.MATCH_4_PLUS:
+		return 2
+	return 1
+
 func get_context_potency_multiplier(ctx: MatchContext) -> float:
 	if ctx == null:
 		return 1.0
@@ -280,7 +286,7 @@ func get_context_potency_multiplier(ctx: MatchContext) -> float:
 	var grid_h: int = 9
 	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("grd_height" in Global):
 		grid_h = Global.grd_height
-	if trigger_condition == TriggerCondition.BOTTOM_HALF_GRID and ctx.lowest_row >= int(grid_h / 2):
+	if trigger_condition == TriggerCondition.BOTTOM_HALF_GRID and ctx.lowest_row >= (grid_h >> 1):
 		mult *= 1.5
 	return mult
 
@@ -491,7 +497,7 @@ func activate(context = null) -> void:
 	# 1. Pre-Effect Hand Combo
 	var eff_combo_before: int = get_effective_combo_points_before()
 	if eff_combo_before != 0:
-		cur_char.modify_stat("hand_combo", eff_combo_before)
+		cur_char.modify_stat("combo", eff_combo_before)
 
 	# 2. Attack & Damage Effect
 	var eff_dmg: float = get_effective_base_damage()
@@ -506,7 +512,7 @@ func activate(context = null) -> void:
 			for i in loops:
 				var dmg_val: float = eff_dmg + stat_bonus + flat_upg
 				if total_combo_mult > 0.0:
-					dmg_val += cur_char.hand_combo * total_combo_mult
+					dmg_val += cur_char.combo * total_combo_mult
 				dmg_val = max(1.0, roundf(dmg_val * mult * crit_factor))
 				cur_enemy.take_damage(dmg_val, false, int(damage_type), cur_char)
 				if ctx != null and ctx.lifesteal_bonus > 0.0:
@@ -518,7 +524,7 @@ func activate(context = null) -> void:
 	if eff_arm > 0.0:
 		var arm_val: float = eff_arm + float(upgrade) + _get_stat_value(cur_char, armor_stat_scaling)
 		if multiply_armor_by_combo:
-			arm_val *= max(1, cur_char.hand_combo)
+			arm_val *= max(1, cur_char.combo)
 		arm_val = roundf(arm_val * mult * crit_factor)
 		cur_char.modify_stat("cur_armor", arm_val)
 
@@ -527,7 +533,7 @@ func activate(context = null) -> void:
 	if eff_m_arm > 0.0:
 		var m_arm_val: float = eff_m_arm + float(upgrade) + _get_stat_value(cur_char, magic_armor_stat_scaling)
 		if multiply_magic_armor_by_combo:
-			m_arm_val *= max(1, cur_char.hand_combo)
+			m_arm_val *= max(1, cur_char.combo)
 		m_arm_val = roundf(m_arm_val * mult * crit_factor)
 		cur_char.modify_stat("cur_mage_armor", m_arm_val)
 
@@ -545,7 +551,7 @@ func activate(context = null) -> void:
 		cur_char.modify_stat("moves_left", total_moves * 2 if is_crit else total_moves)
 
 	if grant_dodge:
-		cur_char.modify_stat("dodging", true, false)
+		cur_char.modify_stat("dodge", true, false)
 
 	var eff_gold: int = get_effective_gold_to_give()
 	if eff_gold > 0 and "gold" in cur_char:
@@ -554,9 +560,9 @@ func activate(context = null) -> void:
 	# 7. Post-Effect Hand Combo / Finisher Consumption
 	var eff_combo_after: int = get_effective_combo_points_after()
 	if consume_all_combo:
-		cur_char.modify_stat("hand_combo", 0, false)
+		cur_char.modify_stat("combo", 0, false)
 	elif eff_combo_after != 0:
-		cur_char.modify_stat("hand_combo", eff_combo_after)
+		cur_char.modify_stat("combo", eff_combo_after)
 
 	_on_custom_activate(cur_char, cur_enemy, ctx)
 
@@ -699,18 +705,20 @@ func is_colorless() -> bool:
 func is_allowed_on_color(target_color: int) -> bool:
 	if is_colorless():
 		return true
-	var target_base: int = int(target_color / 100) * 100
-	if bound_color > 0 and int(bound_color / 100) * 100 == target_base:
+	var target_base: int = target_color - (target_color % 100) if target_color > 0 else 0
+	if bound_color > 0 and (bound_color - (bound_color % 100)) == target_base:
 		return true
 	for c in allowed_colors:
-		if int(c) == 0 or int(int(c) / 100) * 100 == target_base:
+		var c_int: int = int(c)
+		if c_int == 0 or (c_int - (c_int % 100)) == target_base:
 			return true
 	var tier = get_active_tier()
 	if tier != null:
 		if tier.allow_all_colors:
 			return true
 		for c in tier.extra_allowed_colors:
-			if int(c) == 0 or int(int(c) / 100) * 100 == target_base:
+			var c_int: int = int(c)
+			if c_int == 0 or (c_int - (c_int % 100)) == target_base:
 				return true
 	return false
 

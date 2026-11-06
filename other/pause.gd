@@ -31,14 +31,13 @@ const BACKPACK_SHEET = preload("res://assets/level_ui/icons/backpack.png")
 
 var stats_open: bool = false
 var selected_inspector_mod: Equipment = null
-var selected_source_type: String = "" # "bag" or "track"
+var selected_source_type: String = "" # "track" or "passive"
 var selected_track: ColorLoadoutTrack = null
 var selected_index: int = -1
 
 var inspector_label: RichTextLabel = null
 var inspector_actions_box: HFlowContainer = null
 var active_track_rows: Array[ColorTrackRow] = []
-var active_bag_grid: InventoryBagGrid = null
 var inv_btn: Button = null
 
 @onready var pause_overlay: PanelContainer = $pause_overlay
@@ -49,7 +48,6 @@ var gold_on_label: int
 func _ready() -> void:
 	grd = _find_grd()
 	pause_overlay.visible = false
-	_create_compact_inventory_button()
 
 	var mm_btn: Button = pause_overlay.find_child("back_to_mm", true, false) as Button
 	if mm_btn != null and not mm_btn.pressed.is_connected(_on_back_to_mm_pressed):
@@ -212,7 +210,6 @@ func _populate_loadout_view() -> void:
 	for child in deck_container.get_children():
 		child.queue_free()
 	active_track_rows.clear()
-	active_bag_grid = null
 
 	if Global.cur_char == null:
 		return
@@ -276,19 +273,96 @@ func _populate_loadout_view() -> void:
 	inspector_actions_box.add_theme_constant_override("v_separation", 4)
 	insp_vbox.add_child(inspector_actions_box)
 
-	var bag_header := Label.new()
-	bag_header.text = "Equipment Bag (%d) — Tap to Quick-Equip or Drag onto a Track" % Global.cur_char.modifier_inventory.size()
-	bag_header.add_theme_font_size_override("font_size", 14)
-	bag_header.add_theme_color_override("font_color", Color(0.88, 0.84, 0.72))
-	wrapper.add_child(bag_header)
+	# Active Passives (5 Slots) Section
+	var passives_list: Array[Resource] = Global.cur_char.get_equipped_passives() if Global.cur_char != null else []
+	var passives_header := Label.new()
+	passives_header.text = "Active Passives (%d/5) — Permanent Character Perks" % passives_list.size()
+	passives_header.add_theme_font_size_override("font_size", 14)
+	passives_header.add_theme_color_override("font_color", Color(0.88, 0.84, 0.72))
+	wrapper.add_child(passives_header)
 
-	var bag_grid := InventoryBagGrid.new()
-	bag_grid.custom_minimum_size = Vector2(460, 230)
-	wrapper.add_child(bag_grid)
-	bag_grid.populate_bag(Global.cur_char.modifier_inventory, can_edit)
-	bag_grid.modifier_dropped_on_bag_grid.connect(_on_modifier_dropped_on_bag)
-	bag_grid.bag_tile_clicked.connect(_on_bag_tile_clicked)
-	active_bag_grid = bag_grid
+	var passives_scroll := ScrollContainer.new()
+	passives_scroll.custom_minimum_size = Vector2(460, 115)
+	passives_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	passives_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	wrapper.add_child(passives_scroll)
+
+	var passives_hbox := HBoxContainer.new()
+	passives_hbox.add_theme_constant_override("separation", 8)
+	passives_scroll.add_child(passives_hbox)
+
+	for i in range(PlayerResource.MAX_PASSIVE_SLOTS):
+		var p_card := PanelContainer.new()
+		p_card.custom_minimum_size = Vector2(86, 105)
+		p_card.mouse_filter = Control.MOUSE_FILTER_STOP
+
+		var is_selected: bool = (selected_source_type == "passive" and selected_index == i)
+		var p_sb := StyleBoxFlat.new()
+		p_sb.bg_color = Color(0.18, 0.14, 0.22, 0.95) if is_selected else Color(0.11, 0.08, 0.14, 0.9)
+		p_sb.border_width_left = 1
+		p_sb.border_width_top = 1
+		p_sb.border_width_right = 1
+		p_sb.border_width_bottom = 1
+		p_sb.border_color = Color(0.95, 0.82, 0.35) if is_selected else Color(0.48, 0.42, 0.54)
+		p_sb.corner_radius_top_left = 4
+		p_sb.corner_radius_top_right = 4
+		p_sb.corner_radius_bottom_left = 4
+		p_sb.corner_radius_bottom_right = 4
+		p_sb.content_margin_left = 4
+		p_sb.content_margin_right = 4
+		p_sb.content_margin_top = 4
+		p_sb.content_margin_bottom = 4
+		p_card.add_theme_stylebox_override("panel", p_sb)
+
+		var p_vbox := VBoxContainer.new()
+		p_vbox.add_theme_constant_override("separation", 3)
+		p_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		p_card.add_child(p_vbox)
+
+		if i < passives_list.size() and passives_list[i] != null:
+			var item: Resource = passives_list[i]
+			var p_icon := TextureRect.new()
+			p_icon.custom_minimum_size = Vector2(32, 32)
+			p_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			p_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			p_icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			if "icon" in item and item.icon != null:
+				p_icon.texture = item.icon
+			p_vbox.add_child(p_icon)
+
+			var p_lbl := Label.new()
+			p_lbl.text = item.name if ("name" in item and item.name != "") else "Passive %d" % (i + 1)
+			p_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			p_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			p_lbl.add_theme_font_size_override("font_size", 9)
+			p_lbl.add_theme_color_override("font_color", Color(0.95, 0.88, 0.75))
+			p_vbox.add_child(p_lbl)
+
+			var p_desc_str: String = (item as Reward).description if (item is Reward) else ""
+			p_lbl.tooltip_text = p_desc_str
+			var p_desc_lbl := Label.new()
+			p_desc_lbl.text = p_desc_str
+			p_desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			p_desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			p_desc_lbl.add_theme_font_size_override("font_size", 8)
+			p_desc_lbl.add_theme_color_override("font_color", Color(0.68, 0.65, 0.62))
+			p_vbox.add_child(p_desc_lbl)
+
+			var slot_idx: int = i
+			var cur_item: Resource = item
+			p_card.gui_input.connect(func(ev: InputEvent):
+				if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+					_on_passive_slot_clicked(cur_item, slot_idx)
+			)
+		else:
+			var empty_lbl := Label.new()
+			empty_lbl.text = "Empty\nPassive Slot"
+			empty_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			empty_lbl.add_theme_font_size_override("font_size", 10)
+			empty_lbl.add_theme_color_override("font_color", Color(0.48, 0.44, 0.52))
+			p_vbox.add_child(empty_lbl)
+
+		passives_hbox.add_child(p_card)
 
 	_sync_selection_highlights()
 	_update_inspector_banner(selected_inspector_mod)
@@ -297,8 +371,6 @@ func _sync_selection_highlights() -> void:
 	for row in active_track_rows:
 		if is_instance_valid(row):
 			row.highlight_selected_mod(selected_inspector_mod if selected_source_type == "track" else null)
-	if is_instance_valid(active_bag_grid):
-		active_bag_grid.highlight_selected_mod(selected_inspector_mod if selected_source_type == "bag" else null)
 
 func _update_inspector_banner(mod: Equipment) -> void:
 	if inspector_label == null:
@@ -308,7 +380,7 @@ func _update_inspector_banner(mod: Equipment) -> void:
 			child.queue_free()
 
 	if mod == null:
-		inspector_label.text = "[color=#9b95a6]Tap any equipment tile in your Tracks or Bag to inspect details, reorder chain position, or quick-equip/unequip.[/color]"
+		inspector_label.text = "[color=#9b95a6]Tap any equipment tile in your Tracks or Passives to inspect details, reorder chain position, or discard/unequip.[/color]"
 		if inspector_actions_box != null:
 			inspector_actions_box.visible = false
 		return
@@ -354,20 +426,7 @@ func _update_inspector_banner(mod: Equipment) -> void:
 		return
 	inspector_actions_box.visible = true
 
-	if selected_source_type == "bag":
-		for c_id in Global.cur_char.active_color_pool:
-			var track: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
-			if track != null and track.is_color_compatible(mod):
-				var eq_btn := Button.new()
-				var used_s: int = track.get_used_slots()
-				var max_s: int = track.max_slots
-				var c_name: String = Global.get_color_name(c_id)
-				var fits: bool = track.can_equip(mod)
-				eq_btn.text = ("+Equip %s (%d/%d)" % [c_name, used_s, max_s]) if fits else ("Swap %s (%d/%d)" % [c_name, used_s, max_s])
-				_style_action_button(eq_btn, 12)
-				eq_btn.pressed.connect(_on_quick_equip_from_bag.bind(mod, selected_index, track))
-				inspector_actions_box.add_child(eq_btn)
-	elif selected_source_type == "track" and selected_track != null:
+	if selected_source_type == "track" and selected_track != null:
 		var count: int = selected_track.get_filled_entry_count()
 		if count > 1:
 			var left_btn := Button.new()
@@ -384,46 +443,68 @@ func _update_inspector_banner(mod: Equipment) -> void:
 			right_btn.pressed.connect(_on_reorder_track_item.bind(selected_track, selected_index, selected_index + 1))
 			inspector_actions_box.add_child(right_btn)
 
-		var unequip_btn := Button.new()
-		unequip_btn.text = "Unequip to Bag"
-		_style_action_button(unequip_btn, 12)
-		unequip_btn.pressed.connect(_on_quick_unequip_from_track.bind(mod, selected_track, selected_index))
-		inspector_actions_box.add_child(unequip_btn)
+		var discard_btn := Button.new()
+		discard_btn.text = "Discard Equipment"
+		_style_action_button(discard_btn, 12)
+		discard_btn.add_theme_color_override("font_color", Color(0.95, 0.45, 0.45))
+		discard_btn.pressed.connect(_on_discard_track_item.bind(selected_track, selected_index))
+		inspector_actions_box.add_child(discard_btn)
 
-func _on_quick_equip_from_bag(mod: Equipment, bag_idx: int, target_track: ColorLoadoutTrack) -> void:
-	if Global.cur_char == null or mod == null or target_track == null:
+func _on_discard_track_item(src_track: ColorLoadoutTrack, src_idx: int) -> void:
+	if Global.cur_char == null or src_track == null:
 		return
-	var drag_data := {
-		"type": "modifier_drag",
-		"source": "bag",
-		"modifier": mod,
-		"bag_index": bag_idx
-	}
-	if Global.cur_char.handle_modifier_drop_on_track(drag_data, target_track, -1):
-		selected_source_type = "track"
-		selected_track = target_track
-		selected_index = target_track.equipped_modifiers.find(mod)
+	if src_idx >= 0 and src_idx < src_track.equipped_modifiers.size():
+		src_track.unequip_at(src_idx)
+		src_track.clamp_cursor()
+		Global.cur_char.recalculate_equipment_passives()
+		Global.cur_char.loadoutChanged.emit()
+	selected_inspector_mod = null
+	selected_source_type = ""
+	selected_track = null
+	selected_index = -1
 	if stats != null:
 		stats.expand()
 	_populate_loadout_view()
 
-func _on_quick_unequip_from_track(mod: Equipment, src_track: ColorLoadoutTrack, src_idx: int) -> void:
-	if Global.cur_char == null or mod == null or src_track == null:
+func _on_passive_slot_clicked(item: Resource, slot_idx: int) -> void:
+	selected_source_type = "passive"
+	selected_track = null
+	selected_index = slot_idx
+	selected_inspector_mod = null
+	_sync_selection_highlights()
+
+	if inspector_label == null:
 		return
-	var drag_data := {
-		"type": "modifier_drag",
-		"source": "track",
-		"modifier": mod,
-		"source_track": src_track,
-		"source_index": src_idx
-	}
-	if Global.cur_char.handle_modifier_drop_on_bag(drag_data, -1):
-		selected_source_type = "bag"
-		selected_track = null
-		selected_index = Global.cur_char.modifier_inventory.find(mod)
-	if stats != null:
-		stats.expand()
-	_populate_loadout_view()
+	if inspector_actions_box != null:
+		for child in inspector_actions_box.get_children():
+			child.queue_free()
+
+	if item == null:
+		inspector_label.text = "[color=#9b95a6]Passive Slot %d is empty. Earn passives and talent perks from post-combat drafts.[/color]" % (slot_idx + 1)
+		if inspector_actions_box != null:
+			inspector_actions_box.visible = false
+		return
+
+	var p_name: String = item.name if ("name" in item and item.name != "") else "Passive Perk"
+	var p_desc: String = item.description if (item is Reward and item.description != "") else ""
+	inspector_label.text = "[color=#fad65a][b]%s[/b][/color] [color=#b2b8a3](Passive Slot %d/5)[/color]\n%s" % [p_name, slot_idx + 1, p_desc]
+
+	if inspector_actions_box != null:
+		inspector_actions_box.visible = true
+		var unequip_p_btn := Button.new()
+		unequip_p_btn.text = "Unequip / Revoke Passive"
+		_style_action_button(unequip_p_btn, 12)
+		unequip_p_btn.add_theme_color_override("font_color", Color(0.95, 0.45, 0.45))
+		unequip_p_btn.pressed.connect(func():
+			if Global.cur_char != null:
+				Global.cur_char.unequip_passive(slot_idx)
+			selected_source_type = ""
+			selected_index = -1
+			if stats != null:
+				stats.expand()
+			_populate_loadout_view()
+		)
+		inspector_actions_box.add_child(unequip_p_btn)
 
 func _on_reorder_track_item(track: ColorLoadoutTrack, from_idx: int, to_idx: int) -> void:
 	if Global.cur_char == null or track == null:
@@ -444,14 +525,6 @@ func _on_reorder_track_item(track: ColorLoadoutTrack, from_idx: int, to_idx: int
 		selected_index = track.equipped_modifiers.find(mod)
 	_populate_loadout_view()
 
-func _on_bag_tile_clicked(mod: Equipment, bag_idx: int) -> void:
-	selected_inspector_mod = mod
-	selected_source_type = "bag"
-	selected_track = null
-	selected_index = bag_idx
-	_sync_selection_highlights()
-	_update_inspector_banner(mod)
-
 func _on_track_slot_selected(mod: Equipment, track: ColorLoadoutTrack, mod_idx: int) -> void:
 	selected_inspector_mod = mod
 	selected_source_type = "track"
@@ -467,17 +540,6 @@ func _on_modifier_dropped_on_track_row(drag_data: Dictionary, target_track: Colo
 		selected_source_type = "track"
 		selected_track = target_track
 		selected_index = target_track.equipped_modifiers.find(selected_inspector_mod)
-		if stats != null:
-			stats.expand()
-		_populate_loadout_view()
-
-func _on_modifier_dropped_on_bag(drag_data: Dictionary, target_bag_index: int) -> void:
-	if Global.cur_char != null:
-		selected_inspector_mod = drag_data.get("modifier", null)
-		Global.cur_char.handle_modifier_drop_on_bag(drag_data, target_bag_index)
-		selected_source_type = "bag"
-		selected_track = null
-		selected_index = Global.cur_char.modifier_inventory.find(selected_inspector_mod)
 		if stats != null:
 			stats.expand()
 		_populate_loadout_view()
