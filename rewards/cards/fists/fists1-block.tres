@@ -1,18 +1,19 @@
-[gd_resource type="Resource" script_class="Reward" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="Reward" format=3 uid="uid://1g8k2n3dctqp"]
 
-[ext_resource type="Script" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="2_7ecs5"]
 [ext_resource type="Texture2D" uid="uid://cgtfwub25v2xw" path="res://assets/blue_0_sq.png" id="2_base"]
 [ext_resource type="Texture2D" uid="uid://c63xr5f160uv2" path="res://assets/_blue_icons/blue_icon_6.png" id="3_icon"]
 [ext_resource type="Resource" path="res://tiles/equipment/block.tres" id="4_eq"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_ruano"]
 
 [resource]
 script = ExtResource("1_script")
+family = "fists"
 name = "Block"
 description = "Gain 2 Block"
-base = ExtResource("2_base")
 icon = ExtResource("3_icon")
+base = ExtResource("2_base")
 rarity = 1
-category = 0
-equipment_to_grant = Array[Resource]([ExtResource("4_eq"), ExtResource("4_eq")])
 unlock_tags = Array[String](["flg_rew_fists_lvl_1_5"])
-remove_from_pool_when_picked = true
+equipment_to_grant = Array[ExtResource("2_7ecs5")]([ExtResource("4_eq"), ExtResource("4_eq")])

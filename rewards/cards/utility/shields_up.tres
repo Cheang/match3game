@@ -7,11 +7,12 @@
 
 [resource]
 script = ExtResource("1_script")
+reward_type = 0
+family = "shields"
 name = "Shields up!"
 description = "Adds 1 Round Shield"
 base = ExtResource("2_base")
 icon = ExtResource("3_icon")
 rarity = 0
-category = 0
 equipment_to_grant = Array[Resource]([ExtResource("4_eq")])
 remove_from_pool_when_picked = false

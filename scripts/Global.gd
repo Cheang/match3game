@@ -24,6 +24,7 @@ const EQUIPMENT_FAMILY_COLORS: Dictionary = {
 	"shields": TileColor.BLUE,
 	"mobility": TileColor.GREEN,
 	"healing": TileColor.PURPLE,
+	"beast": TileColor.GREEN,
 }
 
 ## Returns the default preferred color for a given equipment family name.
@@ -31,10 +32,13 @@ func get_family_default_color(family_name: String) -> int:
 	return EQUIPMENT_FAMILY_COLORS.get(family_name.to_lower(), 0)
 
 var def_char: PlayerResource = null
+var def_enemy: EnemyResource = null
 
 func _ready():
 	if ResourceLoader.exists("res://players/warrior/warrior.tres"):
 		def_char = load("res://players/warrior/warrior.tres")
+	if ResourceLoader.exists("res://enemies/minion/wild_boar/wild_boar_1.tres"):
+		def_enemy = load("res://enemies/minion/wild_boar/wild_boar_1.tres")
 	if setting_res == null:
 		setting_res = SettingsResource.new()
 
@@ -172,20 +176,31 @@ func set_up_player():
 		cur_char = selected_char.duplicate(true)
 		cur_char.reset_stats_at_beginning_of_game()
 		reset_variable()
+	if cur_enemy == null:
+		set_up_enemy()
 
 func select_character(character: PlayerResource):
 	selected_char = character
 
 #Enemy_functions ---------------------------------------------------------------
-func set_up_enemy(specific_enemy: EnemyResource):
-	if !is_null(specific_enemy):
-		cur_enemy = specific_enemy.duplicate()
+func set_up_enemy(specific_enemy: EnemyResource = null):
+	var enemy_to_set: EnemyResource = specific_enemy
+	if enemy_to_set == null:
+		if def_enemy == null and ResourceLoader.exists("res://enemies/minion/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://enemies/minion/wild_boar/wild_boar_1.tres")
+		enemy_to_set = def_enemy
+	if enemy_to_set != null:
+		cur_enemy = enemy_to_set.duplicate()
 		cur_enemy.cur_health = cur_enemy.max_health
 		cur_enemy.reset_stats_at_beginning_of_fight()
 		prepare_post_combat_rewards(cur_enemy)
 
 func prepare_post_combat_rewards(defeated_enemy: EnemyResource = null) -> void:
 	var enemy_res: EnemyResource = defeated_enemy if defeated_enemy != null else cur_enemy
+	if enemy_res == null:
+		if def_enemy == null and ResourceLoader.exists("res://enemies/minion/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://enemies/minion/wild_boar/wild_boar_1.tres")
+		enemy_res = def_enemy
 	var monster_loot: Array[Resource] = []
 	if enemy_res != null and enemy_res.loot_table != null:
 		for item in enemy_res.loot_table:
@@ -293,11 +308,8 @@ func save():
 				save_file.saved_equipped_passives.append(p_res.duplicate(true))
 		save_file.saved_active_passive_stat_contributions = cur_char._active_passive_stat_contributions.duplicate(true)
 		save_file.saved_active_equipment_stat_contributions = cur_char._active_equipment_stat_contributions.duplicate(true)
-		if cur_char.active_reward_tree != null:
-			save_file.saved_unlocked_tags = cur_char.active_reward_tree.unlocked_tags.duplicate(true)
-			save_file.saved_activated_node_ids = cur_char.active_reward_tree.activated_node_ids.duplicate(true)
-			save_file.saved_active_combat_pool = cur_char.active_reward_tree.active_combat_pool.duplicate()
-			save_file.saved_active_passive_pool = cur_char.active_reward_tree.active_passive_pool.duplicate()
+		save_file.saved_unlocked_tags = cur_char.unlocked_tags.duplicate(true)
+		save_file.saved_active_combat_pool = cur_char.active_class_pool.duplicate()
 	if selected_char:
 		save_file.selected_char = selected_char.duplicate(true)
 	save_file.settings = setting_res
@@ -379,18 +391,12 @@ func load_data():
 				cur_char._active_passive_stat_contributions = save_file.saved_active_passive_stat_contributions.duplicate(true)
 				cur_char.recalculate_passive_bonuses()
 			cur_char._active_equipment_stat_contributions = save_file.saved_active_equipment_stat_contributions.duplicate(true)
-			if cur_char.reward_tree != null and cur_char.active_reward_tree == null:
-				cur_char.active_reward_tree = cur_char.reward_tree.duplicate(true)
-				cur_char.active_reward_tree.initialize_run(cur_char)
-			if cur_char.active_reward_tree != null:
-				if not save_file.saved_unlocked_tags.is_empty():
-					cur_char.active_reward_tree.unlocked_tags = save_file.saved_unlocked_tags.duplicate(true)
-				if not save_file.saved_activated_node_ids.is_empty():
-					cur_char.active_reward_tree.activated_node_ids = save_file.saved_activated_node_ids.duplicate(true)
-				if not save_file.saved_active_combat_pool.is_empty():
-					cur_char.active_reward_tree.active_combat_pool = save_file.saved_active_combat_pool.duplicate()
-				if not save_file.saved_active_passive_pool.is_empty():
-					cur_char.active_reward_tree.active_passive_pool = save_file.saved_active_passive_pool.duplicate()
+			if cur_char.active_class_pool.is_empty() and not cur_char.class_rewards.is_empty():
+				cur_char.initialize_class_pool()
+			if not save_file.saved_unlocked_tags.is_empty():
+				cur_char.unlocked_tags = save_file.saved_unlocked_tags.duplicate(true)
+			if not save_file.saved_active_combat_pool.is_empty():
+				cur_char.active_class_pool = save_file.saved_active_combat_pool.duplicate()
 			cur_char.recalculate_equipment_passives()
 			cur_scene = save_file.cur_scene
 			if save_file.cur_enemy:
@@ -435,6 +441,10 @@ func load_data():
 		if def_char == null and ResourceLoader.exists("res://players/warrior/warrior.tres"):
 			def_char = load("res://players/warrior/warrior.tres")
 		selected_char = def_char
+		if def_enemy == null and ResourceLoader.exists("res://enemies/minion/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://enemies/minion/wild_boar/wild_boar_1.tres")
+		if cur_enemy == null:
+			set_up_enemy()
 
 func get_tiles_from_player() -> Array:
 	return []

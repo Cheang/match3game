@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=6 format=3 uid="uid://d2nis0gpq35ns"]
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://d2nis0gpq35ns"]
 
 [ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://enemies/attacks/bases/enemy_attack.gd" id="1_cfbcj"]
 [ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://enemies/attacks/normal_attack.tres" id="2_luuok"]
@@ -7,36 +7,25 @@
 [ext_resource type="PackedScene" uid="uid://bcmfqa5aviot1" path="res://enemies/minion/wild_boar/wild_boar.tscn" id="4_u6v4h"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="5_eq_scr"]
 [ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="6_rush"]
-[ext_resource type="Resource" path="res://tiles/equipment/short_sword.tres" id="7_ssword"]
+[ext_resource type="Resource" uid="uid://db6ss0wrwnl6f" path="res://rewards/enemies/wild_boar/boar_meat.tres" id="7_robod"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://tiles/equipment/short_sword.tres" id="7_ssword"]
+[ext_resource type="Resource" uid="uid://ccvtfa00ywplh" path="res://rewards/enemies/wild_boar/boar_hide.tres" id="8_qe126"]
 [ext_resource type="Resource" path="res://tiles/equipment/round_shield.tres" id="8_rshield"]
 [ext_resource type="Resource" path="res://tiles/equipment/punch.tres" id="9_punch"]
-[ext_resource type="Resource" path="res://rewards/cards/body/body0_strong_body_1.tres" id="10_body1"]
 
 [resource]
 script = ExtResource("2_owds6")
 name = "Gligan"
-type = 0
 behavior_category = 1
 explicit_track_colors = Array[int]([100, 200])
 red_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("6_rush"), ExtResource("7_ssword")])
 blue_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("8_rshield")])
 colorless_fallback_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("9_punch")])
-loot_table = Array[Resource]([ExtResource("6_rush"), ExtResource("9_punch"), ExtResource("10_body1")])
+loot_table = Array[Resource]([ExtResource("7_robod"), ExtResource("8_qe126")])
+damage = 2.0
+attacks = Array[ExtResource("1_cfbcj")]([ExtResource("2_luuok"), ExtResource("2_luuok")])
+empty_spaces = Array[Vector2]([Vector2(0, 0), Vector2(0, 8), Vector2(7, 0), Vector2(7, 8)])
+rock_spaces = Array[Vector2]([Vector2(1, 1), Vector2(1, 7), Vector2(6, 1), Vector2(6, 7)])
+sprite = ExtResource("4_u6v4h")
 max_health = 25.0
 cur_health = 0.0
-physical_dmg_reduction = 0.0
-damage = 2.0
-has_phases = false
-phase = 1
-attacks = Array[ExtResource("1_cfbcj")]([ExtResource("2_luuok"), ExtResource("2_luuok")])
-attacks_p2 = Array[ExtResource("1_cfbcj")]([])
-attacks_p3 = Array[ExtResource("1_cfbcj")]([])
-attacks_p4 = Array[ExtResource("1_cfbcj")]([])
-speed = 1
-sprite = ExtResource("4_u6v4h")
-health_bar = ExtResource("2_oygvr")
-empty_spaces = Array[Vector2]([Vector2(0, 0), Vector2(0, 8), Vector2(7, 0), Vector2(7, 8)])
-ice_spaces = Array[Vector2]([])
-freeze_spaces = Array[Vector2]([])
-rock_spaces = Array[Vector2]([Vector2(1, 1), Vector2(1, 7), Vector2(6, 1), Vector2(6, 7)])
-flesh_spaces = Array[Vector2]([])

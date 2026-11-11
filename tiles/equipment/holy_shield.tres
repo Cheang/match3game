@@ -7,9 +7,10 @@
 script = ExtResource("1_script")
 piece_name = "Holy Shield"
 icon = ExtResource("2_icon")
-description = "Gives 6 + Spirit Magic Armor"
+description = "Gives 6 + 50% Spirit Mystic Armor"
 family = "shields"
 slot_cost = 2
 cooldown_turns = 2
 once_per_battle = true
-base_magic_armor = 6.0
+is_mystical = true
+base_mystic_armor = 6.0

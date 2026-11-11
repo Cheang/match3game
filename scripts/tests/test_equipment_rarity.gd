@@ -183,6 +183,10 @@ func test_player_passive_reconciliation() -> bool:
 	if player.crit_chance != 10:
 		printerr("FAIL: Player crit_chance expected 10, got: ", player.crit_chance)
 		return false
+	# +2 Might gives +2 Max Health: 20.0 -> 22.0
+	if player.max_health != 22.0:
+		printerr("FAIL: Player max_health expected 22.0 (+2 from Might), got: ", player.max_health)
+		return false
 
 	# 2. Add Epic Armor onto Blue track
 	var epic_shield := Equipment.new()
@@ -206,39 +210,31 @@ func test_player_passive_reconciliation() -> bool:
 	if player.grit != 3.0:
 		printerr("FAIL: Player grit expected 3.0, got: ", player.grit)
 		return false
-	if player.max_health != 25.0 or player.cur_health != 25.0:
-		printerr("FAIL: Player max_health expected 25.0, got: ", player.max_health)
+	# +3 Grit gives +6 HP, plus +5 direct HP buff = +11 HP: 22.0 -> 33.0
+	if player.max_health != 33.0 or player.cur_health != 33.0:
+		printerr("FAIL: Player max_health expected 33.0, got: ", player.max_health)
 		return false
 
-	# 3. Unequip Epic Shield to Bag
-	var unequip_shield := {
-		"type": "modifier_drag",
-		"source": "track",
-		"modifier": epic_shield,
-		"source_track": blue_track,
-		"source_index": 0
-	}
-	player.handle_modifier_drop_on_bag(unequip_shield)
+	# 3. Unequip Epic Shield
+	blue_track.unequip_modifier(epic_shield)
+	player.recalculate_equipment_passives()
 
 	if player.grit != 0.0:
 		printerr("FAIL: Player grit expected 0.0 after unequip, got: ", player.grit)
 		return false
-	if player.max_health != 20.0:
-		printerr("FAIL: Player max_health expected 20.0 after unequip, got: ", player.max_health)
+	if player.max_health != 22.0:
+		printerr("FAIL: Player max_health expected 22.0 after unequip, got: ", player.max_health)
 		return false
 
-	# 4. Unequip Rare Sword to Bag
-	var unequip_sword := {
-		"type": "modifier_drag",
-		"source": "track",
-		"modifier": rare_sword,
-		"source_track": red_track,
-		"source_index": 0
-	}
-	player.handle_modifier_drop_on_bag(unequip_sword)
+	# 4. Unequip Rare Sword
+	red_track.unequip_modifier(rare_sword)
+	player.recalculate_equipment_passives()
 
 	if player.might != 1.0 or player.crit_chance != 5:
 		printerr("FAIL: Player baseline stats drifted: might=", player.might, " crit=", player.crit_chance)
+		return false
+	if player.max_health != 20.0:
+		printerr("FAIL: Player max_health expected 20.0 after unequip, got: ", player.max_health)
 		return false
 
 	print("   PASSED: Passive stats applied on equip and revoked cleanly with zero drift.")

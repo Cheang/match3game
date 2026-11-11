@@ -4,6 +4,7 @@ class_name InventoryOverlayTrackRow
 ## Dedicated track row for the full Inventory / Loadout Overlay screen.
 ## Displays the ultimate slot (showing track color & icon) on the left,
 ## and 5 diamond basic ability slots (showing icons & track color) on the right.
+## Displays multislot connection graphics when an ability occupies multiple slots.
 ## Supports drag-and-drop to move, reorder, and swap abilities.
 
 signal slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
@@ -14,8 +15,8 @@ const TEX_BASIC_UNSELECTED = preload("res://assets/scene-assets/inventory-overla
 const TEX_ULT_SELECTED = preload("res://assets/scene-assets/inventory-overlay/ability-ult-selected.png")
 const TEX_ULT_UNSELECTED = preload("res://assets/scene-assets/inventory-overlay/ability-ult-unselected.png")
 const TEX_TRACK_EMPTY = preload("res://assets/scene-assets/inventory-overlay/ability-color-track-empty.png")
+const TEX_MULTISLOT_CONNECTION = preload("res://assets/scene-assets/inventory-overlay/ability-multislot-connection.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
-const OverlaySlotUI = preload("res://scripts/ui/overlay_slot_ui.gd")
 
 const TRACK_SIZE = Vector2(520, 71)
 const ULT_POS = Vector2(6, 6)
@@ -24,10 +25,17 @@ const DIAMOND_SIZE = Vector2(59, 59)
 const DIAMOND_X_POSITIONS = [103.0, 188.0, 273.0, 358.0, 443.0]
 const DIAMOND_Y_POS = 6.0
 
+const CONNECTION_SIZE = Vector2(40, 43)
+const CONNECTION_Y_POS = 14.0
+const CONNECTION_X_POSITIONS = [155.0, 240.0, 325.0, 410.0]
+
 var track_color: int = 100
 var track_ref: ColorLoadoutTrack = null
 
 var bg_rect: TextureRect
+var connection_rects: Array[TextureRect] = []
+var connection_shader_mats: Array[ShaderMaterial] = []
+
 var ult_slot: OverlaySlotUI
 var ult_frame: TextureRect
 var ult_icon: TextureRect
@@ -58,7 +66,33 @@ func _ensure_structure() -> void:
 			bg_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			add_child(bg_rect)
 
-	# 1. Ultimate Slot (Left: 83x59)
+	# 1. Multi-slot Connection Graphics (Between diamonds 0-1, 1-2, 2-3, 3-4)
+	# Added before slots so diamond borders render cleanly on top of connection edges
+	if connection_rects.is_empty():
+		for i in range(4):
+			var conn_name := "Connection_%d" % i
+			var conn_rect := get_node_or_null(conn_name) as TextureRect
+			if conn_rect == null:
+				conn_rect = TextureRect.new()
+				conn_rect.name = conn_name
+				conn_rect.texture = TEX_MULTISLOT_CONNECTION
+				conn_rect.position = Vector2(CONNECTION_X_POSITIONS[i], CONNECTION_Y_POS)
+				conn_rect.size = CONNECTION_SIZE
+				conn_rect.custom_minimum_size = CONNECTION_SIZE
+				conn_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				conn_rect.visible = false
+				add_child(conn_rect)
+
+			var s_mat := conn_rect.material as ShaderMaterial
+			if s_mat == null:
+				s_mat = ShaderMaterial.new()
+				s_mat.shader = PALETTE_SHADER
+				conn_rect.material = s_mat
+
+			connection_rects.append(conn_rect)
+			connection_shader_mats.append(s_mat)
+
+	# 2. Ultimate Slot (Left: 83x59)
 	if ult_slot == null:
 		ult_slot = get_node_or_null("UltimateSlot") as OverlaySlotUI
 		if ult_slot == null:
@@ -106,7 +140,7 @@ func _ensure_structure() -> void:
 			ult_slot.add_child(ult_icon)
 		ult_slot.icon_rect = ult_icon
 
-	# 2. Basic Diamond Slots (Right: 59x59 each at x = 103, 188, 273, 358, 443)
+	# 3. Basic Diamond Slots (Right: 59x59 each at x = 103, 188, 273, 358, 443)
 	if diamond_slots.is_empty():
 		for i in range(5):
 			var slot_name := "DiamondSlot_%d" % i
@@ -204,7 +238,10 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 			_apply_palette(s_mat, track_color)
 			frame.visible = true
 			frame.texture = TEX_BASIC_UNSELECTED
-			if mod.icon != null:
+
+			var slot_indices: Array[int] = track.get_slot_indices_for_modifier(mod) if track != null else []
+			var is_primary_slot: bool = slot_indices.is_empty() or slot_indices[0] == i
+			if mod.icon != null and is_primary_slot:
 				icon.texture = mod.icon
 				icon.visible = true
 			else:
@@ -215,8 +252,22 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 			frame.visible = false
 			icon.visible = false
 
+	# 3. Setup Multi-slot Connectors
+	for i in range(4):
+		var conn_rect: TextureRect = connection_rects[i]
+		var s_mat: ShaderMaterial = connection_shader_mats[i]
+
+		var left_mod: Equipment = track.get_modifier_at_slot_index(i) if track != null else null
+		var right_mod: Equipment = track.get_modifier_at_slot_index(i + 1) if track != null else null
+
+		if track_color > 0 and left_mod != null and left_mod == right_mod:
+			_apply_palette(s_mat, track_color)
+			conn_rect.visible = true
+		else:
+			conn_rect.visible = false
+
 ## Updates highlight selection state on slots.
-func update_selection(selected_mod: Equipment, is_ult: bool, slot_idx: int, is_same_track: bool) -> void:
+func update_selection(selected_mod: Equipment, is_ult: bool, _slot_idx: int, is_same_track: bool) -> void:
 	_ensure_structure()
 
 	# Ultimate slot selection

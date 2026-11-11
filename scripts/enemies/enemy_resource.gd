@@ -76,6 +76,8 @@ signal enemyDied
 
 func _init() -> void:
 	super._init()
+	base_energy = 1
+	agility = 1.0
 
 func _on_entity_died() -> void:
 	super._on_entity_died()

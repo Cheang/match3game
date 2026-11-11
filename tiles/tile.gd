@@ -179,7 +179,7 @@ func unmark():
 func will_gold():
 	if Global.cur_char == null or gold_border == null:
 		return
-	var chance: int = Global.cur_char.gold_chance
+	var chance: int = int(roundf(Global.cur_char.get_gold_find_chance())) if Global.cur_char.has_method("get_gold_find_chance") else int(Global.cur_char.gold_chance)
 	if chance <= 0:
 		gold_border.visible = false
 		is_gold = false

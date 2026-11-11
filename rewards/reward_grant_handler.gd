@@ -1,10 +1,111 @@
 extends RefCounted
 class_name RewardGrantHandler
 
-## Unified adapter for direct Equipment resources and non-equipment/bundle Reward resources.
+## Unified adapter and build-affinity selector for Reward resources and direct Equipment resources.
+
+## Bonus weight multiplier added per matching family item equipped on the player.
+const BUILD_AFFINITY_WEIGHT_PER_ITEM: float = 0.75
 
 static func is_supported_reward(res: Resource) -> bool:
-	return res is Equipment or res is Reward
+	return res is Reward or res is Equipment
+
+static func normalize_to_reward(res: Resource, rolled_rarity_name: String = "") -> Reward:
+	if res == null:
+		return null
+	if res is Reward:
+		var r := res as Reward
+		if rolled_rarity_name != "":
+			var dup_r: Reward = r.duplicate(true)
+			dup_r.rearity = rolled_rarity_name
+			dup_r.source_template = r.source_template if r.source_template != null else r
+			return dup_r
+		return r
+	if res is Equipment:
+		var eq := res as Equipment
+		var r_enum: int = int(rarity_name_to_equipment_enum(rolled_rarity_name)) if rolled_rarity_name != "" else int(eq.rarity)
+		return Reward.from_equipment(eq, r_enum)
+	return null
+
+static func get_reward_type(res: Resource) -> Reward.RewardType:
+	if res is Reward:
+		return (res as Reward).get_effective_reward_type()
+	if res is Equipment:
+		return Reward.RewardType.EQUIPMENT
+	return Reward.RewardType.EQUIPMENT
+
+static func get_family(res: Resource) -> String:
+	if res == null:
+		return ""
+	if res is Reward:
+		return (res as Reward).get_effective_family()
+	if res is Equipment:
+		return (res as Equipment).family.to_lower()
+	var fam = res.get("family")
+	return str(fam).to_lower() if fam != null else ""
+
+static func get_drop_weight(res: Resource) -> float:
+	if res == null:
+		return 1.0
+	if res is Reward:
+		return maxf(0.01, (res as Reward).drop_weight)
+	var w = res.get("drop_weight")
+	if w != null:
+		return maxf(0.01, float(w))
+	return 1.0
+
+static func can_be_offered_to(res: Resource, player: Object) -> bool:
+	if res == null:
+		return false
+	if player == null:
+		return true
+	if res is Reward:
+		var rew := res as Reward
+		if not rew.meets_requirements(player):
+			return false
+		if rew.is_already_unlocked(player):
+			return false
+	return true
+
+## Computes the selection weight for a candidate reward, optionally boosted by the player's build affinity.
+static func compute_selection_weight(res: Resource, player: Object = null, use_build_affinity: bool = false) -> float:
+	var base_w: float = get_drop_weight(res)
+	if not use_build_affinity or player == null:
+		return base_w
+	var fam: String = get_family(res)
+	if fam == "":
+		return base_w
+	var family_counts: Dictionary = {}
+	if player.has_method("get_build_family_counts"):
+		family_counts = player.get_build_family_counts()
+	var count: int = int(family_counts.get(fam, 0))
+	if count <= 0:
+		return base_w
+	return base_w * (1.0 + BUILD_AFFINITY_WEIGHT_PER_ITEM * float(count))
+
+## Picks a single candidate from `candidates` using weighted random selection.
+static func pick_weighted_candidate(candidates: Array[Resource], player: Object = null, use_build_affinity: bool = false) -> Resource:
+	if candidates.is_empty():
+		return null
+	if candidates.size() == 1:
+		return candidates[0]
+
+	var weights: Array[float] = []
+	var total_weight: float = 0.0
+	for cand in candidates:
+		var w: float = compute_selection_weight(cand, player, use_build_affinity)
+		weights.append(w)
+		total_weight += w
+
+	if total_weight <= 0.0:
+		return candidates[randi() % candidates.size()]
+
+	var roll: float = randf() * total_weight
+	var cumulative: float = 0.0
+	for i in range(candidates.size()):
+		cumulative += weights[i]
+		if roll <= cumulative:
+			return candidates[i]
+	return candidates[candidates.size() - 1]
 
 static func rarity_name_to_equipment_enum(r_name: String) -> Equipment.Rarity:
 	match r_name.to_upper():
@@ -31,16 +132,13 @@ static func get_rarity_name(res: Resource) -> String:
 static func get_display_name(res: Resource) -> String:
 	if res == null:
 		return ""
+	if res is Reward:
+		return (res as Reward).get_display_name()
 	if res is Equipment:
 		var eq := res as Equipment
 		if eq.piece_name != "":
 			return eq.piece_name
 		return eq.resource_path.get_file().get_basename()
-	if res is Reward:
-		var rew := res as Reward
-		if rew.name != "":
-			return rew.name
-		return rew.resource_path.get_file().get_basename()
 	var n = res.get("name")
 	if n != null and str(n) != "":
 		return str(n)
@@ -49,6 +147,8 @@ static func get_display_name(res: Resource) -> String:
 static func get_icon(res: Resource) -> Texture2D:
 	if res == null:
 		return null
+	if res is Reward:
+		return (res as Reward).get_display_icon()
 	if "icon" in res:
 		return res.icon
 	return null
@@ -56,6 +156,8 @@ static func get_icon(res: Resource) -> Texture2D:
 static func get_base_texture(res: Resource) -> Texture2D:
 	if res == null:
 		return null
+	if res is Reward:
+		return (res as Reward).get_display_base()
 	if res is Equipment:
 		return (res as Equipment).base
 	if "base" in res and res.base != null:
@@ -67,7 +169,7 @@ static func get_base_texture(res: Resource) -> Texture2D:
 static func get_description(res: Resource) -> String:
 	if res == null:
 		return ""
-	if res.has_method("get_effect_description"):
+	if res.get_class() != "ScriptPlaceholderResource" and res.has_method("get_effect_description"):
 		return res.get_effect_description()
 	if "description" in res:
 		return str(res.description)
@@ -78,6 +180,8 @@ static func get_source_template(res: Resource) -> Resource:
 		return null
 	if res is Equipment and (res as Equipment).source_template != null:
 		return (res as Equipment).source_template
+	if res is Reward and (res as Reward).source_template != null:
+		return (res as Reward).source_template
 	return res
 
 static func get_identity_key(res: Resource) -> String:
@@ -88,15 +192,28 @@ static func get_identity_key(res: Resource) -> String:
 		return tpl.resource_path
 	return "%s:%s" % [tpl.get_class(), get_display_name(tpl)]
 
+static func can_roll_at_rarity(res: Resource, rolled_rarity_name: String) -> bool:
+	if res == null:
+		return false
+	var target_r: int = int(rarity_name_to_equipment_enum(rolled_rarity_name))
+	if res is Reward:
+		return (res as Reward).can_roll_at_rarity(target_r)
+	if res is Equipment:
+		return (res as Equipment).can_roll_at_rarity(target_r)
+	return get_rarity_name(res) == rolled_rarity_name.to_upper()
+
 ## Creates a non-mutating draft presentation instance for a reward slot.
-## Direct Equipment resources receive an independent instance rolled to `rolled_rarity_name`.
+## Both Reward and direct Equipment resources receive an independent instance rolled/clamped to `rolled_rarity_name`.
 static func prepare_draft_instance(res: Resource, rolled_rarity_name: String = "COMMON") -> Resource:
 	if res == null:
 		return null
+	var target_enum: Equipment.Rarity = rarity_name_to_equipment_enum(rolled_rarity_name)
 	if res is Equipment:
 		var eq := res as Equipment
-		var target_enum: Equipment.Rarity = rarity_name_to_equipment_enum(rolled_rarity_name)
 		return eq.duplicate_with_rarity(target_enum)
+	if res is Reward:
+		var rew := res as Reward
+		return rew.duplicate_with_rarity(int(target_enum) as Reward.Rarity)
 	return res
 
 static func get_resolved_modifiers(res: Resource) -> Array[Equipment]:
@@ -130,46 +247,13 @@ static func grant_reward(res: Resource, grant_equipment: bool = true, player: Pl
 			p.add_modifier_reward(owned_copy, true)
 		for tag in eq.unlock_tags:
 			p.set_flag(tag, true)
-		if p.active_reward_tree != null:
-			p.active_reward_tree.on_reward_chosen(eq, p)
-		var tpl: Resource = get_source_template(eq)
-		if eq.remove_from_pool_when_picked and p.rewards_piece != null:
-			p.rewards_piece.erase(eq)
-			p.rewards_piece.erase(tpl)
+		if p.has_method("on_reward_chosen"):
+			p.on_reward_chosen(eq)
 		return
 
 	if res is Reward:
 		var rew := res as Reward
-		if rew.category == Reward.RewardCategory.PASSIVE:
-			if p != null and not p.equipped_passives.has(rew):
-				p.equip_passive(rew)
-			if p != null and p.active_reward_tree != null:
-				p.active_reward_tree.on_reward_chosen(rew, p)
-			return
-
-		if not Engine.is_editor_hint() and is_instance_valid(Global) and ("cur_char" in Global) and p == Global.cur_char:
-			rew.activate(grant_equipment)
-		else:
-			# Direct application on explicit PlayerResource (e.g. in isolated tests)
-			if rew.might != 0.0: p.modify_stat("might", rew.might)
-			if rew.grit != 0.0: p.modify_stat("grit", rew.grit)
-			if rew.spirit != 0.0: p.modify_stat("spirit", rew.spirit)
-			if rew.agility != 0: p.modify_stat("agility", rew.agility)
-			if rew.max_health != 0.0: p.modify_stat("max_health", rew.max_health)
-			if rew.heal_hp != 0.0: p.modify_stat("cur_health", rew.heal_hp)
-			if rew.gold != 0: p.modify_stat("gold", rew.gold)
-			if rew.rerolls != 0: p.modify_stat("rerolls", rew.rerolls)
-			if rew.crit_chance != 0: p.modify_stat("crit_chance", rew.crit_chance)
-			if rew.unlock_row_bombs: p.set_flag("flg_can_spawn_row_bombs", true)
-			if rew.unlock_col_bombs: p.set_flag("flg_can_spawn_col_bombs", true)
-			if rew.unlock_adj_bombs: p.set_flag("flg_can_spawn_adj_bombs", true)
-			for f in rew.custom_flags:
-				p.set_flag(f, true)
-			if grant_equipment:
-				for eq_item in rew.get_resolved_modifiers():
-					p.add_modifier_reward(eq_item, true)
-			if p.active_reward_tree != null:
-				p.active_reward_tree.on_reward_chosen(rew, p)
+		rew.apply_to_player(p, grant_equipment)
 		return
 
 	push_error("Unsupported reward resource type: %s" % [res.get_class()])

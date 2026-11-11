@@ -14,48 +14,88 @@ const BuffRegistryRef = preload("res://scripts/combat/buff_registry.gd")
 #------------------------------------------------------------------------------#
 @export_category("Core Attributes")
 ## Red Pillar: Increases physical attack damage and scales with fall momentum.
-@export var might: float = 1.0
+@export var might: float = 1.0:
+	set(new_might):
+		might = new_might
+		recalculate_max_health()
+
 ## Blue Pillar: Increases physical armor and magic armor granted by defensive equipment.
-@export var grit: float = 0.0
+@export var grit: float = 0.0:
+	set(new_grit):
+		grit = new_grit
+		recalculate_max_health()
+
 ## Green Pillar: Determines base actions / energy per turn and scales mobility effects.
-@export var agility: int = 1:
+@export var agility: float = 1.0:
 	set(new_val):
 		agility = new_val
 		moves_left = clamp(moves_left, 0, max_energy)
-## Legacy alias pointing to agility
-var speed: int:
-	get: return agility
-	set(v): agility = v
-
-## Maximum energy (actions / moves per turn), derived from Agility with a hard floor of 1.
-## Formula: Base 1 + 1 for every 2 Agility, clamped with minimum 1.
-var max_energy: int:
-	get: return get_max_energy()
-
-func get_max_energy() -> int:
-	return max(1, 1 + int(floor(float(agility) / 2.0)))
 
 ## Purple/White Pillar: Increases healing potency, magic effects, and status scaling.
 @export var spirit: float = 0.0
 
+## Base energy (moves per turn) before Agility scaling. Players default to 2; enemies default to 1.
+@export var base_energy: int = 2
+## Flat bonus to max energy.
+var bonus_energy: float = 0.0
+
+## Maximum energy (actions / moves per turn), derived from Agility with a hard floor of 1.
+## Formula: Base Energy + 1 for every 5 Agility + bonus_energy, clamped with minimum 1.
+var max_energy: int:
+	get: return get_max_energy()
+
+func get_max_energy() -> int:
+	return max(1, base_energy + int(floor(agility / 5.0)) + int(roundf(bonus_energy)))
+
 #------------------------------------------------------------------------------#
 @export_category("Combat Stats")
 @export_group("Health & Sustain")
+## Base health before Might, Grit, and bonus health scaling.
+@export var base_health: float = 15.0
+## Direct flat bonus to max health from gear, passives, or stat buffs.
+var bonus_max_health: float = 0.0
+var _is_recalculating_hp: bool = false
+
 ## Maximum health points.
 @export var max_health: float = 20.0:
 	set(new_max_health):
 		var diff = new_max_health - max_health
 		max_health = new_max_health
 		cur_health += diff
-		cur_mage_armor = clampf(cur_mage_armor, 0.0, max(0.0, max_health))
+		cur_mystic_armor = clampf(cur_mystic_armor, 0.0, max(0.0, max_health))
+		if not _is_recalculating_hp:
+			bonus_max_health = max_health - (base_health + (might * 1.0) + (grit * 2.0))
+
+func get_derived_max_health() -> float:
+	return base_health + (might * 1.0) + (grit * 2.0) + bonus_max_health
+
+func recalculate_max_health() -> void:
+	if _is_recalculating_hp:
+		return
+	_is_recalculating_hp = true
+	var target_max: float = get_derived_max_health()
+	if not is_equal_approx(max_health, target_max):
+		max_health = target_max
+	_is_recalculating_hp = false
+
 ## Fraction of attack damage restored as health (e.g. 0.25 = 25% lifesteal).
 @export var life_steal: float = 0.0
 
 @export_group("Defense & Mitigation")
 ## Physical armor granted automatically at the start of every battle.
 @export var start_armor: float = 0.0
-## Magic armor granted automatically at the start of every battle.
-@export var start_mage_armor: float = 0.0
+## Mystic armor granted automatically at the start of every battle.
+@export var start_mystic_armor: float = 0.0
+## Compatibility alias for start_mystic_armor
+var start_mage_armor: float:
+	get: return start_mystic_armor
+	set(val): start_mystic_armor = val
+
+## Flat bonus to physical armor gain.
+var bonus_armor_gain: float = 0.0
+## Flat bonus to mystic armor gain.
+var bonus_mystic_armor_gain: float = 0.0
+
 ## Flat amount of damage subtracted from every incoming hit before percentage reduction.
 @export var dmg_reduction_flat: float = 0.0
 ## Percentage of incoming damage reduced (0% to max_dmg_reduction).
@@ -66,12 +106,32 @@ func get_max_energy() -> int:
 @export var physical_dmg_reduction: float = 0.0
 
 @export_group("Critical & Combo")
-## Base chance (0% to 100%) for an action or attack to critically strike.
-@export_range(0, 100) var crit_chance: int = 5:
-	set(new_crit_chance):
-		crit_chance = clamp(new_crit_chance, 0, 100)
-## Bonus critical damage percentage added when an action critically strikes (100.0 = +100% damage / 2x multiplier).
-@export var crit_mutly: float = 100.0
+## Base critical chance percentage before agility and bonus scaling.
+@export var base_crit_chance: float = 5.0
+var bonus_crit_chance: float = 0.0
+
+## Critical strike chance percentage.
+## Formula: Base 5% + (Agility * 2%) + bonus_crit_chance.
+var crit_chance: float:
+	get: return base_crit_chance + (agility * 2.0) + bonus_crit_chance
+	set(val): bonus_crit_chance = val - base_crit_chance - (agility * 2.0)
+
+## Flat bonus to physical attack damage.
+var bonus_phys_dmg: float = 0.0
+## Flat bonus to mystic attack damage.
+var bonus_mystic_dmg: float = 0.0
+## Flat bonus to critical strike damage percentage.
+var bonus_crit_dmg: float = 0.0
+
+## Bonus critical damage percentage added when an action critically strikes (50.0 = +50% / 1.5x multiplier base).
+## Formula: 50.0% + (Might * 5.0%) + bonus_crit_dmg.
+var crit_mutly: float:
+	get: return 50.0 + (might * 5.0) + bonus_crit_dmg
+	set(val): bonus_crit_dmg = val - 50.0 - (might * 5.0)
+
+func get_crit_damage_multiplier() -> float:
+	return 1.0 + (crit_mutly / 100.0)
+
 ## Starting combo points at the beginning of each turn for Fists-family equipment.
 @export var start_combo: int = 0
 var start_hand_combo: int:
@@ -80,7 +140,7 @@ var start_hand_combo: int:
 ## Baseline damage dealt per matched tile when a color track triggers no equipment modifiers.
 @export var fluf_damage: float = 0.0
 ## Flat reduction (in turns) applied to equipment cooldowns when triggered.
-@export var cooldown_reduction: int = 0
+@export var cooldown_reduction: float = 0.0
 
 #==============================================================================#
 # RUNTIME COMBAT STATE
@@ -95,11 +155,16 @@ var start_hand_combo: int:
 
 ## Current physical armor during combat. Resets at the start of the entity's turn.
 var cur_armor: float = 0.0
-## Current magic armor during combat. Persists across turns within a battle; capped at max_health.
-var cur_mage_armor: float = 0.0:
-	set(new_mage_armor):
+## Current mystic armor during combat. Persists across turns within a battle; capped at max_health.
+var cur_mystic_armor: float = 0.0:
+	set(new_mystic_armor):
 		var cap: float = max(0.0, max_health)
-		cur_mage_armor = clampf(new_mage_armor, 0.0, cap)
+		cur_mystic_armor = clampf(new_mystic_armor, 0.0, cap)
+
+## Compatibility alias for cur_mystic_armor
+var cur_mage_armor: float:
+	get: return cur_mystic_armor
+	set(val): cur_mystic_armor = val
 ## Remaining actions / tile swaps in the current combat turn. Clamped between 0 and max_energy.
 var moves_left: int = 0:
 	set(new_moves):
@@ -366,8 +431,8 @@ func take_damage(incoming_damage: float, piercing: bool = false, type: int = 0, 
 	if physical_dmg_reduction > 0.0 and type == 0:
 		net_damage = round(net_damage * (1.0 - clamp(physical_dmg_reduction, 0.0, max_dmg_reduction) / 100.0))
 
-	if cur_mage_armor > 0.0 and net_damage > 0.0 and not piercing:
-		net_damage = apply_armor_reduction(net_damage, "cur_mage_armor")
+	if cur_mystic_armor > 0.0 and net_damage > 0.0 and not piercing:
+		net_damage = apply_armor_reduction(net_damage, "cur_mystic_armor")
 	if cur_armor > 0.0 and net_damage > 0.0:
 		net_damage = apply_armor_reduction(net_damage, "cur_armor")
 
@@ -388,10 +453,16 @@ func apply_armor_reduction(damage: float, armor_property: String) -> float:
 		set(armor_property, remaining_armor)
 		_on_stat_modified(armor_property)
 		statChanged.emit(armor_property)
+		if armor_property == "cur_mystic_armor":
+			_on_stat_modified("cur_mage_armor")
+			statChanged.emit("cur_mage_armor")
 		return 0.0
 	set(armor_property, 0.0)
 	_on_stat_modified(armor_property)
 	statChanged.emit(armor_property)
+	if armor_property == "cur_mystic_armor":
+		_on_stat_modified("cur_mage_armor")
+		statChanged.emit("cur_mage_armor")
 	return abs(remaining_armor)
 
 func modify_stat(stat: String, value, increment: bool = true) -> void:
@@ -404,6 +475,19 @@ func modify_stat(stat: String, value, increment: bool = true) -> void:
 			next_stacks = (get_buff_stacks(norm_id) + int(value)) if increment else int(value)
 		set_buff(norm_id, next_stacks)
 		return
+	if stat == "cur_mage_armor":
+		stat = "cur_mystic_armor"
+	elif stat == "start_mage_armor":
+		stat = "start_mystic_armor"
+	elif stat == "max_health":
+		if increment:
+			bonus_max_health += float(value)
+		else:
+			bonus_max_health = float(value) - (base_health + (might * 1.0) + (grit * 2.0))
+		recalculate_max_health()
+		_on_stat_modified("max_health")
+		statChanged.emit("max_health")
+		return
 	if not stat in self:
 		print("Stat does not exist:", stat)
 		return
@@ -413,6 +497,12 @@ func modify_stat(stat: String, value, increment: bool = true) -> void:
 		_on_moves_exhausted()
 	_on_stat_modified(stat)
 	statChanged.emit(stat)
+	if stat == "cur_mystic_armor":
+		_on_stat_modified("cur_mage_armor")
+		statChanged.emit("cur_mage_armor")
+	elif stat == "start_mystic_armor":
+		_on_stat_modified("start_mage_armor")
+		statChanged.emit("start_mage_armor")
 
 # Compatibility aliases used across existing enemy and event scripts
 func take_dmg(dmg: float, dmg_type: int = 0, attacker: EntityResource = null) -> float:
@@ -437,7 +527,7 @@ func reset_stats_at_beginning_of_fight() -> void:
 	modify_stat("moves_left", max_energy, false)
 	modify_stat("combo", start_combo, false)
 	modify_stat("cur_armor", start_armor, false)
-	modify_stat("cur_mage_armor", start_mage_armor, false)
+	modify_stat("cur_mystic_armor", start_mystic_armor, false)
 	_on_battle_started()
 
 ## Processes turn-start upkeep: cooldowns tick, energy refills, physical armor resets, and turn buffs tick.

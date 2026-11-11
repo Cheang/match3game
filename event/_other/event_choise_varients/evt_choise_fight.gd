@@ -12,4 +12,4 @@ func activate():
 	if not enemy.is_empty():
 		Global.set_up_enemy(enemy.pick_random())
 
-	SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	SceneManager.change_scene("res://scenes/combat-screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })

@@ -6,11 +6,12 @@
 
 [resource]
 script = ExtResource("1_script")
+reward_type = 2
+family = "healing"
 name = "Hearty Feast"
 description = "Heal 10 HP"
 base = ExtResource("2_base")
 icon = ExtResource("3_icon")
 rarity = 0
-category = 0
 heal_hp = 10.0
 remove_from_pool_when_picked = false

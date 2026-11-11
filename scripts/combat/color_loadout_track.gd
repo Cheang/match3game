@@ -384,8 +384,8 @@ func get_slot_state(slot_index: int) -> int:
 func get_trigger_budget(ctx: MatchContext) -> int:
 	if ctx == null:
 		return 1
-	var count: int = max(3, ctx.match_count)
-	var budget: int = max(1, count - 2)
+	var count: int = maxi(3, ctx.match_count)
+	var budget: int = maxi(1, count - 2)
 	if ctx.shape_type in ["L_SHAPE", "T_SHAPE"]:
 		budget += 1
 	return budget

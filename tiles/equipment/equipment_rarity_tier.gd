@@ -32,11 +32,7 @@ enum Rarity {
 ## Passive Grit granted to the hero (Blue Pillar: boosts armor).
 @export var grit: float = 0.0
 ## Passive Agility granted to the hero (Green Pillar: determines actions per turn / Max Energy).
-@export var agility: int = 0
-## Legacy alias pointing to agility
-var speed: int:
-	get: return agility
-	set(v): agility = v
+@export var agility: float = 0.0
 ## Passive Spirit granted to the hero (Purple/White Pillar: boosts healing and magic).
 @export var spirit: float = 0.0
 ## Passive Max Health added to the hero.
@@ -49,8 +45,12 @@ var speed: int:
 @export var life_steal: float = 0.0
 ## Passive Starting Physical Armor granted at the start of every combat encounter.
 @export var start_armor: float = 0.0
-## Passive Starting Magic Armor granted at the start of every combat encounter.
-@export var start_mage_armor: float = 0.0
+## Passive Starting Mystic Armor granted at the start of every combat encounter.
+@export var start_mystic_armor: float = 0.0
+## Compatibility alias for start_mystic_armor
+var start_mage_armor: float:
+	get: return start_mystic_armor
+	set(val): start_mystic_armor = val
 ## Passive percentage damage reduction (0% to 90%).
 @export var dmg_reduction: float = 0.0
 ## Passive flat incoming damage reduction.
@@ -82,8 +82,12 @@ var start_hand_combo: int:
 
 ## Base Physical Armor granted when triggered.
 @export var base_armor: float = 0.0
-## Base Magic Armor granted when triggered.
-@export var base_magic_armor: float = 0.0
+## Base Mystic Armor granted when triggered.
+@export var base_mystic_armor: float = 0.0
+## Compatibility alias for base_mystic_armor
+var base_magic_armor: float:
+	get: return base_mystic_armor
+	set(val): base_mystic_armor = val
 ## Base HP restored when triggered.
 @export var base_heal: float = 0.0
 
@@ -120,7 +124,6 @@ func get_stat_boosts() -> Dictionary:
 	if grit != 0.0: boosts["grit"] = grit
 	if agility != 0:
 		boosts["agility"] = agility
-		boosts["speed"] = agility
 	if spirit != 0.0: boosts["spirit"] = spirit
 	if max_health != 0.0: boosts["max_health"] = max_health
 	if crit_chance != 0: boosts["crit_chance"] = crit_chance

@@ -220,11 +220,14 @@ func _refresh_modal_view() -> void:
 		var fits: bool = track.can_equip(current_mod)
 		quick_btn.text = "+Equip" if fits else "Replace Last"
 		_style_pixel_button(quick_btn, 12)
-		quick_btn.tooltip_text = ("Equip into %s Track (%d/%d Slots)" if fits else "Replace last item in %s Track (displaced item discarded)") % [
-			Global.get_color_name(track.color),
-			track.get_used_slots(),
-			track.max_slots
-		]
+		if fits:
+			quick_btn.tooltip_text = "Equip into %s Track (%d/%d Slots)" % [
+				Global.get_color_name(track.color),
+				track.get_used_slots(),
+				track.max_slots
+			]
+		else:
+			quick_btn.tooltip_text = "Replace last item in %s Track (displaced item discarded)" % [Global.get_color_name(track.color)]
 		quick_btn.pressed.connect(_on_quick_slot_pressed.bind(track))
 		row_hbox.add_child(quick_btn)
 
@@ -251,7 +254,7 @@ func _on_quick_slot_pressed(track: ColorLoadoutTrack) -> void:
 			Global.cur_char.loadoutChanged.emit()
 		else:
 			# Replace last item in track
-			var last_idx: int = max(0, track.equipped_modifiers.size() - 1)
+			var last_idx: int = maxi(0, track.equipped_modifiers.size() - 1)
 			Global.cur_char.replace_modifier_on_track(track, last_idx, current_mod)
 	_show_next_modifier()
 

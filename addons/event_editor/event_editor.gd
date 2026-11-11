@@ -641,7 +641,7 @@ func stat_lbl_text(stat_row: HBoxContainer, c_data: Dictionary) -> void:
 	var st_opt = OptionButton.new()
 	st_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	st_opt.clip_text = true
-	var req_stats = ["None", "strength", "proficiency", "toughness", "faith", "speed", "agility", "gold"]
+	var req_stats = ["None", "might", "grit", "agility", "spirit", "gold"]
 	for si in req_stats.size():
 		st_opt.add_item(req_stats[si], si)
 		if req_stats[si] == c_data.get("req_stat", "None"):
@@ -759,7 +759,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 				var st_opt = OptionButton.new()
 				st_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				st_opt.clip_text = true
-				var stats = ["gold", "health", "max_health", "strength", "proficiency", "toughness", "faith", "speed", "agility"]
+				var stats = ["gold", "health", "max_health", "might", "grit", "agility", "spirit"]
 				for si in stats.size():
 					st_opt.add_item(stats[si], si)
 					if stats[si] == c_data.get("reward_stat", "gold"):

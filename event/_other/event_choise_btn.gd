@@ -141,7 +141,7 @@ func _on_btn_pressed() -> void:
 						if evt_rew.fight_overwrite and not evt_rew.enemy.is_empty():
 							Global.post_combat_event = evt_rew.next_event
 							Global.set_up_enemy(evt_rew.enemy.pick_random())
-							SceneManager.change_scene("res://scenes/game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+							SceneManager.change_scene("res://scenes/combat-screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 							return
 						if evt_rew.next_event != null:
 							var screen = find_parent("event_screen")

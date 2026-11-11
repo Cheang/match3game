@@ -60,7 +60,8 @@ void fragment() {
 	} else {
 		// 2. Rounded Bottom Shadow (concentric upward-offset bowl crescent, moves with waves)
 		float fill_scale = clamp(fill_amount * 1.35, 0.2, 1.0);
-		vec2 shadow_c = center - vec2(0.0, radius * 0.28 * fill_scale);
+		float shadow_offset = radius * 0.36 * fill_scale;
+		vec2 shadow_c = center - vec2(0.0, shadow_offset);
 
 		// Shadow sloshes and sways along with the wave motion
 		float shadow_t = t * 0.85 + 0.4;
@@ -71,28 +72,33 @@ void fragment() {
 		shadow_c.y += shadow_wave * 0.8;
 
 		float shadow_dist = distance(pixel_uv, shadow_c);
-		float shadow_inner_r = radius * mix(0.96, 0.88, fill_scale);
+		// Geometric crescent intersection: tapers smoothly to zero along the sides
+		float shadow_inner_r = sqrt(radius * radius + shadow_offset * shadow_offset);
 
-		bool is_in_shadow = (pixel_uv.y > center.y - radius * 0.2 && shadow_dist >= shadow_inner_r);
+		bool is_in_shadow = (shadow_dist >= shadow_inner_r);
 
 		// 3. Rising Specks (Bubbles / floating illuminated motes)
 		bool is_speck = false;
 		if (enable_specks && fill_amount > 0.05) {
 			vec2 p_grid = floor(pixel_uv * pixel_grid_size);
 
-			const float seed_x[8] = float[](18.0, 31.0, 44.0, 23.0, 37.0, 16.0, 47.0, 33.0);
-			const float seed_speed[8] = float[](1.0, 1.22, 0.92, 1.15, 0.88, 1.28, 0.95, 1.08);
-			const float seed_sway[8] = float[](1.5, -2.0, 1.3, -1.6, 1.8, -1.2, 1.6, -1.4);
-			const float seed_phase[8] = float[](0.12, 0.47, 0.81, 0.28, 0.63, 0.93, 0.36, 0.72);
+			// 10 seeds distributed across BOTH left and right sides of the globe (-0.62 to +0.55 relative to radius)
+			const float seed_rel_x[10] = float[](-0.62, -0.45, -0.28, -0.12, 0.05, 0.22, 0.38, 0.55, -0.35, 0.42);
+			const float seed_speed[10] = float[](1.0, 1.25, 0.92, 1.15, 0.88, 1.28, 0.95, 1.08, 1.18, 0.85);
+			const float seed_sway[10]  = float[](1.8, -2.2, 1.5, -1.8, 2.0, -1.4, 1.9, -1.6, -1.5, 1.7);
+			const float seed_phase[10] = float[](0.12, 0.47, 0.81, 0.28, 0.63, 0.93, 0.36, 0.72, 0.55, 0.18);
 
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 10; i++) {
 				float p = fract((TIME * speck_rise_speed + seed_phase[i]) * seed_speed[i]);
-				// Specks rise from bottom to top
-				float part_y = mix(y_bottom * pixel_grid_size - 4.0, y_top * pixel_grid_size + 4.0, p);
+				// Specks rise from bottom to surface of liquid
+				float part_v = mix(y_bottom, surface_y + crest_thickness, p);
 				float sway = sin(p * 6.283185 * 2.0 + float(i) * 1.7) * seed_sway[i];
-				float part_x = seed_x[i] + sway;
+				float part_u = center.x + (seed_rel_x[i] * radius) + (sway / pixel_grid_size);
 
-				if (abs(p_grid.x - round(part_x)) < 0.5 && abs(p_grid.y - round(part_y)) < 0.5) {
+				float bubble_grid_x = round(part_u * pixel_grid_size);
+				float bubble_grid_y = round(part_v * pixel_grid_size);
+
+				if (abs(p_grid.x - bubble_grid_x) < 0.5 && abs(p_grid.y - bubble_grid_y) < 0.5) {
 					if (pixel_uv.y > surface_y + crest_thickness && dist < radius - (2.5 / pixel_grid_size)) {
 						is_speck = true;
 						break;

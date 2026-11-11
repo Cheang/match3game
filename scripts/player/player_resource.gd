@@ -17,8 +17,33 @@ class_name PlayerResource
 @export_range(0, 100) var gold_chance: int = 1
 ## Number of reward screen rerolls the character starts a new run with.
 @export var start_reroll: int = 1
-## Bonus added to reward rarity rolls (0 to 100).
-@export var rarity_bonus: int = 0
+
+## Bonus added directly to reward rarity rolls (0 to 100).
+@export var direct_rarity_bonus: int = 0
+
+## Flat bonuses to composite stats
+var bonus_luck: float = 0.0
+var bonus_magic_find: float = 0.0
+var bonus_gold_chance: float = 0.0
+
+## Composite Luck derived from pure sum of Agility + Spirit + bonus_luck.
+func get_luck() -> float:
+	return agility + spirit + bonus_luck
+
+## Magic Find derived from Luck + bonus_magic_find.
+func get_magic_find() -> float:
+	return get_luck() + bonus_magic_find
+
+## Total effective Gold Find chance.
+func get_gold_find_chance() -> float:
+	return float(gold_chance) + (get_luck() * 1.0) + bonus_gold_chance
+
+## Effective Rarity Bonus (Magic Find + direct rarity bonus).
+var rarity_bonus: int:
+	get:
+		return int(roundf(get_magic_find())) + direct_rarity_bonus
+	set(val):
+		direct_rarity_bonus = val
 
 #------------------------------------------------------------------------------#
 @export_category("Loadout & Rewards")
@@ -26,26 +51,31 @@ class_name PlayerResource
 @export var active_color_pool: Array[int] = [100, 200, 300, 500]
 ## Equipment modifiers automatically slotted into the character's color tracks at the start of a run.
 @export var starting_modifiers: Array[Equipment] = []
-## Standalone reward tree resource that manages this character class's combat and passive rewards.
-@export var reward_tree: RewardTree
+## Complete list of class-specific rewards (Equipment, Passives, Stat Buffs, Mechanic Unlocks) available to this character.
+## The draft system uses a Build-Affinity algorithm to favor rewards matching the player's equipped families.
+@export var class_rewards: Array[Resource] = []
 
 var _raw_rewards_piece: Array = []
 var _raw_rewards_passive: Array = []
 
-## Pool of combat/equipment rewards that can be offered to this character after combat.
+## Pool of combat/equipment/stat/mechanic rewards currently available to be offered to this character after combat.
 var rewards_piece: Array:
 	get:
-		if active_reward_tree != null:
-			return active_reward_tree.get_combat_pool()
+		if not active_class_pool.is_empty() or not class_rewards.is_empty():
+			return get_active_combat_pool()
 		return _raw_rewards_piece
 	set(val):
 		_raw_rewards_piece = val
+		active_class_pool.clear()
+		for item in val:
+			if item != null:
+				active_class_pool.append(item)
 
-## Pool of passive/talent rewards that can be offered to this character after combat.
+## Pool of passive/talent rewards currently available to be offered to this character (e.g. after boss combat).
 var rewards_passive: Array:
 	get:
-		if active_reward_tree != null:
-			return active_reward_tree.get_passive_pool()
+		if not active_class_pool.is_empty() or not class_rewards.is_empty():
+			return get_active_passive_pool()
 		return _raw_rewards_passive
 	set(val):
 		_raw_rewards_passive = val
@@ -53,7 +83,10 @@ var rewards_passive: Array:
 #==============================================================================#
 # RUNTIME STATE & COMPATIBILITY PROPERTIES (Non-exported to keep Inspector clean)
 #==============================================================================#
-var active_reward_tree: RewardTree = null
+## Active runtime pool of class rewards for the current run.
+var active_class_pool: Array[Resource] = []
+## Progression and mechanic tags unlocked during the current run.
+var unlocked_tags: Dictionary = {}
 
 ## Current reward rerolls remaining in the run.
 var rerolls: int = 0
@@ -70,23 +103,6 @@ var equipped_passives: Array[Resource] = []
 var _active_passive_stat_contributions: Dictionary = {}
 var _is_recalculating_passive_bonuses: bool = false
 signal passivesChanged
-
-# Legacy Attribute Aliases (maps old stat names used in existing rewards/events to the 4 core pillars)
-var strength: float:
-	get: return might
-	set(v): might = v
-var proficiency: float:
-	get: return might
-	set(v): might = v
-var toughness: float:
-	get: return grit
-	set(v): grit = v
-var faith: float:
-	get: return spirit
-	set(v): spirit = v
-var mana: float:
-	get: return spirit
-	set(v): spirit = v
 
 # Legacy Deck & Progression Flags (retained internally for reward tree & save compatibility)
 var deck: Array[PackedScene] = []
@@ -116,7 +132,14 @@ signal playerFinishedTurn
 
 func _init() -> void:
 	super._init()
-	agility = 2
+	base_energy = 2
+	might = 2.0
+	grit = 3.0
+	agility = 2.0
+	spirit = 0.0
+	base_health = 15.0
+	recalculate_max_health()
+	cur_health = max_health
 
 func _on_entity_died() -> void:
 	super._on_entity_died()
@@ -379,16 +402,18 @@ func recalculate_passive_bonuses() -> void:
 			continue
 		if p_res is Reward:
 			var r := p_res as Reward
-			if r.might != 0.0: new_totals["might"] = new_totals.get("might", 0.0) + r.might
-			if r.grit != 0.0: new_totals["grit"] = new_totals.get("grit", 0.0) + r.grit
-			if r.spirit != 0.0: new_totals["spirit"] = new_totals.get("spirit", 0.0) + r.spirit
-			if r.agility != 0: new_totals["agility"] = new_totals.get("agility", 0) + r.agility
-			if r.max_health != 0.0: new_totals["max_health"] = new_totals.get("max_health", 0.0) + r.max_health
-			if r.crit_chance != 0: new_totals["crit_chance"] = new_totals.get("crit_chance", 0) + r.crit_chance
-			if r.unlock_row_bombs: set_flag("flg_can_spawn_row_bombs", true)
-			if r.unlock_col_bombs: set_flag("flg_can_spawn_col_bombs", true)
-			if r.unlock_adj_bombs: set_flag("flg_can_spawn_adj_bombs", true)
-			for f in r.custom_flags:
+			var boosts: Dictionary = r.get_stat_boosts()
+			for s in boosts.keys():
+				new_totals[s] = new_totals.get(s, 0.0) + boosts[s]
+			if r.unlock_row_bombs or r.mechanic_type == Reward.MechanicType.ROW_BOMBS:
+				set_flag("flg_can_spawn_row_bombs", true)
+			if r.unlock_col_bombs or r.mechanic_type == Reward.MechanicType.COL_BOMBS:
+				set_flag("flg_can_spawn_col_bombs", true)
+			if r.unlock_adj_bombs or r.mechanic_type == Reward.MechanicType.ADJ_BOMBS:
+				set_flag("flg_can_spawn_adj_bombs", true)
+			if r.unlock_color_bombs or r.mechanic_type == Reward.MechanicType.COLOR_BOMBS:
+				set_flag("flg_can_spawn_clr_bombs", true)
+			for f in r.get_effective_custom_flags():
 				set_flag(f, true)
 		elif p_res.has_method("get_stat_boosts"):
 			var boosts: Dictionary = p_res.get_stat_boosts()
@@ -435,6 +460,105 @@ func reset_modifiers_for_battle() -> void:
 			mod.reset_for_battle()
 
 #==============================================================================#
+# CLASS REWARD POOL & BUILD-AFFINITY SYSTEM
+#==============================================================================#
+
+## Initializes the runtime class reward pool at the start of a run.
+func initialize_class_pool() -> void:
+	active_class_pool.clear()
+	unlocked_tags.clear()
+	for r in class_rewards:
+		if r != null:
+			active_class_pool.append(r)
+
+## Returns all eligible non-passive rewards from the class pool for standard post-combat drafts.
+func get_active_combat_pool() -> Array[Resource]:
+	if active_class_pool.is_empty() and not class_rewards.is_empty():
+		initialize_class_pool()
+	var pool: Array[Resource] = []
+	for r in active_class_pool:
+		if r == null:
+			continue
+		if RewardGrantHandler.get_reward_type(r) != Reward.RewardType.PASSIVE:
+			if RewardGrantHandler.can_be_offered_to(r, self):
+				pool.append(r)
+	return pool
+
+## Returns all eligible PASSIVE rewards from the class pool (e.g. for boss drafts).
+func get_active_passive_pool() -> Array[Resource]:
+	if active_class_pool.is_empty() and not class_rewards.is_empty():
+		initialize_class_pool()
+	var pool: Array[Resource] = []
+	for r in active_class_pool:
+		if r == null:
+			continue
+		if RewardGrantHandler.get_reward_type(r) == Reward.RewardType.PASSIVE:
+			if RewardGrantHandler.can_be_offered_to(r, self):
+				pool.append(r)
+	return pool
+
+## Counts how many items of each family ("fists", "sword", "shields", "mobility", "healing", "body", etc.)
+## the player currently has equipped across all color loadout tracks and passive slots.
+func get_build_family_counts() -> Dictionary:
+	ensure_loadout_tracks()
+	var counts: Dictionary = {}
+	for k in color_loadouts.keys():
+		var track: ColorLoadoutTrack = color_loadouts[k]
+		if track != null:
+			if track.ultimate_skill != null:
+				var u_fam: String = RewardGrantHandler.get_family(track.ultimate_skill)
+				if u_fam != "":
+					counts[u_fam] = counts.get(u_fam, 0) + 1
+			for mod in track.equipped_modifiers:
+				if mod != null:
+					var m_fam: String = RewardGrantHandler.get_family(mod)
+					if m_fam != "":
+						counts[m_fam] = counts.get(m_fam, 0) + 1
+	for pas in equipped_passives:
+		if pas != null:
+			var p_fam: String = RewardGrantHandler.get_family(pas)
+			if p_fam != "":
+				counts[p_fam] = counts.get(p_fam, 0) + 1
+	return counts
+
+## Computes the build-affinity weight for a candidate reward based on the player's current build.
+func get_reward_affinity_weight(res: Resource) -> float:
+	return RewardGrantHandler.compute_selection_weight(res, self, true)
+
+## Called when any reward or direct Equipment is claimed by the player.
+func on_reward_chosen(reward: Resource) -> void:
+	if reward == null:
+		return
+	var tpl: Resource = RewardGrantHandler.get_source_template(reward)
+
+	var tags = reward.get("unlock_tags")
+	if tags is Array:
+		for tag in tags:
+			set_flag(str(tag), true)
+	if tpl != reward and tpl != null:
+		var tpl_tags = tpl.get("unlock_tags")
+		if tpl_tags is Array:
+			for tag in tpl_tags:
+				set_flag(str(tag), true)
+
+	var rem = reward.get("remove_from_pool_when_picked")
+	if rem == null and tpl != null:
+		rem = tpl.get("remove_from_pool_when_picked")
+	if rem == null or rem == true:
+		active_class_pool.erase(reward)
+		_raw_rewards_piece.erase(reward)
+		_raw_rewards_passive.erase(reward)
+		if tpl != null:
+			active_class_pool.erase(tpl)
+			_raw_rewards_piece.erase(tpl)
+			_raw_rewards_passive.erase(tpl)
+		var id_key: String = RewardGrantHandler.get_identity_key(reward)
+		if id_key != "":
+			for i in range(active_class_pool.size() - 1, -1, -1):
+				if RewardGrantHandler.get_identity_key(active_class_pool[i]) == id_key:
+					active_class_pool.remove_at(i)
+
+#==============================================================================#
 # COMBAT & LIFECYCLE FUNCTIONS
 #==============================================================================#
 
@@ -446,10 +570,7 @@ func reset_stats_at_beginning_of_game() -> void:
 	_active_equipment_stat_contributions.clear()
 	_active_passive_stat_contributions.clear()
 	ensure_loadout_tracks()
-
-	if reward_tree != null:
-		active_reward_tree = reward_tree.duplicate(true)
-		active_reward_tree.initialize_run(self)
+	initialize_class_pool()
 
 	if not starting_modifiers.is_empty():
 		for mod in starting_modifiers:
@@ -486,10 +607,18 @@ func reset_stats_at_beging_of_turn() -> void:
 # HELPER FUNCTIONS
 #==============================================================================#
 
+func has_flag(flag: String) -> bool:
+	if unlocked_tags.has(flag) and bool(unlocked_tags[flag]):
+		return true
+	if flag in self:
+		return bool(get(flag))
+	return false
+
 func set_flag(flag: String, value = true):
-	if active_reward_tree != null and value:
-		active_reward_tree.unlocked_tags[flag] = true
-		active_reward_tree.check_progression()
+	if value:
+		unlocked_tags[flag] = true
+	else:
+		unlocked_tags.erase(flag)
 	if flag in self:
 		set(flag, value)
 

@@ -26,7 +26,6 @@ enum StatScaling {
 	MIGHT = 1,              ## Adds the player's Might stat.
 	GRIT = 2,               ## Adds the player's Grit stat.
 	AGILITY = 3,            ## Adds the player's Agility stat.
-	SPEED = 3,              ## Backward compatibility alias for AGILITY.
 	SPIRIT = 4,             ## Adds the player's Spirit stat.
 	CURRENT_ARMOR = 5       ## Adds the player's current Physical Armor in combat.
 }
@@ -82,7 +81,7 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Optional custom tooltip text. Leave blank or standard to auto-generate dynamic stat descriptions.
 @export_multiline var description: String = ""
 ## Synergy tag chosen from defined equipment families. Determines auto-slotting color and triggers passives/synergies.
-@export_enum("sword", "fists", "shields", "mobility", "healing") var family: String = "sword"
+@export_enum("sword", "fists", "shields", "mobility", "healing", "beast") var family: String = "sword"
 ## Number of slots this equipment occupies on a color track (1 = small, 2 = medium, 3 = large, up to 5).
 @export_range(1, 5) var slot_cost: int = 1
 ## Whether this skill is an Ultimate ability (can ONLY be equipped in the dedicated Ultimate slot 0).
@@ -98,6 +97,12 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Base version (COMMON) grants 0 passive hero stat boosts.
 ## Higher rarities grant passive stats, scaled effects, and extra colors configured in rarity_tiers.
 @export var rarity: Rarity = Rarity.COMMON
+## If true, this equipment is locked to its configured `rarity` and will only appear at that exact tier.
+@export var fixed_rarity: bool = false
+## Minimum rarity tier this equipment can roll (Rarity Floor).
+@export var min_rarity: Rarity = Rarity.COMMON
+## Maximum rarity tier this equipment can roll (Rarity Ceiling).
+@export var max_rarity: Rarity = Rarity.GODLY
 ## Specific tier configurations (passive stats, effect scaling, and color options) for higher rarities.
 @export var rarity_tiers: Array[EquipmentRarityTier] = []
 
@@ -115,7 +120,18 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var allowed_colors: Array[Global.TileColor] = []
 
 # ==============================================================================
-# 3. ATTACK & DAMAGE (Set base_damage > 0 to enable)
+# 3. DISCIPLINE & SCALING
+# ==============================================================================
+@export_group("Discipline & Scaling")
+## If true, this equipment is Mystical (cooldown reduced by Spirit).
+## If false (default), this equipment is Physical (cooldown reduced by Agility).
+@export var is_mystical: bool = false
+## Stat scaling ratio for physical weapons (0.25 = 25%, 0.50 = 50%).
+## Note: Mystic DMG always scales at 0.50 (50%).
+@export_range(0.0, 1.0, 0.05) var stat_scaling_ratio: float = 0.50
+
+# ==============================================================================
+# 4. ATTACK & DAMAGE (Set base_damage > 0 to enable)
 # ==============================================================================
 @export_group("Attack & Damage")
 ## Base damage dealt per hit (0 = does not deal damage).
@@ -130,7 +146,7 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var damage_combo_multiplier: float = 0.0
 
 # ==============================================================================
-# 4. DEFENSE & HEALING (Set > 0 to enable)
+# 5. DEFENSE & HEALING (Set > 0 to enable)
 # ==============================================================================
 @export_group("Defense & Healing")
 ## Base Physical Armor granted when triggered (0 = none).
@@ -139,12 +155,27 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var armor_stat_scaling: StatScaling = StatScaling.GRIT
 ## If true, multiplies total Physical Armor granted by the player's current Hand Combo (e.g. Block).
 @export var multiply_armor_by_combo: bool = false
-## Base Magic Armor granted when triggered (0 = none).
-@export var base_magic_armor: float = 0.0
-## Which player stat is added to base_magic_armor.
-@export var magic_armor_stat_scaling: StatScaling = StatScaling.SPIRIT
-## If true, multiplies total Magic Armor granted by the player's current Hand Combo.
-@export var multiply_magic_armor_by_combo: bool = false
+## Base Mystic Armor granted when triggered (0 = none).
+@export var base_mystic_armor: float = 0.0
+## Compatibility alias for base_mystic_armor
+var base_magic_armor: float:
+	get: return base_mystic_armor
+	set(val): base_mystic_armor = val
+
+## Which player stat is added to base_mystic_armor.
+@export var mystic_armor_stat_scaling: StatScaling = StatScaling.SPIRIT
+## Compatibility alias for mystic_armor_stat_scaling
+var magic_armor_stat_scaling: StatScaling:
+	get: return mystic_armor_stat_scaling
+	set(val): mystic_armor_stat_scaling = val
+
+## If true, multiplies total Mystic Armor granted by the player's current Hand Combo.
+@export var multiply_mystic_armor_by_combo: bool = false
+## Compatibility alias for multiply_mystic_armor_by_combo
+var multiply_magic_armor_by_combo: bool:
+	get: return multiply_mystic_armor_by_combo
+	set(val): multiply_mystic_armor_by_combo = val
+
 ## Base HP restored to the player when triggered (0 = none).
 @export var base_heal: float = 0.0
 ## Which player stat is added to base_heal.
@@ -295,10 +326,15 @@ func on_triggered(actor: EntityResource = null) -> void:
 		used_this_battle = true
 	var eff_cd: int = get_effective_cooldown_turns()
 	if eff_cd > 0:
-		var cdr: int = 0
 		var owner_entity: EntityResource = actor if actor != null else _safe_get_global_char()
+		var cdr: int = 0
 		if owner_entity != null:
-			cdr = owner_entity.cooldown_reduction + int(floor(owner_entity.spirit * 0.25))
+			var stat_cdr: int = 0
+			if is_mystical:
+				stat_cdr = int(floor(owner_entity.spirit / 5.0))
+			else:
+				stat_cdr = int(floor(owner_entity.agility / 5.0))
+			cdr = int(roundf(owner_entity.cooldown_reduction)) + stat_cdr
 		current_cooldown = max(0, eff_cd - cdr)
 
 func reset_for_battle() -> void:
@@ -319,9 +355,7 @@ func _get_stat_value(c_res, scaling: StatScaling) -> float:
 		StatScaling.GRIT:
 			return float(c_res.grit) if "grit" in c_res else 0.0
 		StatScaling.AGILITY:
-			if "agility" in c_res:
-				return float(c_res.agility)
-			return float(c_res.speed) if "speed" in c_res else 0.0
+			return float(c_res.agility) if "agility" in c_res else 0.0
 		StatScaling.SPIRIT:
 			return float(c_res.spirit) if "spirit" in c_res else 0.0
 		StatScaling.CURRENT_ARMOR:
@@ -382,13 +416,18 @@ func get_effective_base_armor() -> float:
 		return tier.base_armor if tier.base_armor > 0.0 else base_armor
 	return base_armor + tier.base_armor
 
-func get_effective_base_magic_armor() -> float:
+func get_effective_base_mystic_armor() -> float:
 	var tier = get_active_tier()
 	if tier == null:
-		return base_magic_armor
+		return base_mystic_armor
 	if tier.is_effect_override:
-		return tier.base_magic_armor if tier.base_magic_armor > 0.0 else base_magic_armor
-	return base_magic_armor + tier.base_magic_armor
+		var tier_m_arm: float = tier.base_mystic_armor if ("base_mystic_armor" in tier and tier.base_mystic_armor > 0.0) else (tier.base_magic_armor if "base_magic_armor" in tier else 0.0)
+		return tier_m_arm if tier_m_arm > 0.0 else base_mystic_armor
+	var tier_m_arm_add: float = tier.base_mystic_armor if "base_mystic_armor" in tier else (tier.base_magic_armor if "base_magic_armor" in tier else 0.0)
+	return base_mystic_armor + tier_m_arm_add
+
+func get_effective_base_magic_armor() -> float:
+	return get_effective_base_mystic_armor()
 
 func get_effective_base_heal() -> float:
 	var tier = get_active_tier()
@@ -443,11 +482,27 @@ func set_rarity(new_rarity: Rarity) -> void:
 	if p != null:
 		p.recalculate_equipment_passives()
 
-## Creates an independent clone of this equipment initialized to a specific rarity tier.
-## Designed for Reward Trees, Combat Drops, and Shop inventories.
+## Returns true if this equipment can be rolled at `target_rarity` given its fixed_rarity, min_rarity (floor), and max_rarity (ceiling).
+func can_roll_at_rarity(target_rarity: int) -> bool:
+	if fixed_rarity:
+		return int(rarity) == target_rarity
+	var floor_r: int = mini(int(min_rarity), int(max_rarity))
+	var ceil_r: int = maxi(int(min_rarity), int(max_rarity))
+	return target_rarity >= floor_r and target_rarity <= ceil_r
+
+## Clamps `target_rarity` into this equipment's valid [min_rarity, max_rarity] range (or `rarity` if fixed_rarity is true).
+func clamp_to_allowed_rarity(target_rarity: int) -> Rarity:
+	if fixed_rarity:
+		return rarity
+	var floor_r: int = mini(int(min_rarity), int(max_rarity))
+	var ceil_r: int = maxi(int(min_rarity), int(max_rarity))
+	return clampi(target_rarity, floor_r, ceil_r) as Rarity
+
+## Creates an independent clone of this equipment initialized to a specific rarity tier (respecting floor/ceiling/fixed rules).
+## Designed for Class Pools, Combat Drops, Events, and Shop inventories.
 func duplicate_with_rarity(target_rarity: Rarity) -> Equipment:
 	var dup: Equipment = duplicate(true)
-	dup.rarity = target_rarity
+	dup.rarity = clamp_to_allowed_rarity(int(target_rarity))
 	dup.source_template = source_template if source_template != null else self
 	dup.reset_for_battle()
 	return dup
@@ -464,13 +519,8 @@ func apply_progression() -> void:
 		return
 	for tag in unlock_tags:
 		p.set_flag(tag, true)
-	if p.active_reward_tree != null:
-		p.active_reward_tree.on_reward_chosen(self, p)
-	if p.rewards_piece != null:
-		var tpl: Resource = source_template if source_template != null else self
-		if remove_from_pool_when_picked:
-			p.rewards_piece.erase(self)
-			p.rewards_piece.erase(tpl)
+	if p.has_method("on_reward_chosen"):
+		p.on_reward_chosen(self)
 
 func boost() -> void:
 	apply_progression()
@@ -492,7 +542,7 @@ func activate(context = null) -> void:
 	elif cur_char != null:
 		is_crit = cur_char.roll_crit()
 	criting = false
-	var crit_factor: float = (1.0 + cur_char.crit_mutly / 100.0) if is_crit else 1.0
+	var crit_factor: float = cur_char.get_crit_damage_multiplier() if is_crit else 1.0
 
 	# 1. Pre-Effect Hand Combo
 	var eff_combo_before: int = get_effective_combo_points_before()
@@ -505,7 +555,9 @@ func activate(context = null) -> void:
 	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
 		if cur_enemy != null:
 			var loops: int = get_effective_hit_count()
-			var stat_bonus: float = _get_stat_value(cur_char, damage_stat_scaling)
+			var raw_stat: float = _get_stat_value(cur_char, damage_stat_scaling)
+			var eff_ratio: float = 0.50 if damage_type == DamageType.MAGIC else stat_scaling_ratio
+			var stat_bonus: float = roundf(raw_stat * eff_ratio)
 			var flat_upg: float = float(upgrade) if not upgrade_scales_combo_mult else 0.0
 			var total_combo_mult: float = eff_combo_mult + (float(upgrade) if upgrade_scales_combo_mult else 0.0)
 
@@ -519,23 +571,25 @@ func activate(context = null) -> void:
 					var heal_amt: float = max(1.0, roundf(dmg_val * ctx.lifesteal_bonus))
 					cur_char.modify_stat("cur_health", heal_amt)
 
-	# 3. Physical Armor Effect
+	# 3. Physical Armor Effect (Fixed 25% scaling from Grit)
 	var eff_arm: float = get_effective_base_armor()
 	if eff_arm > 0.0:
-		var arm_val: float = eff_arm + float(upgrade) + _get_stat_value(cur_char, armor_stat_scaling)
+		var raw_stat_arm: float = _get_stat_value(cur_char, armor_stat_scaling)
+		var arm_val: float = eff_arm + float(upgrade) + roundf(raw_stat_arm * 0.25)
 		if multiply_armor_by_combo:
 			arm_val *= max(1, cur_char.combo)
 		arm_val = roundf(arm_val * mult * crit_factor)
 		cur_char.modify_stat("cur_armor", arm_val)
 
-	# 4. Magic Armor Effect
-	var eff_m_arm: float = get_effective_base_magic_armor()
+	# 4. Mystic Armor Effect (Fixed 50% scaling from Spirit)
+	var eff_m_arm: float = get_effective_base_mystic_armor()
 	if eff_m_arm > 0.0:
-		var m_arm_val: float = eff_m_arm + float(upgrade) + _get_stat_value(cur_char, magic_armor_stat_scaling)
-		if multiply_magic_armor_by_combo:
+		var raw_stat_m_arm: float = _get_stat_value(cur_char, mystic_armor_stat_scaling)
+		var m_arm_val: float = eff_m_arm + float(upgrade) + roundf(raw_stat_m_arm * 0.50)
+		if multiply_mystic_armor_by_combo:
 			m_arm_val *= max(1, cur_char.combo)
 		m_arm_val = roundf(m_arm_val * mult * crit_factor)
-		cur_char.modify_stat("cur_mage_armor", m_arm_val)
+		cur_char.modify_stat("cur_mystic_armor", m_arm_val)
 
 	# 5. Heal HP Effect
 	var eff_heal: float = get_effective_base_heal()

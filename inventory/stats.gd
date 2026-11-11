@@ -35,33 +35,35 @@ func expand():
 	get_stat_and_set(ls_display, cat_health_lifesteal, true, "Life Steal (%)")
 
 	get_stat_and_set(Global.cur_char.grit, cat_defence_startarmor, false, "Grit (Blue)", eq_bonuses.get("grit", 0.0))
-	get_stat_and_set(Global.cur_char.start_mage_armor, cat_defence_startmagearmor, true, "Starting Magic Armor", eq_bonuses.get("start_mage_armor", 0.0))
+	var m_arm = Global.cur_char.start_mystic_armor if "start_mystic_armor" in Global.cur_char else Global.cur_char.start_mage_armor
+	get_stat_and_set(m_arm, cat_defence_startmagearmor, true, "Starting Mystic Armor", eq_bonuses.get("start_mystic_armor", eq_bonuses.get("start_mage_armor", 0.0)))
 	get_stat_and_set(Global.cur_char.dmg_reduction_flat, cat_defence_dmgreduction, true, "Flat DMG Reduction", eq_bonuses.get("dmg_reduction_flat", 0.0))
-	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true, "Damage Reduction", eq_bonuses.get("dmg_reduction", 0.0))
+	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true, "Damage Reduction (%)", eq_bonuses.get("dmg_reduction", 0.0))
 
 	get_stat_and_set(Global.cur_char.might, cat_offence_str, false, "Might (Red)", eq_bonuses.get("might", 0.0))
 	if cat_offence_prof != null:
 		cat_offence_prof.visible = false
 	get_stat_and_set(Global.cur_char.fluf_damage, cat_offence_dmgfluf, true, "Unarmed Track DMG", eq_bonuses.get("fluf_damage", 0.0))
-	var eff_crit: int = Global.cur_char.crit_chance + max(0, (Global.cur_char.agility - 2) * 2)
-	get_stat_and_set(eff_crit, cat_offence_crit, false, "Crit Chance", eq_bonuses.get("crit_chance", 0.0))
-	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg, false, "Crit Bonus DMG", eq_bonuses.get("crit_mutly", 0.0))
+	var eff_crit: int = Global.cur_char.get_effective_crit_chance() if Global.cur_char.has_method("get_effective_crit_chance") else int(Global.cur_char.crit_chance)
+	get_stat_and_set(eff_crit, cat_offence_crit, false, "Crit Chance (%)", eq_bonuses.get("crit_chance", 0.0))
+	get_stat_and_set(Global.cur_char.crit_mutly, cat_offence_critdmg, false, "Crit Bonus DMG (%)", eq_bonuses.get("crit_mutly", 0.0))
 
-	get_stat_and_set(Global.cur_char.spirit, cat_magic_mana, false, "Spirit (Purple/White)", eq_bonuses.get("spirit", 0.0))
+	get_stat_and_set(Global.cur_char.spirit, cat_magic_mana, false, "Spirit (Purple)", eq_bonuses.get("spirit", 0.0))
 
-	var agi_bonus: float = eq_bonuses.get("agility", eq_bonuses.get("speed", 0.0))
+	var agi_bonus: float = eq_bonuses.get("agility", 0.0)
 	get_stat_and_set(Global.cur_char.agility, cat_utility_spd, false, "Agility (Max Energy: %d)" % Global.cur_char.max_energy, agi_bonus)
 	if cat_utility_agility != null:
-		cat_utility_agility.visible = false
+		var luck_val: float = Global.cur_char.get_luck() if Global.cur_char.has_method("get_luck") else (Global.cur_char.agility + Global.cur_char.spirit)
+		var mf_val: float = Global.cur_char.get_magic_find() if Global.cur_char.has_method("get_magic_find") else luck_val
+		get_stat_and_set(luck_val, cat_utility_agility, false, "Luck (Magic Find: %d)" % int(roundf(mf_val)))
 	get_stat_and_set(Global.cur_char.rerolls, cat_utility_rerolls, false, "Draft Rerolls")
-	var eff_cdr: int = Global.cur_char.cooldown_reduction + int(floor(Global.cur_char.spirit * 0.25))
-	get_stat_and_set(eff_cdr, cat_utility_cd, true, "Cooldown Reduction", eq_bonuses.get("cooldown_reduction", 0.0))
+	var phys_cdr = int(roundf(Global.cur_char.cooldown_reduction)) + int(floor(Global.cur_char.agility / 5.0))
+	var myst_cdr = int(roundf(Global.cur_char.cooldown_reduction)) + int(floor(Global.cur_char.spirit / 5.0))
+	get_stat_and_set(phys_cdr, cat_utility_cd, false, "Cooldown Red. (Phys -%d | Myst -%d)" % [phys_cdr, myst_cdr], eq_bonuses.get("cooldown_reduction", 0.0))
 
 func _fmt_num(val) -> String:
-	if typeof(val) == TYPE_FLOAT:
-		if is_equal_approx(val, roundf(val)):
-			return str(int(roundf(val)))
-		return str(snappedf(val, 0.1))
+	if typeof(val) == TYPE_FLOAT or typeof(val) == TYPE_INT:
+		return str(int(roundf(float(val))))
 	return str(val)
 
 func get_stat_and_set(value, to_set: HBoxContainer, hide_if_empty: bool = false, custom_name: String = "", eq_bonus: float = 0.0):

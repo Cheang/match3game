@@ -35,11 +35,13 @@ func _on_selection_btn_pressed() -> void:
 	if loc_res == null or loc_res.next_scene == null:
 		return
 	var destination_scene: String = loc_res.next_scene
-	if loc_res.enemy_encounter and not loc_res.which_enemy.is_empty():
-		var enemy_chosen = loc_res.which_enemy.pick_random()
+	if loc_res.enemy_encounter:
+		var enemy_chosen: EnemyResource = null
+		if not loc_res.which_enemy.is_empty():
+			enemy_chosen = loc_res.which_enemy.pick_random()
 		Global.set_up_enemy(enemy_chosen)
 		Global.minions_killed += 1
-		destination_scene = "res://scenes/game_window.tscn"
+		destination_scene = "res://scenes/combat-screen.tscn"
 	elif loc_res.event_encounter and loc_res.event_resource:
 		Global.area_cur_event = loc_res.event_resource
 		destination_scene = "res://scenes/event_screen.tscn"

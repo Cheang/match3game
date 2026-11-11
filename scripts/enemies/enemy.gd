@@ -22,6 +22,8 @@ signal enemy_attacked
 
 func _ready() -> void:
 	if Global.cur_enemy == null:
+		Global.set_up_enemy()
+	if Global.cur_enemy == null:
 		return
 	Global.cur_enemy.ensure_loadout_tracks()
 	Global.cur_enemy.pick_next_attack()
@@ -155,15 +157,15 @@ func update_health():
 	var armor_str: String = ""
 	if Global.cur_enemy.cur_armor > 0:
 		armor_str += " [Armor:%d]" % int(roundf(Global.cur_enemy.cur_armor))
-	if Global.cur_enemy.cur_mage_armor > 0:
-		armor_str += " [M.Armor:%d]" % int(roundf(Global.cur_enemy.cur_mage_armor))
+	if Global.cur_enemy.cur_mystic_armor > 0:
+		armor_str += " [Mystic Armor:%d]" % int(roundf(Global.cur_enemy.cur_mystic_armor))
 	if health != null:
 		health.text = "HP: %d / %d%s" % [int(roundf(cur_hp)), int(roundf(max_hp)), armor_str]
 	if healthBar != null:
 		healthBar.value = cur_hp * 100.0 / max_hp
 		healthBar.tooltip_text = _build_enemy_tooltip()
 	if armorBar != null:
-		var total_armor: float = Global.cur_enemy.cur_armor + Global.cur_enemy.cur_mage_armor
+		var total_armor: float = Global.cur_enemy.cur_armor + Global.cur_enemy.cur_mystic_armor
 		armorBar.value = clampf(total_armor * 100.0 / max_hp, 0.0, 100.0)
 
 	if _is_initialized:
@@ -201,7 +203,7 @@ func _spawn_enemy_popup(text_str: String, col: Color) -> void:
 	tw.chain().tween_callback(lbl.queue_free)
 
 func update_ui(stat: String):
-	if stat in ["cur_health", "max_health", "cur_armor", "cur_mage_armor"]:
+	if stat in ["cur_health", "max_health", "cur_armor", "cur_mage_armor", "cur_mystic_armor"]:
 		update_health()
 	elif stat in ["combo", "hand_combo", "dodge", "dodging"]:
 		if buff_container != null and Global.cur_enemy != null:

@@ -325,8 +325,8 @@ func _on_back_to_mm_pressed() -> void:
 func _on_tree_entered() -> void:
 	if Global.cur_char == null:
 		Global.set_up_player()
-	if Global.cur_enemy == null and ResourceLoader.exists("res://enemies/minion/wild_boar/wild_boar_1.tres"):
-		Global.set_up_enemy(load("res://enemies/minion/wild_boar/wild_boar_1.tres"))
+	if Global.cur_enemy == null:
+		Global.set_up_enemy()
 	if Global.cur_char != null:
 		Global.cur_char.playerDied.connect(player_died)
 		Global.cur_char.playerFinishedTurn.connect(player_finished_turn)

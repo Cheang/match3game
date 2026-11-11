@@ -16,9 +16,6 @@ var _last_armor: float = 0.0
 var _last_mage_armor: float = 0.0
 var _last_combo: int = 0
 var _last_dodge: bool = false
-var _last_dodging: bool:
-	get: return _last_dodge
-	set(v): _last_dodge = v
 var _last_gold: int = 0
 var _popup_seq: int = 0
 var _is_updating_ui: bool = false
@@ -57,11 +54,11 @@ func _update_ui_internal(stat: String) -> void:
 		return
 	cur_character = Global.cur_char
 
-	if stat == "cur_health" or stat == "max_health" or stat == "cur_armor" or stat == "cur_mage_armor":
+	if stat == "cur_health" or stat == "max_health" or stat == "cur_armor" or stat == "cur_mage_armor" or stat == "cur_mystic_armor":
 		var cur_hp: float = Global.cur_char.cur_health
 		var max_hp: float = max(1.0, Global.cur_char.max_health)
 		var armor: float = Global.cur_char.cur_armor
-		var mage_armor: float = Global.cur_char.cur_mage_armor
+		var mage_armor: float = Global.cur_char.cur_mystic_armor
 		if globes != null:
 			globes.set_defenses(cur_hp, max_hp, armor, mage_armor, _is_initialized)
 
@@ -79,19 +76,19 @@ func _update_ui_internal(stat: String) -> void:
 					_spawn_combat_popup("+%d Armor" % int(roundf(diff_a)), Color(0.42, 0.68, 1.0))
 				elif diff_a < -0.05:
 					_spawn_combat_popup("-%d Armor" % int(roundf(abs(diff_a))), Color(0.65, 0.75, 0.85))
-			elif stat == "cur_mage_armor":
+			elif stat == "cur_mage_armor" or stat == "cur_mystic_armor":
 				var diff_ma: float = mage_armor - _last_mage_armor
 				if diff_ma > 0.05:
-					_spawn_combat_popup("+%d M.Armor" % int(roundf(diff_ma)), Color(0.28, 0.88, 0.98))
+					_spawn_combat_popup("+%d Mystic Armor" % int(roundf(diff_ma)), Color(0.28, 0.88, 0.98))
 				elif diff_ma < -0.05:
-					_spawn_combat_popup("-%d M.Armor" % int(roundf(abs(diff_ma))), Color(0.28, 0.88, 0.98))
+					_spawn_combat_popup("-%d Mystic Armor" % int(roundf(abs(diff_ma))), Color(0.28, 0.88, 0.98))
 		_last_hp = cur_hp
 		_last_armor = armor
 		_last_mage_armor = mage_armor
 		return
 
 	if stat == "moves_left" or stat == "agility" or stat == "speed" or stat == "max_energy":
-		var moves: int = max(0, Global.cur_char.moves_left)
+		var moves: int = maxi(0, int(Global.cur_char.moves_left))
 		var max_moves: int = Global.cur_char.max_energy
 		if globes != null:
 			globes.set_energy(moves, max_moves, _is_initialized)

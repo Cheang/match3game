@@ -45,7 +45,9 @@ func _run_all_tests() -> void:
 	_test_per_action_critical_hits()
 	_test_unified_buffs_and_debuffs()
 	_test_five_passive_slots_and_inventory_removal()
+	_test_unified_four_reward_types_and_build_affinity()
 	_test_save_load_persistence()
+	_test_core_pillars_and_derived_stat_scaling()
 
 # ------------------------------------------------------------------------------
 # 1. Shared Entity Foundation
@@ -56,37 +58,34 @@ func _test_shared_entity_resource() -> void:
 	var enemy := EnemyResource.new()
 	_assert(player is EntityResource, "PlayerResource extends EntityResource")
 	_assert(enemy is EntityResource, "EnemyResource extends EntityResource")
-	_assert(player.agility == 2, "PlayerResource defaults to agility = 2")
-	_assert(player.speed == 2, "PlayerResource speed alias returns agility (2)")
-	_assert(player.max_energy == 2, "PlayerResource default max_energy = 2 (1 + floor(2/2))")
-	_assert(enemy.agility == 1, "EnemyResource defaults to agility = 1")
-	_assert(enemy.speed == 1, "EnemyResource speed alias returns agility (1)")
-	_assert(enemy.max_energy == 1, "EnemyResource default max_energy = 1 (1 + floor(1/2))")
+	_assert(is_equal_approx(player.agility, 2.0), "PlayerResource defaults to agility = 2")
+	_assert(player.max_energy == 2, "PlayerResource default max_energy = 2 (Base 2 + floor(2/5))")
+	_assert(is_equal_approx(enemy.agility, 1.0), "EnemyResource defaults to agility = 1")
+	_assert(enemy.max_energy == 1, "EnemyResource default max_energy = 1 (Base 1 + floor(1/5))")
 
-	# Max energy scaling formula tests: max(1, 1 + int(floor(agility / 2.0)))
-	player.agility = 0
-	_assert(player.max_energy == 1, "Agility 0 -> max_energy = 1")
-	player.agility = 1
-	_assert(player.max_energy == 1, "Agility 1 -> max_energy = 1")
-	player.agility = 2
+	# Max energy scaling formula tests: Base + int(floor(agility / 5.0))
+	player.agility = 0.0
+	_assert(player.max_energy == 2, "Agility 0 -> max_energy = 2")
+	player.agility = 1.0
+	_assert(player.max_energy == 2, "Agility 1 -> max_energy = 2")
+	player.agility = 2.0
 	_assert(player.max_energy == 2, "Agility 2 -> max_energy = 2")
-	player.agility = 3
-	_assert(player.max_energy == 2, "Agility 3 -> max_energy = 2")
-	player.agility = 4
-	_assert(player.max_energy == 3, "Agility 4 -> max_energy = 3")
-	player.agility = 6
-	_assert(player.max_energy == 4, "Agility 6 -> max_energy = 4")
-	player.agility = -5
-	_assert(player.max_energy == 1, "Agility negative (-5) respects hard floor of 1")
+	player.agility = 4.0
+	_assert(player.max_energy == 2, "Agility 4 -> max_energy = 2")
+	player.agility = 5.0
+	_assert(player.max_energy == 3, "Agility 5 -> max_energy = 3 (Base 2 + 1)")
+	player.agility = 10.0
+	_assert(player.max_energy == 4, "Agility 10 -> max_energy = 4 (Base 2 + 2)")
+	player.agility = -10.0
+	_assert(player.max_energy == 1, "Agility negative (-10) respects hard floor of 1")
 
-	# Backward compat setter alias test
-	player.speed = 4
-	_assert(player.agility == 4, "Setting speed=4 updates agility to 4")
-	_assert(player.max_energy == 3, "Agility 4 derived max_energy = 3")
-	player.agility = 2
+	player.agility = 5.0
+	_assert(is_equal_approx(player.agility, 5.0), "Setting agility=5 updates agility to 5")
+	_assert(player.max_energy == 3, "Agility 5 derived max_energy = 3")
+	player.agility = 2.0
 
 	# Moves_left strict clamping to max_energy
-	player.agility = 2 # max_energy = 2
+	player.agility = 2.0 # max_energy = 2
 	player.moves_left = 10
 	_assert(player.moves_left == 2, "moves_left capped at max_energy (2) when assigned 10")
 	player.modify_stat("moves_left", 5)
@@ -97,11 +96,11 @@ func _test_shared_entity_resource() -> void:
 	_assert(player.moves_left == 0, "modify_stat('moves_left', -10) clamps floor to 0")
 
 	# Agility change clamps existing moves_left if exceeding new max_energy
-	player.agility = 4 # max_energy = 3
+	player.agility = 5.0 # max_energy = 3
 	player.moves_left = 3
 	_assert(player.moves_left == 3, "moves_left can reach 3 when max_energy is 3")
-	player.agility = 2 # max_energy = 2
-	_assert(player.moves_left == 2, "Reducing agility from 4 to 2 automatically clamps moves_left down to 2")
+	player.agility = 2.0 # max_energy = 2
+	_assert(player.moves_left == 2, "Reducing agility from 5 to 2 automatically clamps moves_left down to 2")
 
 	# Verify enemy lifesteal heals the enemy (attacker) and NOT Global.cur_char
 	player.max_health = 30.0
@@ -117,12 +116,21 @@ func _test_shared_entity_resource() -> void:
 	_assert(is_equal_approx(enemy.cur_health, 15.0), "Enemy lifesteal healed the enemy (+5 HP), not the player")
 
 	# Verify equipment cooldown reduction reads from the acting entity
+	# Heavy Slam is Physical (is_mystical = false), so CDR scales with Agility (-1 per 5 Agility)
 	enemy.cooldown_reduction = 1
-	enemy.spirit = 4.0 # +1 CDR from spirit * 0.25
+	enemy.agility = 5.0 # +1 CDR from agility (floor(5.0 / 5.0))
 	var cd_eq := _make_test_equipment("Heavy Slam", 5.0)
 	cd_eq.cooldown_turns = 3
 	cd_eq.on_triggered(enemy)
-	_assert(cd_eq.current_cooldown == 1, "Equipment on_triggered(enemy) uses enemy CDR (3 - 2 = 1)")
+	_assert(cd_eq.current_cooldown == 1, "Equipment on_triggered(enemy) uses enemy Agility CDR (3 - (1 + 1) = 1)")
+
+	# Verify Mystical equipment cooldown reduction reads Spirit (-1 per 5 Spirit)
+	var myst_eq := _make_test_equipment("Mystic Blast", 5.0)
+	myst_eq.is_mystical = true
+	myst_eq.cooldown_turns = 4
+	enemy.spirit = 5.0 # +1 CDR from spirit
+	myst_eq.on_triggered(enemy)
+	_assert(myst_eq.current_cooldown == 2, "Mystical equipment on_triggered(enemy) uses enemy Spirit CDR (4 - (1 + 1) = 2)")
 
 # ------------------------------------------------------------------------------
 # 2. 5 Normal Slots + 1 Ultimate Slot Capacity & Chain Execution
@@ -409,7 +417,7 @@ func _test_board_smart_beast_hybrid_and_bombs() -> void:
 	# Instantiate game_window to test real board resolution for Smart, Beast, and Bomb majority color
 	Global.cur_char = player
 	Global.set_up_enemy(cap)
-	var gw_scene: PackedScene = load("res://scenes/game_window.tscn")
+	var gw_scene: PackedScene = load("res://scenes/combat-screen.tscn")
 	var gw: GameMaster = gw_scene.instantiate()
 	add_child(gw)
 	await get_tree().create_timer(0.55).timeout
@@ -467,7 +475,7 @@ func _test_enemy_target_preview_and_cascade_suppression() -> void:
 
 	Global.cur_char = player
 	Global.set_up_enemy(cap)
-	var gw_scene: PackedScene = load("res://scenes/game_window.tscn")
+	var gw_scene: PackedScene = load("res://scenes/combat-screen.tscn")
 	var gw: GameMaster = gw_scene.instantiate()
 	add_child(gw)
 	await get_tree().create_timer(0.55).timeout
@@ -543,14 +551,14 @@ func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	Global.cur_char = player
 	Global.set_up_enemy(boar)
 
-	# Check that warrior_tree.tres contains direct Equipment resources
-	var combat_pool: Array[Resource] = player.active_reward_tree.get_combat_pool()
+	# Check that warrior.tres class_rewards contains direct Equipment and unified Reward resources
+	var combat_pool: Array[Resource] = player.get_active_combat_pool()
 	var has_direct_equipment: bool = false
 	for item in combat_pool:
 		if item is Equipment:
 			has_direct_equipment = true
 			break
-	_assert(has_direct_equipment, "Warrior RewardTree contains direct Equipment resources without Reward wrappers")
+	_assert(has_direct_equipment, "Warrior class_rewards pool contains direct Equipment resources without Reward wrappers")
 	_assert(not boar.loot_table.is_empty(), "Wild Boar has a populated monster loot_table")
 
 	var reward_scene: PackedScene = load("res://scenes/reward_screen.tscn")
@@ -684,8 +692,9 @@ func _test_save_load_persistence() -> void:
 	player.reset_stats_at_beginning_of_game()
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
 	red_track.next_entry_cursor = 1
-	player.active_reward_tree.unlocked_tags["test_tag_persisted"] = true
+	player.set_flag("test_tag_persisted", true)
 	var p_saved := Reward.new()
+	p_saved.reward_type = Reward.RewardType.PASSIVE
 	p_saved.name = "SavedPassive"
 	p_saved.might = 3.0
 	player.equip_passive(p_saved)
@@ -709,10 +718,10 @@ func _test_save_load_persistence() -> void:
 	var loaded_red: ColorLoadoutTrack = Global.cur_char.get_track_for_color(Global.TileColor.RED)
 	_assert(loaded_red != null and loaded_red.max_slots == 5, "Reloaded Red track preserves 5-slot normal capacity")
 	_assert(loaded_red.next_entry_cursor == 1, "Reloaded Red track preserves next_entry_cursor == 1")
-	_assert(Global.cur_char.active_reward_tree.unlocked_tags.has("test_tag_persisted"), "Reloaded RewardTree preserves unlocked_tags")
+	_assert(Global.cur_char.has_flag("test_tag_persisted"), "Reloaded PlayerResource preserves unlocked_tags")
 	_assert(Global.cur_char.equipped_passives.size() == 1, "Reloaded cur_char preserves 1 equipped passive")
 	_assert(Global.cur_char.equipped_passives[0].name == "SavedPassive", "Reloaded passive is SavedPassive")
-	_assert(is_equal_approx(Global.cur_char.might, 4.0), "Reloaded passive grants +3 might (total 4.0)")
+	_assert(is_equal_approx(Global.cur_char.might, 5.0), "Reloaded passive grants +3 might (total 5.0)")
 	_assert(Global.cur_enemy != null and Global.cur_enemy.hybrid_next_is_beast == true, "Reloaded EnemyResource preserves hybrid_next_is_beast state")
 
 	if FileAccess.file_exists(test_save_path):
@@ -898,7 +907,7 @@ func _test_five_passive_slots_and_inventory_removal() -> void:
 
 	_assert(plr.equipped_passives.size() == 5, "Player has exactly 5 passives equipped")
 	_assert(plr.can_equip_passive() == false, "can_equip_passive is false when 5/5 slots are full")
-	_assert(is_equal_approx(plr.might, 1.0 + 10.0), "5 passives grant +10 might (total 11.0)")
+	_assert(is_equal_approx(plr.might, 2.0 + 10.0), "5 passives grant +10 might (total 12.0)")
 
 	# Attempt to equip 6th passive without replace_index -> rejected
 	var rew_6 := Reward.new()
@@ -913,16 +922,16 @@ func _test_five_passive_slots_and_inventory_removal() -> void:
 	_assert(replaced == true, "Replacing passive at index 2 succeeds")
 	_assert(plr.equipped_passives.size() == 5, "Passives count remains 5 after replacement")
 	_assert(plr.equipped_passives[2].name == "Passive_6", "Passive at slot 2 is now Passive_6")
-	# might: base 1.0 + 4*2.0 (8.0) + 1*5.0 (5.0) = 14.0
-	_assert(is_equal_approx(plr.might, 14.0), "Passive stats reconciled with zero drift: might is 14.0")
+	# might: base 2.0 + 4*2.0 (8.0) + 1*5.0 (5.0) = 15.0
+	_assert(is_equal_approx(plr.might, 15.0), "Passive stats reconciled with zero drift: might is 15.0")
 
 	# Unequip passive at slot index 0
 	var unequipped = plr.unequip_passive(0)
 	_assert(unequipped != null and unequipped.name == "Passive_0", "Unequipped Passive_0 from index 0")
 	_assert(plr.equipped_passives.size() == 4, "Passives count is now 4")
 	_assert(plr.can_equip_passive() == true, "can_equip_passive is true again after unequipping")
-	# might: 14.0 - 2.0 = 12.0
-	_assert(is_equal_approx(plr.might, 12.0), "Passive stats correctly revoked after unequipping: might is 12.0")
+	# might: 15.0 - 2.0 = 13.0
+	_assert(is_equal_approx(plr.might, 13.0), "Passive stats correctly revoked after unequipping: might is 13.0")
 
 	# Test replacing equipment on full color line (no inventory bag)
 	var red_track: ColorLoadoutTrack = plr.get_track_for_color(Global.TileColor.RED)
@@ -942,3 +951,287 @@ func _test_five_passive_slots_and_inventory_removal() -> void:
 	_assert(rep_ok == true, "replace_modifier_on_track successfully replaced slot 1")
 	_assert(red_track.equipped_modifiers[1].piece_name == "NewBlade", "Slot 1 now holds NewBlade")
 	_assert(plr.modifier_inventory.is_empty(), "Displaced item was discarded; modifier_inventory remains empty")
+
+# ------------------------------------------------------------------------------
+# 11. Unified 4 Reward Types & Build-Affinity Class Pool Algorithm
+# ------------------------------------------------------------------------------
+func _test_unified_four_reward_types_and_build_affinity() -> void:
+	print("\n--- 11. Unified 4 Reward Types & Build-Affinity Class Pool ---")
+	var plr: PlayerResource = load("res://players/warrior/warrior.tres").duplicate(true)
+	plr.reset_stats_at_beginning_of_game()
+
+	# 1. Verify all 4 RewardType enum values exist and work on unified Reward
+	var punch_eq: Equipment = load("res://tiles/equipment/punch.tres")
+	var eq_reward: Reward = Reward.from_equipment(punch_eq, int(Equipment.Rarity.RARE), 2)
+	_assert(eq_reward.reward_type == Reward.RewardType.EQUIPMENT, "Reward.from_equipment sets reward_type == EQUIPMENT")
+	_assert(eq_reward.get_effective_family() == "fists", "EQUIPMENT Reward inherits 'fists' family from Punch")
+	_assert(eq_reward.get_display_name() == "Punch", "EQUIPMENT Reward inherits display name from Punch")
+	_assert(eq_reward.equipment_to_grant.size() == 2, "EQUIPMENT Reward grants 2 copies when count=2")
+	_assert(eq_reward.get_effective_shop_price() == 75, "RARE Reward defaults to 75 gold shop price")
+
+	# 2. Verify Type 1 (PASSIVE), Type 2 (STAT_BUFF), Type 3 (MECHANIC_UNLOCK)
+	var pas_rew: Reward = load("res://rewards/cards/fists/fists1_5-iron_muscles.tres").duplicate(true)
+	_assert(pas_rew.reward_type == Reward.RewardType.PASSIVE, "Iron Muscles is RewardType.PASSIVE")
+	_assert(pas_rew.get_effective_family() == "fists", "Iron Muscles has family 'fists'")
+	var might_before: float = plr.might
+	RewardGrantHandler.grant_reward(pas_rew, true, plr)
+	_assert(plr.equipped_passives.size() == 1, "Granting PASSIVE reward equips it into passives ring")
+	_assert(is_equal_approx(plr.might, might_before + 1.0), "Equipped PASSIVE reward boosts Might by +1")
+
+	var stat_rew: Reward = load("res://rewards/cards/body/body0_strong_body_1.tres").duplicate(true)
+	_assert(stat_rew.reward_type == Reward.RewardType.STAT_BUFF, "Strong Body I is RewardType.STAT_BUFF")
+	var max_hp_before: float = plr.max_health
+	RewardGrantHandler.grant_reward(stat_rew, true, plr)
+	_assert(is_equal_approx(plr.max_health, max_hp_before + 2.0), "Granting STAT_BUFF reward permanently increases max_health by +2")
+	_assert(plr.has_flag("flg_rew_body_1"), "Strong Body I unlocks tag 'flg_rew_body_1'")
+
+	var mech_rew: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres").duplicate(true)
+	_assert(mech_rew.reward_type == Reward.RewardType.MECHANIC_UNLOCK, "Horizontal Bombs is RewardType.MECHANIC_UNLOCK")
+	_assert(not plr.flg_can_spawn_row_bombs, "Row bombs initially locked")
+	_assert(RewardGrantHandler.can_be_offered_to(mech_rew, plr) == true, "Horizontal Bombs can be offered while locked")
+	RewardGrantHandler.grant_reward(mech_rew, true, plr)
+	_assert(plr.flg_can_spawn_row_bombs == true, "Granting MECHANIC_UNLOCK unlocks row bombs on player")
+	_assert(mech_rew.is_already_unlocked(plr) == true, "is_already_unlocked returns true after unlocking row bombs")
+	_assert(RewardGrantHandler.can_be_offered_to(mech_rew, plr) == false, "Already-unlocked mechanic cannot be offered again")
+
+	# Test Extra Mechanic Unlocks: Color Pool Addition, Transmutation, and Slot Expansion
+	var add_purple_rew := Reward.new()
+	add_purple_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	add_purple_rew.mechanic_type = Reward.MechanicType.ADD_COLOR_TO_POOL
+	add_purple_rew.target_color = Global.TileColor.PURPLE
+	RewardGrantHandler.grant_reward(add_purple_rew, true, plr)
+	_assert(plr.active_color_pool.has(Global.TileColor.PURPLE), "MECHANIC_UNLOCK (ADD_COLOR_TO_POOL) adds Purple to active_color_pool")
+
+	var transmute_rew := Reward.new()
+	transmute_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	transmute_rew.mechanic_type = Reward.MechanicType.TRANSMUTE_COLOR
+	transmute_rew.target_color = Global.TileColor.RED
+	transmute_rew.transmute_to_color = Global.TileColor.DARK_CRIMSON
+	RewardGrantHandler.grant_reward(transmute_rew, true, plr)
+	_assert(plr.active_color_pool.has(Global.TileColor.DARK_CRIMSON), "MECHANIC_UNLOCK (TRANSMUTE_COLOR) transmutes Red to Dark Crimson")
+
+	var expand_slots_rew := Reward.new()
+	expand_slots_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	expand_slots_rew.mechanic_type = Reward.MechanicType.EXPAND_TRACK_SLOTS
+	expand_slots_rew.target_color = Global.TileColor.BLUE
+	expand_slots_rew.slot_expansion_amount = 1
+	var blue_slots_before: int = plr.get_track_for_color(Global.TileColor.BLUE).max_slots
+	RewardGrantHandler.grant_reward(expand_slots_rew, true, plr)
+	_assert(plr.get_track_for_color(Global.TileColor.BLUE).max_slots == blue_slots_before + 1, "MECHANIC_UNLOCK (EXPAND_TRACK_SLOTS) expands Blue track slots by +1")
+
+	# 3. Verify Build-Affinity Weighting Algorithm
+	var fist_player := PlayerResource.new()
+	fist_player.reset_stats_at_beginning_of_game()
+	# Equip 4 fists items on fist_player (3 Punches on Red track + 1 Iron Muscles passive)
+	for _i in range(3):
+		fist_player.add_modifier_reward(punch_eq, true)
+	fist_player.equip_passive(pas_rew)
+
+	var fam_counts: Dictionary = fist_player.get_build_family_counts()
+	_assert(int(fam_counts.get("fists", 0)) == 4, "Build family counter detects 4 equipped 'fists' items (3 active + 1 passive)")
+
+	var fist_cand: Reward = load("res://rewards/cards/fists/fists1-punch.tres")
+	var sword_cand: Reward = load("res://rewards/cards/sword/sword0_small_sword.tres")
+	var w_fist_affinity: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, true)
+	var w_sword_affinity: float = RewardGrantHandler.compute_selection_weight(sword_cand, fist_player, true)
+	var w_fist_monster: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, false)
+
+	# With 4 fists items and 0.75 per item: weight = 1.0 * (1.0 + 4 * 0.75) = 4.0
+	_assert(is_equal_approx(w_fist_affinity, 4.0), "Fists reward weight scales to 4.0x on a 4-item fists build")
+	_assert(is_equal_approx(w_sword_affinity, 1.0), "Unrelated sword reward stays at 1.0x weight")
+	_assert(is_equal_approx(w_fist_monster, 1.0), "Monster pool draw (use_build_affinity=false) ignores build affinity (1.0x)")
+
+	# Statistical check: drawing 200 times between [fist_cand, sword_cand] with build affinity enabled
+	var test_candidates: Array[Resource] = [fist_cand, sword_cand]
+	var fist_picks: int = 0
+	for _i in range(200):
+		var picked_res: Resource = RewardGrantHandler.pick_weighted_candidate(test_candidates, fist_player, true)
+		if picked_res == fist_cand:
+			fist_picks += 1
+	# Expected: ~80% (160/200). Assert strongly > 60% (> 120/200)
+	_assert(fist_picks >= 125, "Build-affinity weighted draw strongly favors fists reward (%d / 200 picks)" % fist_picks)
+
+	# 4. Verify Dynamic Rarity Scaling, Fixed Rarity, and Rarity Floor / Ceiling
+	var dyn_stat_rew := Reward.new()
+	dyn_stat_rew.reward_type = Reward.RewardType.STAT_BUFF
+	dyn_stat_rew.name = "Vitality Blessing"
+	dyn_stat_rew.max_health = 2.0
+	dyn_stat_rew.auto_scale_stats_with_rarity = true
+	dyn_stat_rew.min_rarity = Reward.Rarity.UNCOMMON # Floor: UNCOMMON
+	dyn_stat_rew.max_rarity = Reward.Rarity.EPIC     # Ceiling: EPIC
+
+	_assert(not dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.COMMON)), "Floor UNCOMMON blocks COMMON roll")
+	_assert(dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.UNCOMMON)), "Floor UNCOMMON allows UNCOMMON roll")
+	_assert(dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.EPIC)), "Ceiling EPIC allows EPIC roll")
+	_assert(not dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.LEGENDARY)), "Ceiling EPIC blocks LEGENDARY roll")
+
+	# Clamping behavior when duplicated outside [min_rarity, max_rarity]
+	var clamped_low: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.COMMON)
+	var clamped_high: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.GODLY)
+	var rolled_epic: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.EPIC)
+	_assert(clamped_low.rarity == Reward.Rarity.UNCOMMON, "Clamps COMMON up to min_rarity floor (UNCOMMON)")
+	_assert(clamped_high.rarity == Reward.Rarity.EPIC, "Clamps GODLY down to max_rarity ceiling (EPIC)")
+	_assert(is_equal_approx(rolled_epic.get_effective_max_health(), 5.0), "Dynamic STAT_BUFF scales max_health at EPIC (2.0 * 2.5 = 5.0)")
+
+	# Explicit RewardRarityTier multi-tier manual override test (e.g. Base=10 HP, Uncommon=12 HP, Rare=16 HP + 5 Heal)
+	var hp_pickup := Reward.new()
+	hp_pickup.reward_type = Reward.RewardType.STAT_BUFF
+	hp_pickup.name = "Health Pickup"
+	hp_pickup.max_health = 10.0
+
+	var tier_uncommon := RewardRarityTier.new()
+	tier_uncommon.rarity = RewardRarityTier.Rarity.UNCOMMON
+	tier_uncommon.max_health = 12.0 # is_stat_override defaults to true
+
+	var tier_rare := RewardRarityTier.new()
+	tier_rare.rarity = RewardRarityTier.Rarity.RARE
+	tier_rare.max_health = 16.0
+	tier_rare.heal_hp = 5.0
+
+	hp_pickup.rarity_tiers = [tier_uncommon, tier_rare]
+
+	var hp_common: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.COMMON)
+	var hp_uncommon: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.UNCOMMON)
+	var hp_rare: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.RARE)
+
+	_assert(is_equal_approx(hp_common.get_effective_max_health(), 10.0) and is_equal_approx(hp_common.get_effective_heal_hp(), 0.0), "Base COMMON Health Pickup gives 10 Max HP and 0 Heal")
+	_assert(is_equal_approx(hp_uncommon.get_effective_max_health(), 12.0) and is_equal_approx(hp_uncommon.get_effective_heal_hp(), 0.0), "Manual UNCOMMON override gives 12 Max HP and 0 Heal")
+	_assert(is_equal_approx(hp_rare.get_effective_max_health(), 16.0) and is_equal_approx(hp_rare.get_effective_heal_hp(), 5.0), "Manual RARE override gives 16 Max HP AND +5 Heal")
+
+	# Verify applying manual RARE override actually grants both +16 max_health (which also raises cur_health by +16) and +5 cur_health heal to player
+	var test_plr := PlayerResource.new()
+	test_plr.max_health = 20.0
+	test_plr.cur_health = 10.0 # Missing 10 HP
+	RewardGrantHandler.grant_reward(hp_rare, true, test_plr)
+	_assert(is_equal_approx(test_plr.max_health, 36.0), "Claiming manual RARE Health Pickup raises max_health 20 -> 36 (+16)")
+	# max_health increase (+16) raises cur_health 10 -> 26, and heal_hp (+5) heals 26 -> 31!
+	_assert(is_equal_approx(test_plr.cur_health, 31.0), "Claiming manual RARE Health Pickup raises cur_health by +16 (from max_health) + 5 (from heal_hp) = 31")
+
+	# Fixed rarity lock test (e.g. Bomb unlocks locked at LEGENDARY)
+	var fixed_bomb: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres")
+	_assert(fixed_bomb.fixed_rarity == true and fixed_bomb.rarity == Reward.Rarity.LEGENDARY, "Horizontal Bombs has fixed_rarity=true at LEGENDARY")
+	_assert(not RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "COMMON"), "Fixed LEGENDARY reward cannot roll at COMMON")
+	_assert(RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "LEGENDARY"), "Fixed LEGENDARY reward rolls at LEGENDARY")
+
+	# Equipment-granting Reward scales its embedded Equipment to the rolled rarity
+	var punch_card: Reward = load("res://rewards/cards/fists/fists1-punch.tres")
+	var epic_punch_card: Reward = RewardGrantHandler.prepare_draft_instance(punch_card, "EPIC") as Reward
+	_assert(epic_punch_card != null and epic_punch_card.rarity == Reward.Rarity.EPIC, "Drafted EQUIPMENT Reward scales to EPIC")
+	var granted_mods: Array[Equipment] = epic_punch_card.get_resolved_modifiers()
+	_assert(not granted_mods.is_empty() and granted_mods[0].rarity == Equipment.Rarity.EPIC, "Embedded Equipment inside drafted Reward also scales to EPIC")
+
+# ------------------------------------------------------------------------------
+# 12. Core Pillars & Low-Number Derived Stat Scaling System
+# ------------------------------------------------------------------------------
+func _test_core_pillars_and_derived_stat_scaling() -> void:
+	print("\n--- 12. Core Pillars & Low-Number Derived Stat Scaling System ---")
+	var plr := PlayerResource.new()
+	plr.might = 4.0
+	plr.grit = 6.0
+	plr.agility = 5.0
+	plr.spirit = 4.0
+	plr.bonus_max_health = 0.0
+
+	# 1. Health Formula: Base 15 + (Might * 1.0) + (Grit * 2.0) + bonus_max_health
+	# 15 + 4 + 12 = 31 HP
+	plr.recalculate_max_health()
+	_assert(is_equal_approx(plr.max_health, 31.0), "Derived Health = 15 + (4 * 1) + (6 * 2) = 31.0")
+
+	# Adding direct health buff: +5 HP -> 36 HP
+	plr.modify_stat("max_health", 5.0)
+	_assert(is_equal_approx(plr.max_health, 36.0), "Adding +5 direct HP buff increases max_health to 36.0")
+	_assert(is_equal_approx(plr.bonus_max_health, 5.0), "bonus_max_health accurately tracks direct HP buff (+5.0)")
+
+	# Increasing Might by 2 -> raises max_health by 2 (36 -> 38)
+	plr.modify_stat("might", 2.0)
+	_assert(is_equal_approx(plr.might, 6.0), "Might updated to 6.0")
+	_assert(is_equal_approx(plr.max_health, 38.0), "+2 Might automatically increases max_health from 36 to 38 (+2 HP)")
+
+	# Increasing Grit by 2 -> raises max_health by 4 (38 -> 42)
+	plr.modify_stat("grit", 2.0)
+	_assert(is_equal_approx(plr.grit, 8.0), "Grit updated to 8.0")
+	_assert(is_equal_approx(plr.max_health, 42.0), "+2 Grit automatically increases max_health from 38 to 42 (+4 HP)")
+
+	# 2. Luck & Magic Find
+	# Luck = Agility + Spirit + bonus_luck: 5.0 + 4.0 = 9.0
+	_assert(is_equal_approx(plr.get_luck(), 9.0), "Luck = Agility (5) + Spirit (4) = 9.0 (pure sum, no division)")
+	_assert(is_equal_approx(plr.get_magic_find(), 9.0), "Magic Find = Luck (9.0)")
+	plr.bonus_magic_find = 3.0
+	_assert(is_equal_approx(plr.get_magic_find(), 12.0), "Magic Find with +3 bonus = 12.0")
+	_assert(plr.rarity_bonus == 12, "Player rarity_bonus property matches Magic Find (12)")
+
+	# 3. Physical Attack Scaling: 25% vs 50%
+	var dummy := EnemyResource.new()
+	dummy.max_health = 100.0
+	dummy.cur_health = 100.0
+
+	# Fast weapon (25% scaling): Base 2 + round(6 Might * 0.25 = 1.5 -> 2) = 4 DMG
+	var dagger := Equipment.new()
+	dagger.piece_name = "Dagger"
+	dagger.base_damage = 2.0
+	dagger.damage_stat_scaling = Equipment.StatScaling.MIGHT
+	dagger.stat_scaling_ratio = 0.25
+	dagger.damage_type = Equipment.DamageType.PHYSICAL
+	dagger.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(dummy.cur_health, 96.0), "25% scaling weapon deals Base 2 + 2 = 4 DMG (100 -> 96)")
+
+	# Heavy weapon (50% scaling): Base 4 + round(6 Might * 0.50 = 3) = 7 DMG
+	var greatsword := Equipment.new()
+	greatsword.piece_name = "Greatsword"
+	greatsword.base_damage = 4.0
+	greatsword.damage_stat_scaling = Equipment.StatScaling.MIGHT
+	greatsword.stat_scaling_ratio = 0.50
+	greatsword.damage_type = Equipment.DamageType.PHYSICAL
+	greatsword.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(dummy.cur_health, 89.0), "50% scaling weapon deals Base 4 + 3 = 7 DMG (96 -> 89)")
+
+	# 4. Mystic DMG: Always fixed at 50% of Spirit (Spirit = 4.0 -> +2 DMG)
+	var spell := Equipment.new()
+	spell.piece_name = "Arcane Spark"
+	spell.base_damage = 3.0
+	spell.damage_type = Equipment.DamageType.MAGIC
+	spell.damage_stat_scaling = Equipment.StatScaling.SPIRIT
+	spell.stat_scaling_ratio = 0.10 # Ignored! Mystic DMG always scales at 50%
+	spell.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	# Base 3 + round(4 Spirit * 0.50 = 2) = 5 DMG (89 -> 84)
+	_assert(is_equal_approx(dummy.cur_health, 84.0), "Mystic DMG fixed at 50% Spirit: Base 3 + 2 = 5 DMG (89 -> 84)")
+
+	# 5. Armor Scaling: Physical (Fixed 25% of Grit) vs Mystic Armor (Fixed 50% of Spirit)
+	plr.cur_armor = 0.0
+	plr.cur_mystic_armor = 0.0
+
+	# Physical Shield: Base 2 + round(8 Grit * 0.25 = 2) = 4 Armor
+	var shield := Equipment.new()
+	shield.piece_name = "Iron Shield"
+	shield.base_armor = 2.0
+	shield.armor_stat_scaling = Equipment.StatScaling.GRIT
+	shield.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(plr.cur_armor, 4.0), "Physical Shield scales fixed 25% Grit: Base 2 + 2 = 4 Armor")
+
+	# Mystic Ward: Base 2 + round(4 Spirit * 0.50 = 2) = 4 Mystic Armor
+	var ward := Equipment.new()
+	ward.piece_name = "Mystic Ward"
+	ward.is_mystical = true
+	ward.base_mystic_armor = 2.0
+	ward.mystic_armor_stat_scaling = Equipment.StatScaling.SPIRIT
+	ward.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(plr.cur_mystic_armor, 4.0), "Mystic Ward scales fixed 50% Spirit: Base 2 + 2 = 4 Mystic Armor")
+
+	# 6. Explicit Inspector Toggle (is_mystical): Physical (Agility) vs Mystical (Spirit) CDR
+	plr.cooldown_reduction = 0.0
+	plr.agility = 10.0 # -2 turns CDR for physical
+	plr.spirit = 5.0   # -1 turn CDR for mystical
+
+	var phys_item := Equipment.new()
+	phys_item.piece_name = "Physical Dash"
+	phys_item.is_mystical = false # Explicit Physical toggle
+	phys_item.cooldown_turns = 3
+	phys_item.on_triggered(plr)
+	_assert(phys_item.current_cooldown == 1, "is_mystical=false uses Agility CDR: 3 - (10/5 = 2) = 1 turn")
+
+	var myst_item := Equipment.new()
+	myst_item.piece_name = "Mystic Flash"
+	myst_item.is_mystical = true # Explicit Mystical toggle
+	myst_item.cooldown_turns = 3
+	myst_item.on_triggered(plr)
+	_assert(myst_item.current_cooldown == 2, "is_mystical=true uses Spirit CDR: 3 - (5/5 = 1) = 2 turns")

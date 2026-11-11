@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Reward" format=3 uid="uid://ccvtfa00ywplh"]
+
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="1_7vkqt"]
+[ext_resource type="Texture2D" uid="uid://hkb53yawfmik" path="res://assets/rewards/boar-hide.png" id="2_kex4f"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="2_r52bq"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="3_kex4f"]
+
+[resource]
+script = ExtResource("3_kex4f")
+reward_type = 2
+family = "beast"
+name = "Hide"
+icon = ExtResource("2_kex4f")
+min_rarity = 1
+remove_from_pool_when_picked = false
+grit = 0.5
+metadata/_custom_type_script = "uid://55ybcdssir3b"

@@ -1,0 +1,168 @@
+[gd_scene format=3 uid="uid://duw8k7n4y1m3a"]
+
+[ext_resource type="Texture2D" uid="uid://cew8q8p8hf48r" path="res://assets/level_ui/level_bg_btm.png" id="1_iwqhq"]
+[ext_resource type="Script" uid="uid://dsit8us5luerf" path="res://scripts/reward-screen.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="2_title_font"]
+[ext_resource type="PackedScene" uid="uid://cbl28s8u4yq7x" path="res://scenes/ui/bottom_bar.tscn" id="3_bottom_bar"]
+[ext_resource type="PackedScene" uid="uid://bwa2kq7a4m1x0" path="res://scenes/ui/inventory_overlay.tscn" id="4_inv_overlay"]
+[ext_resource type="Texture2D" uid="uid://b4u1op0e762r" path="res://assets/scene-assets/general-button-unpressed.png" id="5_btn"]
+[ext_resource type="PackedScene" uid="uid://bksjsebs3posk" path="res://rewards/others/reward_card.tscn" id="8_m3h2k"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(0.85, 0.85, 0.85, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(1.12, 1.12, 1.12, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(0.65, 0.65, 0.65, 0.7)
+
+[node name="reward_screen" type="Control" unique_id=706245572]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="background_img" type="TextureRect" parent="." unique_id=1525934343]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -288.0
+offset_top = -675.0
+offset_right = 288.0
+offset_bottom = 675.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_iwqhq")
+
+[node name="margin_cont" type="MarginContainer" parent="." unique_id=581131883]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_bottom = 130
+
+[node name="center_cont" type="CenterContainer" parent="margin_cont" unique_id=732095022]
+layout_mode = 2
+
+[node name="main_cont" type="VBoxContainer" parent="margin_cont/center_cont" unique_id=817945516]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 36
+
+[node name="title_label" type="Label" parent="margin_cont/center_cont/main_cont" unique_id=1285274773]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.901961, 0.713726, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_title_font")
+theme_override_font_sizes/font_size = 28
+text = "Pick a reward"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="reward_cont" type="VBoxContainer" parent="margin_cont/center_cont/main_cont" unique_id=1031696861]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="rc_" parent="margin_cont/center_cont/main_cont/reward_cont" unique_id=252037861 instance=ExtResource("8_m3h2k")]
+layout_mode = 2
+
+[node name="rc_2" parent="margin_cont/center_cont/main_cont/reward_cont" unique_id=790798824 instance=ExtResource("8_m3h2k")]
+layout_mode = 2
+
+[node name="rc_3" parent="margin_cont/center_cont/main_cont/reward_cont" unique_id=2051716047 instance=ExtResource("8_m3h2k")]
+layout_mode = 2
+
+[node name="button_cont" type="HBoxContainer" parent="margin_cont/center_cont/main_cont" unique_id=1881688504]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 20
+
+[node name="reroll" type="Button" parent="margin_cont/center_cont/main_cont/button_cont" unique_id=2108157857]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
+theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
+theme_override_fonts/font = ExtResource("2_title_font")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+text = "Reroll"
+
+[node name="skip" type="Button" parent="margin_cont/center_cont/main_cont/button_cont" unique_id=751582443]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
+theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
+theme_override_fonts/font = ExtResource("2_title_font")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+text = "Skip"
+
+[node name="bottom_bar" parent="." unique_id=386315069 instance=ExtResource("3_bottom_bar")]
+layout_mode = 1
+
+[node name="inventory_overlay" parent="." unique_id=1763171943 instance=ExtResource("4_inv_overlay")]
+
+[connection signal="mouse_exited" from="margin_cont/center_cont/main_cont/button_cont/reroll" to="." method="_on_reroll_mouse_exited"]
+[connection signal="pressed" from="margin_cont/center_cont/main_cont/button_cont/reroll" to="." method="_on_reroll_pressed"]
+[connection signal="pressed" from="margin_cont/center_cont/main_cont/button_cont/skip" to="." method="_on_skip_pressed"]

@@ -28,6 +28,9 @@ var current_hp: float = 20.0
 var max_hp: float = 20.0
 var current_armor: float = 0.0
 var current_mage_armor: float = 0.0
+var current_mystic_armor: float:
+	get: return current_mage_armor
+	set(val): current_mage_armor = val
 var current_energy: int = 2
 var max_energy: int = 2
 var current_gold: int = 10

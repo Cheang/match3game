@@ -5,9 +5,10 @@
 
 [resource]
 script = ExtResource("1_script")
-piece_name = "Magic Shield"
+piece_name = "Mystic Shield"
 icon = ExtResource("2_icon")
-description = "Gives 2 + Spirit Magic Armor"
+description = "Gives 2 + 50% Spirit Mystic Armor"
 family = "shields"
 cooldown_turns = 1
-base_magic_armor = 2.0
+is_mystical = true
+base_mystic_armor = 2.0

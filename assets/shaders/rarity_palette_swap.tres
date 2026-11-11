@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://b3j2e04nj10p1"]
+
+[ext_resource type="Shader" uid="uid://c5t1b51ve1pq8" path="res://assets/shaders/rarity_palette_swap.gdshader" id="1_rarity_shader"]
+
+[resource]
+shader = ExtResource("1_rarity_shader")
+shader_parameter/rarity_tier = 0
+shader_parameter/use_custom_colors = false
+shader_parameter/target_color_1 = Color(1, 1, 1, 1)
+shader_parameter/target_color_2 = Color(0.7804, 0.8627, 0.8157, 1)
+shader_parameter/target_color_3 = Color(0.6078, 0.6706, 0.698, 1)
+shader_parameter/target_color_4 = Color(0.498, 0.4392, 0.5412, 1)
+shader_parameter/target_color_5 = Color(0.4118, 0.3098, 0.3843, 1)

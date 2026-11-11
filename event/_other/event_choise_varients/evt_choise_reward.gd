@@ -21,7 +21,7 @@ func activate():
 	if fight_overwrite and not enemy.is_empty():
 		Global.post_combat_event = next_event
 		Global.set_up_enemy(enemy.pick_random())
-		SceneManager.change_scene("res://game_window.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		SceneManager.change_scene("res://scenes/combat-screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 		return
 	if next_event != null:
 		if handled_in_place:

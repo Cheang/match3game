@@ -21,6 +21,7 @@ const TEX_OVERLAY_BG = preload("res://assets/scene-assets/combat/inventory-btn-u
 const TEX_DESC_PANEL = preload("res://assets/scene-assets/inventory-overlay/ability-description-panel.png")
 const TEX_GENERAL_BTN = preload("res://assets/scene-assets/general-button-unpressed.png")
 const TRACK_ROW_SCENE = preload("res://scenes/ui/inventory_overlay_track_row.tscn")
+const PASSIVES_RING_SCENE = preload("res://scenes/ui/inventory_overlay_passives_ring.tscn")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
 
 @export var description_panel_height: float = 160.0:
@@ -29,36 +30,48 @@ const TITLE_FONT = preload("res://assets/theme/title.ttf")
 		if description_panel != null:
 			description_panel.custom_minimum_size.y = val
 
-@export var passives_section_height: float = 64.0:
-	set(val):
-		passives_section_height = val
-		if passives_container != null:
-			passives_container.custom_minimum_size.y = val
-
 @export var header_title: String = "Loadout":
 	set(val):
 		header_title = val
 		if header_label != null:
 			header_label.text = val
 
+enum Tab { LOADOUT, STATS, SETTINGS }
+var current_tab: Tab = Tab.LOADOUT
+
 var dimmer: ColorRect
 var main_panel: NinePatchRect
 var header_label: Label
-var passives_container: VBoxContainer
-var passives_hbox: HBoxContainer
-var passive_slots: Array[PanelContainer] = []
+
+var loadout_view: VBoxContainer
+var passives_ring: InventoryOverlayPassivesRing = null
 var spacer: Control
 var tracks_box: VBoxContainer
 var track_rows: Array[InventoryOverlayTrackRow] = []
 var description_panel: NinePatchRect
 var description_label: RichTextLabel
+
+var stats_view: Control
+
+var settings_view: Control
+var settings_vbox: VBoxContainer
+var almanac_btn: Button
+var sound_btn: Button
+var graphics_btn: Button
+var main_menu_btn: Button
+
 var bottom_nav_box: HBoxContainer
 var loadout_nav_btn: Button
+var stats_nav_btn: Button
+var settings_nav_btn: Button
 
 var selected_ability: Equipment = null
 var selected_track: ColorLoadoutTrack = null
 var selected_is_ult: bool = false
 var selected_slot_idx: int = -2
+
+var selected_passive: Resource = null
+var selected_passive_idx: int = -1
 
 var _saved_game_is_played: bool = true
 
@@ -98,11 +111,13 @@ static func close_overlay() -> void:
 		instance.close()
 
 func open() -> void:
+	if Global.game_is_over:
+		return
 	_saved_game_is_played = Global.game_is_played
 	Global.game_is_played = false
 
 	_build_ui_if_needed()
-	refresh_overlay_data()
+	switch_tab(Tab.LOADOUT)
 	visible = true
 	overlay_opened.emit()
 
@@ -118,15 +133,21 @@ func toggle() -> void:
 		open()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not visible:
-		return
 	if event.is_action_pressed("ui_cancel"):
-		close()
-		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_I:
+		if visible:
 			close()
 			get_viewport().set_input_as_handled()
+		elif not Global.game_is_over:
+			open()
+			get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I:
+			if visible:
+				close()
+				get_viewport().set_input_as_handled()
+			elif not Global.game_is_over:
+				open()
+				get_viewport().set_input_as_handled()
 
 func _build_ui_if_needed() -> void:
 	dimmer = get_node_or_null("Dimmer") as ColorRect
@@ -157,7 +178,7 @@ func _build_ui_if_needed() -> void:
 		main_panel.patch_margin_top = 6
 		main_panel.patch_margin_right = 6
 		main_panel.patch_margin_bottom = 6
-		main_panel.custom_minimum_size = Vector2(548, 930)
+		main_panel.custom_minimum_size = Vector2(548, 970)
 		main_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 		center.add_child(main_panel)
 
@@ -167,9 +188,9 @@ func _build_ui_if_needed() -> void:
 		margin.name = "MarginContainer"
 		margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 		margin.add_theme_constant_override("margin_left", 14)
-		margin.add_theme_constant_override("margin_top", 14)
+		margin.add_theme_constant_override("margin_top", 10)
 		margin.add_theme_constant_override("margin_right", 14)
-		margin.add_theme_constant_override("margin_bottom", 14)
+		margin.add_theme_constant_override("margin_bottom", 10)
 		margin.mouse_filter = Control.MOUSE_FILTER_PASS
 		main_panel.add_child(margin)
 
@@ -177,78 +198,61 @@ func _build_ui_if_needed() -> void:
 	if vbox == null:
 		vbox = VBoxContainer.new()
 		vbox.name = "ContentVBox"
-		vbox.add_theme_constant_override("separation", 8)
+		vbox.add_theme_constant_override("separation", 6)
 		vbox.mouse_filter = Control.MOUSE_FILTER_PASS
 		margin.add_child(vbox)
 
-	# 1. Header: "Loadout"
-	header_label = vbox.get_node_or_null("HeaderLabel") as Label
-	if header_label == null:
-		header_label = Label.new()
-		header_label.name = "HeaderLabel"
+	# Optional Header Label (only configured if present in scene)
+	header_label = vbox.find_child("HeaderLabel", true, false) as Label
+	if header_label != null:
 		header_label.text = header_title
 		header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		header_label.add_theme_font_override("font", TITLE_FONT)
 		header_label.add_theme_font_size_override("font_size", 28)
 		header_label.add_theme_color_override("font_color", Color("#2e2633"))
-		vbox.add_child(header_label)
 
-	# 2. Passives Section (5-slot layout placeholder)
-	passives_container = vbox.get_node_or_null("PassivesSection") as VBoxContainer
-	if passives_container == null:
-		passives_container = VBoxContainer.new()
-		passives_container.name = "PassivesSection"
-		passives_container.custom_minimum_size.y = passives_section_height
-		passives_container.add_theme_constant_override("separation", 2)
-		vbox.add_child(passives_container)
+	# 2. Views Container or Direct Views in ContentVBox
+	loadout_view = vbox.find_child("LoadoutView", true, false) as VBoxContainer
+	if loadout_view == null:
+		loadout_view = VBoxContainer.new()
+		loadout_view.name = "LoadoutView"
+		loadout_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		loadout_view.add_theme_constant_override("separation", 8)
+		vbox.add_child(loadout_view)
 
-		var pass_lbl := Label.new()
-		pass_lbl.name = "PassivesTitle"
-		pass_lbl.text = "Passives"
-		pass_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		pass_lbl.add_theme_font_override("font", TITLE_FONT)
-		pass_lbl.add_theme_font_size_override("font_size", 14)
-		pass_lbl.add_theme_color_override("font_color", Color("#5a485a"))
-		passives_container.add_child(pass_lbl)
+	# Passives Ring Section (342x313 pentagonal ring)
+	passives_ring = vbox.find_child("PassivesRing", true, false) as InventoryOverlayPassivesRing
+	if passives_ring == null:
+		if PASSIVES_RING_SCENE != null:
+			passives_ring = PASSIVES_RING_SCENE.instantiate() as InventoryOverlayPassivesRing
+		if passives_ring == null:
+			passives_ring = InventoryOverlayPassivesRing.new()
+		passives_ring.name = "PassivesRing"
+		passives_ring.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		loadout_view.add_child(passives_ring)
+	elif passives_ring.get_parent() != loadout_view and loadout_view != null:
+		passives_ring.reparent(loadout_view)
 
-	passives_hbox = passives_container.get_node_or_null("PassivesHBox") as HBoxContainer
-	if passives_hbox == null:
-		passives_hbox = HBoxContainer.new()
-		passives_hbox.name = "PassivesHBox"
-		passives_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-		passives_hbox.add_theme_constant_override("separation", 10)
-		passives_container.add_child(passives_hbox)
+	if not passives_ring.passive_clicked.is_connected(_on_passive_clicked):
+		passives_ring.passive_clicked.connect(_on_passive_clicked)
+	if not passives_ring.passive_dropped.is_connected(_on_passive_dropped):
+		passives_ring.passive_dropped.connect(_on_passive_dropped)
 
-	if passive_slots.is_empty():
-		for child in passives_hbox.get_children():
-			if child is PanelContainer:
-				var idx: int = passive_slots.size()
-				if not child.gui_input.is_connected(_on_passive_gui_input.bind(idx)):
-					child.gui_input.connect(_on_passive_gui_input.bind(idx))
-				passive_slots.append(child)
+	# Optional spacer (hidden/disabled if passives ring is present)
+	spacer = vbox.find_child("TopSpacer", true, false) as Control
+	if spacer != null:
+		spacer.visible = false
+		spacer.size_flags_vertical = 0
 
-		while passive_slots.size() < 5:
-			var slot_idx: int = passive_slots.size()
-			var slot_panel := _create_passive_slot_panel(slot_idx)
-			passives_hbox.add_child(slot_panel)
-			passive_slots.append(slot_panel)
-
-	# 3. Flexible Top Spacer: Expands to make tracks, description & buttons bottom-aligned
-	spacer = vbox.get_node_or_null("TopSpacer") as Control
-	if spacer == null:
-		spacer = Control.new()
-		spacer.name = "TopSpacer"
-		spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		spacer.mouse_filter = Control.MOUSE_FILTER_PASS
-		vbox.add_child(spacer)
-
-	# 4. Loadout Tracks Section (5 rows, bottom-aligned above description)
-	tracks_box = vbox.get_node_or_null("TracksBox") as VBoxContainer
+	# Loadout Tracks Section (5 rows)
+	tracks_box = vbox.find_child("TracksBox", true, false) as VBoxContainer
 	if tracks_box == null:
 		tracks_box = VBoxContainer.new()
 		tracks_box.name = "TracksBox"
 		tracks_box.add_theme_constant_override("separation", 4)
-		vbox.add_child(tracks_box)
+		loadout_view.add_child(tracks_box)
+	elif tracks_box.get_parent() != loadout_view and loadout_view != null:
+		tracks_box.reparent(loadout_view)
 
 	if track_rows.is_empty():
 		for child in tracks_box.get_children():
@@ -273,8 +277,8 @@ func _build_ui_if_needed() -> void:
 			tracks_box.add_child(row)
 			track_rows.append(row)
 
-	# 5. Ability Description Field
-	description_panel = vbox.get_node_or_null("DescriptionPanel") as NinePatchRect
+	# Ability Description Field
+	description_panel = vbox.find_child("DescriptionPanel", true, false) as NinePatchRect
 	if description_panel == null:
 		description_panel = NinePatchRect.new()
 		description_panel.name = "DescriptionPanel"
@@ -286,7 +290,7 @@ func _build_ui_if_needed() -> void:
 		description_panel.custom_minimum_size = Vector2(520, description_panel_height)
 		description_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		description_panel.mouse_filter = Control.MOUSE_FILTER_PASS
-		vbox.add_child(description_panel)
+		loadout_view.add_child(description_panel)
 
 		var d_margin := MarginContainer.new()
 		d_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -312,21 +316,91 @@ func _build_ui_if_needed() -> void:
 		scroll.add_child(description_label)
 	else:
 		description_label = description_panel.find_child("DescriptionLabel", true, false) as RichTextLabel
+		if description_panel.get_parent() != loadout_view and loadout_view != null:
+			description_panel.reparent(loadout_view)
 
-	# 6. Bottom Navigation Row (Loadout button)
-	bottom_nav_box = vbox.get_node_or_null("BottomNavBox") as HBoxContainer
+	# 3. Stats View (empty placeholder for future design)
+	stats_view = vbox.find_child("StatsView", true, false) as Control
+	if stats_view == null:
+		stats_view = Control.new()
+		stats_view.name = "StatsView"
+		stats_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		stats_view.visible = false
+		vbox.add_child(stats_view)
+
+	# 4. Settings View (CenterContainer with 4 buttons)
+	settings_view = vbox.find_child("SettingsView", true, false) as Control
+	if settings_view == null:
+		settings_view = CenterContainer.new()
+		settings_view.name = "SettingsView"
+		settings_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		settings_view.visible = false
+		vbox.add_child(settings_view)
+
+	settings_vbox = settings_view.find_child("SettingsVBox", true, false) as VBoxContainer
+	if settings_vbox == null:
+		settings_vbox = VBoxContainer.new()
+		settings_vbox.name = "SettingsVBox"
+		settings_vbox.custom_minimum_size = Vector2(280, 0)
+		settings_vbox.add_theme_constant_override("separation", 14)
+		settings_view.add_child(settings_vbox)
+
+	almanac_btn = settings_vbox.find_child("AlmanacBtn", true, false) as Button
+	if almanac_btn == null:
+		almanac_btn = _create_nav_button("Almanac", true)
+		almanac_btn.name = "AlmanacBtn"
+		almanac_btn.custom_minimum_size = Vector2(280, 48)
+		settings_vbox.add_child(almanac_btn)
+
+	sound_btn = settings_vbox.find_child("SoundBtn", true, false) as Button
+	if sound_btn == null:
+		sound_btn = _create_nav_button("Sound", true)
+		sound_btn.name = "SoundBtn"
+		sound_btn.custom_minimum_size = Vector2(280, 48)
+		settings_vbox.add_child(sound_btn)
+
+	graphics_btn = settings_vbox.find_child("GraphicsBtn", true, false) as Button
+	if graphics_btn == null:
+		graphics_btn = _create_nav_button("Graphics", true)
+		graphics_btn.name = "GraphicsBtn"
+		graphics_btn.custom_minimum_size = Vector2(280, 48)
+		settings_vbox.add_child(graphics_btn)
+
+	main_menu_btn = settings_vbox.find_child("MainMenuBtn", true, false) as Button
+	if main_menu_btn == null:
+		main_menu_btn = _create_nav_button("Main Menu", false)
+		main_menu_btn.name = "MainMenuBtn"
+		main_menu_btn.custom_minimum_size = Vector2(280, 48)
+		settings_vbox.add_child(main_menu_btn)
+
+	if not main_menu_btn.pressed.is_connected(_on_main_menu_pressed):
+		main_menu_btn.pressed.connect(_on_main_menu_pressed)
+
+	# 5. Bottom Navigation Row (Loadout, Stats, Settings)
+	bottom_nav_box = vbox.find_child("BottomNavBox", true, false) as HBoxContainer
 	if bottom_nav_box == null:
 		bottom_nav_box = HBoxContainer.new()
 		bottom_nav_box.name = "BottomNavBox"
-		bottom_nav_box.custom_minimum_size = Vector2(520, 48)
+		bottom_nav_box.custom_minimum_size = Vector2(520, 44)
 		bottom_nav_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		bottom_nav_box.add_theme_constant_override("separation", 8)
 		vbox.add_child(bottom_nav_box)
 
-	loadout_nav_btn = bottom_nav_box.get_node_or_null("NavBtn_Loadout") as Button
+	# 5a. Stats Nav Button (Left: index 0)
+	stats_nav_btn = bottom_nav_box.find_child("NavBtn_Stats", true, false) as Button
+	if stats_nav_btn == null:
+		stats_nav_btn = _create_nav_button("Stats")
+		stats_nav_btn.name = "NavBtn_Stats"
+		bottom_nav_box.add_child(stats_nav_btn)
+	else:
+		stats_nav_btn.text = "Stats"
+	if not stats_nav_btn.pressed.is_connected(_on_stats_nav_pressed):
+		stats_nav_btn.pressed.connect(_on_stats_nav_pressed)
+
+	# 5b. Loadout Nav Button (Middle: index 1)
+	loadout_nav_btn = bottom_nav_box.find_child("NavBtn_Loadout", true, false) as Button
 	if loadout_nav_btn == null:
-		# Check if older NavBtn_Inventory exists to reuse
-		var old_btn := bottom_nav_box.get_node_or_null("NavBtn_Inventory") as Button
+		var old_btn := bottom_nav_box.find_child("NavBtn_Inventory", true, false) as Button
 		if old_btn != null:
 			loadout_nav_btn = old_btn
 			loadout_nav_btn.name = "NavBtn_Loadout"
@@ -337,39 +411,26 @@ func _build_ui_if_needed() -> void:
 			bottom_nav_box.add_child(loadout_nav_btn)
 	else:
 		loadout_nav_btn.text = "Loadout"
-
 	if not loadout_nav_btn.pressed.is_connected(_on_loadout_nav_pressed):
 		loadout_nav_btn.pressed.connect(_on_loadout_nav_pressed)
 
-func _create_passive_slot_panel(slot_idx: int) -> PanelContainer:
-	var pc := PanelContainer.new()
-	pc.name = "PassiveSlot_%d" % slot_idx
-	pc.custom_minimum_size = Vector2(46, 46)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.24, 0.20, 0.27, 0.45)
-	sb.border_width_left = 1
-	sb.border_width_top = 1
-	sb.border_width_right = 1
-	sb.border_width_bottom = 1
-	sb.border_color = Color(0.48, 0.42, 0.52, 0.6)
-	sb.corner_radius_top_left = 4
-	sb.corner_radius_top_right = 4
-	sb.corner_radius_bottom_left = 4
-	sb.corner_radius_bottom_right = 4
-	pc.add_theme_stylebox_override("panel", sb)
+	# 5c. Settings Nav Button (Right: index 2)
+	settings_nav_btn = bottom_nav_box.find_child("NavBtn_Settings", true, false) as Button
+	if settings_nav_btn == null:
+		settings_nav_btn = _create_nav_button("Settings")
+		settings_nav_btn.name = "NavBtn_Settings"
+		bottom_nav_box.add_child(settings_nav_btn)
+	else:
+		settings_nav_btn.text = "Settings"
+	if not settings_nav_btn.pressed.is_connected(_on_settings_nav_pressed):
+		settings_nav_btn.pressed.connect(_on_settings_nav_pressed)
 
-	var icon_rect := TextureRect.new()
-	icon_rect.name = "Icon"
-	icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pc.add_child(icon_rect)
+	# Explicitly ensure child order: 0 = Loadout, 1 = Stats, 2 = Settings
+	bottom_nav_box.move_child(loadout_nav_btn, 0)
+	bottom_nav_box.move_child(stats_nav_btn, 1)
+	bottom_nav_box.move_child(settings_nav_btn, 2)
 
-	pc.gui_input.connect(_on_passive_gui_input.bind(slot_idx))
-	return pc
-
-func _create_nav_button(btn_text: String) -> Button:
+func _create_nav_button(btn_text: String, is_disabled: bool = false) -> Button:
 	var btn := Button.new()
 	btn.text = btn_text
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -392,15 +453,88 @@ func _create_nav_button(btn_text: String) -> Button:
 	var sb_pressed := sb_normal.duplicate() as StyleBoxTexture
 	sb_pressed.modulate_color = Color(0.85, 0.85, 0.85, 1.0)
 
+	var sb_disabled := sb_normal.duplicate() as StyleBoxTexture
+	sb_disabled.modulate_color = Color(0.65, 0.65, 0.65, 0.7)
+
 	btn.add_theme_stylebox_override("normal", sb_normal)
 	btn.add_theme_stylebox_override("hover", sb_hover)
 	btn.add_theme_stylebox_override("pressed", sb_pressed)
+	btn.add_theme_stylebox_override("disabled", sb_disabled)
 	btn.add_theme_font_override("font", TITLE_FONT)
 	btn.add_theme_font_size_override("font_size", 18)
 	btn.add_theme_color_override("font_color", Color("#2e2633"))
 	btn.add_theme_color_override("font_hover_color", Color("#17121b"))
 	btn.add_theme_color_override("font_pressed_color", Color("#100c14"))
+	btn.add_theme_color_override("font_disabled_color", Color(0.44, 0.38, 0.46, 0.8))
+	btn.disabled = is_disabled
 	return btn
+
+## Switches the visible tab view between Loadout, Stats, and Settings.
+func switch_tab(tab: Tab) -> void:
+	current_tab = tab
+	_build_ui_if_needed()
+
+	if loadout_view != null:
+		loadout_view.visible = (tab == Tab.LOADOUT)
+	if stats_view != null:
+		stats_view.visible = (tab == Tab.STATS)
+	if settings_view != null:
+		settings_view.visible = (tab == Tab.SETTINGS)
+
+	match tab:
+		Tab.LOADOUT:
+			if header_label != null:
+				header_label.text = "Loadout"
+			_update_nav_button_highlights(loadout_nav_btn)
+			refresh_overlay_data()
+		Tab.STATS:
+			if header_label != null:
+				header_label.text = "Stats"
+			_update_nav_button_highlights(stats_nav_btn)
+		Tab.SETTINGS:
+			if header_label != null:
+				header_label.text = "Settings"
+			_update_nav_button_highlights(settings_nav_btn)
+
+func _update_nav_button_highlights(active_btn: Button) -> void:
+	for btn in [loadout_nav_btn, stats_nav_btn, settings_nav_btn]:
+		if btn == null:
+			continue
+		if btn == active_btn:
+			btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		else:
+			btn.modulate = Color(0.72, 0.72, 0.78, 0.85)
+
+func _on_loadout_nav_pressed() -> void:
+	if current_tab == Tab.LOADOUT and visible:
+		close()
+		return
+	switch_tab(Tab.LOADOUT)
+
+func _on_stats_nav_pressed() -> void:
+	if current_tab == Tab.STATS and visible:
+		close()
+		return
+	switch_tab(Tab.STATS)
+
+func _on_settings_nav_pressed() -> void:
+	if current_tab == Tab.SETTINGS and visible:
+		close()
+		return
+	switch_tab(Tab.SETTINGS)
+
+func _on_main_menu_pressed() -> void:
+	close()
+	Global.game_is_played = true
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null:
+		tree = get_tree()
+	if tree != null:
+		var sm = tree.root.get_node_or_null("SceneManager")
+		if sm != null and sm.has_method("change_scene"):
+			sm.change_scene("res://scenes/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+		else:
+			tree.change_scene_to_file("res://scenes/main_menu.tscn")
 
 ## Refreshes all 5 loadout tracks, passives, and description from Global.cur_char.
 func refresh_overlay_data() -> void:
@@ -424,28 +558,31 @@ func refresh_overlay_data() -> void:
 		else:
 			row.setup_row(0, null)
 
-	# 2. Update Passives
-	var passives := Global.cur_char.equipped_passives
-	for i in range(passive_slots.size()):
-		var slot_pc: PanelContainer = passive_slots[i]
-		var icon: TextureRect = slot_pc.get_node_or_null("Icon")
-		if i < passives.size() and passives[i] != null:
-			var p_mod: Equipment = passives[i] as Equipment
-			if icon != null and p_mod != null:
-				icon.texture = p_mod.icon
-				icon.visible = true
+	# 2. Update Passives Ring
+	var passives: Array = Global.cur_char.equipped_passives if Global.cur_char != null else []
+	if passives_ring != null:
+		passives_ring.setup_passives(passives)
+		if selected_passive_idx >= 0:
+			passives_ring.update_selection(selected_passive_idx)
 		else:
-			if icon != null:
-				icon.texture = null
-				icon.visible = false
+			passives_ring.update_selection(-1)
 
 	# 3. Update Selection & Description
 	if selected_ability != null:
 		_display_ability_description(selected_ability, selected_track.color if selected_track != null else 0, selected_is_ult)
+	elif selected_passive != null:
+		_display_passive_description(selected_passive)
+	elif selected_passive_idx >= 0:
+		_show_passive_empty_description()
 	else:
 		_show_empty_description()
 
 func _on_slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, slot_idx: int) -> void:
+	selected_passive = null
+	selected_passive_idx = -1
+	if passives_ring != null:
+		passives_ring.update_selection(-1)
+
 	selected_ability = mod
 	selected_track = track
 	selected_is_ult = is_ult
@@ -453,8 +590,8 @@ func _on_slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, sl
 
 	# Update selection highlight across all rows
 	for row in track_rows:
-		var is_same: bool = (row.track_ref == track)
-		row.update_selection(mod, is_ult, slot_idx, is_same)
+		var is_same_track: bool = (row.track_ref == track)
+		row.update_selection(mod, is_ult, slot_idx, is_same_track)
 
 	if mod != null:
 		_display_ability_description(mod, track.color if track != null else 0, is_ult)
@@ -545,28 +682,58 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 	refresh_overlay_data()
 	_on_slot_clicked(source_mod, target_track, target_is_ult, target_slot_idx)
 
-func _on_passive_gui_input(event: InputEvent, slot_idx: int) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if Global.cur_char == null:
-			return
-		var passives := Global.cur_char.equipped_passives
-		var p_mod: Equipment = passives[slot_idx] as Equipment if slot_idx < passives.size() else null
-		# Clear track highlights
-		for row in track_rows:
-			row.update_selection(null, false, -2, false)
-		if p_mod != null:
-			selected_ability = p_mod
-			selected_track = null
-			selected_is_ult = false
-			selected_slot_idx = slot_idx
-			_display_ability_description(p_mod, 0, false)
-		else:
-			_show_slot_empty_description(null, false)
+func _on_passive_clicked(slot_idx: int, passive_res: Resource) -> void:
+	selected_ability = null
+	selected_track = null
+	selected_is_ult = false
+	selected_slot_idx = -2
+
+	# Deselect track highlights across all rows
+	for row in track_rows:
+		row.update_selection(null, false, -2, false)
+
+	selected_passive_idx = slot_idx
+	selected_passive = passive_res
+
+	if passives_ring != null:
+		passives_ring.update_selection(slot_idx)
+
+	if passive_res != null:
+		_display_passive_description(passive_res)
+	else:
+		_show_passive_empty_description()
+
+func _on_passive_dropped(source_idx: int, target_idx: int) -> void:
+	if Global.cur_char == null:
+		return
+	var passives: Array = Global.cur_char.equipped_passives
+	if source_idx < 0 or source_idx >= passives.size():
+		return
+	if target_idx < 0 or target_idx >= passives.size():
+		return
+	if source_idx == target_idx:
+		return
+
+	var temp = passives[source_idx]
+	passives[source_idx] = passives[target_idx]
+	passives[target_idx] = temp
+
+	Global.cur_char.recalculate_passive_bonuses()
+	Global.cur_char.passivesChanged.emit()
+	Global.cur_char.loadoutChanged.emit()
+
+	refresh_overlay_data()
+	_on_passive_clicked(target_idx, passives[target_idx])
 
 func _display_ability_description(mod: Equipment, color_id: int, is_ult: bool) -> void:
 	if description_label == null:
 		return
 	description_label.text = _format_ability_bbcode(mod, color_id, is_ult)
+
+func _display_passive_description(p_res: Resource) -> void:
+	if description_label == null:
+		return
+	description_label.text = _format_passive_bbcode(p_res)
 
 func _show_empty_description() -> void:
 	if description_label == null:
@@ -579,6 +746,52 @@ func _show_slot_empty_description(track: ColorLoadoutTrack, is_ult: bool) -> voi
 	var c_name := ColorLoadoutTrack.get_color_name(track.color) if track != null else "Passive"
 	var type_str := "Ultimate Slot" if is_ult else "Slot"
 	description_label.text = "[center][color=#9babb2]\nEmpty %s %s\nEquip abilities by acquiring them during your run.[/color][/center]" % [c_name, type_str]
+
+func _show_passive_empty_description() -> void:
+	if description_label == null:
+		return
+	description_label.text = "[center][color=#9babb2]\nEmpty Passive Slot\nAcquire passives during your run to fill this slot.[/color][/center]"
+
+func _format_passive_bbcode(p_res: Resource) -> String:
+	if p_res == null:
+		return ""
+
+	var text := ""
+	if p_res is Reward:
+		var rew := p_res as Reward
+		var r_color := Equipment.get_rarity_hex(int(rew.rarity))
+		var r_name := Equipment.get_rarity_name(int(rew.rarity))
+		text += "[font_size=20][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, rew.name]
+		text += "[font_size=12][color=#c7dcd0]%s  •  Passive Card[/color][/font_size]\n\n" % r_name
+		var eff := rew.get_effect_description()
+		if not eff.is_empty():
+			text += "[font_size=14]%s[/font_size]\n" % eff
+	elif p_res is Equipment:
+		var eq := p_res as Equipment
+		var r_color := Equipment.get_rarity_hex(eq.rarity)
+		var r_name := Equipment.get_rarity_name(eq.rarity)
+		text += "[font_size=20][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, eq.piece_name]
+		text += "[font_size=12][color=#c7dcd0]%s  •  Passive Equipment[/color][/font_size]\n\n" % r_name
+		var eff := eq.get_effect_description()
+		if not eff.is_empty():
+			text += "[font_size=14]%s[/font_size]\n" % eff
+		var tier := eq.get_active_tier()
+		if tier != null and not tier.stat_modifiers.is_empty():
+			var stat_parts: Array[String] = []
+			for stat_name in tier.stat_modifiers:
+				var val: int = int(tier.stat_modifiers[stat_name])
+				var sign_str := "+" if val > 0 else ""
+				stat_parts.append("%s%d %s" % [sign_str, val, stat_name.capitalize()])
+			if not stat_parts.is_empty():
+				text += "\n[font_size=12][color=#91db69]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+	else:
+		var p_name: String = p_res.get("piece_name") if p_res.get("piece_name") != null else (p_res.get("name") if p_res.get("name") != null else "Passive")
+		text += "[font_size=20][b][color=#ffffff]%s[/color][/b][/font_size]\n" % p_name
+		text += "[font_size=12][color=#c7dcd0]Passive[/color][/font_size]\n\n"
+		var desc: String = p_res.get("description") if p_res.get("description") != null else ""
+		if not desc.is_empty():
+			text += "[font_size=14]%s[/font_size]\n" % desc
+	return text
 
 func _format_ability_bbcode(mod: Equipment, color_id: int, is_ult: bool) -> String:
 	if mod == null:
@@ -636,6 +849,3 @@ func _get_trigger_description(tc: Equipment.TriggerCondition) -> String:
 func _on_dimmer_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		close()
-
-func _on_loadout_nav_pressed() -> void:
-	close()

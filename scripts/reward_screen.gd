@@ -33,6 +33,10 @@ var is_boss_draft: bool = false
 var last_draft_sources: Array[String] = []
 
 func _ready() -> void:
+	if Global.cur_char == null:
+		Global.set_up_player()
+	if Global.cur_enemy == null:
+		Global.set_up_enemy()
 	if not Global.pending_reward_context.is_empty():
 		is_boss_draft = bool(Global.pending_reward_context.get("is_boss", Global.boss_beaten))
 	else:
@@ -91,17 +95,22 @@ func generate_three_choice_draft(
 		var actual_source: String = preferred_source
 
 		var rolled_rarity: String = roll_rarity_tier()
-		var picked: Resource = _draw_from_pool(primary_pool, rolled_rarity, chosen_identities)
+		var picked: Resource = _draw_from_pool(primary_pool, rolled_rarity, chosen_identities, preferred_source == "class")
 		if picked == null:
-			picked = _draw_from_pool(fallback_pool, rolled_rarity, chosen_identities)
-			if picked != null:
-				actual_source = "class" if preferred_source == "monster" else "monster"
-		if picked == null:
-			# Last resort if unique pool is smaller than 3: allow duplicate identity
+			# If unique pool is smaller than 3, allow duplicate identity from primary pool first
 			var empty_ids: Dictionary = {}
-			picked = _draw_from_pool(primary_pool, rolled_rarity, empty_ids)
-			if picked == null:
-				picked = _draw_from_pool(fallback_pool, rolled_rarity, empty_ids)
+			picked = _draw_from_pool(primary_pool, rolled_rarity, empty_ids, preferred_source == "class")
+		if picked == null:
+			var fallback_source: String = "class" if preferred_source == "monster" else "monster"
+			picked = _draw_from_pool(fallback_pool, rolled_rarity, chosen_identities, fallback_source == "class")
+			if picked != null:
+				actual_source = fallback_source
+		if picked == null:
+			var fallback_source: String = "class" if preferred_source == "monster" else "monster"
+			var empty_ids: Dictionary = {}
+			picked = _draw_from_pool(fallback_pool, rolled_rarity, empty_ids, fallback_source == "class")
+			if picked != null:
+				actual_source = fallback_source
 
 		if picked != null:
 			var id_key: String = RewardGrantHandler.get_identity_key(picked)
@@ -126,7 +135,7 @@ func roll_rarity_tier() -> String:
 			return rarity
 	return "COMMON"
 
-func _draw_from_pool(pool: Array, rolled_rarity: String, excluded_identities: Dictionary) -> Resource:
+func _draw_from_pool(pool: Array, rolled_rarity: String, excluded_identities: Dictionary, use_build_affinity: bool = false) -> Resource:
 	if pool == null or pool.is_empty():
 		return null
 
@@ -136,6 +145,8 @@ func _draw_from_pool(pool: Array, rolled_rarity: String, excluded_identities: Di
 			continue
 		if not RewardGrantHandler.is_supported_reward(item):
 			continue
+		if not RewardGrantHandler.can_be_offered_to(item, Global.cur_char):
+			continue
 		var id_key: String = RewardGrantHandler.get_identity_key(item)
 		if id_key != "" and excluded_identities.has(id_key):
 			continue
@@ -144,19 +155,18 @@ func _draw_from_pool(pool: Array, rolled_rarity: String, excluded_identities: Di
 	if unique_candidates.is_empty():
 		return null
 
-	# Filter candidates matching rolled_rarity (Equipment items can roll any rarity dynamically!)
+	# Filter candidates eligible to roll at rolled_rarity (respecting fixed_rarity, min_rarity floor, and max_rarity ceiling!)
 	var tier_matches: Array[Resource] = []
 	for cand in unique_candidates:
-		if cand is Equipment:
-			tier_matches.append(cand)
-		elif RewardGrantHandler.get_rarity_name(cand) == rolled_rarity:
+		if RewardGrantHandler.can_roll_at_rarity(cand, rolled_rarity):
 			tier_matches.append(cand)
 
 	var chosen_template: Resource = null
+	var chosen_rarity: String = rolled_rarity
 	if not tier_matches.is_empty():
-		chosen_template = tier_matches[randi() % tier_matches.size()]
+		chosen_template = RewardGrantHandler.pick_weighted_candidate(tier_matches, Global.cur_char, use_build_affinity)
 	else:
-		# Fallback across rarity_tiers if pool only contains fixed-rarity Reward cards of another tier
+		# Fallback across rarity_tiers if pool only contains rewards constrained to another tier range
 		var bonus: int = int(Global.cur_char.get("rarity_bonus")) if (Global.cur_char != null and "rarity_bonus" in Global.cur_char) else 0
 		for tier in rarity_tiers:
 			var fallback_r: String = tier[0]
@@ -164,20 +174,21 @@ func _draw_from_pool(pool: Array, rolled_rarity: String, excluded_identities: Di
 				continue
 			var fallback_matches: Array[Resource] = []
 			for cand in unique_candidates:
-				if RewardGrantHandler.get_rarity_name(cand) == fallback_r:
+				if RewardGrantHandler.can_roll_at_rarity(cand, fallback_r):
 					fallback_matches.append(cand)
 			if not fallback_matches.is_empty():
-				chosen_template = fallback_matches[randi() % fallback_matches.size()]
+				chosen_template = RewardGrantHandler.pick_weighted_candidate(fallback_matches, Global.cur_char, use_build_affinity)
+				chosen_rarity = fallback_r
 				break
 		if chosen_template == null:
-			chosen_template = unique_candidates[randi() % unique_candidates.size()]
+			chosen_template = RewardGrantHandler.pick_weighted_candidate(unique_candidates, Global.cur_char, use_build_affinity)
 
-	return RewardGrantHandler.prepare_draft_instance(chosen_template, rolled_rarity)
+	return RewardGrantHandler.prepare_draft_instance(chosen_template, chosen_rarity)
 
 func choose_reward() -> Resource:
 	var rolled_rarity: String = roll_rarity_tier()
 	var empty_ids: Dictionary = {}
-	return _draw_from_pool(rewards, rolled_rarity, empty_ids)
+	return _draw_from_pool(rewards, rolled_rarity, empty_ids, true)
 
 #Helper Functions --------------------------------------------------------------
 func update_reroll_btn() -> void:
@@ -204,6 +215,10 @@ func get_rewards_from_player() -> void:
 				monster_rewards.append(item)
 	elif Global.cur_enemy != null and Global.cur_enemy.loot_table != null:
 		for item in Global.cur_enemy.loot_table:
+			if item != null:
+				monster_rewards.append(item)
+	elif Global.def_enemy != null and Global.def_enemy.loot_table != null:
+		for item in Global.def_enemy.loot_table:
 			if item != null:
 				monster_rewards.append(item)
 
