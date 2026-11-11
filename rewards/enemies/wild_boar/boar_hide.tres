@@ -7,11 +7,12 @@
 
 [resource]
 script = ExtResource("3_kex4f")
+auto_scale_stats_with_rarity = true
 reward_type = 2
 family = "beast"
 name = "Hide"
 icon = ExtResource("2_kex4f")
-min_rarity = 1
+max_rarity = 1
 remove_from_pool_when_picked = false
 grit = 0.5
 metadata/_custom_type_script = "uid://55ybcdssir3b"
