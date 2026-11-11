@@ -76,39 +76,62 @@ var selected_passive_idx: int = -1
 var _saved_game_is_played: bool = true
 
 func _enter_tree() -> void:
-	if instance == null:
-		instance = self
+	instance = self
 
 func _exit_tree() -> void:
 	if instance == self:
 		instance = null
 
 func _ready() -> void:
+	instance = self
 	layer = 50
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_ui_if_needed()
 	visible = false
 
+static func _get_active_instance() -> InventoryOverlay:
+	if instance != null and is_instance_valid(instance) and instance.is_inside_tree() and not instance.is_queued_for_deletion():
+		return instance
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree != null:
+		var search_roots: Array[Node] = []
+		if tree.current_scene != null:
+			search_roots.append(tree.current_scene)
+		if tree.root != null and not search_roots.has(tree.root):
+			search_roots.append(tree.root)
+		for root_node in search_roots:
+			for child in root_node.find_children("*", "InventoryOverlay", true, false):
+				if child is InventoryOverlay and not child.is_queued_for_deletion():
+					instance = child
+					return instance
+			var by_snake := root_node.find_child("inventory_overlay", true, false) as InventoryOverlay
+			if by_snake != null and not by_snake.is_queued_for_deletion():
+				instance = by_snake
+				return instance
+			var by_pascal := root_node.find_child("InventoryOverlay", true, false) as InventoryOverlay
+			if by_pascal != null and not by_pascal.is_queued_for_deletion():
+				instance = by_pascal
+				return instance
+	return null
+
 static func is_overlay_open() -> bool:
-	return instance != null and is_instance_valid(instance) and instance.visible
+	var active := _get_active_instance()
+	return active != null and active.visible
 
 static func toggle_overlay() -> void:
-	if instance != null and is_instance_valid(instance):
-		instance.toggle()
-	else:
-		var tree := Engine.get_main_loop() as SceneTree
-		if tree != null and tree.current_scene != null:
-			var found := tree.current_scene.find_child("InventoryOverlay", true, false) as InventoryOverlay
-			if found != null:
-				found.toggle()
+	var active := _get_active_instance()
+	if active != null:
+		active.toggle()
 
 static func open_overlay() -> void:
-	if instance != null and is_instance_valid(instance):
-		instance.open()
+	var active := _get_active_instance()
+	if active != null:
+		active.open()
 
 static func close_overlay() -> void:
-	if instance != null and is_instance_valid(instance):
-		instance.close()
+	var active := _get_active_instance()
+	if active != null:
+		active.close()
 
 func open() -> void:
 	if Global.game_is_over:

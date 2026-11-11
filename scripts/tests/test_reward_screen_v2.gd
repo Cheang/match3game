@@ -29,8 +29,8 @@ func _ready() -> void:
 	Global.pending_reward_context.clear()
 	Global.boss_beaten = false
 
-	var reward_screen_scene: PackedScene = load("res://scenes/V2/reward-screen.tscn")
-	_assert(reward_screen_scene != null, "scenes/V2/reward-screen.tscn loads successfully")
+	var reward_screen_scene: PackedScene = load("res://scenes/reward-screen.tscn")
+	_assert(reward_screen_scene != null, "scenes/reward-screen.tscn loads successfully")
 
 	var rs = reward_screen_scene.instantiate()
 	_assert(rs != null, "Instantiated reward-screen instance successfully")
@@ -92,8 +92,18 @@ func _ready() -> void:
 	rs._on_skip_pressed()
 	_assert(rs.reward_cards[0].reward_resource != null, "Draft immediately refreshed after Skip in standalone mode")
 
-	# Test InventoryOverlay keyboard shortcut integration
+	# Test InventoryOverlay keyboard shortcut & button press integration (including scene transition race condition)
 	_assert(InventoryOverlay.toggle_overlay != null, "InventoryOverlay toggle_overlay method is accessible")
+	var old_overlay := InventoryOverlay.new()
+	add_child(old_overlay)
+	old_overlay.queue_free() # Simulate SceneManager._replace_scene freeing previous scene's InventoryOverlay at end of frame
+	await get_tree().process_frame
+	rs.inventory_button.pressed.emit()
+	_assert(InventoryOverlay.is_overlay_open() == true, "Pressing InventoryButton in reward-screen opens InventoryOverlay even after scene transition")
+	var overlay_node: InventoryOverlay = rs.get_node_or_null("inventory_overlay") as InventoryOverlay
+	_assert(overlay_node != null and overlay_node.visible == true, "reward-screen's own inventory_overlay is visible when opened")
+	rs.inventory_button.pressed.emit()
+	_assert(InventoryOverlay.is_overlay_open() == false, "Pressing InventoryButton again closes InventoryOverlay")
 
 	_log("==================================================")
 	_log("RESULTS: %d passed, %d failed" % [tests_passed, tests_failed])

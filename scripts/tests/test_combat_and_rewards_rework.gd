@@ -561,7 +561,7 @@ func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	_assert(has_direct_equipment, "Warrior class_rewards pool contains direct Equipment resources without Reward wrappers")
 	_assert(not boar.loot_table.is_empty(), "Wild Boar has a populated monster loot_table")
 
-	var reward_scene: PackedScene = load("res://scenes/reward_screen.tscn")
+	var reward_scene: PackedScene = load("res://scenes/reward-screen.tscn")
 	var rs = reward_scene.instantiate()
 	add_child(rs)
 	await get_tree().process_frame

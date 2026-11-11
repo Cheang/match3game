@@ -82,9 +82,11 @@ var is_standalone: bool = false
 func _ready() -> void:
 	_ensure_nodes()
 	# Detect standalone execution (run scene directly or no active character loaded)
-	if Global.cur_char == null or get_tree().current_scene == self:
+	if Global.cur_char == null:
 		is_standalone = true
 		_init_standalone_mode()
+	elif Global.cur_enemy == null:
+		Global.set_up_enemy()
 
 	if not Global.pending_reward_context.is_empty():
 		is_boss_draft = bool(Global.pending_reward_context.get("is_boss", Global.boss_beaten))
@@ -152,17 +154,20 @@ func generate_three_choice_draft(
 		var rolled_rarity: String = roll_rarity_tier()
 		var picked: Resource = _draw_from_pool(primary_pool, rolled_rarity, chosen_identities, preferred_source == "class")
 		if picked == null:
+			# If unique pool is smaller than 3, allow duplicate identity from primary pool first
+			var empty_ids: Dictionary = {}
+			picked = _draw_from_pool(primary_pool, rolled_rarity, empty_ids, preferred_source == "class")
+		if picked == null:
 			var fallback_source: String = "class" if preferred_source == "monster" else "monster"
 			picked = _draw_from_pool(fallback_pool, rolled_rarity, chosen_identities, fallback_source == "class")
 			if picked != null:
 				actual_source = fallback_source
 		if picked == null:
-			# Last resort if unique pool is smaller than 3: allow duplicate identity
+			var fallback_source: String = "class" if preferred_source == "monster" else "monster"
 			var empty_ids: Dictionary = {}
-			picked = _draw_from_pool(primary_pool, rolled_rarity, empty_ids, preferred_source == "class")
-			if picked == null:
-				var fallback_source: String = "class" if preferred_source == "monster" else "monster"
-				picked = _draw_from_pool(fallback_pool, rolled_rarity, empty_ids, fallback_source == "class")
+			picked = _draw_from_pool(fallback_pool, rolled_rarity, empty_ids, fallback_source == "class")
+			if picked != null:
+				actual_source = fallback_source
 
 		if picked != null:
 			var id_key: String = RewardGrantHandler.get_identity_key(picked)
@@ -259,9 +264,7 @@ func get_rewards_from_player() -> void:
 	if Global.cur_char != null:
 		if is_boss_draft and not Global.cur_char.rewards_passive.is_empty():
 			rewards = Global.cur_char.rewards_passive.duplicate()
-		elif not Global.cur_char.class_rewards.is_empty():
-			rewards = Global.cur_char.class_rewards.duplicate()
-		elif not Global.cur_char.rewards_piece.is_empty():
+		else:
 			rewards = Global.cur_char.rewards_piece.duplicate()
 
 	if not Global.pending_reward_context.is_empty() and Global.pending_reward_context.has("monster_loot"):

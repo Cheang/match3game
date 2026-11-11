@@ -398,7 +398,7 @@ func enemy_died():
 				Global.game_is_over = true
 				SceneManager.change_scene("res://scenes/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 				return
-		SceneManager.change_scene("res://scenes/reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
+		SceneManager.change_scene("res://scenes/reward-screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 
 func destroy_tile(space_to_destroy: Array[Vector2]):
 	grd.mark_for_destruction(space_to_destroy)
