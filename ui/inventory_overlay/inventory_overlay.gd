@@ -798,13 +798,13 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 		var eff := eq.get_effect_description()
 		if not eff.is_empty():
 			text += "[font_size=14]%s[/font_size]\n" % eff
-		var tier := eq.get_active_tier()
-		if tier != null and not tier.stat_modifiers.is_empty():
+		var boosts := eq.get_stat_boosts()
+		if not boosts.is_empty():
 			var stat_parts: Array[String] = []
-			for stat_name in tier.stat_modifiers:
-				var val: int = int(tier.stat_modifiers[stat_name])
+			for stat_name in boosts:
+				var val: float = boosts[stat_name]
 				var sign_str := "+" if val > 0 else ""
-				stat_parts.append("%s%d %s" % [sign_str, val, stat_name.capitalize()])
+				stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 			if not stat_parts.is_empty():
 				text += "\n[font_size=12][color=#91db69]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 	else:
@@ -843,14 +843,14 @@ func _format_ability_bbcode(mod: Equipment, color_id: int, is_ult: bool) -> Stri
 	if not eff.is_empty():
 		text += "[font_size=14]%s[/font_size]\n" % eff
 
-	# Passive stats from tier (if any)
-	var tier := mod.get_active_tier()
-	if tier != null and not tier.stat_modifiers.is_empty():
+	# Passive stats (if any)
+	var boosts := mod.get_stat_boosts()
+	if not boosts.is_empty():
 		var stat_parts: Array[String] = []
-		for stat_name in tier.stat_modifiers:
-			var val: int = int(tier.stat_modifiers[stat_name])
+		for stat_name in boosts:
+			var val: float = boosts[stat_name]
 			var sign_str := "+" if val > 0 else ""
-			stat_parts.append("%s%d %s" % [sign_str, val, stat_name.capitalize()])
+			stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 		if not stat_parts.is_empty():
 			text += "\n[font_size=12][color=#91db69]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 

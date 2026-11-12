@@ -90,18 +90,26 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var bypass_activation_check: bool = false
 
 # ==============================================================================
-# 2. RARITY & SCALING
+# 2. RARITY & BONUSES
 # ==============================================================================
-@export_group("Rarity & Scaling")
+@export_group("Rarity & Bonuses")
 ## Current rarity tier of this equipment.
 ## Base version (COMMON) grants 0 passive hero stat boosts.
-## Higher rarities grant passive stats, scaled effects, and extra colors configured in rarity_tiers.
+## Higher rarities dynamically roll bonuses from `bonuses_table` and unlock `godly_bonus`.
 @export var rarity: Rarity = Rarity.COMMON
 ## If true, this equipment is locked to its configured `rarity` and will only appear at that exact tier.
-## If false (default), this equipment can appear and scale across all rarity tiers (Common through Godly).
+## If false (default), this equipment can appear and scale across allowed rarity tiers.
 @export var fixed_rarity: bool = false
-## Specific tier configurations (passive stats, effect scaling, and color options) for higher rarities.
-@export var rarity_tiers: Array[EquipmentRarityTier] = []
+## Pool of potential bonuses this equipment can roll when generated at higher rarities.
+## Uncommon rolls 1 bonus (1.0x). Rare rolls 2 bonuses (1.0x).
+## Epic rolls 2 bonuses at +50% (1.5x). Legendary rolls 2 bonuses at +100% (2.0x).
+## Godly rolls 2 bonuses at +150% (2.5x) and unlocks `godly_bonus`.
+@export var bonuses_table: Array[EquipmentBonus] = []
+## Dedicated unique perk unlocked exclusively when this item is generated or upgraded to Godly.
+## If null, this equipment CANNOT roll or appear at Godly tier.
+@export var godly_bonus: EquipmentBonus = null
+## Active rolled bonuses currently granted by this instantiated equipment piece.
+@export var rolled_bonuses: Array[EquipmentRolledBonus] = []
 
 # ==============================================================================
 # 3. TRIGGER & RESTRICTIONS
@@ -336,112 +344,98 @@ func _get_stat_value(c_res, scaling: StatScaling) -> float:
 	return 0.0
 
 # ==============================================================================
-# DYNAMIC RARITY & TIER RESOLUTION
+# DYNAMIC RARITY & BONUS RESOLUTION
 # ==============================================================================
 
-## Returns the active EquipmentRarityTier for this item's current rarity.
-## Returns null if this item is COMMON (base) or has no configuration for this tier.
-func get_active_tier() -> EquipmentRarityTier:
-	if rarity == Rarity.COMMON:
-		return null
-	for tier in rarity_tiers:
-		if tier != null and int(tier.rarity) == int(rarity):
-			return tier
-	return null
-
-## Returns dictionary of all passive hero stat boosts for the current rarity tier.
+## Returns dictionary of all passive hero stat boosts from active rolled bonuses.
 ## Base (COMMON) items return an empty dictionary (0 stat boosts).
 func get_stat_boosts() -> Dictionary:
-	var tier = get_active_tier()
-	if tier == null:
-		return {}
-	return tier.get_stat_boosts()
+	var boosts: Dictionary = {}
+	for b in rolled_bonuses:
+		if b == null:
+			continue
+		match b.type:
+			EquipmentBonus.BonusType.MIGHT:
+				boosts["might"] = boosts.get("might", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.GRIT:
+				boosts["grit"] = boosts.get("grit", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.AGILITY:
+				boosts["agility"] = boosts.get("agility", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.SPIRIT:
+				boosts["spirit"] = boosts.get("spirit", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.MAX_HEALTH:
+				boosts["max_health"] = boosts.get("max_health", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.CRIT_CHANCE:
+				boosts["crit_chance"] = boosts.get("crit_chance", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.CRIT_MULTIPLIER:
+				boosts["crit_mutly"] = boosts.get("crit_mutly", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.LIFESTEAL:
+				boosts["life_steal"] = boosts.get("life_steal", 0.0) + (b.effective_val / 100.0 if b.effective_val > 1.0 else b.effective_val)
+			EquipmentBonus.BonusType.START_ARMOR:
+				boosts["start_armor"] = boosts.get("start_armor", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.START_MYSTIC_ARMOR:
+				boosts["start_mystic_armor"] = boosts.get("start_mystic_armor", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.DAMAGE_REDUCTION:
+				boosts["dmg_reduction"] = boosts.get("dmg_reduction", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.DAMAGE_REDUCTION_FLAT:
+				boosts["dmg_reduction_flat"] = boosts.get("dmg_reduction_flat", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.GOLD_CHANCE:
+				boosts["gold_chance"] = boosts.get("gold_chance", 0.0) + b.effective_val
+			EquipmentBonus.BonusType.START_COMBO:
+				boosts["start_combo"] = boosts.get("start_combo", 0.0) + b.effective_val
+	return boosts
 
 func get_effective_base_damage() -> float:
-	var tier = get_active_tier()
-	if tier == null:
-		return base_damage
-	if tier.is_effect_override:
-		return tier.base_damage if tier.base_damage > 0.0 else base_damage
-	return base_damage + tier.base_damage
+	var total: float = base_damage
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.BONUS_BASE_DAMAGE:
+			total += b.effective_val
+	return total
 
 func get_effective_hit_count() -> int:
-	var tier = get_active_tier()
-	if tier == null:
-		return max(1, hit_count)
-	if tier.is_effect_override:
-		return max(1, tier.hit_count) if tier.hit_count > 0 else max(1, hit_count)
-	return max(1, hit_count + tier.hit_count)
+	var total: int = max(1, hit_count)
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.BONUS_HIT_COUNT:
+			total += int(roundf(b.effective_val))
+	return max(1, total)
 
 func get_effective_damage_combo_multiplier() -> float:
-	var tier = get_active_tier()
-	if tier == null:
-		return damage_combo_multiplier
-	if tier.is_effect_override:
-		return tier.damage_combo_multiplier if tier.damage_combo_multiplier > 0.0 else damage_combo_multiplier
-	return damage_combo_multiplier + tier.damage_combo_multiplier
+	return damage_combo_multiplier
 
 func get_effective_base_armor() -> float:
-	var tier = get_active_tier()
-	if tier == null:
-		return base_armor
-	if tier.is_effect_override:
-		return tier.base_armor if tier.base_armor > 0.0 else base_armor
-	return base_armor + tier.base_armor
+	return base_armor
 
 func get_effective_base_mystic_armor() -> float:
-	var tier = get_active_tier()
-	if tier == null:
-		return base_mystic_armor
-	if tier.is_effect_override:
-		return tier.base_mystic_armor if tier.base_mystic_armor > 0.0 else base_mystic_armor
-	return base_mystic_armor + tier.base_mystic_armor
+	return base_mystic_armor
 
 func get_effective_base_heal() -> float:
-	var tier = get_active_tier()
-	if tier == null:
-		return base_heal
-	if tier.is_effect_override:
-		return tier.base_heal if tier.base_heal > 0.0 else base_heal
-	return base_heal + tier.base_heal
+	return base_heal
 
 func get_effective_moves_to_give() -> int:
-	var tier = get_active_tier()
-	if tier == null:
-		return moves_to_give
-	if tier.is_effect_override:
-		return tier.moves_to_give if tier.moves_to_give > 0 else moves_to_give
-	return moves_to_give + tier.moves_to_give
+	return moves_to_give
 
 func get_effective_gold_to_give() -> int:
-	var tier = get_active_tier()
-	if tier == null:
-		return gold_to_give
-	if tier.is_effect_override:
-		return tier.gold_to_give if tier.gold_to_give > 0 else gold_to_give
-	return gold_to_give + tier.gold_to_give
+	return gold_to_give
 
 func get_effective_combo_points_before() -> int:
-	var tier = get_active_tier()
-	if tier == null:
-		return combo_points_before
-	if tier.is_effect_override:
-		return tier.combo_points_before if tier.combo_points_before != 0 else combo_points_before
-	return combo_points_before + tier.combo_points_before
+	return combo_points_before
 
 func get_effective_combo_points_after() -> int:
-	var tier = get_active_tier()
-	if tier == null:
-		return combo_points_after
-	if tier.is_effect_override:
-		return tier.combo_points_after if tier.combo_points_after != 0 else combo_points_after
-	return combo_points_after + tier.combo_points_after
+	return combo_points_after
 
 func get_effective_cooldown_turns() -> int:
-	var tier = get_active_tier()
-	if tier != null and tier.cooldown_override >= 0:
-		return tier.cooldown_override
-	return cooldown_turns
+	var total: int = cooldown_turns
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.LOWER_COOLDOWN:
+			total -= int(roundf(b.effective_val))
+	return max(0, total)
+
+func get_effective_slot_cost() -> int:
+	var total: int = slot_cost
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.REMOVE_SLOT_COST:
+			total -= int(roundf(b.effective_val))
+	return max(1, total)
 
 ## Dynamically sets this equipment instance's rarity and notifies player to recalculate passives.
 func set_rarity(new_rarity: Rarity) -> void:
@@ -451,23 +445,89 @@ func set_rarity(new_rarity: Rarity) -> void:
 		p.recalculate_equipment_passives()
 
 ## Returns true if this equipment can be rolled at `target_rarity`.
-## If fixed_rarity is true, only rolls at its configured rarity; otherwise rolls at all rarities.
+## If fixed_rarity is true, only rolls at its configured rarity.
+## If target_rarity is GODLY, can only roll if `godly_bonus` is configured.
 func can_roll_at_rarity(target_rarity: int) -> bool:
 	if fixed_rarity:
 		return int(rarity) == target_rarity
+	if target_rarity == int(Rarity.GODLY) and godly_bonus == null:
+		return false
 	return true
 
-## Clamps `target_rarity` to this equipment's allowed rarity (locked to rarity if fixed_rarity is true).
+## Clamps `target_rarity` to this equipment's allowed rarity (locked to rarity if fixed_rarity is true; capped at Legendary if no godly_bonus).
 func clamp_to_allowed_rarity(target_rarity: int) -> Rarity:
 	if fixed_rarity:
 		return rarity
-	return clampi(target_rarity, int(Rarity.COMMON), int(Rarity.GODLY)) as Rarity
+	var max_r: int = int(Rarity.GODLY) if godly_bonus != null else int(Rarity.LEGENDARY)
+	return clampi(target_rarity, int(Rarity.COMMON), max_r) as Rarity
 
-## Creates an independent clone of this equipment initialized to a specific rarity tier (respecting floor/ceiling/fixed rules).
+## Creates an independent clone of this equipment with rolled bonuses according to target rarity tier.
 ## Designed for Class Pools, Combat Drops, Events, and Shop inventories.
-func duplicate_with_rarity(target_rarity: Rarity) -> Equipment:
+func duplicate_with_rarity(target_rarity: Rarity, seed_val: int = 0) -> Equipment:
 	var dup: Equipment = duplicate(true)
-	dup.rarity = clamp_to_allowed_rarity(int(target_rarity))
+	var final_r: Rarity = clamp_to_allowed_rarity(int(target_rarity))
+	dup.rarity = final_r
+	dup.source_template = source_template if source_template != null else self
+	dup.reset_for_battle()
+
+	var rng: RandomNumberGenerator = null
+	if seed_val != 0:
+		rng = RandomNumberGenerator.new()
+		rng.seed = seed_val
+
+	# Roll bonuses based on rarity
+	dup.rolled_bonuses.clear()
+	var bonus_count: int = 0
+	var mult: float = 1.0
+
+	match final_r:
+		Rarity.COMMON:
+			bonus_count = 0
+		Rarity.UNCOMMON:
+			bonus_count = 1
+			mult = 1.0
+		Rarity.RARE:
+			bonus_count = 2
+			mult = 1.0
+		Rarity.EPIC:
+			bonus_count = 2
+			mult = 1.5
+		Rarity.LEGENDARY:
+			bonus_count = 2
+			mult = 2.0
+		Rarity.GODLY:
+			bonus_count = 2
+			mult = 2.5
+
+	if bonus_count > 0 and not bonuses_table.is_empty():
+		var indices: Array[int] = []
+		for i in range(bonuses_table.size()):
+			if bonuses_table[i] != null:
+				indices.append(i)
+
+		# Shuffle to pick unique bonuses
+		if rng != null:
+			for i in range(indices.size() - 1, 0, -1):
+				var j: int = rng.randi_range(0, i)
+				var tmp: int = indices[i]
+				indices[i] = indices[j]
+				indices[j] = tmp
+		else:
+			indices.shuffle()
+
+		var picks: int = mini(bonus_count, indices.size())
+		for k in range(picks):
+			var b_tpl: EquipmentBonus = bonuses_table[indices[k]]
+			dup.rolled_bonuses.append(b_tpl.roll(mult, false, rng))
+
+	# Godly tier unlocks the guaranteed fixed godly_bonus
+	if final_r == Rarity.GODLY and godly_bonus != null:
+		dup.rolled_bonuses.append(godly_bonus.roll(1.0, true, rng))
+
+	# Update effective slot cost if reduced
+	dup.slot_cost = dup.get_effective_slot_cost()
+
+	return dup
 	dup.source_template = source_template if source_template != null else self
 	dup.reset_for_battle()
 	return dup
@@ -580,6 +640,23 @@ func activate(context = null) -> void:
 	elif eff_combo_after != 0:
 		cur_char.modify_stat("combo", eff_combo_after)
 
+	# 8. Rolled Trigger Buffs
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.GAIN_BUFF_ON_TRIGGER:
+			match b.trigger_buff.to_lower():
+				"dodge":
+					cur_char.modify_stat("dodge", true, false)
+				"combo":
+					cur_char.modify_stat("combo", int(roundf(b.effective_val)))
+				"moves":
+					cur_char.modify_stat("moves_left", int(roundf(b.effective_val)))
+				"armor":
+					cur_char.modify_stat("cur_armor", roundf(b.effective_val))
+				"mystic_armor":
+					cur_char.modify_stat("cur_mystic_armor", roundf(b.effective_val))
+				"heal":
+					cur_char.modify_stat("cur_health", roundf(b.effective_val))
+
 	_on_custom_activate(cur_char, cur_enemy, ctx)
 
 ## Optional virtual hook for unique one-off equipment scripts.
@@ -591,14 +668,6 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 	var upg: int = upgrade if upgrades < 0 else upgrades
 	var c_res = char_resource if char_resource != null else _safe_get_global_char()
 	var parts: Array[String] = []
-
-	var tier = get_active_tier()
-	if tier != null:
-		var stat_bbcode: String = tier.get_stat_boosts_bbcode()
-		if stat_bbcode != "":
-			parts.append(stat_bbcode)
-		if tier.custom_description != "":
-			parts.append(tier.custom_description)
 
 	var eff_combo_before: int = get_effective_combo_points_before()
 	if eff_combo_before > 0:
@@ -669,9 +738,26 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 	if consume_all_combo:
 		parts.append("Consumes all [color=#7a3045]Combo[/color]")
 
-	if not parts.is_empty():
-		return " | ".join(parts)
-	return description
+	var base_desc: String = " | ".join(parts) if not parts.is_empty() else description
+
+	if not rolled_bonuses.is_empty():
+		var bonus_lines: Array[String] = []
+		var mult_pct: int = 0
+		match rarity:
+			Rarity.EPIC: mult_pct = 50
+			Rarity.LEGENDARY: mult_pct = 100
+			Rarity.GODLY: mult_pct = 150
+		for b in rolled_bonuses:
+			if b != null:
+				bonus_lines.append(b.get_display_text(mult_pct))
+		if not bonus_lines.is_empty():
+			var r_hex: String = get_rarity_hex(rarity)
+			var bonus_block: String = "[color=%s]%s[/color]" % [r_hex, "\n".join(bonus_lines)]
+			if base_desc != "":
+				return "%s\n%s" % [base_desc, bonus_block]
+			return bonus_block
+
+	return base_desc
 
 func _resolve_char(context) -> EntityResource:
 	if context is Dictionary and context.has("attacker"):
@@ -718,9 +804,9 @@ func _fmt(val: float) -> String:
 	return str(snappedf(val, 0.1))
 
 func is_colorless() -> bool:
-	var tier = get_active_tier()
-	if tier != null and tier.allow_all_colors:
-		return true
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.MAKE_COLORLESS:
+			return true
 	return bound_color == 0 and allowed_colors.is_empty()
 
 func is_allowed_on_color(target_color: int) -> bool:
@@ -733,13 +819,9 @@ func is_allowed_on_color(target_color: int) -> bool:
 		var c_int: int = int(c)
 		if c_int == 0 or (c_int - (c_int % 100)) == target_base:
 			return true
-	var tier = get_active_tier()
-	if tier != null:
-		if tier.allow_all_colors:
-			return true
-		for c in tier.extra_allowed_colors:
-			var c_int: int = int(c)
-			if c_int == 0 or (c_int - (c_int % 100)) == target_base:
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.EXTRA_COLOR:
+			if b.color_value == 0 or (b.color_value - (b.color_value % 100)) == target_base:
 				return true
 	return false
 
@@ -756,11 +838,10 @@ func get_effective_allowed_colors() -> Array[int]:
 				res.append(int(c))
 	elif bound_color > 0:
 		res.append(bound_color)
-	var tier = get_active_tier()
-	if tier != null:
-		for c in tier.extra_allowed_colors:
-			if not res.has(int(c)):
-				res.append(int(c))
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.EXTRA_COLOR and b.color_value > 0:
+			if not res.has(b.color_value):
+				res.append(b.color_value)
 	if res.is_empty():
 		return [100, 200, 300, 400, 500]
 	return res

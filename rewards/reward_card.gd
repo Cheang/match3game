@@ -278,7 +278,11 @@ func load_btn() -> void:
 			color_multi.visible = false
 
 	# 4. Description taken directly from reward resource
-	var body_desc: String = RewardGrantHandler.get_description(reward_resource)
+	var body_desc: String = ""
+	if eq != null:
+		body_desc = eq.get_effect_description()
+	else:
+		body_desc = RewardGrantHandler.get_description(reward_resource)
 	if eq != null:
 		var extra_tags: Array[String] = []
 		var trig: String = eq.get_trigger_badge_text()

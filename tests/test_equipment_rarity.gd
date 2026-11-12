@@ -2,18 +2,18 @@ extends Node
 
 func _ready() -> void:
 	print("\n=======================================================")
-	print(" RUNNING EQUIPMENT RARITY & SCALING TEST SUITE")
+	print(" RUNNING EQUIPMENT BONUS TABLE & RARITY SCALING SUITE")
 	print("=======================================================\n")
 	var success := true
 	success = test_base_common_isolation() and success
-	success = test_tier_creation_and_scaling() and success
-	success = test_color_expansion() and success
+	success = test_bonus_table_rolling_and_scaling() and success
+	success = test_utility_bonuses() and success
 	success = test_player_passive_reconciliation() and success
-	success = test_rarity_duplication() and success
+	success = test_reward_single_equipment_and_bonus_display() and success
 	success = test_existing_equipment_compatibility() and success
 
 	if success:
-		print("\n[ALL TESTS PASSED] Equipment rarity and scaling system is 100% verified!\n")
+		print("\n[ALL TESTS PASSED] Equipment bonus table system is 100% verified!\n")
 		get_tree().quit(0)
 	else:
 		printerr("\n[TESTS FAILED] One or more tests failed!\n")
@@ -31,6 +31,9 @@ func test_base_common_isolation() -> bool:
 	if not eq.get_stat_boosts().is_empty():
 		printerr("FAIL: Common equipment should have 0 stat boosts, got: ", eq.get_stat_boosts())
 		return false
+	if not eq.rolled_bonuses.is_empty():
+		printerr("FAIL: Common equipment should have 0 rolled bonuses, got: ", eq.rolled_bonuses.size())
+		return false
 	if eq.get_effective_base_damage() != 2.0:
 		printerr("FAIL: Effective damage mismatch on common: ", eq.get_effective_base_damage())
 		return false
@@ -40,112 +43,187 @@ func test_base_common_isolation() -> bool:
 	print("   PASSED: Base Common item grants 0 stat boosts and respects base bounds.")
 	return true
 
-func test_tier_creation_and_scaling() -> bool:
-	print("-> Testing Tier Creation & Scaling...")
+func test_bonus_table_rolling_and_scaling() -> bool:
+	print("-> Testing Bonus Table Rolling & Multiplier Scaling...")
 	var eq := Equipment.new()
-	eq.piece_name = "Short Sword"
-	eq.base_damage = 1.0
-	eq.hit_count = 1
-	eq.allowed_colors = [100]
+	eq.piece_name = "Heroic Blade"
+	eq.base_damage = 3.0
 
-	# Uncommon tier (+1 Might, +1 DMG)
-	var t_uncom := EquipmentRarityTier.new()
-	t_uncom.rarity = EquipmentRarityTier.Rarity.UNCOMMON
-	t_uncom.might = 1.0
-	t_uncom.base_damage = 1.0 # additive bonus -> 1 + 1 = 2
-	eq.rarity_tiers.append(t_uncom)
+	# 1. Author bonus table
+	var b_might := EquipmentBonus.new()
+	b_might.type = EquipmentBonus.BonusType.MIGHT
+	b_might.min_val = 2.0
+	b_might.max_val = 2.0 # Fixed roll for deterministic testing
 
-	# Rare tier (+2 Might, +5% Crit, +2 DMG)
-	var t_rare := EquipmentRarityTier.new()
-	t_rare.rarity = EquipmentRarityTier.Rarity.RARE
-	t_rare.might = 2.0
-	t_rare.crit_chance = 5
-	t_rare.base_damage = 2.0 # additive bonus -> 1 + 2 = 3
-	eq.rarity_tiers.append(t_rare)
+	var b_health := EquipmentBonus.new()
+	b_health.type = EquipmentBonus.BonusType.MAX_HEALTH
+	b_health.min_val = 10.0
+	b_health.max_val = 10.0
 
-	# Epic tier (+3 Might, +10% Crit, +5 Max HP, Override: 6 DMG, 2 Hits)
-	var t_epic := EquipmentRarityTier.new()
-	t_epic.rarity = EquipmentRarityTier.Rarity.EPIC
-	t_epic.might = 3.0
-	t_epic.crit_chance = 10
-	t_epic.max_health = 5.0
-	t_epic.is_effect_override = true
-	t_epic.base_damage = 6.0
-	t_epic.hit_count = 2
-	eq.rarity_tiers.append(t_epic)
+	var b_crit := EquipmentBonus.new()
+	b_crit.type = EquipmentBonus.BonusType.CRIT_CHANCE
+	b_crit.min_val = 5.0
+	b_crit.max_val = 5.0
 
-	# Check Uncommon
-	eq.rarity = Equipment.Rarity.UNCOMMON
-	var uncom_boosts: Dictionary = eq.get_stat_boosts()
-	if uncom_boosts.get("might", 0.0) != 1.0 or uncom_boosts.has("crit_chance"):
-		printerr("FAIL: Uncommon stat boosts incorrect: ", uncom_boosts)
+	eq.bonuses_table = [b_might, b_health, b_crit]
+
+	# 2. Uncommon: exactly 1 bonus rolled, 1.0x multiplier
+	var uncom: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.UNCOMMON, 12345)
+	if uncom.rarity != Equipment.Rarity.UNCOMMON:
+		printerr("FAIL: Expected Uncommon rarity, got: ", uncom.rarity)
 		return false
-	if eq.get_effective_base_damage() != 2.0:
-		printerr("FAIL: Uncommon effective damage incorrect: ", eq.get_effective_base_damage())
+	if uncom.rolled_bonuses.size() != 1:
+		printerr("FAIL: Uncommon must roll exactly 1 bonus, got: ", uncom.rolled_bonuses.size())
 		return false
 
-	# Check Rare
-	eq.rarity = Equipment.Rarity.RARE
-	var rare_boosts: Dictionary = eq.get_stat_boosts()
-	if rare_boosts.get("might", 0.0) != 2.0 or rare_boosts.get("crit_chance", 0) != 5:
-		printerr("FAIL: Rare stat boosts incorrect: ", rare_boosts)
+	# 3. Rare: exactly 2 unique bonuses rolled, 1.0x multiplier
+	var rare: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.RARE, 12345)
+	if rare.rolled_bonuses.size() != 2:
+		printerr("FAIL: Rare must roll exactly 2 bonuses, got: ", rare.rolled_bonuses.size())
 		return false
-	if eq.get_effective_base_damage() != 3.0:
-		printerr("FAIL: Rare effective damage incorrect: ", eq.get_effective_base_damage())
-		return false
-
-	# Check Epic (Override)
-	eq.rarity = Equipment.Rarity.EPIC
-	var epic_boosts: Dictionary = eq.get_stat_boosts()
-	if epic_boosts.get("might", 0.0) != 3.0 or epic_boosts.get("crit_chance", 0) != 10 or epic_boosts.get("max_health", 0.0) != 5.0:
-		printerr("FAIL: Epic stat boosts incorrect: ", epic_boosts)
-		return false
-	if eq.get_effective_base_damage() != 6.0 or eq.get_effective_hit_count() != 2:
-		printerr("FAIL: Epic effective overrides incorrect: DMG=", eq.get_effective_base_damage(), " Hits=", eq.get_effective_hit_count())
+	var b1_type = rare.rolled_bonuses[0].type
+	var b2_type = rare.rolled_bonuses[1].type
+	if b1_type == b2_type:
+		printerr("FAIL: Rare bonuses should be unique!")
 		return false
 
-	print("   PASSED: Tiers scale damage, hits, and passive stats dynamically.")
+	# 4. Epic: 2 unique bonuses at +50% (1.5x)
+	var epic: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.EPIC, 12345)
+	if epic.rolled_bonuses.size() != 2:
+		printerr("FAIL: Epic must roll exactly 2 bonuses, got: ", epic.rolled_bonuses.size())
+		return false
+	for b in epic.rolled_bonuses:
+		if b.type == EquipmentBonus.BonusType.MIGHT and b.effective_val != 3.0: # 2.0 * 1.5 = 3.0
+			printerr("FAIL: Epic Might scaling expected 3.0, got: ", b.effective_val)
+			return false
+		if b.type == EquipmentBonus.BonusType.MAX_HEALTH and b.effective_val != 15.0: # 10.0 * 1.5 = 15.0
+			printerr("FAIL: Epic Max Health scaling expected 15.0, got: ", b.effective_val)
+			return false
+
+	# 5. Legendary: 2 unique bonuses at +100% (2.0x)
+	var legend: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.LEGENDARY, 12345)
+	if legend.rolled_bonuses.size() != 2:
+		printerr("FAIL: Legendary must roll exactly 2 bonuses, got: ", legend.rolled_bonuses.size())
+		return false
+	for b in legend.rolled_bonuses:
+		if b.type == EquipmentBonus.BonusType.MIGHT and b.effective_val != 4.0: # 2.0 * 2.0 = 4.0
+			printerr("FAIL: Legendary Might scaling expected 4.0, got: ", b.effective_val)
+			return false
+		if b.type == EquipmentBonus.BonusType.MAX_HEALTH and b.effective_val != 20.0: # 10.0 * 2.0 = 20.0
+			printerr("FAIL: Legendary Max Health scaling expected 20.0, got: ", b.effective_val)
+			return false
+
+	# 6. Godly eligibility check: item WITHOUT godly_bonus CANNOT roll Godly!
+	if eq.can_roll_at_rarity(int(Equipment.Rarity.GODLY)):
+		printerr("FAIL: Equipment without godly_bonus should NOT be eligible for Godly!")
+		return false
+	var rejected_godly: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.GODLY)
+	if rejected_godly.rarity != Equipment.Rarity.LEGENDARY:
+		printerr("FAIL: Item without godly_bonus rolled at Godly must clamp down to Legendary, got: ", rejected_godly.rarity)
+		return false
+
+	# 7. Configure Godly bonus & test Godly tier (2 bonuses at 2.5x + 1 fixed Godly perk)
+	var g_perk := EquipmentBonus.new()
+	g_perk.type = EquipmentBonus.BonusType.MIGHT
+	g_perk.min_val = 5.0
+	g_perk.max_val = 5.0
+	g_perk.custom_text = "Omnipotent Fury: Strikes echo twice"
+	eq.godly_bonus = g_perk
+
+	if not eq.can_roll_at_rarity(int(Equipment.Rarity.GODLY)):
+		printerr("FAIL: Equipment WITH godly_bonus must be eligible for Godly!")
+		return false
+
+	var godly: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.GODLY, 12345)
+	if godly.rarity != Equipment.Rarity.GODLY:
+		printerr("FAIL: Expected Godly rarity, got: ", godly.rarity)
+		return false
+	# Must have 2 random bonuses + 1 fixed Godly perk = 3 total
+	if godly.rolled_bonuses.size() != 3:
+		printerr("FAIL: Godly must have 3 bonuses (2 random + 1 Godly perk), got: ", godly.rolled_bonuses.size())
+		return false
+
+	var found_godly_perk := false
+	for b in godly.rolled_bonuses:
+		if b.is_godly_perk:
+			found_godly_perk = true
+			if b.custom_text != "Omnipotent Fury: Strikes echo twice":
+				printerr("FAIL: Godly perk text mismatch: ", b.custom_text)
+				return false
+		elif b.type == EquipmentBonus.BonusType.MIGHT:
+			# 2.0 * 2.5 = 5.0 (+150%)
+			if b.effective_val != 5.0:
+				printerr("FAIL: Godly random Might scaling expected 5.0 (+150%), got: ", b.effective_val)
+				return false
+		elif b.type == EquipmentBonus.BonusType.MAX_HEALTH:
+			# 10.0 * 2.5 = 25.0 (+150%)
+			if b.effective_val != 25.0:
+				printerr("FAIL: Godly random Max Health scaling expected 25.0 (+150%), got: ", b.effective_val)
+				return false
+
+	if not found_godly_perk:
+		printerr("FAIL: Godly item missing exclusive Godly perk!")
+		return false
+
+	print("   PASSED: Procedural rolling, scaling multipliers (1.0x, 1.5x, 2.0x, 2.5x), and Godly locking verified.")
 	return true
 
-func test_color_expansion() -> bool:
-	print("-> Testing Color Availability Expansion...")
+func test_utility_bonuses() -> bool:
+	print("-> Testing Utility & Mechanic Bonuses...")
 	var eq := Equipment.new()
-	eq.piece_name = "Red Lance"
-	eq.allowed_colors = [100] # Red only at base
+	eq.piece_name = "Heavy Bulwark"
+	eq.slot_cost = 2
+	eq.cooldown_turns = 3
+	eq.allowed_colors = [200] # Blue only
 
-	var t_rare := EquipmentRarityTier.new()
-	t_rare.rarity = EquipmentRarityTier.Rarity.RARE
-	t_rare.extra_allowed_colors = [200] # Add Blue
-	eq.rarity_tiers.append(t_rare)
+	# 1. Lower Cooldown & Remove Slot Cost
+	var b_cd := EquipmentBonus.new()
+	b_cd.type = EquipmentBonus.BonusType.LOWER_COOLDOWN
+	b_cd.min_val = 1.0
+	b_cd.max_val = 1.0
 
-	var t_legend := EquipmentRarityTier.new()
-	t_legend.rarity = EquipmentRarityTier.Rarity.LEGENDARY
-	t_legend.allow_all_colors = true # Colorless on any track!
-	eq.rarity_tiers.append(t_legend)
+	var b_slot := EquipmentBonus.new()
+	b_slot.type = EquipmentBonus.BonusType.REMOVE_SLOT_COST
+	b_slot.min_val = 1.0
+	b_slot.max_val = 1.0
 
-	# At Common: Only Red
-	eq.rarity = Equipment.Rarity.COMMON
-	if not eq.is_allowed_on_color(100) or eq.is_allowed_on_color(200) or eq.is_allowed_on_color(300):
-		printerr("FAIL: Common should only allow Red")
+	eq.bonuses_table = [b_cd, b_slot]
+	var rolled: Equipment = eq.duplicate_with_rarity(Equipment.Rarity.RARE)
+	if rolled.get_effective_cooldown_turns() != 2: # 3 - 1 = 2
+		printerr("FAIL: Expected reduced cooldown 2, got: ", rolled.get_effective_cooldown_turns())
+		return false
+	if rolled.slot_cost != 1: # 2 - 1 = 1
+		printerr("FAIL: Expected reduced slot cost 1, got: ", rolled.slot_cost)
 		return false
 
-	# At Rare: Red and Blue
-	eq.rarity = Equipment.Rarity.RARE
-	if not eq.is_allowed_on_color(100) or not eq.is_allowed_on_color(200) or eq.is_allowed_on_color(300):
-		printerr("FAIL: Rare should allow Red and Blue, but not Green")
+	# 2. Extra Color & Colorless
+	var eq_color := Equipment.new()
+	eq_color.piece_name = "Prismatic Charm"
+	eq_color.allowed_colors = [100] # Red
+
+	var b_extra_color := EquipmentBonus.new()
+	b_extra_color.type = EquipmentBonus.BonusType.EXTRA_COLOR
+	b_extra_color.color_value = 300 # Green
+
+	eq_color.bonuses_table = [b_extra_color]
+	var rolled_color: Equipment = eq_color.duplicate_with_rarity(Equipment.Rarity.UNCOMMON)
+	if not rolled_color.is_allowed_on_color(100) or not rolled_color.is_allowed_on_color(300) or rolled_color.is_allowed_on_color(200):
+		printerr("FAIL: Expected Red (100) and Green (300) allowed, but got mismatch")
 		return false
 
-	# At Legendary: Colorless (any track)
-	eq.rarity = Equipment.Rarity.LEGENDARY
-	if not eq.is_colorless() or not eq.is_allowed_on_color(100) or not eq.is_allowed_on_color(200) or not eq.is_allowed_on_color(300) or not eq.is_allowed_on_color(500):
-		printerr("FAIL: Legendary should be colorless and allow all colors")
+	var b_colorless := EquipmentBonus.new()
+	b_colorless.type = EquipmentBonus.BonusType.MAKE_COLORLESS
+	eq_color.bonuses_table = [b_colorless]
+	var rolled_colorless: Equipment = eq_color.duplicate_with_rarity(Equipment.Rarity.UNCOMMON)
+	if not rolled_colorless.is_colorless() or not rolled_colorless.is_allowed_on_color(500):
+		printerr("FAIL: Expected Colorless on any track")
 		return false
 
-	print("   PASSED: Color options expand correctly per rarity tier.")
+	print("   PASSED: Cooldown reduction, slot reduction, and color options verified.")
 	return true
 
 func test_player_passive_reconciliation() -> bool:
-	print("-> Testing Player Passive Stat Reconciliation...")
+	print("-> Testing Player Passive Stat Reconciliation with Rolled Bonuses...")
 	var player := PlayerResource.new()
 	player.might = 1.0
 	player.grit = 0.0
@@ -154,139 +232,84 @@ func test_player_passive_reconciliation() -> bool:
 	player.cur_health = 20.0
 	player.ensure_loadout_tracks()
 
-	var rare_sword := Equipment.new()
-	rare_sword.piece_name = "Rare Sword"
-	rare_sword.rarity = Equipment.Rarity.RARE
-	var t_rare := EquipmentRarityTier.new()
-	t_rare.rarity = EquipmentRarityTier.Rarity.RARE
-	t_rare.might = 2.0
-	t_rare.crit_chance = 5
-	rare_sword.rarity_tiers.append(t_rare)
+	var sword := Equipment.new()
+	sword.piece_name = "Might Sword"
+	var b_m := EquipmentRolledBonus.new()
+	b_m.type = EquipmentBonus.BonusType.MIGHT
+	b_m.effective_val = 2.0
+	var b_c := EquipmentRolledBonus.new()
+	b_c.type = EquipmentBonus.BonusType.CRIT_CHANCE
+	b_c.effective_val = 5.0
+	sword.rolled_bonuses = [b_m, b_c]
 
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(100)
 	var drag_data := {
 		"type": "modifier_drag",
 		"source": "bag",
-		"modifier": rare_sword,
+		"modifier": sword,
 		"bag_index": -1
 	}
 
-	# 1. Equip Rare Sword onto Red track
+	# 1. Equip onto Red track
 	var equipped: bool = player.handle_modifier_drop_on_track(drag_data, red_track, 0)
 	if not equipped:
-		printerr("FAIL: Could not drop rare sword on red track")
+		printerr("FAIL: Could not drop sword on red track")
 		return false
 
-	if player.might != 3.0:
+	if player.might != 3.0: # 1.0 base + 2.0
 		printerr("FAIL: Player might expected 3.0, got: ", player.might)
 		return false
-	if player.crit_chance != 10:
+	if player.crit_chance != 10: # 5 base + 5
 		printerr("FAIL: Player crit_chance expected 10, got: ", player.crit_chance)
 		return false
 	# +2 Might gives +2 Max Health: 20.0 -> 22.0
 	if player.max_health != 22.0:
-		printerr("FAIL: Player max_health expected 22.0 (+2 from Might), got: ", player.max_health)
+		printerr("FAIL: Player max_health expected 22.0, got: ", player.max_health)
 		return false
 
-	# 2. Add Epic Armor onto Blue track
-	var epic_shield := Equipment.new()
-	epic_shield.piece_name = "Epic Shield"
-	epic_shield.rarity = Equipment.Rarity.EPIC
-	var t_epic := EquipmentRarityTier.new()
-	t_epic.rarity = EquipmentRarityTier.Rarity.EPIC
-	t_epic.grit = 3.0
-	t_epic.max_health = 5.0
-	epic_shield.rarity_tiers.append(t_epic)
-
-	var blue_track: ColorLoadoutTrack = player.get_track_for_color(200)
-	var drag_shield := {
-		"type": "modifier_drag",
-		"source": "bag",
-		"modifier": epic_shield,
-		"bag_index": -1
-	}
-	player.handle_modifier_drop_on_track(drag_shield, blue_track, 0)
-
-	if player.grit != 3.0:
-		printerr("FAIL: Player grit expected 3.0, got: ", player.grit)
-		return false
-	# +3 Grit gives +6 HP, plus +5 direct HP buff = +11 HP: 22.0 -> 33.0
-	if player.max_health != 33.0 or player.cur_health != 33.0:
-		printerr("FAIL: Player max_health expected 33.0, got: ", player.max_health)
-		return false
-
-	# 3. Unequip Epic Shield
-	blue_track.unequip_modifier(epic_shield)
+	# 2. Unequip
+	red_track.unequip_modifier(sword)
 	player.recalculate_equipment_passives()
 
-	if player.grit != 0.0:
-		printerr("FAIL: Player grit expected 0.0 after unequip, got: ", player.grit)
-		return false
-	if player.max_health != 22.0:
-		printerr("FAIL: Player max_health expected 22.0 after unequip, got: ", player.max_health)
+	if player.might != 1.0 or player.crit_chance != 5 or player.max_health != 20.0:
+		printerr("FAIL: Player baseline stats drifted after unequip: might=", player.might, " crit=", player.crit_chance, " hp=", player.max_health)
 		return false
 
-	# 4. Unequip Rare Sword
-	red_track.unequip_modifier(rare_sword)
-	player.recalculate_equipment_passives()
-
-	if player.might != 1.0 or player.crit_chance != 5:
-		printerr("FAIL: Player baseline stats drifted: might=", player.might, " crit=", player.crit_chance)
-		return false
-	if player.max_health != 20.0:
-		printerr("FAIL: Player max_health expected 20.0 after unequip, got: ", player.max_health)
-		return false
-
-	print("   PASSED: Passive stats applied on equip and revoked cleanly with zero drift.")
+	print("   PASSED: Passive stats from rolled bonuses apply and revoke cleanly with zero drift.")
 	return true
 
-func test_rarity_duplication() -> bool:
-	print("-> Testing Rarity Duplication (Reward / Shop Spawning)...")
-	var base_item := Equipment.new()
-	base_item.piece_name = "Dagger"
-	base_item.rarity = Equipment.Rarity.COMMON
-	var t_epic := EquipmentRarityTier.new()
-	t_epic.rarity = EquipmentRarityTier.Rarity.EPIC
-	t_epic.might = 4.0
-	base_item.rarity_tiers.append(t_epic)
+func test_reward_single_equipment_and_bonus_display() -> bool:
+	print("-> Testing Reward Single-Item Rule & Rolled Bonus Visibility...")
+	var eq := Equipment.new()
+	eq.piece_name = "Silver Rapier"
+	eq.base_damage = 4.0
 
-	var rolled_item: Equipment = base_item.duplicate_with_rarity(Equipment.Rarity.EPIC)
-	if base_item.rarity != Equipment.Rarity.COMMON:
-		printerr("FAIL: Base blueprint item rarity was mutated!")
-		return false
-	if rolled_item.rarity != Equipment.Rarity.EPIC:
-		printerr("FAIL: Rolled item should be EPIC, got: ", rolled_item.rarity)
-		return false
-	if rolled_item.get_stat_boosts().get("might", 0.0) != 4.0:
-		printerr("FAIL: Rolled item does not have Epic stat boosts!")
+	var b_might := EquipmentBonus.new()
+	b_might.type = EquipmentBonus.BonusType.MIGHT
+	b_might.min_val = 2.0
+	b_might.max_val = 2.0
+	eq.bonuses_table = [b_might]
+
+	# 1. Reward.from_equipment creates strictly 1 equipment
+	var rew: Reward = Reward.from_equipment(eq, int(Equipment.Rarity.UNCOMMON))
+	if rew.equipment_to_grant.size() != 1:
+		printerr("FAIL: Reward.from_equipment must strictly grant 1 equipment, got: ", rew.equipment_to_grant.size())
 		return false
 
-	# Test fixed_rarity behavior: equipment is either locked to a specific rarity or can be all
-	# 1. Non-fixed equipment can be all rarities (COMMON through GODLY)
-	for r in range(int(Equipment.Rarity.COMMON), int(Equipment.Rarity.GODLY) + 1):
-		if not base_item.can_roll_at_rarity(r):
-			printerr("FAIL: Non-fixed equipment should be eligible for all rarities, rejected: ", r)
-			return false
-
-	# 2. Fixed-rarity equipment is locked to its configured rarity
-	var fixed_item := Equipment.new()
-	fixed_item.piece_name = "Legendary Relic"
-	fixed_item.rarity = Equipment.Rarity.LEGENDARY
-	fixed_item.fixed_rarity = true
-
-	if not fixed_item.can_roll_at_rarity(int(Equipment.Rarity.LEGENDARY)):
-		printerr("FAIL: Fixed equipment should be eligible at its locked rarity!")
-		return false
-	if fixed_item.can_roll_at_rarity(int(Equipment.Rarity.COMMON)) or fixed_item.can_roll_at_rarity(int(Equipment.Rarity.RARE)):
-		printerr("FAIL: Fixed equipment should NOT be eligible at different rarities!")
+	# 2. Rolled bonuses appear in effect description
+	var rolled_eq: Equipment = rew.equipment_to_grant[0]
+	var desc: String = rolled_eq.get_effect_description()
+	if not desc.contains("+2 Might"):
+		printerr("FAIL: Rolled equipment description should display '+2 Might', got: ", desc)
 		return false
 
-	var rolled_fixed: Equipment = fixed_item.duplicate_with_rarity(Equipment.Rarity.COMMON)
-	if rolled_fixed.rarity != Equipment.Rarity.LEGENDARY:
-		printerr("FAIL: Fixed equipment duplicated with COMMON should stay locked to LEGENDARY!")
+	# 3. Reward description incorporates equipment effect description
+	var rew_desc: String = rew.get_effect_description()
+	if not rew_desc.contains("+2 Might"):
+		printerr("FAIL: Reward description should display rolled bonus '+2 Might', got: ", rew_desc)
 		return false
 
-	print("   PASSED: duplicate_with_rarity and fixed_rarity vs all-rarity rules verified.")
+	print("   PASSED: Single equipment per reward and rolled bonus text visibility verified.")
 	return true
 
 func test_existing_equipment_compatibility() -> bool:

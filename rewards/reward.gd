@@ -386,7 +386,8 @@ var flags: Array[String]:
 # UNIFIED METADATA & FACTORY HELPERS
 # ==============================================================================
 ## Wraps a standalone Equipment resource into a unified Reward instance of type EQUIPMENT.
-static func from_equipment(eq: Equipment, rolled_rarity: int = -1, count: int = 1) -> Reward:
+## Equipment rewards strictly grant exactly 1 equipment instance.
+static func from_equipment(eq: Equipment, rolled_rarity: int = -1) -> Reward:
 	if eq == null:
 		return null
 	var rew := Reward.new()
@@ -397,12 +398,12 @@ static func from_equipment(eq: Equipment, rolled_rarity: int = -1, count: int = 
 		rew.max_rarity = int(eq.rarity) as Rarity
 	else:
 		rew.min_rarity = Rarity.COMMON
-		rew.max_rarity = Rarity.GODLY
+		rew.max_rarity = Rarity.GODLY if eq.godly_bonus != null else Rarity.LEGENDARY
 	var raw_r: int = int(eq.rarity) if rolled_rarity < 0 else rolled_rarity
 	var clamped_r: Equipment.Rarity = eq.clamp_to_allowed_rarity(raw_r)
 	rew.rarity = int(clamped_r) as Rarity
-	for _i in range(maxi(1, count)):
-		rew.equipment_to_grant.append(eq.duplicate_with_rarity(clamped_r))
+	# Strictly exactly 1 equipment instance per reward
+	rew.equipment_to_grant = [eq.duplicate_with_rarity(clamped_r)]
 	rew.name = eq.piece_name
 	rew.description = eq.description
 	rew.icon = eq.icon
@@ -695,21 +696,12 @@ func get_effect_description() -> String:
 	var lines: Array[String] = []
 	var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
 
-	if not equipment_to_grant.is_empty():
-		if equipment_to_grant.size() == 1 and equipment_to_grant[0] != null:
-			var eq: Equipment = equipment_to_grant[0].duplicate_with_rarity(target_eq_rarity)
-			lines.append("Gain 1 [color=#f2c94c]%s[/color]: %s" % [eq.piece_name, eq.get_effect_description()])
-		else:
-			var counts: Dictionary = {}
-			var eq_map: Dictionary = {}
-			for eq in equipment_to_grant:
-				if eq != null:
-					var scaled_eq: Equipment = eq.duplicate_with_rarity(target_eq_rarity)
-					counts[scaled_eq.piece_name] = counts.get(scaled_eq.piece_name, 0) + 1
-					eq_map[scaled_eq.piece_name] = scaled_eq
-			for eq_name in counts.keys():
-				var eq_ref: Equipment = eq_map[eq_name]
-				lines.append("Gain %d [color=#f2c94c]%s[/color]: %s" % [counts[eq_name], eq_name, eq_ref.get_effect_description()])
+	if not equipment_to_grant.is_empty() and equipment_to_grant[0] != null:
+		var eq: Equipment = equipment_to_grant[0]
+		if int(eq.rarity) != int(target_eq_rarity):
+			eq = eq.duplicate_with_rarity(target_eq_rarity)
+		var eq_desc: String = eq.get_effect_description()
+		lines.append("Gain [color=#f2c94c]%s[/color]: %s" % [eq.piece_name, eq_desc])
 
 	var eff_might: float = get_effective_might()
 	var eff_grit: float = get_effective_grit()

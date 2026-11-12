@@ -963,11 +963,11 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 
 	# 1. Verify all 4 RewardType enum values exist and work on unified Reward
 	var punch_eq: Equipment = load("res://equipment/items/punch.tres")
-	var eq_reward: Reward = Reward.from_equipment(punch_eq, int(Equipment.Rarity.RARE), 2)
+	var eq_reward: Reward = Reward.from_equipment(punch_eq, int(Equipment.Rarity.RARE))
 	_assert(eq_reward.reward_type == Reward.RewardType.EQUIPMENT, "Reward.from_equipment sets reward_type == EQUIPMENT")
 	_assert(eq_reward.get_effective_family() == "fists", "EQUIPMENT Reward inherits 'fists' family from Punch")
 	_assert(eq_reward.get_display_name() == "Punch", "EQUIPMENT Reward inherits display name from Punch")
-	_assert(eq_reward.equipment_to_grant.size() == 2, "EQUIPMENT Reward grants 2 copies when count=2")
+	_assert(eq_reward.equipment_to_grant.size() == 1, "EQUIPMENT Reward strictly grants 1 equipment instance")
 	_assert(eq_reward.get_effective_shop_price() == 75, "RARE Reward defaults to 75 gold shop price")
 
 	# 2. Verify Type 1 (PASSIVE), Type 2 (STAT_BUFF), Type 3 (MECHANIC_UNLOCK)
