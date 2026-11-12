@@ -542,8 +542,7 @@ func duplicate_with_rarity(target_rarity: Rarity, seed_val: int = 0) -> Equipmen
 
 ## Returns an independent owned instance of this equipment for reward granting.
 func get_resolved_modifiers() -> Array[Equipment]:
-	var inst: Equipment = duplicate_with_rarity(rarity)
-	return [inst]
+	return [self]
 
 ## Applies reward progression (unlock tags and pool removal) when this equipment is claimed directly.
 func apply_progression() -> void:

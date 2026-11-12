@@ -11,6 +11,7 @@ func _ready() -> void:
 	success = test_base_damage_vs_bonus_damage_order() and success
 	success = test_player_passive_reconciliation() and success
 	success = test_reward_single_equipment_and_bonus_display() and success
+	success = test_reward_draft_and_modal_consistency() and success
 	success = test_existing_equipment_compatibility() and success
 
 	if success:
@@ -406,6 +407,101 @@ func test_reward_single_equipment_and_bonus_display() -> bool:
 		return false
 
 	print("   PASSED: Single equipment per reward and rolled bonus text visibility verified.")
+	return true
+
+func test_reward_draft_and_modal_consistency() -> bool:
+	print("-> Testing Reward Draft and Pick Modal Stat Consistency (No Re-rolling)...")
+	var eq := Equipment.new()
+	eq.piece_name = "Tusk Dagger"
+	eq.base_damage = 6.0
+	eq.hit_count = 2
+
+	var b_grit := EquipmentBonus.new()
+	b_grit.type = EquipmentBonus.BonusType.GRIT
+	b_grit.min_val = 1.0
+	b_grit.max_val = 5.0
+
+	var b_crit := EquipmentBonus.new()
+	b_crit.type = EquipmentBonus.BonusType.CRIT_CHANCE
+	b_crit.min_val = 5.0
+	b_crit.max_val = 15.0
+
+	var b_hp := EquipmentBonus.new()
+	b_hp.type = EquipmentBonus.BonusType.MAX_HEALTH
+	b_hp.min_val = 10.0
+	b_hp.max_val = 30.0
+
+	eq.bonuses_table = [b_grit, b_crit, b_hp]
+
+	var rew := Reward.new()
+	rew.reward_type = Reward.RewardType.EQUIPMENT
+	rew.equipment_to_grant = eq
+
+	# 1. Draft the reward at RARE (rolls 2 bonuses)
+	var drafted: Reward = RewardGrantHandler.prepare_draft_instance(rew, "RARE") as Reward
+	if drafted == null or drafted.equipment_to_grant == null:
+		printerr("FAIL: Drafted reward or equipment is null")
+		return false
+
+	var drafted_bonuses: Array[EquipmentRolledBonus] = drafted.equipment_to_grant.rolled_bonuses
+	if drafted_bonuses.size() != 2:
+		printerr("FAIL: Expected 2 rolled bonuses on RARE draft, got: ", drafted_bonuses.size())
+		return false
+
+	var expected_type_1 = drafted_bonuses[0].type
+	var expected_val_1 = drafted_bonuses[0].effective_val
+	var expected_type_2 = drafted_bonuses[1].type
+	var expected_val_2 = drafted_bonuses[1].effective_val
+	var drafted_desc = drafted.get_effect_description()
+
+	# 2. Simulate clicking the RewardCard -> calling get_resolved_modifiers()
+	var resolved_mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(drafted)
+	if resolved_mods.size() != 1:
+		printerr("FAIL: Expected 1 resolved modifier, got: ", resolved_mods.size())
+		return false
+
+	var modal_eq: Equipment = resolved_mods[0]
+	if modal_eq.rolled_bonuses.size() != 2:
+		printerr("FAIL: Expected 2 rolled bonuses in modal equipment, got: ", modal_eq.rolled_bonuses.size())
+		return false
+
+	if modal_eq.rolled_bonuses[0].type != expected_type_1 or not is_equal_approx(modal_eq.rolled_bonuses[0].effective_val, expected_val_1):
+		printerr("FAIL: Bonus 0 changed between draft card and modal! Expected type %s (%.1f), got %s (%.1f)" % [
+			expected_type_1, expected_val_1, modal_eq.rolled_bonuses[0].type, modal_eq.rolled_bonuses[0].effective_val
+		])
+		return false
+
+	if modal_eq.rolled_bonuses[1].type != expected_type_2 or not is_equal_approx(modal_eq.rolled_bonuses[1].effective_val, expected_val_2):
+		printerr("FAIL: Bonus 1 changed between draft card and modal! Expected type %s (%.1f), got %s (%.1f)" % [
+			expected_type_2, expected_val_2, modal_eq.rolled_bonuses[1].type, modal_eq.rolled_bonuses[1].effective_val
+		])
+		return false
+
+	# 3. Verify repeated calls to get_resolved_modifiers() do not re-roll
+	for i in range(5):
+		var repeated_mods = RewardGrantHandler.get_resolved_modifiers(drafted)
+		var rep_eq = repeated_mods[0]
+		if not is_equal_approx(rep_eq.rolled_bonuses[0].effective_val, expected_val_1) or not is_equal_approx(rep_eq.rolled_bonuses[1].effective_val, expected_val_2):
+			printerr("FAIL: Re-rolling detected on repeated get_resolved_modifiers() call #", i)
+			return false
+
+	# 4. Verify equipping into Player maintains the exact rolled stats
+	var dummy_player := PlayerResource.new()
+	var red_track: ColorLoadoutTrack = dummy_player.get_track_for_color(100) # Red
+	red_track.equip_modifier(modal_eq.duplicate(true))
+	dummy_player.recalculate_equipment_passives()
+
+	var boosts = modal_eq.get_stat_boosts()
+	for stat_name in boosts.keys():
+		var expected_val = boosts[stat_name]
+		var actual_val = dummy_player.get(stat_name)
+		# Note: player base stats might be 0, verify contribution
+		var contrib = dummy_player._active_equipment_stat_contributions.get(stat_name, 0.0)
+		if not is_equal_approx(contrib, expected_val):
+			printerr("FAIL: Player equipment contribution mismatch for stat '%s'! Expected %.1f, got %.1f" % [stat_name, expected_val, contrib])
+			return false
+
+	print("   PASSED: Draft card and pick modal stats are 100% consistent across repeated reads and equipping.")
 	return true
 
 func test_existing_equipment_compatibility() -> bool:

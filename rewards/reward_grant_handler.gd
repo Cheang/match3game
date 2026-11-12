@@ -222,7 +222,7 @@ static func get_resolved_modifiers(res: Resource) -> Array[Equipment]:
 		return mods
 	if res is Equipment:
 		var eq := res as Equipment
-		mods.append(eq.duplicate_with_rarity(eq.rarity))
+		mods.append(eq)
 		return mods
 	if res.has_method("get_resolved_modifiers"):
 		return res.get_resolved_modifiers()
@@ -243,7 +243,7 @@ static func grant_reward(res: Resource, grant_equipment: bool = true, player: Pl
 	if res is Equipment:
 		var eq := res as Equipment
 		if grant_equipment:
-			var owned_copy: Equipment = eq.duplicate_with_rarity(eq.rarity)
+			var owned_copy: Equipment = eq.duplicate(true)
 			p.add_modifier_reward(owned_copy, true)
 		for tag in eq.unlock_tags:
 			p.set_flag(tag, true)

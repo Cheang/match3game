@@ -528,12 +528,16 @@ func is_already_unlocked(player: Object) -> bool:
 
 	return checks > 0 and checks == already_active
 
-## Returns resolved equipment items granted by this reward, scaled to this reward's current rarity.
+## Returns resolved equipment items granted by this reward, preserving drafted rolled bonuses.
 func get_resolved_modifiers() -> Array[Equipment]:
 	var mods: Array[Equipment] = []
 	if equipment_to_grant != null:
 		var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
-		mods.append(equipment_to_grant.duplicate_with_rarity(target_eq_rarity))
+		if not equipment_to_grant.rolled_bonuses.is_empty() or int(equipment_to_grant.rarity) == int(target_eq_rarity):
+			mods.append(equipment_to_grant)
+		else:
+			equipment_to_grant = equipment_to_grant.duplicate_with_rarity(target_eq_rarity)
+			mods.append(equipment_to_grant)
 	return mods
 
 ## Returns all custom flags active on this reward at its current rarity (base custom_flags + tier extra_custom_flags).
@@ -664,8 +668,9 @@ func get_effect_description() -> String:
 		if equipment_to_grant != null:
 			var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
 			var eq: Equipment = equipment_to_grant
-			if int(eq.rarity) != int(target_eq_rarity):
-				eq = eq.duplicate_with_rarity(target_eq_rarity)
+			if int(eq.rarity) != int(target_eq_rarity) and eq.rolled_bonuses.is_empty():
+				equipment_to_grant = eq.duplicate_with_rarity(target_eq_rarity)
+				eq = equipment_to_grant
 			var eq_desc: String = eq.get_effect_description()
 			return "Gain [color=#f2c94c]%s[/color]: %s" % [eq.piece_name, eq_desc]
 		return ""
