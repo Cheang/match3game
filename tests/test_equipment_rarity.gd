@@ -196,6 +196,30 @@ func test_utility_bonuses() -> bool:
 		printerr("FAIL: Expected reduced slot cost 1, got: ", rolled.slot_cost)
 		return false
 
+	# Test slot_cost floor of 1: A 1-slot item with -3 slot cost reduction must clamp to 1
+	var eq_floor := Equipment.new()
+	eq_floor.piece_name = "Tiny Dagger"
+	eq_floor.slot_cost = 1
+	var b_slot_huge := EquipmentBonus.new()
+	b_slot_huge.type = EquipmentBonus.BonusType.REMOVE_SLOT_COST
+	b_slot_huge.min_val = 3.0
+	b_slot_huge.max_val = 3.0
+	eq_floor.bonuses_table = [b_slot_huge]
+	var rolled_floor: Equipment = eq_floor.duplicate_with_rarity(Equipment.Rarity.UNCOMMON)
+	if rolled_floor.slot_cost != 1 or rolled_floor.get_effective_slot_cost() != 1:
+		printerr("FAIL: Slot cost went below 1! Got slot_cost=", rolled_floor.slot_cost, " effective=", rolled_floor.get_effective_slot_cost())
+		return false
+
+	# Test direct assignment clamp
+	eq_floor.slot_cost = 0
+	if eq_floor.slot_cost != 1:
+		printerr("FAIL: Direct assignment of 0 to slot_cost did not clamp to 1, got: ", eq_floor.slot_cost)
+		return false
+	eq_floor.slot_cost = -5
+	if eq_floor.slot_cost != 1:
+		printerr("FAIL: Direct assignment of -5 to slot_cost did not clamp to 1, got: ", eq_floor.slot_cost)
+		return false
+
 	# 2. Extra Color & Colorless
 	var eq_color := Equipment.new()
 	eq_color.piece_name = "Prismatic Charm"

@@ -83,7 +83,9 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Synergy tag chosen from defined equipment families. Determines auto-slotting color and triggers passives/synergies.
 @export_enum("sword", "fists", "shields", "mobility", "healing", "beast") var family: String = "sword"
 ## Number of slots this equipment occupies on a color track (1 = small, 2 = medium, 3 = large, up to 5).
-@export_range(1, 5) var slot_cost: int = 1
+@export_range(1, 5) var slot_cost: int = 1:
+	set(val):
+		slot_cost = maxi(1, val)
 ## Whether this skill is an Ultimate ability (can ONLY be equipped in the dedicated Ultimate slot 0).
 @export var is_ultimate: bool = false
 ## If true, this ultimate does not require all 5 normal skills to be activated before it can trigger.
@@ -428,14 +430,14 @@ func get_effective_cooldown_turns() -> int:
 	for b in rolled_bonuses:
 		if b != null and b.type == EquipmentBonus.BonusType.LOWER_COOLDOWN:
 			total -= int(roundf(b.effective_val))
-	return max(0, total)
+	return maxi(0, total)
 
 func get_effective_slot_cost() -> int:
 	var total: int = slot_cost
 	for b in rolled_bonuses:
 		if b != null and b.type == EquipmentBonus.BonusType.REMOVE_SLOT_COST:
 			total -= int(roundf(b.effective_val))
-	return max(1, total)
+	return maxi(1, total)
 
 ## Dynamically sets this equipment instance's rarity and notifies player to recalculate passives.
 func set_rarity(new_rarity: Rarity) -> void:
@@ -524,12 +526,11 @@ func duplicate_with_rarity(target_rarity: Rarity, seed_val: int = 0) -> Equipmen
 	if final_r == Rarity.GODLY and godly_bonus != null:
 		dup.rolled_bonuses.append(godly_bonus.roll(1.0, true, rng))
 
-	# Update effective slot cost if reduced
+	# Update effective slot cost if reduced (floored at 1)
 	dup.slot_cost = dup.get_effective_slot_cost()
-
-	return dup
 	dup.source_template = source_template if source_template != null else self
 	dup.reset_for_battle()
+
 	return dup
 
 ## Returns an independent owned instance of this equipment for reward granting.
