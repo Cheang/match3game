@@ -8,6 +8,7 @@ func _ready() -> void:
 	success = test_base_common_isolation() and success
 	success = test_bonus_table_rolling_and_scaling() and success
 	success = test_utility_bonuses() and success
+	success = test_base_damage_vs_bonus_damage_order() and success
 	success = test_player_passive_reconciliation() and success
 	success = test_reward_single_equipment_and_bonus_display() and success
 	success = test_existing_equipment_compatibility() and success
@@ -244,6 +245,77 @@ func test_utility_bonuses() -> bool:
 		return false
 
 	print("   PASSED: Cooldown reduction, slot reduction, and color options verified.")
+	return true
+
+func test_base_damage_vs_bonus_damage_order() -> bool:
+	print("-> Testing Base Damage (Pre-Multiplier) vs Bonus Damage (Post-Multiplier)...")
+	var dummy_enemy := EnemyResource.new()
+	dummy_enemy.max_health = 100.0
+	dummy_enemy.cur_health = 100.0
+
+	var dummy_player := PlayerResource.new()
+	dummy_player.might = 0.0 # 0 stat bonus for clean calculation
+	dummy_player.crit_chance = 0 # no random crit
+
+	# 1. Base Damage bonus only (applied BEFORE multipliers):
+	# Base 2.0 + Bonus Base Damage 3.0 = 5.0. Multiplier 2.0x -> 10 DMG.
+	var eq_base := Equipment.new()
+	eq_base.base_damage = 2.0
+	eq_base.stat_scaling_ratio = 0.0
+	var b_base := EquipmentRolledBonus.new()
+	b_base.type = EquipmentBonus.BonusType.BONUS_BASE_DAMAGE
+	b_base.effective_val = 3.0
+	eq_base.rolled_bonuses = [b_base]
+
+	var m_ctx := MatchContext.new()
+	m_ctx.potency_multiplier = 2.0
+	var act_ctx := {
+		"attacker": dummy_player,
+		"target": dummy_enemy,
+		"ctx": m_ctx
+	}
+
+	eq_base.activate(act_ctx)
+	# Enemy took (2 + 3) * 2 = 10 damage -> cur_health = 90
+	if not is_equal_approx(dummy_enemy.cur_health, 90.0):
+		printerr("FAIL: Base Damage bonus failed pre-multiplier application! Expected 90 HP, got: ", dummy_enemy.cur_health)
+		return false
+
+	# 2. Bonus Damage only (applied AFTER multipliers):
+	# Base 2.0 * Multiplier 2.0x = 4.0. Plus Bonus Damage 3.0 = 7 DMG.
+	dummy_enemy.cur_health = 100.0
+	var eq_bonus := Equipment.new()
+	eq_bonus.base_damage = 2.0
+	eq_bonus.stat_scaling_ratio = 0.0
+	var b_dmg := EquipmentRolledBonus.new()
+	b_dmg.type = EquipmentBonus.BonusType.BONUS_DAMAGE
+	b_dmg.effective_val = 3.0
+	eq_bonus.rolled_bonuses = [b_dmg]
+
+	eq_bonus.activate(act_ctx)
+	# Enemy took (2 * 2) + 3 = 7 damage -> cur_health = 93
+	if not is_equal_approx(dummy_enemy.cur_health, 93.0):
+		printerr("FAIL: Bonus Damage failed post-multiplier application! Expected 93 HP, got: ", dummy_enemy.cur_health)
+		return false
+
+	# 3. Combined Base Damage (pre) + Bonus Damage (post):
+	# (Base 2 + Bonus Base 3) * Multiplier 2.0x = 10. Plus Bonus Damage 4 = 14 DMG.
+	dummy_enemy.cur_health = 100.0
+	var eq_both := Equipment.new()
+	eq_both.base_damage = 2.0
+	eq_both.stat_scaling_ratio = 0.0
+	var b_dmg2 := EquipmentRolledBonus.new()
+	b_dmg2.type = EquipmentBonus.BonusType.BONUS_DAMAGE
+	b_dmg2.effective_val = 4.0
+	eq_both.rolled_bonuses = [b_base, b_dmg2]
+
+	eq_both.activate(act_ctx)
+	# Enemy took ((2 + 3) * 2) + 4 = 14 damage -> cur_health = 86
+	if not is_equal_approx(dummy_enemy.cur_health, 86.0):
+		printerr("FAIL: Combined damage failed! Expected 86 HP, got: ", dummy_enemy.cur_health)
+		return false
+
+	print("   PASSED: Base Damage bonus (pre-multiplier) and Bonus Damage (post-multiplier) verified.")
 	return true
 
 func test_player_passive_reconciliation() -> bool:

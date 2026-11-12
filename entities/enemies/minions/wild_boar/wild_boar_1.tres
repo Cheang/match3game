@@ -11,7 +11,7 @@
 [ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="7_ssword"]
 [ext_resource type="Resource" uid="uid://ccvtfa00ywplh" path="res://rewards/enemy_loot/wild_boar/boar_hide.tres" id="8_qe126"]
 [ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="8_rshield"]
-[ext_resource type="Resource" path="res://equipment/items/punch.tres" id="9_punch"]
+[ext_resource type="Resource" uid="uid://ebripwxwhb44" path="res://equipment/items/punch.tres" id="9_punch"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="10_rew_scr"]
 [ext_resource type="Resource" uid="uid://cawaw370rqyj1" path="res://rewards/enemy_loot/wild_boar/boar_tusk.tres" id="11_tusk"]
 

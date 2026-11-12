@@ -2,9 +2,8 @@
 
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/sprites/tiles/red_0_sq.png" id="2_base"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="2_nid3q"]
 [ext_resource type="Texture2D" uid="uid://bpb7i2cgrm60w" path="res://assets/sprites/icons/red/red_icon_1_2.png" id="3_icon"]
-[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="4_eq"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="4_eq"]
 [ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_ccpxt"]
 
 [resource]

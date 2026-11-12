@@ -394,6 +394,13 @@ func get_effective_base_damage() -> float:
 			total += b.effective_val
 	return total
 
+func get_effective_bonus_damage() -> float:
+	var total: float = 0.0
+	for b in rolled_bonuses:
+		if b != null and b.type == EquipmentBonus.BonusType.BONUS_DAMAGE:
+			total += b.effective_val
+	return total
+
 func get_effective_hit_count() -> int:
 	var total: int = max(1, hit_count)
 	for b in rolled_bonuses:
@@ -574,8 +581,9 @@ func activate(context = null) -> void:
 
 	# 2. Attack & Damage Effect
 	var eff_dmg: float = get_effective_base_damage()
+	var eff_bonus_dmg: float = get_effective_bonus_damage()
 	var eff_combo_mult: float = get_effective_damage_combo_multiplier()
-	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
+	if eff_dmg > 0.0 or eff_bonus_dmg > 0.0 or eff_combo_mult > 0.0:
 		if cur_enemy != null:
 			var loops: int = get_effective_hit_count()
 			var stat_scaling: StatScaling = StatScaling.SPIRIT if damage_type == DamageType.MYSTICAL else StatScaling.MIGHT
@@ -588,10 +596,13 @@ func activate(context = null) -> void:
 				var dmg_val: float = eff_dmg + stat_bonus + flat_upg
 				if total_combo_mult > 0.0:
 					dmg_val += cur_char.combo * total_combo_mult
-				dmg_val = max(1.0, roundf(dmg_val * mult * crit_factor))
-				cur_enemy.take_damage(dmg_val, false, int(damage_type), cur_char)
+				# Base damage and scaling multiplied by combo match mult and crit factor
+				dmg_val = roundf(dmg_val * mult * crit_factor)
+				# Bonus damage added after multipliers
+				var final_dmg: float = max(1.0, dmg_val + eff_bonus_dmg)
+				cur_enemy.take_damage(final_dmg, false, int(damage_type), cur_char)
 				if ctx != null and ctx.lifesteal_bonus > 0.0:
-					var heal_amt: float = max(1.0, roundf(dmg_val * ctx.lifesteal_bonus))
+					var heal_amt: float = max(1.0, roundf(final_dmg * ctx.lifesteal_bonus))
 					cur_char.modify_stat("cur_health", heal_amt)
 
 	# 3. Physical Armor Effect (Fixed 25% scaling from Grit)
@@ -675,8 +686,9 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 		parts.append("[color=#7a3045]+%d Combo[/color]" % eff_combo_before)
 
 	var eff_dmg: float = get_effective_base_damage()
+	var eff_bonus_dmg: float = get_effective_bonus_damage()
 	var eff_combo_mult: float = get_effective_damage_combo_multiplier()
-	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
+	if eff_dmg > 0.0 or eff_bonus_dmg > 0.0 or eff_combo_mult > 0.0:
 		var stat_scaling: StatScaling = StatScaling.SPIRIT if damage_type == DamageType.MYSTICAL else StatScaling.MIGHT
 		var raw_stat: float = _get_stat_value(c_res, stat_scaling)
 		var stat_bonus: float = roundf(raw_stat * stat_scaling_ratio)
@@ -687,16 +699,23 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 		var is_myst: bool = (damage_type == DamageType.MYSTICAL)
 		var color_str: String = "#3ca370" if is_myst else "#ae2334"
 		var type_label: String = " Mystical" if is_myst else ""
+		var bonus_suffix: String = (" + [color=%s]%s Bonus[/color]" % [color_str, _fmt(eff_bonus_dmg)]) if eff_bonus_dmg > 0.0 else ""
 
 		if combo_mult > 0.0:
 			if combo_mult > 1.0:
-				parts.append("Deals: [color=%s]%s[/color]%s DMG + ([color=#7a3045]Combo[/color] * [color=%s]%s[/color])" % [color_str, _fmt(dmg), type_label, color_str, _fmt(combo_mult)])
+				parts.append("Deals: [color=%s]%s[/color]%s DMG + ([color=#7a3045]Combo[/color] * [color=%s]%s[/color])%s" % [color_str, _fmt(dmg), type_label, color_str, _fmt(combo_mult), bonus_suffix])
 			else:
-				parts.append("Deals: [color=%s]%s[/color]%s DMG + [color=#7a3045]Combo[/color]" % [color_str, _fmt(dmg), type_label])
+				parts.append("Deals: [color=%s]%s[/color]%s DMG + [color=#7a3045]Combo[/color]%s" % [color_str, _fmt(dmg), type_label, bonus_suffix])
 		elif count > 1:
-			parts.append("Deals: [color=%s]%s x %d[/color]%s DMG" % [color_str, _fmt(dmg), count, type_label])
+			if eff_bonus_dmg > 0.0:
+				parts.append("Deals: [color=%s](%s + %s Bonus) x %d[/color]%s DMG" % [color_str, _fmt(dmg), _fmt(eff_bonus_dmg), count, type_label])
+			else:
+				parts.append("Deals: [color=%s]%s x %d[/color]%s DMG" % [color_str, _fmt(dmg), count, type_label])
 		else:
-			parts.append("Deals: [color=%s]%s[/color]%s DMG" % [color_str, _fmt(dmg), type_label])
+			if eff_bonus_dmg > 0.0:
+				parts.append("Deals: [color=%s]%s[/color] + [color=%s]%s Bonus[/color]%s DMG" % [color_str, _fmt(dmg), color_str, _fmt(eff_bonus_dmg), type_label])
+			else:
+				parts.append("Deals: [color=%s]%s[/color]%s DMG" % [color_str, _fmt(dmg), type_label])
 
 	var eff_arm: float = get_effective_base_armor()
 	if eff_arm > 0.0:

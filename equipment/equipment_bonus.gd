@@ -29,7 +29,8 @@ enum BonusType {
 
 	# Trigger & Combat Buffs
 	GAIN_BUFF_ON_TRIGGER, ## Grants buff/utility on activation (e.g. combo, dodge, moves, heal, armor)
-	BONUS_BASE_DAMAGE,    ## Adds flat bonus to base damage
+	BONUS_BASE_DAMAGE,    ## Adds flat bonus to base damage (applied BEFORE multipliers)
+	BONUS_DAMAGE,         ## Adds flat bonus damage (applied AFTER multipliers)
 	BONUS_HIT_COUNT       ## Adds extra hit count
 }
 
@@ -67,7 +68,8 @@ static func get_bonus_type_name(b_type: BonusType) -> String:
 		BonusType.EXTRA_COLOR: return "Extra Color"
 		BonusType.MAKE_COLORLESS: return "Colorless"
 		BonusType.GAIN_BUFF_ON_TRIGGER: return "Activation Buff"
-		BonusType.BONUS_BASE_DAMAGE: return "Bonus Base Damage"
+		BonusType.BONUS_BASE_DAMAGE: return "Base Damage"
+		BonusType.BONUS_DAMAGE: return "Bonus Damage"
 		BonusType.BONUS_HIT_COUNT: return "Bonus Hits"
 	return "Bonus"
 
@@ -111,6 +113,6 @@ static func _is_integer_stat(b_type: BonusType) -> bool:
 		BonusType.MIGHT, BonusType.GRIT, BonusType.AGILITY, BonusType.SPIRIT, \
 		BonusType.MAX_HEALTH, BonusType.CRIT_CHANCE, BonusType.GOLD_CHANCE, \
 		BonusType.START_COMBO, BonusType.LOWER_COOLDOWN, BonusType.REMOVE_SLOT_COST, \
-		BonusType.BONUS_HIT_COUNT:
+		BonusType.BONUS_HIT_COUNT, BonusType.BONUS_BASE_DAMAGE, BonusType.BONUS_DAMAGE:
 			return true
 	return false

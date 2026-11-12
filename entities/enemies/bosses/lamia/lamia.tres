@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://cyl7kv84j6vky"]
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://cyl7kv84j6vky"]
 
 [ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://entities/enemies/attacks/enemy_attack.gd" id="1_j17yo"]
 [ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://entities/enemies/attacks/normal_attack.tres" id="2_1p6sj"]
@@ -9,15 +9,14 @@
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="7_fkeyq"]
 [ext_resource type="PackedScene" uid="uid://c48fmwq3lbdm2" path="res://entities/enemies/bosses/lamia/lamia.tscn" id="8_c4omb"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="9_eq_scr"]
-[ext_resource type="Resource" path="res://equipment/items/uppercut.tres" id="10_upper"]
-[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="11_ssword"]
-[ext_resource type="Resource" path="res://equipment/items/dodge.tres" id="12_smoke"]
+[ext_resource type="Resource" uid="uid://bxaakyig0re5j" path="res://equipment/items/uppercut.tres" id="10_upper"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="11_ssword"]
+[ext_resource type="Resource" uid="uid://brmv3jks500aj" path="res://equipment/items/dodge.tres" id="12_smoke"]
 [ext_resource type="Resource" path="res://equipment/items/rush.tres" id="13_rush"]
 [ext_resource type="Resource" path="res://equipment/items/healing_potion.tres" id="14_hpot"]
-[ext_resource type="Resource" path="res://equipment/items/punch.tres" id="15_punch"]
+[ext_resource type="Resource" uid="uid://ebripwxwhb44" path="res://equipment/items/punch.tres" id="15_punch"]
 [ext_resource type="Resource" path="res://equipment/items/block.tres" id="16_block"]
-[ext_resource type="Resource" path="res://equipment/items/holy_shield.tres" id="17_hshield"]
-[ext_resource type="Resource" path="res://rewards/cards/sword/sword0_sword_practice.tres" id="18_spractice"]
+[ext_resource type="Resource" uid="uid://b0plli2xp6jww" path="res://rewards/cards/sword/sword0_sword_practice.tres" id="18_spractice"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="19_rew_scr"]
 [ext_resource type="Resource" uid="uid://brjtyx8s2586c" path="res://rewards/cards/utility/faith_weak.tres" id="20_rew_faith"]
 [ext_resource type="Resource" uid="uid://cuos01tmjw73" path="res://rewards/cards/fists/fists1_crushing_fist.tres" id="21_rew_upper"]
@@ -34,21 +33,10 @@ green_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("12_smoke"),
 purple_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("14_hpot")])
 colorless_fallback_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("15_punch"), ExtResource("16_block")])
 loot_table = Array[ExtResource("19_rew_scr")]([ExtResource("20_rew_faith"), ExtResource("21_rew_upper"), ExtResource("22_rew_smoke"), ExtResource("18_spractice")])
-max_health = 65.0
-cur_health = 0.0
-physical_dmg_reduction = 0.0
 damage = 2.0
-has_phases = false
-phase = 1
 attacks = Array[ExtResource("1_j17yo")]([ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("3_6p5om"), ExtResource("4_tfsx7"), ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("5_6ib0x")])
-attacks_p2 = Array[ExtResource("1_j17yo")]([])
-attacks_p3 = Array[ExtResource("1_j17yo")]([])
-attacks_p4 = Array[ExtResource("1_j17yo")]([])
-agility = 1
-sprite = ExtResource("8_c4omb")
 health_bar = ExtResource("6_vvsti")
 empty_spaces = Array[Vector2]([Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(6, 7), Vector2(7, 7), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1)])
-ice_spaces = Array[Vector2]([])
-freeze_spaces = Array[Vector2]([])
-rock_spaces = Array[Vector2]([])
-flesh_spaces = Array[Vector2]([])
+sprite = ExtResource("8_c4omb")
+max_health = 65.0
+cur_health = 0.0

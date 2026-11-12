@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="Equipment" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="Equipment" format=3 uid="uid://ebripwxwhb44"]
 
-[ext_resource type="Script" path="res://equipment/equipment.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://d0nigkv2quklc" path="res://equipment/equipment_bonus.gd" id="1_6vvq7"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/sprites/icons/red/red_icon_2.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://c1njf4ebhrbys" path="res://equipment/equipment_rolled_bonus.gd" id="3_y7mbe"]
 
 [resource]
 script = ExtResource("1_script")
@@ -9,15 +11,6 @@ piece_name = "Punch"
 icon = ExtResource("2_icon")
 description = "+1 Combo. Deals 1 + Might + Combo DMG"
 family = "fists"
-slot_cost = 1
-trigger_condition = 0
-cooldown_turns = 0
-once_per_battle = false
-allowed_colors = Array[int]([])
 base_damage = 1.0
-damage_type = 0
-hit_count = 1
 damage_combo_multiplier = 1.0
 combo_points_before = 1
-can_upgrade = true
-upgrade = 0

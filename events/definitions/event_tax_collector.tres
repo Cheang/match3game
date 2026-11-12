@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/sprites/tiles/red_0_sq.png" id="3_o1m3v"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="4_qxlvy"]
 [ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="5_bfl87"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="5_gc0j7"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_qn67d"]
 [ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/sprites/icons/red/red_icon_1.png" id="6_isglo"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="6_r32wb"]

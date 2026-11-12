@@ -1,7 +1,9 @@
 [gd_resource type="Resource" script_class="Equipment" format=3 uid="uid://bdl5lb62iu4tv"]
 
+[ext_resource type="Script" uid="uid://d0nigkv2quklc" path="res://equipment/equipment_bonus.gd" id="1_52cra"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bi63ay6gm8o8t" path="res://assets/sprites/icons/red/red_icon_1.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://c1njf4ebhrbys" path="res://equipment/equipment_rolled_bonus.gd" id="3_v1xas"]
 
 [resource]
 script = ExtResource("1_script")

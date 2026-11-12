@@ -83,6 +83,8 @@ func _format_stat_summary() -> String:
 			return "On Trigger: +%s %s" % [_fmt(effective_val), trigger_buff.capitalize()]
 		EquipmentBonus.BonusType.BONUS_BASE_DAMAGE:
 			return "+%s Base Damage" % _fmt(effective_val)
+		EquipmentBonus.BonusType.BONUS_DAMAGE:
+			return "+%s Bonus Damage" % _fmt(effective_val)
 		EquipmentBonus.BonusType.BONUS_HIT_COUNT:
 			var h_int: int = int(roundf(effective_val))
 			return "+%d Hit%s" % [h_int, "" if h_int == 1 else "s"]
