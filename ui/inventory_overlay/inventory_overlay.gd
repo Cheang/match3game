@@ -13,6 +13,7 @@ extends CanvasLayer
 
 signal overlay_opened
 signal overlay_closed
+signal slotting_completed
 signal ability_selected(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
 
 static var instance: InventoryOverlay = null
@@ -64,6 +65,12 @@ var bottom_nav_box: HBoxContainer
 var loadout_nav_btn: Button
 var stats_nav_btn: Button
 var settings_nav_btn: Button
+var done_btn: Button
+
+var is_slotting_mode: bool = false
+var pending_slotting_queue: Array[Equipment] = []
+var floating_shard_dock: FloatingShardDock = null
+var _cached_floating_equipment: Equipment = null
 
 var selected_ability: Equipment = null
 var selected_track: ColorLoadoutTrack = null
@@ -133,6 +140,83 @@ static func close_overlay() -> void:
 	if active != null:
 		active.close()
 
+## Finds active instance or instantiates inventory_overlay.tscn under parent/root.
+static func get_or_create(parent: Node = null) -> InventoryOverlay:
+	var active := _get_active_instance()
+	if active != null:
+		return active
+	var tree := Engine.get_main_loop() as SceneTree
+	var p: Node = parent
+	if p == null and tree != null:
+		p = tree.current_scene if tree.current_scene != null else tree.root
+	var overlay_scene: PackedScene = preload("res://ui/inventory_overlay/inventory_overlay.tscn")
+	var overlay: InventoryOverlay = overlay_scene.instantiate() as InventoryOverlay
+	if p != null:
+		p.add_child(overlay)
+	return overlay
+
+## Interactive slotting session for newly acquired equipment rewards.
+## Displays the floating diamond shard with fire particles at the bottom and a single Done button.
+## Suspends execution via await until the player finishes moving shards and clicks Done.
+func prompt_slotting(equipment_list: Array) -> void:
+	var typed_list: Array[Equipment] = []
+	for item in equipment_list:
+		if item is Equipment:
+			typed_list.append(item)
+	if typed_list.is_empty():
+		return
+	_build_ui_if_needed()
+	start_slotting_mode(typed_list)
+	await slotting_completed
+
+func start_slotting_mode(equipment_list: Array) -> void:
+	_build_ui_if_needed()
+	is_slotting_mode = true
+	pending_slotting_queue.clear()
+	for item in equipment_list:
+		if item is Equipment:
+			pending_slotting_queue.append(item)
+	var first_eq: Equipment = pending_slotting_queue.pop_front() if not pending_slotting_queue.is_empty() else null
+	_update_slotting_mode_ui(true)
+	open()
+	set_floating_equipment(first_eq)
+
+func set_floating_equipment(eq: Equipment) -> void:
+	_cached_floating_equipment = eq
+	if floating_shard_dock != null:
+		floating_shard_dock.set_equipment(eq)
+	for row in track_rows:
+		if row != null:
+			row.set_compatibility_state(eq)
+	if eq != null:
+		_display_ability_description(eq, _get_equipment_color(eq), eq.is_ultimate)
+	else:
+		_show_empty_description()
+
+func _update_slotting_mode_ui(slotting_active: bool) -> void:
+	_build_ui_if_needed()
+	is_slotting_mode = slotting_active
+	if header_label != null:
+		header_label.text = "Equip Shard" if slotting_active else header_title
+	if floating_shard_dock != null:
+		floating_shard_dock.visible = slotting_active
+	if description_panel != null:
+		description_panel.custom_minimum_size.y = 80.0 if slotting_active else description_panel_height
+	if done_btn != null:
+		done_btn.visible = slotting_active
+	if loadout_nav_btn != null:
+		loadout_nav_btn.visible = not slotting_active
+	if stats_nav_btn != null:
+		stats_nav_btn.visible = not slotting_active
+	if settings_nav_btn != null:
+		settings_nav_btn.visible = not slotting_active
+
+func _get_equipment_color(eq: Equipment) -> int:
+	if eq == null or eq.is_colorless():
+		return 100
+	var eff: Array[int] = eq.get_effective_allowed_colors()
+	return eff[0] if not eff.is_empty() else 100
+
 func open() -> void:
 	if Global.game_is_over:
 		return
@@ -156,6 +240,11 @@ func toggle() -> void:
 		open()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_slotting_mode:
+		if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_I):
+			_on_done_btn_pressed()
+			get_viewport().set_input_as_handled()
+			return
 	if event.is_action_pressed("ui_cancel"):
 		if visible:
 			close()
@@ -342,6 +431,18 @@ func _build_ui_if_needed() -> void:
 		if description_panel.get_parent() != loadout_view and loadout_view != null:
 			description_panel.reparent(loadout_view)
 
+	# Floating Shard Dock (Slotting Mode only, below DescriptionPanel in LoadoutView)
+	floating_shard_dock = loadout_view.find_child("FloatingShardDock", true, false) as FloatingShardDock
+	if floating_shard_dock == null:
+		floating_shard_dock = FloatingShardDock.new()
+		floating_shard_dock.name = "FloatingShardDock"
+		loadout_view.add_child(floating_shard_dock)
+	floating_shard_dock.visible = is_slotting_mode
+	if not floating_shard_dock.shard_selected.is_connected(_on_floating_shard_selected):
+		floating_shard_dock.shard_selected.connect(_on_floating_shard_selected)
+	if not floating_shard_dock.shard_dropped_on_dock.is_connected(_on_shard_dropped_to_dock):
+		floating_shard_dock.shard_dropped_on_dock.connect(_on_shard_dropped_to_dock)
+
 	# 3. Stats View (empty placeholder for future design)
 	stats_view = vbox.find_child("StatsView", true, false) as Control
 	if stats_view == null:
@@ -452,6 +553,18 @@ func _build_ui_if_needed() -> void:
 	bottom_nav_box.move_child(loadout_nav_btn, 0)
 	bottom_nav_box.move_child(stats_nav_btn, 1)
 	bottom_nav_box.move_child(settings_nav_btn, 2)
+
+	# 5d. Done Nav Button (Slotting Mode only)
+	done_btn = bottom_nav_box.find_child("NavBtn_Done", true, false) as Button
+	if done_btn == null:
+		done_btn = _create_nav_button("Done")
+		done_btn.name = "NavBtn_Done"
+		bottom_nav_box.add_child(done_btn)
+	else:
+		done_btn.text = "Done"
+	done_btn.visible = is_slotting_mode
+	if not done_btn.pressed.is_connected(_on_done_btn_pressed):
+		done_btn.pressed.connect(_on_done_btn_pressed)
 
 func _create_nav_button(btn_text: String, is_disabled: bool = false) -> Button:
 	var btn := Button.new()
@@ -581,6 +694,10 @@ func refresh_overlay_data() -> void:
 		else:
 			row.setup_row(0, null)
 
+	if is_slotting_mode:
+		for row in track_rows:
+			row.set_compatibility_state(_cached_floating_equipment)
+
 	# 2. Update Passives Ring
 	var passives: Array = Global.cur_char.equipped_passives if Global.cur_char != null else []
 	if passives_ring != null:
@@ -628,6 +745,12 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 		return
 
 	var source_mod: Equipment = drag_data.get("modifier") as Equipment
+	var source_is_floating: bool = drag_data.get("source_is_floating", false)
+
+	if source_is_floating:
+		_handle_floating_shard_drop(source_mod, target_track, target_is_ult, target_slot_idx)
+		return
+
 	var source_track: ColorLoadoutTrack = drag_data.get("source_track") as ColorLoadoutTrack
 	var source_is_ult: bool = drag_data.get("source_is_ult", false)
 
@@ -704,6 +827,126 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 
 	refresh_overlay_data()
 	_on_slot_clicked(source_mod, target_track, target_is_ult, target_slot_idx)
+
+func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> void:
+	if target_track == null or source_mod == null:
+		return
+	if not target_track.is_color_compatible(source_mod):
+		return
+
+	var displaced_item: Equipment = null
+
+	if target_is_ult:
+		if not source_mod.is_ultimate:
+			return
+		displaced_item = target_track.ultimate_skill
+		target_track.equip_ultimate(source_mod)
+	else:
+		if source_mod.is_ultimate:
+			return
+		var target_mod: Equipment = target_track.get_modifier_at_slot_index(target_slot_idx) if target_slot_idx >= 0 else null
+		if target_mod != null:
+			# Replacing an occupied slot
+			var t_idx: int = target_track.equipped_modifiers.find(target_mod)
+			if t_idx != -1:
+				displaced_item = target_mod
+				target_track.equipped_modifiers.remove_at(t_idx)
+				while target_track.get_free_slots() < source_mod.slot_cost and not target_track.equipped_modifiers.is_empty():
+					displaced_item = target_track.equipped_modifiers.pop_back()
+				target_track.equip_modifier(source_mod, t_idx)
+		else:
+			# Dropping onto empty slot or row
+			if target_track.can_equip(source_mod):
+				target_track.equip_modifier(source_mod, target_slot_idx)
+			else:
+				# Track full or not enough slots: displace from end
+				if not target_track.equipped_modifiers.is_empty():
+					displaced_item = target_track.equipped_modifiers.pop_back()
+				while not target_track.can_equip(source_mod) and not target_track.equipped_modifiers.is_empty():
+					displaced_item = target_track.equipped_modifiers.pop_back()
+				target_track.equip_modifier(source_mod)
+
+	# Displaced item becomes the new floating shard so the player can keep moving shards
+	if displaced_item != null:
+		set_floating_equipment(displaced_item)
+	else:
+		if not pending_slotting_queue.is_empty():
+			set_floating_equipment(pending_slotting_queue.pop_front())
+		else:
+			set_floating_equipment(null)
+
+	target_track.clamp_cursor()
+	target_track.check_ultimate_ready_at_cycle_start()
+	if Global.cur_char != null:
+		Global.cur_char.recalculate_equipment_passives()
+		Global.cur_char.loadoutChanged.emit()
+
+	refresh_overlay_data()
+	_on_slot_clicked(source_mod, target_track, target_is_ult, target_slot_idx)
+
+func _on_shard_dropped_to_dock(drag_data: Dictionary) -> void:
+	if not is_slotting_mode:
+		return
+	var source_mod: Equipment = drag_data.get("modifier") as Equipment
+	var source_track: ColorLoadoutTrack = drag_data.get("source_track") as ColorLoadoutTrack
+	var source_is_ult: bool = drag_data.get("source_is_ult", false)
+	if source_mod == null or source_track == null:
+		return
+
+	var old_floating: Equipment = _cached_floating_equipment
+	if old_floating == null:
+		if source_is_ult:
+			source_track.unequip_ultimate()
+		else:
+			source_track.unequip_modifier(source_mod)
+		set_floating_equipment(source_mod)
+	else:
+		if source_track.is_color_compatible(old_floating) and source_is_ult == old_floating.is_ultimate:
+			if source_is_ult:
+				source_track.equip_ultimate(old_floating)
+				set_floating_equipment(source_mod)
+			else:
+				var s_idx: int = source_track.equipped_modifiers.find(source_mod)
+				if s_idx != -1:
+					source_track.equipped_modifiers.remove_at(s_idx)
+					if source_track.get_free_slots() >= old_floating.slot_cost:
+						source_track.equip_modifier(old_floating, s_idx)
+						set_floating_equipment(source_mod)
+					else:
+						source_track.equip_modifier(source_mod, s_idx)
+
+	source_track.clamp_cursor()
+	source_track.check_ultimate_ready_at_cycle_start()
+	if Global.cur_char != null:
+		Global.cur_char.recalculate_equipment_passives()
+		Global.cur_char.loadoutChanged.emit()
+	refresh_overlay_data()
+
+func _on_floating_shard_selected(eq: Equipment) -> void:
+	if eq == null:
+		_show_empty_description()
+		return
+	selected_ability = eq
+	selected_track = null
+	selected_is_ult = eq.is_ultimate
+	selected_slot_idx = -2
+	for row in track_rows:
+		row.update_selection(null, false, -2, false)
+	var c_id: int = _get_equipment_color(eq)
+	_display_ability_description(eq, c_id, eq.is_ultimate)
+
+func _on_done_btn_pressed() -> void:
+	if is_slotting_mode:
+		_cached_floating_equipment = null
+		pending_slotting_queue.clear()
+		if floating_shard_dock != null:
+			floating_shard_dock.set_equipment(null)
+		for row in track_rows:
+			row.set_compatibility_state(null)
+		is_slotting_mode = false
+		_update_slotting_mode_ui(false)
+		close()
+		slotting_completed.emit()
 
 func _on_passive_clicked(slot_idx: int, passive_res: Resource) -> void:
 	selected_ability = null

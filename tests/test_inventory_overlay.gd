@@ -4,6 +4,11 @@ const InventoryOverlayClass = preload("res://ui/inventory_overlay/inventory_over
 
 func _ready() -> void:
 	print("--- TEST INVENTORY OVERLAY CORRECTIONS START ---")
+	# Failsafe timeout to ensure test never hangs or runs too long
+	get_tree().create_timer(4.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_inventory_overlay took longer than 4.0s")
+		get_tree().quit(1)
+	)
 	var overlay_scene := load("res://ui/inventory_overlay/inventory_overlay.tscn") as PackedScene
 	if overlay_scene == null:
 		push_error("Failed to load inventory_overlay.tscn")
@@ -276,6 +281,55 @@ func _ready() -> void:
 	overlay._on_settings_nav_pressed()
 	assert(overlay.visible == false, "Clicking active Settings tab must close overlay")
 	print("Closing overlay via active Settings tab verified!")
+
+	# F. Test Slotting Mode with Floating Shard, Fire Particles & Compatibility Highlights
+	print("Testing slotting mode with floating shard, particles, and disabled track sprites...")
+	var red_shard := Equipment.new()
+	red_shard.piece_name = "Crimson Shard"
+	red_shard.allowed_colors = [100] # Red only
+	red_shard.base_damage = 4.0
+
+	var shards_to_slot: Array[Equipment] = [red_shard]
+	overlay.start_slotting_mode(shards_to_slot)
+	assert(overlay.is_slotting_mode == true, "Overlay should be in slotting mode")
+	assert(overlay.visible == true, "Overlay should be open")
+	assert(overlay.done_btn != null and overlay.done_btn.visible == true, "Done button must be visible in slotting mode")
+	assert(overlay.loadout_nav_btn.visible == false, "Normal nav buttons must be hidden in slotting mode")
+	assert(overlay.stats_nav_btn.visible == false, "Stats nav button must be hidden in slotting mode")
+	assert(overlay.settings_nav_btn.visible == false, "Settings nav button must be hidden in slotting mode")
+	assert(overlay.floating_shard_dock != null and overlay.floating_shard_dock.visible == true, "Floating shard dock must be visible")
+	assert(overlay.floating_shard_dock.current_equipment == red_shard, "Floating shard dock must hold the new shard")
+	assert(overlay.floating_shard_dock.fire_particles.emitting == true, "Fire particles must be emitting on floating shard")
+
+	# Verify compatibility highlights: Red track normal, other tracks disabled
+	for row in overlay.track_rows:
+		if row.track_color == 100:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Red track must use normal empty sprite")
+			assert(row.diamond_slots[0].modulate == Color.WHITE, "Red track diamond slots must not be dimmed")
+			assert(row.ult_slot.modulate.a < 0.9, "Ultimate slot must be dimmed for non-ultimate shard")
+		elif row.track_color > 0:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible track (%d) must use disabled sprite" % row.track_color)
+			assert(row.diamond_slots[0].modulate.a < 0.9, "Incompatible track slots must be grayed out")
+
+	# Test dropping floating shard on Red track slot 0 to replace existing Greatsword
+	var initial_item: Equipment = red_track.get_modifier_at_slot_index(0)
+	overlay._handle_floating_shard_drop(red_shard, red_track, false, 0)
+	assert(red_track.get_modifier_at_slot_index(0) == red_shard, "Slot 0 should now hold Crimson Shard")
+	assert(overlay.floating_shard_dock.current_equipment == initial_item, "Replaced Greatsword must become the new floating shard")
+	assert(overlay.floating_shard_dock.fire_particles.emitting == true, "Particles must remain active on replaced shard")
+	print("Shard replacement and floating swap verified!")
+
+	# Test clicking Done button
+	overlay._on_done_btn_pressed()
+	assert(overlay.is_slotting_mode == false, "Slotting mode must be false after Done")
+	assert(overlay.visible == false, "Overlay must close after Done")
+	assert(overlay.done_btn.visible == false, "Done button must be hidden after Done")
+	assert(overlay.loadout_nav_btn.visible == true, "Nav buttons must restore after Done")
+	for row in overlay.track_rows:
+		if row.track_color > 0:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Tracks must restore normal empty sprite")
+			assert(row.diamond_slots[0].modulate == Color.WHITE, "Slots must restore normal modulate")
+	print("Slotting mode completion and cleanup verified!")
 
 	overlay.close()
 	overlay.queue_free()

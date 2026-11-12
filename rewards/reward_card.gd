@@ -170,10 +170,8 @@ func _on_choise_btn_pressed() -> void:
 	# 2. Combat / Equipment Card Handling
 	var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(reward_resource)
 	if not mods.is_empty():
-		var modal := SlotEquipModal.new()
-		get_tree().current_scene.add_child(modal)
-		modal.prompt_modifiers(mods)
-		await modal.modal_closed
+		var overlay := InventoryOverlay.get_or_create(get_tree().root)
+		await overlay.prompt_slotting(mods)
 		RewardGrantHandler.grant_reward(reward_resource, false)
 	else:
 		RewardGrantHandler.grant_reward(reward_resource, true)

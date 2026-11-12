@@ -1,64 +1,64 @@
 [gd_resource type="Resource" script_class="Equipment" format=3 uid="uid://cu00e1ukbbev4"]
 
-[ext_resource type="Script" uid="uid://d0nigkv2quklc" path="res://equipment/equipment_bonus.gd" id="1_ga6ni"]
-[ext_resource type="Texture2D" uid="uid://bjavpsogodr0h" path="res://assets/sprites/icons/red/red_icon_2_3.png" id="1_qoy08"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="2_qoy08"]
-[ext_resource type="Script" uid="uid://c1njf4ebhrbys" path="res://equipment/equipment_rolled_bonus.gd" id="3_6ou0u"]
+[ext_resource type="Script" uid="uid://d0nigkv2quklc" path="res://equipment/equipment_bonus.gd" id="1_wgs53"]
+[ext_resource type="Texture2D" uid="uid://josq1akymu0u" path="res://assets/sprites/equipment/wild-tusk.png" id="2_wgs53"]
+[ext_resource type="Script" uid="uid://c1njf4ebhrbys" path="res://equipment/equipment_rolled_bonus.gd" id="3_20ad8"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="4_e0ur7"]
 
 [sub_resource type="Resource" id="Resource_ga6ni"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_6ou0u"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 1
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_l4kw2"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 2
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_upgye"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 5
 max_val = 5.0
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_jicxe"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 4
 min_val = 5.0
 max_val = 10.0
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_xufca"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 6
 min_val = 25.0
 max_val = 50.0
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_j6qpn"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 19
 min_val = 0.5
 max_val = 1.0
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [sub_resource type="Resource" id="Resource_hm7lu"]
-script = ExtResource("1_ga6ni")
+script = ExtResource("1_wgs53")
 type = 19
 min_val = 5.0
 max_val = 5.0
 metadata/_custom_type_script = "uid://d0nigkv2quklc"
 
 [resource]
-script = ExtResource("2_qoy08")
+script = ExtResource("4_e0ur7")
 piece_name = "Tusk Dagger"
-icon = ExtResource("1_qoy08")
+icon = ExtResource("2_wgs53")
 family = "beast"
-bonuses_table = Array[ExtResource("1_ga6ni")]([SubResource("Resource_ga6ni"), SubResource("Resource_6ou0u"), SubResource("Resource_l4kw2"), SubResource("Resource_upgye"), SubResource("Resource_jicxe"), SubResource("Resource_xufca"), SubResource("Resource_j6qpn")])
+bonuses_table = Array[ExtResource("1_wgs53")]([SubResource("Resource_ga6ni"), SubResource("Resource_6ou0u"), SubResource("Resource_l4kw2"), SubResource("Resource_upgye"), SubResource("Resource_jicxe"), SubResource("Resource_xufca"), SubResource("Resource_j6qpn")])
 godly_bonus = SubResource("Resource_hm7lu")
 allowed_colors = Array[int]([100])
 base_damage = 1.0

@@ -15,6 +15,7 @@ const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/
 const TEX_ULT_SELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_selected.png")
 const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
 const TEX_TRACK_EMPTY = preload("res://assets/sprites/ui/inventory_overlay/ability_color_track_empty.png")
+const TEX_TRACK_EMPTY_DISABLED = preload("res://assets/sprites/ui/inventory_overlay/ability_color_track_empty-disabled.png")
 const TEX_MULTISLOT_CONNECTION = preload("res://assets/sprites/ui/inventory_overlay/ability_multislot_connection.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 
@@ -289,6 +290,44 @@ func update_selection(selected_mod: Equipment, is_ult: bool, _slot_idx: int, is_
 			slot_is_selected = (mod == selected_mod)
 		slot_ctrl.is_selected_slot = slot_is_selected
 		frame.texture = TEX_BASIC_SELECTED if slot_is_selected else TEX_BASIC_UNSELECTED
+
+## Sets compatibility visual state (disabled track sprite & grayed-out slots) for candidate equipment.
+func set_compatibility_state(candidate: Equipment) -> void:
+	_ensure_structure()
+	if candidate == null or track_ref == null or track_color <= 0:
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY
+		if ult_slot != null:
+			ult_slot.modulate = Color.WHITE
+		for s in diamond_slots:
+			if s != null:
+				s.modulate = Color.WHITE
+		return
+
+	var is_compat: bool = track_ref.is_color_compatible(candidate)
+	if not is_compat:
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
+		if ult_slot != null:
+			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		for s in diamond_slots:
+			if s != null:
+				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+	else:
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY
+		if candidate.is_ultimate:
+			if ult_slot != null:
+				ult_slot.modulate = Color.WHITE
+			for s in diamond_slots:
+				if s != null:
+					s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		else:
+			if ult_slot != null:
+				ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
+			for s in diamond_slots:
+				if s != null:
+					s.modulate = Color.WHITE
 
 func _apply_palette(s_mat: ShaderMaterial, c_id: int) -> void:
 	if s_mat == null:

@@ -134,10 +134,8 @@ func _on_btn_pressed() -> void:
 					if resource is EvtChoiseReward:
 						(resource as EvtChoiseReward).equipment_already_prompted = true
 					RewardGrantHandler.grant_reward(resource.reward, false)
-					var modal := SlotEquipModal.new()
-					get_tree().current_scene.add_child(modal)
-					modal.prompt_modifiers(mods)
-					await modal.modal_closed
+					var overlay := InventoryOverlay.get_or_create(get_tree().root)
+					await overlay.prompt_slotting(mods)
 					if resource is EvtChoiseReward:
 						var evt_rew: EvtChoiseReward = resource as EvtChoiseReward
 						evt_rew.equipment_already_prompted = false

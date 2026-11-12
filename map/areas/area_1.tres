@@ -1,16 +1,12 @@
-[gd_resource type="Resource" script_class="LocationLoader" load_steps=15 format=3 uid="uid://beq8vfn2nxrdo"]
+[gd_resource type="Resource" script_class="LocationLoader" format=3 uid="uid://beq8vfn2nxrdo"]
 
 [ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://map/location_resource.gd" id="1_wcv6m"]
 [ext_resource type="Resource" uid="uid://cqehju5d485x1" path="res://map/encounters/boss/loc_boss_lamia.tres" id="2_vg4qu"]
-[ext_resource type="Resource" uid="uid://csp37q5bepa8w" path="res://map/encounters/enemy/loc_karjaliia_cap_1.tres" id="3_0pvec"]
 [ext_resource type="Resource" uid="uid://di3upxoydgajk" path="res://map/encounters/enemy/loc_wild_boar_1.tres" id="4_3g8uc"]
 [ext_resource type="Resource" uid="uid://br20uh8grxa7c" path="res://map/encounters/event/event_rowdy_villagers.tres" id="4_hnthf"]
 [ext_resource type="Script" uid="uid://b7nahh8uqgdv4" path="res://map/locations_loader.gd" id="4_kqrmq"]
 [ext_resource type="Resource" uid="uid://dw3ch66xefnv6" path="res://map/encounters/event/event_fallen_tree.tres" id="5_37ayj"]
-[ext_resource type="Resource" uid="uid://4nre8u1ei118" path="res://map/encounters/enemy/loc_corrupted_wild_boar_1.tres" id="5_ygnyx"]
-[ext_resource type="Resource" uid="uid://d3yfpmo8s6ytm" path="res://map/encounters/enemy/loc_bear_stravnica_1.tres" id="6_bpw8g"]
 [ext_resource type="Resource" uid="uid://ccc1sbv8dne52" path="res://map/encounters/service/loc_tavern.tres" id="6_o68wa"]
-[ext_resource type="Resource" uid="uid://boq4f5pqkwn2t" path="res://map/encounters/enemy/loc_vila_1.tres" id="7_0c727"]
 [ext_resource type="Resource" uid="uid://c0qxpkd40er5v" path="res://map/encounters/event/event_golden_pitka.tres" id="7_65xj8"]
 [ext_resource type="Resource" uid="uid://bibl4pbiwfsfv" path="res://map/encounters/event/event_tax_collector.tres" id="11_bklaq"]
 [ext_resource type="Resource" uid="uid://bkps4u1c1mljl" path="res://map/encounters/event/event_punch_rock.tres" id="12_qfmch"]
@@ -21,7 +17,7 @@ enemy_needed = 4
 enemy_loc_numb = 4
 event_loc_numb = 5
 services_loc_numb = 1
-enemy = Array[ExtResource("1_wcv6m")]([ExtResource("3_0pvec"), ExtResource("4_3g8uc"), ExtResource("5_ygnyx"), ExtResource("6_bpw8g"), ExtResource("7_0c727")])
+enemy = Array[ExtResource("1_wcv6m")]([ExtResource("4_3g8uc")])
 services = Array[ExtResource("1_wcv6m")]([ExtResource("6_o68wa")])
 event = Array[ExtResource("1_wcv6m")]([ExtResource("5_37ayj"), ExtResource("11_bklaq"), ExtResource("7_65xj8"), ExtResource("4_hnthf"), ExtResource("12_qfmch")])
 boss = Array[ExtResource("1_wcv6m")]([ExtResource("2_vg4qu")])
