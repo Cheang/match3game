@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://mpv3rrt7rf3k"]
+
+[ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://events/choices/event_choice_resource.gd" id="1_goqmw"]
+[ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="2_1cqn8"]
+[ext_resource type="Resource" uid="uid://d2nis0gpq35ns" path="res://entities/enemies/minions/wild_boar/wild_boar_1.tres" id="2_i41h6"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="2_tl81x"]
+[ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://events/event_resource.gd" id="2_x4t16"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/sprites/tiles/white_0_sq.png" id="3_nht5e"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="4_1sg0h"]
+[ext_resource type="Resource" uid="uid://duwwp183j67gq" path="res://entities/enemies/minions/wild_boar/wild_boar_2.tres" id="4_jy64e"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="6_obeb2"]
+[ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="7_5ffkd"]
+[ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://events/choices/event_choice_event.gd" id="9_yrxgu"]
+
+[sub_resource type="Resource" id="Resource_4vsok"]
+script = ExtResource("4_1sg0h")
+name = "Gold Pouch"
+description = "Get 5 Gold"
+base = ExtResource("3_nht5e")
+gold = 5
+
+[sub_resource type="Resource" id="Resource_s7dvr"]
+script = ExtResource("7_5ffkd")
+reward = SubResource("Resource_4vsok")
+fight_overwrite = true
+enemy = Array[ExtResource("2_tl81x")]([ExtResource("2_i41h6"), ExtResource("4_jy64e")])
+text = "Continue"
+
+[sub_resource type="Resource" id="Resource_wbkl8"]
+script = ExtResource("2_x4t16")
+title = "Fallen Tree"
+description = "You pick up the gold and hear and angry snort  behind you, looks like you have a fight on your hand..."
+choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_s7dvr")])
+
+[sub_resource type="Resource" id="Resource_iujkh"]
+script = ExtResource("9_yrxgu")
+next_event = SubResource("Resource_wbkl8")
+text = "Take the gold"
+
+[sub_resource type="Resource" id="Resource_x27l4"]
+script = ExtResource("2_1cqn8")
+text = "Leave"
+
+[sub_resource type="Resource" id="Resource_jvb48"]
+script = ExtResource("2_x4t16")
+title = "Fallen Tree"
+description = "As you inspect the fallen tree more closely, your fingers brush against something unusual in a hollow near the trunk. Digging a little deeper, you uncover a small pouch tucked away inside, its weight and jingling sound revealing it to be filled with gold."
+choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_iujkh"), SubResource("Resource_x27l4")])
+
+[sub_resource type="Resource" id="Resource_75kt4"]
+script = ExtResource("9_yrxgu")
+next_event = SubResource("Resource_jvb48")
+text = "Investigate"
+
+[sub_resource type="Resource" id="Resource_ipfbh"]
+script = ExtResource("2_1cqn8")
+text = "Leave"
+
+[resource]
+script = ExtResource("2_x4t16")
+title = "Fallen Tree"
+description = "Walking along the road, you spot a large fallen tree, its roots and branches sprawled unnaturally across the ground. The cut on the trunk looks too clean to be natural, and the way it blocks the path feels deliberate. Something about it feels out of place. What will you do?"
+choises = Array[ExtResource("1_goqmw")]([SubResource("Resource_75kt4"), SubResource("Resource_ipfbh")])

@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="EnemyResource" format=3 uid="uid://bk5sqcp28vayd"]
+
+[ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://entities/enemies/attacks/enemy_attack.gd" id="1_kjfkh"]
+[ext_resource type="Script" uid="uid://6ltgy5nl6t63" path="res://entities/enemies/attacks/basic_attack.gd" id="2_vagb6"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/sprites/ui/legacy/enemy_health.png" id="3_08ell"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="3_kh8ag"]
+[ext_resource type="Material" uid="uid://clq4bt10v4f3t" path="res://assets/shaders/ghost_effect2.tres" id="5_2m358"]
+[ext_resource type="PackedScene" uid="uid://bpjsthpyvd7uh" path="res://entities/enemies/minions/vila/vila.tscn" id="5_svqro"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="6_eq_scr"]
+[ext_resource type="Resource" path="res://equipment/items/healing_potion.tres" id="7_hpot"]
+[ext_resource type="Resource" uid="uid://dv3yjpg60n6se" path="res://equipment/items/holy_shield.tres" id="8_hshield"]
+[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="9_ssword"]
+[ext_resource type="Resource" path="res://rewards/cards/utility/faith_weak.tres" id="10_faith"]
+
+[sub_resource type="Resource" id="Resource_li333"]
+script = ExtResource("2_vagb6")
+damage = 1.0
+tooltip = "True Shot"
+
+[sub_resource type="Resource" id="Resource_c4817"]
+script = ExtResource("2_vagb6")
+tooltip = "Thinking"
+
+[resource]
+script = ExtResource("3_kh8ag")
+name = "Vila"
+explicit_track_colors = Array[int]([400, 500])
+purple_track_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("7_hpot")])
+white_track_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("8_hshield")])
+colorless_fallback_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("9_ssword")])
+loot_table = Array[Resource]([ExtResource("8_hshield"), ExtResource("7_hpot"), ExtResource("10_faith")])
+damage = 3.0
+attacks = Array[ExtResource("1_kjfkh")]([SubResource("Resource_li333"), SubResource("Resource_c4817")])
+shader = ExtResource("5_2m358")
+sprite = ExtResource("5_svqro")
+physical_dmg_reduction = 50.0

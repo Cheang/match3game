@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7ut720c0esco"]
+
+[ext_resource type="Script" uid="uid://cuuosyrejvq0m" path="res://ui/common/btn_general.gd" id="1_8wasw"]
+[ext_resource type="PackedScene" uid="uid://b87buk2t5cluu" path="res://ui/common/btn_click.tscn" id="2_7lres"]
+
+[node name="btn" type="Button"]
+z_index = 5
+custom_minimum_size = Vector2(0, 50)
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "Lorem ipsum"
+script = ExtResource("1_8wasw")
+
+[node name="sound" parent="." instance=ExtResource("2_7lres")]
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

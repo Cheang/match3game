@@ -1,6 +1,6 @@
 @tool
-extends Resource
 class_name Reward
+extends Resource
 
 ## Defines the 4 core reward types in LoreTiles.
 enum RewardType {
@@ -455,7 +455,7 @@ func get_display_base() -> Texture2D:
 		return eq.base
 	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("get_color_base_texture" in Global):
 		return Global.get_color_base_texture(0)
-	return preload("res://assets/white_0_sq.png")
+	return preload("res://assets/sprites/tiles/white_0_sq.png")
 
 func get_effective_shop_price() -> int:
 	if shop_price > 0:

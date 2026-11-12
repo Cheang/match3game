@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://cjyh124y87q6l"]
-
-[ext_resource type="Script" uid="uid://bj28271ncmwkq" path="res://scripts/tests/test_bottom_bar.gd" id="1_test"]
-
-[node name="TestBottomBar" type="Node"]
-script = ExtResource("1_test")

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Reward" format=3 uid="uid://dkl4627h6stmo"]
+
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="2_aoxpa"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/sprites/tiles/red_0_sq.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://dgrtd2xq830ed" path="res://assets/sprites/icons/red/red_icon_2_1.png" id="3_icon"]
+[ext_resource type="Resource" path="res://equipment/items/punch.tres" id="4_eq"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_756nc"]
+
+[resource]
+script = ExtResource("1_script")
+family = "fists"
+name = "Punch"
+description = "Gain 1 Punch"
+icon = ExtResource("3_icon")
+base = ExtResource("2_base")
+unlock_tags = Array[String](["flg_rew_fists_lvl_1_5"])
+remove_from_pool_when_picked = false
+equipment_to_grant = Array[ExtResource("2_aoxpa")]([ExtResource("4_eq")])

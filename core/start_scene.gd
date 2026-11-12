@@ -1,0 +1,26 @@
+extends Control
+
+
+func _ready() -> void:
+	set_display_dimentions()
+	Global.load_data()
+	load_settings()
+	SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
+
+
+func load_settings() -> void:
+	if Global.setting_res == null:
+		Global.setting_res = SettingsResource.new()
+	AudioServer.set_bus_volume_db(0, linear_to_db(Global.setting_res.set_audio_audio_lvl))
+	AudioServer.set_bus_mute(0, Global.setting_res.set_audio_audio_playing)
+	AudioServer.set_bus_volume_db(1, linear_to_db(Global.setting_res.set_audio_music_lvl))
+	AudioServer.set_bus_mute(1, Global.setting_res.set_audio_music_playing)
+	AudioServer.set_bus_volume_db(2, linear_to_db(Global.setting_res.set_audio_sfx_lvl))
+	AudioServer.set_bus_mute(2, Global.setting_res.set_audio_sfx_playing)
+
+
+func set_display_dimentions() -> void:
+	if OS.has_feature("mobile"):
+		var primary_screen_size: Vector2i = DisplayServer.screen_get_size(0)
+		DisplayServer.window_set_size(primary_screen_size)
+

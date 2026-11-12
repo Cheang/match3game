@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://cx6g3k7x5mbba"]
-
-[ext_resource type="Script" path="res://scripts/tests/test_player_globes.gd" id="1_test"]
-
-[node name="TestPlayerGlobes" type="Node"]
-script = ExtResource("1_test")

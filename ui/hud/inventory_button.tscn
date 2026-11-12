@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dpovgqkn85a1v"]
+
+[ext_resource type="Texture2D" uid="uid://crqwdln8iiptw" path="res://assets/sprites/ui/combat/inventory_btn_unpressed.png" id="1_btn"]
+[ext_resource type="Texture2D" uid="uid://ct4epdg401147" path="res://assets/sprites/ui/combat/inventory_btn_icon.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://db8wwdeie22x4" path="res://ui/hud/inventory_button.gd" id="3_script"]
+
+[node name="InventoryButton" type="TextureButton" unique_id=185012345]
+custom_minimum_size = Vector2(134, 82)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 134.0
+offset_bottom = 82.0
+texture_normal = ExtResource("1_btn")
+script = ExtResource("3_script")
+
+[node name="Icon" type="TextureRect" parent="." unique_id=185012346]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 11.0
+offset_right = 107.0
+offset_bottom = 72.0
+mouse_filter = 2
+texture = ExtResource("2_icon")

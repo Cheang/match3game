@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="Reward" format=3 uid="uid://b335wc8yb4wk6"]
 
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/green_0_sq.png" id="2_base"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://tiles/equipment/equipment.gd" id="2_od3ue"]
-[ext_resource type="Texture2D" uid="uid://dj48suit8jml0" path="res://assets/_green_icons/green_icon_1_1.png" id="3_icon"]
-[ext_resource type="Resource" path="res://tiles/equipment/rush.tres" id="4_eq"]
+[ext_resource type="Texture2D" uid="uid://i1luvcksbtos" path="res://assets/sprites/tiles/green_0_sq.png" id="2_base"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="2_od3ue"]
+[ext_resource type="Texture2D" uid="uid://dj48suit8jml0" path="res://assets/sprites/icons/green/green_icon_1_1.png" id="3_icon"]
+[ext_resource type="Resource" path="res://equipment/items/rush.tres" id="4_eq"]
 [ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_ypj2o"]
 
 [resource]

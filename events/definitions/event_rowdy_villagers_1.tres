@@ -1,0 +1,105 @@
+[gd_resource type="Resource" script_class="Event" format=3 uid="uid://lalxc0m4oab8"]
+
+[ext_resource type="Script" uid="uid://bkt4qo6251f0r" path="res://events/choices/event_choice_resource.gd" id="1_iep27"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="2_75m3y"]
+[ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="2_f35as"]
+[ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://events/event_resource.gd" id="2_x30kn"]
+[ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/sprites/tiles/white_0_sq.png" id="4_6gs8v"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="4_v23nn"]
+[ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="5_drwhw"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_lr1ko"]
+[ext_resource type="Resource" uid="uid://8koqx7511051" path="res://entities/enemies/minions/peasant/peasant_1.tres" id="7_4nv4i"]
+[ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://events/choices/event_choice_event.gd" id="7_h0m8j"]
+[ext_resource type="Script" uid="uid://bng6oewrwnmlg" path="res://events/choices/event_choice_fight.gd" id="9_18ry6"]
+
+[sub_resource type="Resource" id="Resource_75jmv"]
+script = ExtResource("5_lr1ko")
+name = "Gold Pieces"
+description = "Get 2 Gold"
+base = ExtResource("4_6gs8v")
+gold = 2
+
+[sub_resource type="Resource" id="Resource_olbvy"]
+script = ExtResource("5_drwhw")
+reward = SubResource("Resource_75jmv")
+text = "Take it"
+
+[sub_resource type="Resource" id="Resource_gahxv"]
+script = ExtResource("2_x30kn")
+title = "Rowdy Villagers"
+description = "As you compel the man to return the gold, he begins to weep, overwhelmed by the thought of his young daughter's fate. The other villager, grateful for your intervention, hands you 2 gold as a token of thanks."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_olbvy")])
+
+[sub_resource type="Resource" id="Resource_ini77"]
+script = ExtResource("7_h0m8j")
+next_event = SubResource("Resource_gahxv")
+text = "Make him return the gold"
+
+[sub_resource type="Resource" id="Resource_5vsuj"]
+script = ExtResource("9_18ry6")
+enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_4nv4i")])
+text = "Fight"
+
+[sub_resource type="Resource" id="Resource_6fph1"]
+script = ExtResource("2_x30kn")
+title = "Rowdy Villagers"
+description = "Seems like the other villigers don't agrea with that decision. Get ready for a fight."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_5vsuj")])
+
+[sub_resource type="Resource" id="Resource_k6ncp"]
+script = ExtResource("7_h0m8j")
+next_event = SubResource("Resource_6fph1")
+text = "Defend him, let him keep the gold"
+
+[sub_resource type="Resource" id="Resource_wv72e"]
+script = ExtResource("2_x30kn")
+title = "Rowdy Villagers"
+description = "When you ask what’s going on, the villagers explain that the man on the right stole 8 gold from the man on the left, claiming he needed the money to buy medicine for his sick daughter. What will you do?"
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_ini77"), SubResource("Resource_k6ncp")])
+
+[sub_resource type="Resource" id="Resource_3qrpa"]
+script = ExtResource("7_h0m8j")
+next_event = SubResource("Resource_wv72e")
+text = "Try to talk to them"
+
+[sub_resource type="Resource" id="Resource_yhnc8"]
+script = ExtResource("9_18ry6")
+enemy = Array[ExtResource("2_75m3y")]([ExtResource("7_4nv4i")])
+text = "Join in the Fight"
+
+[sub_resource type="Resource" id="Resource_0qer2"]
+script = ExtResource("5_lr1ko")
+name = "Gold Pouch"
+description = "Get 5 Gold"
+base = ExtResource("4_6gs8v")
+
+[sub_resource type="Resource" id="Resource_6tjg4"]
+script = ExtResource("5_drwhw")
+reward = SubResource("Resource_0qer2")
+text = "Take it"
+
+[sub_resource type="Resource" id="Resource_qolxl"]
+script = ExtResource("2_f35as")
+text = "Refuse"
+
+[sub_resource type="Resource" id="Resource_alwvk"]
+script = ExtResource("2_x30kn")
+title = "Rowdy Villagers"
+description = "As you approach and brandish your sword, the villagers recoil in fear and gradually back away. While leaving the village, a short, chubby man hurries to catch up with you, pressing a gold purse into your hand and thanking you for stopping the fight."
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_6tjg4"), SubResource("Resource_qolxl")])
+
+[sub_resource type="Resource" id="Resource_oepy4"]
+script = ExtResource("7_h0m8j")
+next_event = SubResource("Resource_alwvk")
+text = "Flash you blade to calm them"
+req_piece_name = "Short Sword"
+
+[sub_resource type="Resource" id="Resource_dudp6"]
+script = ExtResource("2_f35as")
+text = "Leave"
+
+[resource]
+script = ExtResource("2_x30kn")
+title = "Rowdy Villagers"
+description = "A group of villagers, clad in traditional garb, stand in a dusty village square, their faces flushed with anger as they argue heatedly over a boundary dispute. Nearby, curious onlookers gather around small stone houses. What would you do?"
+choises = Array[ExtResource("1_iep27")]([SubResource("Resource_3qrpa"), SubResource("Resource_yhnc8"), SubResource("Resource_oepy4"), SubResource("Resource_dudp6")])

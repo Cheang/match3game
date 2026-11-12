@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=8 format=3 uid="uid://e6scwl0nfeok"]
+
+[ext_resource type="Script" uid="uid://cgopbn83f1ceh" path="res://entities/enemies/attacks/enemy_attack.gd" id="1_mu0b4"]
+[ext_resource type="Resource" uid="uid://hjj2qcqtybi5" path="res://entities/enemies/attacks/normal_attack.tres" id="2_3h6gv"]
+[ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="2_3jfvh"]
+[ext_resource type="Resource" uid="uid://dga8ipnl6kpri" path="res://entities/enemies/attacks/enrage_plus_1.tres" id="3_tuo2f"]
+[ext_resource type="Resource" uid="uid://c71adaipqow8y" path="res://entities/enemies/attacks/strong_attack.tres" id="4_pdeom"]
+[ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/sprites/ui/legacy/enemy_health.png" id="5_ck8d1"]
+[ext_resource type="PackedScene" uid="uid://3j3pvno8yhem" path="res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tscn" id="7_duoj2"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="8_eq_scr"]
+[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="9_ssword"]
+[ext_resource type="Resource" path="res://equipment/items/uppercut.tres" id="10_upper"]
+[ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="11_rshield"]
+[ext_resource type="Resource" path="res://equipment/items/block.tres" id="12_block"]
+[ext_resource type="Resource" path="res://equipment/items/rush.tres" id="13_rush"]
+[ext_resource type="Resource" path="res://equipment/items/dodge.tres" id="14_smoke"]
+
+[resource]
+script = ExtResource("2_3jfvh")
+name = "Kardzaliia Capitan"
+type = 0
+behavior_category = 2
+explicit_track_colors = Array[int]([100, 200, 300])
+red_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("9_ssword"), ExtResource("10_upper")])
+blue_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("11_rshield"), ExtResource("12_block")])
+green_track_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("13_rush")])
+colorless_fallback_modifiers = Array[ExtResource("8_eq_scr")]([ExtResource("9_ssword")])
+loot_table = Array[Resource]([ExtResource("9_ssword"), ExtResource("10_upper"), ExtResource("14_smoke")])
+max_health = 27.0
+cur_health = 0.0
+physical_dmg_reduction = 0.0
+damage = 1.0
+has_phases = false
+phase = 1
+attacks = Array[ExtResource("1_mu0b4")]([ExtResource("3_tuo2f"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("2_3h6gv"), ExtResource("4_pdeom")])
+attacks_p2 = Array[ExtResource("1_mu0b4")]([])
+attacks_p3 = Array[ExtResource("1_mu0b4")]([])
+attacks_p4 = Array[ExtResource("1_mu0b4")]([])
+agility = 1
+sprite = ExtResource("7_duoj2")
+health_bar = ExtResource("5_ck8d1")
+empty_spaces = Array[Vector2]([])
+ice_spaces = Array[Vector2]([])
+freeze_spaces = Array[Vector2]([])
+rock_spaces = Array[Vector2]([])
+flesh_spaces = Array[Vector2]([])

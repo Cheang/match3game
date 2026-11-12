@@ -1,5 +1,5 @@
-extends Resource
 class_name RewardRarityTier
+extends Resource
 
 ## Defines which rarity tier this configuration applies to.
 ## 0 = COMMON, 1 = UNCOMMON, 2 = RARE, 3 = EPIC, 4 = LEGENDARY, 5 = GODLY

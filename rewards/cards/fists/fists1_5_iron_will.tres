@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Reward" format=3 uid="uid://d2qx8mlmggpn3"]
+
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bhaflo3fhrtvd" path="res://assets/sprites/tiles/red_0_sq.png" id="2_base"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="2_ec2bi"]
+[ext_resource type="Texture2D" uid="uid://cgpvrcxfrbrfr" path="res://assets/sprites/icons/red/red_icon_8_1.png" id="3_icon"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="4_4q51d"]
+
+[resource]
+script = ExtResource("1_script")
+reward_type = 1
+family = "fists"
+name = "Iron Will"
+description = "Increase Grit +1"
+icon = ExtResource("3_icon")
+base = ExtResource("2_base")
+rarity = 1
+unlock_tags = Array[String](["flg_rew_fists_lvl_1_5_picked"])
+grit = 1.0

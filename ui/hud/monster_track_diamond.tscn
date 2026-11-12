@@ -1,0 +1,77 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" uid="uid://c5m0f4aui0sgr" path="res://ui/hud/monster_track_diamond.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://b316fpha4o5pp" path="res://assets/shaders/palette_swap_5.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://bhpmmx3gu8j2t" path="res://assets/sprites/ui/combat/enm_move_bottom.png" id="3_bottom"]
+[ext_resource type="Texture2D" uid="uid://dsgqc3268jfwm" path="res://assets/sprites/ui/combat/enm_move_middle.png" id="4_middle"]
+[ext_resource type="Texture2D" uid="uid://0v2b5qn0v73x" path="res://assets/sprites/ui/combat/enm_move_top.png" id="5_top"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bottom"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+shader_parameter/target_color_1 = Color(0.976471, 0.760784, 0.168627, 1)
+shader_parameter/target_color_2 = Color(0.984314, 0.419608, 0.113725, 1)
+shader_parameter/target_color_3 = Color(0.909804, 0.231373, 0.231373, 1)
+shader_parameter/target_color_4 = Color(0.682353, 0.137255, 0.203922, 1)
+shader_parameter/target_color_5 = Color(0.478431, 0.188235, 0.270588, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_middle"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+shader_parameter/target_color_1 = Color(0.976471, 0.760784, 0.168627, 1)
+shader_parameter/target_color_2 = Color(0.984314, 0.419608, 0.113725, 1)
+shader_parameter/target_color_3 = Color(0.909804, 0.231373, 0.231373, 1)
+shader_parameter/target_color_4 = Color(0.682353, 0.137255, 0.203922, 1)
+shader_parameter/target_color_5 = Color(0.478431, 0.188235, 0.270588, 1)
+
+[node name="MonsterTrackDiamond" type="Control"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="BottomFill" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_bottom")
+layout_mode = 0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 2
+texture = ExtResource("3_bottom")
+
+[node name="MiddleIcon" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_middle")
+layout_mode = 0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 2
+texture = ExtResource("4_middle")
+
+[node name="TopBorder" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 2
+texture = ExtResource("5_top")
+
+[node name="QuantityLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 34.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0.12, 0.08, 0.15, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CycleTimer" type="Timer" parent="."]
+wait_time = 2.4

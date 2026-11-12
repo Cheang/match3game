@@ -100,9 +100,12 @@ func _process(_delta: float) -> void:
 func change_scene(path: Variant, setted_options: Dictionary = {}) -> void:
 	assert(path == null or path is String or path is PackedScene, 'Path must be a string or a PackedScene')
 	if path is String and not ResourceLoader.exists(path):
-		var in_scenes: String = "res://scenes/" + str(path).get_file()
-		if ResourceLoader.exists(in_scenes):
-			path = in_scenes
+		var file_only: String = str(path).get_file().replace("-", "_")
+		for folder in ["res://combat/", "res://rewards/", "res://events/", "res://map/", "res://ui/screens/", "res://core/"]:
+			var candidate: String = folder + file_only
+			if ResourceLoader.exists(candidate):
+				path = candidate
+				break
 	var options = _get_final_options(setted_options)
 	if path:
 		Global.actual_cur_scene = path

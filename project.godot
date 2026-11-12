@@ -16,19 +16,19 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="LoreTiles"
 config/version="0.1"
-run/main_scene="res://scenes/start_scene.tscn"
+run/main_scene="res://core/start_scene.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/bg_color=Color(0.180392, 0.133333, 0.184314, 1)
-boot_splash/image="res://assets/level_ui/logo.png"
-config/icon="res://assets/icon/icon.png"
+boot_splash/image="res://assets/sprites/ui/legacy/logo.png"
+config/icon="res://assets/sprites/ui/icon/icon.png"
 
 [autoload]
 
-Global="*res://scripts/Global.gd"
-Locations="*res://scripts/Locations.gd"
 SceneManager="*uid://j20v4cg7v8m1"
 MusicManager="*uid://klqktsr2spx7"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+Global="*res://core/global.gd"
+Locations="*res://core/locations_manager.gd"
 
 [display]
 
@@ -48,7 +48,7 @@ enabled=PackedStringArray("res://addons/MusicManager/plugin.cfg", "res://addons/
 [gui]
 
 theme/default_font_antialiasing=0
-theme/custom="res://assets/theme/mainTheme.tres"
+theme/custom="res://assets/theme/main_theme.tres"
 
 [input]
 

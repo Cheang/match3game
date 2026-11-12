@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Reward" format=3 uid="uid://db6ss0wrwnl6f"]
+
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="1_wii6e"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="2_ucdcv"]
+[ext_resource type="Texture2D" uid="uid://d1cvhef8rjhug" path="res://assets/sprites/rewards/icons/wild_boar/boar_meat.png" id="2_wja2k"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="3_wja2k"]
+
+[resource]
+script = ExtResource("3_wja2k")
+auto_scale_stats_with_rarity = true
+reward_type = 2
+family = "beast"
+name = "Meat"
+icon = ExtResource("2_wja2k")
+max_rarity = 2
+remove_from_pool_when_picked = false
+heal_hp = 5.0
+metadata/_custom_type_script = "uid://55ybcdssir3b"

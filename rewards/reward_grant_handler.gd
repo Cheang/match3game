@@ -1,5 +1,5 @@
-extends RefCounted
 class_name RewardGrantHandler
+extends RefCounted
 
 ## Unified adapter and build-affinity selector for Reward resources and direct Equipment resources.
 
@@ -164,7 +164,7 @@ static func get_base_texture(res: Resource) -> Texture2D:
 		return res.base
 	if not Engine.is_editor_hint() and is_instance_valid(Global) and ("get_color_base_texture" in Global):
 		return Global.get_color_base_texture(0)
-	return preload("res://assets/white_0_sq.png")
+	return preload("res://assets/sprites/tiles/white_0_sq.png")
 
 static func get_description(res: Resource) -> String:
 	if res == null:

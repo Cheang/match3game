@@ -1,0 +1,1238 @@
+extends Node
+
+var tests_passed: int = 0
+var tests_failed: int = 0
+
+func _ready() -> void:
+	print("==================================================")
+	print("RUNNING LORETILES COMBAT & REWARDS REWORK TESTS")
+	print("==================================================")
+	await _run_all_tests()
+	print("==================================================")
+	print("RESULTS: %d passed, %d failed" % [tests_passed, tests_failed])
+	if tests_failed == 0:
+		print("[ALL REWORK TESTS PASSED]")
+	else:
+		print("[SOME REWORK TESTS FAILED]")
+	print("==================================================")
+	get_tree().quit(0 if tests_failed == 0 else 1)
+
+func _assert(condition: bool, message: String) -> void:
+	if condition:
+		tests_passed += 1
+		print("  [PASS] " + message)
+	else:
+		tests_failed += 1
+		push_error("  [FAIL] " + message)
+		print("  [FAIL] " + message)
+
+func _make_test_equipment(eq_name: String, dmg: float, cost: int = 1) -> Equipment:
+	var eq := Equipment.new()
+	eq.piece_name = eq_name
+	eq.base_damage = dmg
+	eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	eq.slot_cost = cost
+	return eq
+
+func _run_all_tests() -> void:
+	_test_shared_entity_resource()
+	_test_six_slot_capacity_and_sequential_chains()
+	_test_trigger_budgets_and_blocked_entries()
+	_test_monster_tracks_and_colorless_fallback()
+	await _test_board_smart_beast_hybrid_and_bombs()
+	await _test_enemy_target_preview_and_cascade_suppression()
+	await _test_direct_equipment_rewards_and_three_source_draft()
+	_test_per_action_critical_hits()
+	_test_unified_buffs_and_debuffs()
+	_test_five_passive_slots_and_inventory_removal()
+	_test_unified_four_reward_types_and_build_affinity()
+	_test_save_load_persistence()
+	_test_core_pillars_and_derived_stat_scaling()
+
+# ------------------------------------------------------------------------------
+# 1. Shared Entity Foundation
+# ------------------------------------------------------------------------------
+func _test_shared_entity_resource() -> void:
+	print("\n--- 1. Shared Entity Foundation ---")
+	var player := PlayerResource.new()
+	var enemy := EnemyResource.new()
+	_assert(player is EntityResource, "PlayerResource extends EntityResource")
+	_assert(enemy is EntityResource, "EnemyResource extends EntityResource")
+	_assert(is_equal_approx(player.agility, 2.0), "PlayerResource defaults to agility = 2")
+	_assert(player.max_energy == 2, "PlayerResource default max_energy = 2 (Base 2 + floor(2/5))")
+	_assert(is_equal_approx(enemy.agility, 1.0), "EnemyResource defaults to agility = 1")
+	_assert(enemy.max_energy == 1, "EnemyResource default max_energy = 1 (Base 1 + floor(1/5))")
+
+	# Max energy scaling formula tests: Base + int(floor(agility / 5.0))
+	player.agility = 0.0
+	_assert(player.max_energy == 2, "Agility 0 -> max_energy = 2")
+	player.agility = 1.0
+	_assert(player.max_energy == 2, "Agility 1 -> max_energy = 2")
+	player.agility = 2.0
+	_assert(player.max_energy == 2, "Agility 2 -> max_energy = 2")
+	player.agility = 4.0
+	_assert(player.max_energy == 2, "Agility 4 -> max_energy = 2")
+	player.agility = 5.0
+	_assert(player.max_energy == 3, "Agility 5 -> max_energy = 3 (Base 2 + 1)")
+	player.agility = 10.0
+	_assert(player.max_energy == 4, "Agility 10 -> max_energy = 4 (Base 2 + 2)")
+	player.agility = -10.0
+	_assert(player.max_energy == 1, "Agility negative (-10) respects hard floor of 1")
+
+	player.agility = 5.0
+	_assert(is_equal_approx(player.agility, 5.0), "Setting agility=5 updates agility to 5")
+	_assert(player.max_energy == 3, "Agility 5 derived max_energy = 3")
+	player.agility = 2.0
+
+	# Moves_left strict clamping to max_energy
+	player.agility = 2.0 # max_energy = 2
+	player.moves_left = 10
+	_assert(player.moves_left == 2, "moves_left capped at max_energy (2) when assigned 10")
+	player.modify_stat("moves_left", 5)
+	_assert(player.moves_left == 2, "modify_stat('moves_left', +5) capped at max_energy (2)")
+	player.modify_stat("moves_left", -1)
+	_assert(player.moves_left == 1, "modify_stat('moves_left', -1) decrements to 1")
+	player.modify_stat("moves_left", -10)
+	_assert(player.moves_left == 0, "modify_stat('moves_left', -10) clamps floor to 0")
+
+	# Agility change clamps existing moves_left if exceeding new max_energy
+	player.agility = 5.0 # max_energy = 3
+	player.moves_left = 3
+	_assert(player.moves_left == 3, "moves_left can reach 3 when max_energy is 3")
+	player.agility = 2.0 # max_energy = 2
+	_assert(player.moves_left == 2, "Reducing agility from 5 to 2 automatically clamps moves_left down to 2")
+
+	# Verify enemy lifesteal heals the enemy (attacker) and NOT Global.cur_char
+	player.max_health = 30.0
+	player.cur_health = 20.0
+	enemy.max_health = 30.0
+	enemy.cur_health = 10.0
+	enemy.life_steal = 0.5
+	Global.cur_char = player
+	Global.cur_enemy = enemy
+
+	player.take_damage(10.0, false, 0, enemy)
+	_assert(is_equal_approx(player.cur_health, 10.0), "Player took 10 damage from enemy")
+	_assert(is_equal_approx(enemy.cur_health, 15.0), "Enemy lifesteal healed the enemy (+5 HP), not the player")
+
+	# Verify equipment cooldown reduction reads from the acting entity
+	# Heavy Slam is Physical (is_mystical = false), so CDR scales with Agility (-1 per 5 Agility)
+	enemy.cooldown_reduction = 1
+	enemy.agility = 5.0 # +1 CDR from agility (floor(5.0 / 5.0))
+	var cd_eq := _make_test_equipment("Heavy Slam", 5.0)
+	cd_eq.cooldown_turns = 3
+	cd_eq.on_triggered(enemy)
+	_assert(cd_eq.current_cooldown == 1, "Equipment on_triggered(enemy) uses enemy Agility CDR (3 - (1 + 1) = 1)")
+
+	# Verify Mystical equipment cooldown reduction reads Spirit (-1 per 5 Spirit)
+	var myst_eq := _make_test_equipment("Mystic Blast", 5.0)
+	myst_eq.is_mystical = true
+	myst_eq.cooldown_turns = 4
+	enemy.spirit = 5.0 # +1 CDR from spirit
+	myst_eq.on_triggered(enemy)
+	_assert(myst_eq.current_cooldown == 2, "Mystical equipment on_triggered(enemy) uses enemy Spirit CDR (4 - (1 + 1) = 2)")
+
+# ------------------------------------------------------------------------------
+# 2. 5 Normal Slots + 1 Ultimate Slot Capacity & Chain Execution
+# ------------------------------------------------------------------------------
+func _test_six_slot_capacity_and_sequential_chains() -> void:
+	print("\n--- 2. 5-Slot Normal + 1 Ultimate Slot Capacity & Sequential Chains ---")
+	var player := PlayerResource.new()
+	player.ensure_loadout_tracks()
+	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
+	var blue_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.BLUE)
+	_assert(red_track != null and red_track.max_slots == 5, "Player Red track defaults to 5 open normal slots")
+
+	var eq_a := _make_test_equipment("A", 2.0, 2)
+	var eq_b := _make_test_equipment("B", 3.0, 2)
+	var eq_c := _make_test_equipment("C", 4.0, 1)
+	_assert(red_track.equip_modifier(eq_a), "Equipped A (cost 2) into 5-slot track")
+	_assert(red_track.equip_modifier(eq_b), "Equipped B (cost 2) into 5-slot track")
+	_assert(red_track.equip_modifier(eq_c), "Equipped C (cost 1) into 5-slot track")
+	_assert(red_track.get_used_slots() == 5 and red_track.get_remaining_slots() == 0, "5-slot capacity accounting (2+2+1 = 5 used, 0 remaining)")
+	_assert(not red_track.can_fit(_make_test_equipment("D", 1.0, 1)), "6th normal slot point is rejected when 5/5 normal slots are full")
+
+	# Ultimate slot restrictions
+	var ult_skill := _make_test_equipment("Red Comet", 15.0, 1)
+	ult_skill.is_ultimate = true
+	var normal_skill := _make_test_equipment("Normal Slash", 5.0, 1)
+
+	_assert(not red_track.equip_ultimate(normal_skill), "Non-ultimate cannot be equipped into the Ultimate slot")
+	_assert(not red_track.equip_modifier(ult_skill), "Ultimate skill cannot be equipped into normal slots (1-5)")
+	_assert(red_track.equip_ultimate(ult_skill), "Ultimate skill equipped successfully into dedicated slot 0")
+	_assert(red_track.ultimate_skill == ult_skill, "Track ultimate_skill references the equipped ultimate")
+
+	# Ultimate readiness at cycle start & visual states
+	var dummy_ctx := MatchContext.new()
+	dummy_ctx.base_color = Global.TileColor.RED
+	dummy_ctx.match_count = 3
+
+	_assert(red_track.is_ultimate_active_for_cycle == true, "Ultimate is active for cycle because all 5 skills are ready at reset start")
+	_assert(red_track.get_ultimate_visual_state() == ColorLoadoutTrack.UltimateVisualState.ACTIVATED, "Ultimate slot shows ACTIVATED state (lighter U)")
+	_assert(red_track.can_trigger_ultimate(dummy_ctx), "Ultimate can trigger when active for cycle")
+
+	# Normal slot visual states (NEXT, NORMAL, DARK, EMPTY)
+	red_track.next_entry_cursor = 0
+	_assert(red_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.NEXT, "Slot 0 (first skill A) is NEXT (lighter state)")
+	_assert(red_track.get_normal_slot_visual_state(1) == ColorLoadoutTrack.NormalSlotVisualState.NEXT, "Slot 1 (part of A) is NEXT (lighter state)")
+	_assert(red_track.get_normal_slot_visual_state(2) == ColorLoadoutTrack.NormalSlotVisualState.NORMAL, "Slot 2 (skill B) is NORMAL (ready)")
+	_assert(red_track.get_normal_slot_visual_state(4) == ColorLoadoutTrack.NormalSlotVisualState.NORMAL, "Slot 4 (skill C) is NORMAL (ready)")
+
+	# UI texture binding verification
+	var test_slot_ui := ModifierSlotUI.new()
+	test_slot_ui.setup_slot(null, 100, red_track, 0, false, false, false) # Next
+	_assert(test_slot_ui.texture_rect.visible == true and test_slot_ui.texture_rect.texture == ModifierSlotUI.TEX_CRISTAL_BRIGHT, "UI binds bright crystal texture to NEXT slot")
+
+	var empty_slot_ui := ModifierSlotUI.new()
+	var empty_track := ColorLoadoutTrack.new()
+	empty_track.color = 100
+	_assert(empty_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.EMPTY, "Unassigned slot returns EMPTY visual state")
+	empty_slot_ui.setup_slot(null, 100, empty_track, 0, false, false, false)
+	_assert(empty_slot_ui.texture_rect.visible == false, "Empty slot texture_rect is invisible so base socket shows through")
+
+	# When skill A is used: becomes DARK state
+	red_track.record_skill_activated(eq_a)
+	_assert(red_track.get_normal_slot_visual_state(0) == ColorLoadoutTrack.NormalSlotVisualState.DARK, "Slot 0 becomes DARK once used")
+	_assert(red_track.get_normal_slot_visual_state(1) == ColorLoadoutTrack.NormalSlotVisualState.DARK, "Slot 1 becomes DARK once used")
+	test_slot_ui.setup_slot(eq_a, 100, red_track, 0, false, false, false)
+	_assert(test_slot_ui.texture_rect.visible == true and test_slot_ui.texture_rect.texture == ModifierSlotUI.TEX_CRISTAL_DARK, "UI binds dark crystal texture to DARK slot")
+	test_slot_ui.free()
+	empty_slot_ui.free()
+
+	# Cooldown ticks down on loadout reset, and determines ultimate readiness for next cycle
+	eq_a.current_cooldown = 2
+	red_track.reset_activation_cycle()
+	_assert(eq_a.current_cooldown == 1, "Cooldown ticks down on loadout reset (2 -> 1)")
+	_assert(red_track.is_ultimate_active_for_cycle == false, "Ultimate is NOT active for new cycle because skill A was on cooldown at reset start")
+	_assert(red_track.get_ultimate_visual_state() == ColorLoadoutTrack.UltimateVisualState.NORMAL, "Ultimate visual state is NORMAL (not lighter/activated) when unready")
+	_assert(not red_track.can_trigger_ultimate(dummy_ctx), "Ultimate cannot trigger when not active for cycle")
+
+	# Ticking down remaining cooldown to 0 restores readiness at next reset
+	red_track.reset_activation_cycle()
+	_assert(eq_a.current_cooldown == 0, "Cooldown ticked to 0 on next loadout reset")
+	_assert(red_track.is_ultimate_active_for_cycle == true, "Ultimate becomes active again once all skills are ready at reset start")
+
+	# Test: Reset happens when no more tiles can be activated in the color track
+	var partial_track := ColorLoadoutTrack.new()
+	partial_track.color = 100
+	var skill_1 := _make_test_equipment("Skill1", 5.0, 1)
+	var skill_2 := _make_test_equipment("Skill2", 5.0, 1)
+	skill_2.current_cooldown = 2
+	partial_track.equip_modifier(skill_1)
+	partial_track.equip_modifier(skill_2)
+
+	_assert(partial_track.has_activatable_tiles() == true, "Track has activatable tiles because skill_1 is ready")
+	partial_track.record_skill_activated(skill_1)
+	_assert(partial_track.has_activatable_tiles() == false, "No more activatable tiles (skill_1 used, skill_2 on cooldown)")
+	partial_track.reset_activation_cycle()
+	_assert(skill_2.current_cooldown == 1, "Reset on no more activatable tiles ticks cooldown (2 -> 1)")
+	_assert(partial_track.has_activatable_tiles() == true, "After reset, skill_1 is ready again")
+	partial_track.record_skill_activated(skill_1)
+	_assert(partial_track.has_activatable_tiles() == false, "Skill 1 used again, skill 2 still on cooldown")
+	partial_track.reset_activation_cycle()
+	_assert(skill_2.current_cooldown == 0, "Second reset ticks skill 2 cooldown to 0")
+	_assert(partial_track.has_activatable_tiles() == true, "Now both skills are ready")
+
+	# Bypass activation check test
+	var bypass_ult := _make_test_equipment("Free Comet", 10.0, 1)
+	bypass_ult.is_ultimate = true
+	bypass_ult.bypass_activation_check = true
+	red_track.equip_ultimate(bypass_ult)
+	_assert(red_track.can_trigger_ultimate(dummy_ctx), "Ultimate with bypass_activation_check=true triggers regardless")
+	red_track.equip_ultimate(ult_skill) # Restore strict ultimate
+
+	# Sequential normal matches + ultimate at end of cycle: A -> B -> C -> ULT -> A
+	red_track.next_entry_cursor = 0
+	var fired_names: Array[String] = []
+	for _i in range(5):
+		var m: Equipment = red_track.step_next_entry()
+		fired_names.append(m.piece_name)
+	_assert(fired_names == ["A", "B", "C", "Red Comet", "A"], "Successive matches step A -> B -> C -> Red Comet (Ultimate) -> A")
+	_assert(red_track.next_entry_cursor == 1, "After full cycle + 1 step, cursor points to B (index 1)")
+
+	# Advance cursor to C (index 2), then execute a 4-tile match (2 triggers): C -> ULT, leaving A next
+	red_track.next_entry_cursor = 2
+	var ctx_4 := MatchContext.new()
+	ctx_4.base_color = Global.TileColor.RED
+	ctx_4.match_count = 4
+	ctx_4.shape_type = "LINE_4"
+	var budget_4: int = red_track.get_trigger_budget(ctx_4)
+	_assert(budget_4 == 2, "4-tile match grants 2 triggers")
+
+	var match4_fired: Array[String] = []
+	for _i in range(budget_4):
+		match4_fired.append(red_track.step_next_entry().piece_name)
+	_assert(match4_fired == ["C", "Red Comet"], "4-tile match starting at C executes C then Red Comet")
+	_assert(red_track.next_entry_cursor == 0, "After C then Ultimate, cursor wraps around leaving A next (index 0)")
+
+	# Track independence: Blue track cursor was never touched
+	_assert(blue_track.next_entry_cursor == 0, "Matching Red does not advance Blue track cursor")
+
+	# Cursor lifetime: turn reset does NOT reset cursor; battle reset DOES reset cursor
+	red_track.next_entry_cursor = 1
+	player.reset_stats_at_beginning_of_turn()
+	_assert(red_track.next_entry_cursor == 1, "Turn start does NOT reset next_entry_cursor")
+	player.reset_modifiers_for_battle()
+	_assert(red_track.next_entry_cursor == 0, "Battle start resets next_entry_cursor to 0")
+
+# ------------------------------------------------------------------------------
+# 3. Trigger Budgets (5+, L/T, Bombs) & Blocked Entry Consumption
+# ------------------------------------------------------------------------------
+func _test_trigger_budgets_and_blocked_entries() -> void:
+	print("\n--- 3. Trigger Budgets & Blocked Entry Consumption ---")
+	var track := ColorLoadoutTrack.new()
+	var eq_a := _make_test_equipment("A", 2.0)
+	var eq_b := _make_test_equipment("B_Blocked", 10.0)
+	eq_b.trigger_condition = Equipment.TriggerCondition.MATCH_4_PLUS
+	var eq_c := _make_test_equipment("C", 3.0)
+	track.equip_modifier(eq_a)
+	track.equip_modifier(eq_b)
+	track.equip_modifier(eq_c)
+
+	var ctx_3 := MatchContext.new()
+	ctx_3.match_count = 3
+	ctx_3.shape_type = "LINE_3"
+	_assert(track.get_trigger_budget(ctx_3) == 1, "3-tile match = 1 trigger")
+
+	var ctx_5 := MatchContext.new()
+	ctx_5.match_count = 5
+	ctx_5.shape_type = "LINE_5"
+	_assert(track.get_trigger_budget(ctx_5) == 3, "5-tile match = 3 triggers (5 - 2)")
+
+	var ctx_l5 := MatchContext.new()
+	ctx_l5.match_count = 5
+	ctx_l5.shape_type = "L_SHAPE"
+	_assert(track.get_trigger_budget(ctx_l5) == 4, "5-tile L-shape match = 4 triggers ((5 - 2) + 1)")
+
+	var ctx_t5 := MatchContext.new()
+	ctx_t5.match_count = 5
+	ctx_t5.shape_type = "T_SHAPE"
+	_assert(track.get_trigger_budget(ctx_t5) == 4, "5-tile T-shape match = 4 triggers ((5 - 2) + 1)")
+
+	# Test blocked equipment on a 3-tile match:
+	# Cursor 0 (A) fires; Cursor 1 (B_Blocked requires 4+) cannot trigger on a 3-tile match,
+	# so the trigger is still consumed and the cursor moves to Cursor 2 (C)!
+	track.next_entry_cursor = 1
+	var stepped: Equipment = track.step_next_entry()
+	var did_fire: bool = stepped != null and stepped.can_trigger(ctx_3)
+	_assert(stepped == eq_b and not did_fire, "Blocked entry B_Blocked fails condition on 3-tile match")
+	_assert(track.next_entry_cursor == 2, "Blocked entry still consumes trigger and advances cursor to C (index 2)")
+
+	# Test 4+ match trigger cost (Rush behavior):
+	_assert(eq_b.get_trigger_cost() == 2, "MATCH_4_PLUS equipment consumes 2 triggers")
+	_assert(eq_a.get_trigger_cost() == 1, "Standard equipment consumes 1 trigger")
+
+	var ctx_4 := MatchContext.new()
+	ctx_4.match_count = 4
+	ctx_4.shape_type = "LINE_4"
+	_assert(track.get_trigger_budget(ctx_4) == 2, "4-tile match = 2 triggers (4 - 2)")
+
+	# Case 1: Solo 4+ skill (Rush) on a 4-match triggers ONCE (not twice)
+	var rush_only_track := ColorLoadoutTrack.new()
+	var rush_eq := _make_test_equipment("Rush", 0.0)
+	rush_eq.trigger_condition = Equipment.TriggerCondition.MATCH_4_PLUS
+	rush_only_track.equip_modifier(rush_eq)
+	var peek_4: Array[int] = rush_only_track.peek_firing_indices(ctx_4)
+	_assert(peek_4 == [0], "Solo 4+ match skill peeks index [0] on 4-match (consumed 2 triggers, fires once)")
+
+	var peek_3: Array[int] = rush_only_track.peek_firing_indices(ctx_3)
+	_assert(peek_3 == [], "4+ match skill peeks empty on 3-match (insufficient budget and match count)")
+
+	# Case 2: Rush + 3-match skill on a 5-match (budget = 3) -> Rush takes 2 triggers, next skill takes 1
+	var combo_track := ColorLoadoutTrack.new()
+	var normal_skill := _make_test_equipment("Punch", 2.0)
+	combo_track.equip_modifier(rush_eq)
+	combo_track.equip_modifier(normal_skill)
+	var peek_5: Array[int] = combo_track.peek_firing_indices(ctx_5)
+	_assert(peek_5 == [0, 1], "Rush + normal skill on 5-match triggers both Rush (index 0) and next skill (index 1)")
+
+	# On a 4-match (budget = 2), Rush consumes all 2 triggers; next skill is not reached
+	var peek_rush_and_norm_4: Array[int] = combo_track.peek_firing_indices(ctx_4)
+	_assert(peek_rush_and_norm_4 == [0], "Rush + normal skill on 4-match triggers only Rush (consumes both triggers)")
+
+	# Case 3: Three normal 3-match skills on a 5-match (budget = 3) -> all three trigger once
+	var three_track := ColorLoadoutTrack.new()
+	three_track.equip_modifier(eq_a)
+	three_track.equip_modifier(_make_test_equipment("B_Normal", 2.0))
+	three_track.equip_modifier(eq_c)
+	var peek_three_5: Array[int] = three_track.peek_firing_indices(ctx_5)
+	_assert(peek_three_5 == [0, 1, 2], "Three normal skills on 5-match trigger all three once ([0, 1, 2])")
+
+# ------------------------------------------------------------------------------
+# 4. Monster Tracks & Colorless Fallback
+# ------------------------------------------------------------------------------
+func _test_monster_tracks_and_colorless_fallback() -> void:
+	print("\n--- 4. Monster Tracks & Colorless Fallback ---")
+	var boar: EnemyResource = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
+	boar.ensure_loadout_tracks()
+	_assert(boar.has_explicit_track_for_color(Global.TileColor.RED), "Boar has explicit Red track")
+	_assert(boar.has_explicit_track_for_color(Global.TileColor.BLUE), "Boar has explicit Blue track")
+	_assert(not boar.has_explicit_track_for_color(Global.TileColor.GREEN), "Boar does not have explicit Green track")
+
+	var red_t := boar.get_track_for_color(Global.TileColor.RED)
+	var blue_t := boar.get_track_for_color(Global.TileColor.BLUE)
+	var green_t := boar.get_track_for_color(Global.TileColor.GREEN)
+	var purple_t := boar.get_track_for_color(Global.TileColor.PURPLE)
+	_assert(red_t != boar.colorless_fallback_track, "Boar Red routes to explicit Red track")
+	_assert(blue_t != boar.colorless_fallback_track, "Boar Blue routes to explicit Blue track")
+	_assert(green_t == boar.colorless_fallback_track, "Boar Green routes to colorless fallback track")
+	_assert(purple_t == boar.colorless_fallback_track, "Boar Purple routes to colorless fallback track")
+
+	var enemy_paths := [
+		"res://entities/enemies/minions/wild_boar/wild_boar_1.tres",
+		"res://entities/enemies/minions/bear_stravnica/bear_stravnica.tres",
+		"res://entities/enemies/minions/peasant/peasant_1.tres",
+		"res://entities/enemies/minions/vila/vila.tres",
+		"res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres",
+		"res://entities/enemies/bosses/lamia/lamia.tres"
+	]
+	for ep in enemy_paths:
+		var er: EnemyResource = load(ep)
+		_assert(er != null and not er.loot_table.is_empty(), "Authored monster resource loads cleanly with loot_table: " + ep.get_file())
+
+# ------------------------------------------------------------------------------
+# 5. Board AI: Smart, Beast, Hybrid, and Bomb Majority Color
+# ------------------------------------------------------------------------------
+func _test_board_smart_beast_hybrid_and_bombs() -> void:
+	print("\n--- 5. Board AI (Smart, Beast, Hybrid) & Bomb Majority Color ---")
+	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	player.reset_stats_at_beginning_of_game()
+	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	cap.cur_health = cap.max_health
+	cap.reset_stats_at_beginning_of_fight()
+
+	# Verify Hybrid alternation per action
+	_assert(cap.behavior_category == EnemyResource.BehaviorCategory.HYBRID, "Kardzaliia Capitan is HYBRID")
+	var modes: Array[int] = []
+	for _i in range(4):
+		modes.append(int(cap.get_current_action_behavior()))
+		cap.advance_hybrid_action_state()
+	_assert(modes == [
+		int(EnemyResource.BehaviorCategory.SMART),
+		int(EnemyResource.BehaviorCategory.BEAST),
+		int(EnemyResource.BehaviorCategory.SMART),
+		int(EnemyResource.BehaviorCategory.BEAST)
+	], "Hybrid monster switches between SMART and BEAST on every action")
+
+	# Instantiate game_window to test real board resolution for Smart, Beast, and Bomb majority color
+	Global.cur_char = player
+	Global.set_up_enemy(cap)
+	var gw_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var gw: GameMaster = gw_scene.instantiate()
+	add_child(gw)
+	await get_tree().create_timer(0.55).timeout
+
+	var grd = gw.grd
+	_assert(grd != null and grd.all_pieces.size() == grd.grd_width, "Combat board initialized cleanly")
+
+	# Set controlled colors in a 3x3 area around (3, 3): 5 RED tiles, 2 BLUE tiles, 2 GREEN tiles
+	var red_coords := [Vector2i(2, 2), Vector2i(3, 2), Vector2i(4, 2), Vector2i(2, 3), Vector2i(3, 3)]
+	var blue_coords := [Vector2i(4, 3), Vector2i(2, 4)]
+	var green_coords := [Vector2i(3, 4), Vector2i(4, 4)]
+	for c in red_coords:
+		grd.all_pieces[c.x][c.y].setup_chromatic(Global.TileColor.RED)
+	for c in blue_coords:
+		grd.all_pieces[c.x][c.y].setup_chromatic(Global.TileColor.BLUE)
+	for c in green_coords:
+		grd.all_pieces[c.x][c.y].setup_chromatic(Global.TileColor.GREEN)
+
+	var positions_3x3: Array[Vector2] = []
+	for ofs in Global.cur_enemy.get_beast_destruction_shape():
+		positions_3x3.append(Vector2(3 + ofs.x, 3 + ofs.y))
+
+	var beast_ctx: MatchContext = grd.build_majority_color_context(positions_3x3, Global.cur_enemy, Global.cur_char, false)
+	_assert(beast_ctx != null and beast_ctx.base_color == Global.TileColor.RED, "Beast 3x3 majority color is RED (5 of 9 tiles)")
+	_assert(beast_ctx.match_count == 5, "Beast majority color count is 5")
+	var enemy_red_track: ColorLoadoutTrack = Global.cur_enemy.get_track_for_color(beast_ctx.base_color)
+	_assert(enemy_red_track.get_trigger_budget(beast_ctx) == 3, "Beast 5-tile majority color grants 3 sequential triggers (5 - 2)")
+
+	var bomb_ctx: MatchContext = grd.build_majority_color_context(positions_3x3, Global.cur_char, Global.cur_enemy, true)
+	_assert(bomb_ctx != null and bomb_ctx.is_bomb_clear and bomb_ctx.base_color == Global.TileColor.RED and bomb_ctx.match_count == 5, "Bomb clear uses identical majority-color rule (RED, count 5 -> 3 triggers)")
+
+	# Execute enemy turn on the live board and verify player takes damage from monster's track
+	var hp_before: float = Global.cur_char.cur_health
+	var armor_before: float = Global.cur_char.cur_armor
+	await gw._execute_match_context(beast_ctx)
+	_assert(Global.cur_char.cur_health < hp_before or Global.cur_char.cur_armor < armor_before, "Monster sequential track execution dealt damage to player")
+	# In Boar's red track [Rush (cost 2), Short Sword (cost 1)], a 5-match (budget = 3)
+	# activates Rush (costs 2 triggers) once and Short Sword (costs 1 trigger) once,
+	# taking 2 steps and advancing cursor by 2: (0 + 2) % 2 == 0.
+	_assert(enemy_red_track.next_entry_cursor == (2 % enemy_red_track.get_filled_entry_count()), "Monster track cursor advanced by 2 steps (Rush [2 triggers] + Short Sword [1 trigger] on 5-match)")
+
+	gw.queue_free()
+	await get_tree().process_frame
+
+# ------------------------------------------------------------------------------
+# 5b. Enemy Target Visualization & AOE Cascade Exclusion
+# ------------------------------------------------------------------------------
+func _test_enemy_target_preview_and_cascade_suppression() -> void:
+	print("\n--- 5b. Enemy Target Visualization & AOE Cascade Exclusion ---")
+	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	player.reset_stats_at_beginning_of_game()
+	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	cap.cur_health = cap.max_health
+	cap.reset_stats_at_beginning_of_fight()
+
+	Global.cur_char = player
+	Global.set_up_enemy(cap)
+	var gw_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var gw: GameMaster = gw_scene.instantiate()
+	add_child(gw)
+	await get_tree().create_timer(0.55).timeout
+
+	var grd = gw.grd
+	_assert(grd != null, "Combat board valid for target preview tests")
+
+	# 1. Test PieceClass visual highlight
+	var test_piece: PieceClass = grd.all_pieces[3][3]
+	test_piece.set_enemy_target_highlight(true)
+	_assert(test_piece.is_enemy_target_highlighted == true, "Tile marked as enemy target")
+	_assert(test_piece.base.modulate == Color(1.25, 0.75, 0.75, 1.0), "Tile applies danger reddish tint for enemy target")
+	test_piece.set_enemy_target_highlight(false)
+	_assert(test_piece.is_enemy_target_highlighted == false, "Tile unmarks enemy target")
+
+	# 2. Test Beast Target Preview & Center Locking
+	Global.cur_enemy.hybrid_next_is_beast = true
+	grd.update_enemy_target_preview()
+	var beast_cells: Array[Vector2i] = grd.current_enemy_target_cells
+	_assert(not beast_cells.is_empty(), "Beast upcoming action highlights target cells on board")
+	var locked_center: Vector2i = grd.planned_enemy_target_center
+	_assert(locked_center != Vector2i(-1, -1), "Beast planned center is stored")
+	var offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
+	_assert(grd.get_or_choose_beast_target_center(offsets) == locked_center, "Enemy turn execution locks to previewed beast center")
+	for c in beast_cells:
+		var p: PieceClass = grd.all_pieces[c.x][c.y]
+		_assert(p != null and p.is_enemy_target_highlighted, "Targeted cell (%d, %d) has active highlight" % [c.x, c.y])
+	_assert(grd.enemy_attack_overlay != null and grd.enemy_attack_overlay._indicators.size() == beast_cells.size(), "EnemyAttackOverlay displays all active target borders")
+
+	# 3. Test Smart Target Preview
+	Global.cur_enemy.hybrid_next_is_beast = false
+	grd.update_enemy_target_preview()
+	var smart_cells: Array[Vector2i] = grd.current_enemy_target_cells
+	_assert(smart_cells.size() == 2 or not smart_cells.is_empty(), "Smart upcoming action highlights target swap cells")
+	_assert(grd.enemy_attack_overlay._indicators.size() == smart_cells.size(), "EnemyAttackOverlay updates to smart target swap cells")
+
+	# 4. Clear Preview
+	grd.clear_enemy_target_preview()
+	_assert(grd.current_enemy_target_cells.is_empty(), "Clear preview removes all active cell targets")
+	_assert(grd.enemy_attack_overlay._indicators.is_empty(), "EnemyAttackOverlay clears all indicators")
+
+	# 5. Test Secondary Cascade Exclusion for Beast / AOE attacks
+	# Ensure monster equipment only triggers on first tiles destroyed, not on secondary cascades
+	var enemy_red_track: ColorLoadoutTrack = cap.get_track_for_color(Global.TileColor.RED)
+	var cursor_before: int = enemy_red_track.next_entry_cursor
+	var player_hp_before: float = player.cur_health
+
+	# Create a secondary cascade match context (e.g. formed by tiles falling after AOE)
+	var cascade_ctx := MatchContext.new()
+	cascade_ctx.actor = cap
+	cascade_ctx.target = player
+	cascade_ctx.base_color = Global.TileColor.RED
+	cascade_ctx.match_count = 3
+	cascade_ctx.is_secondary_cascade = true
+	cascade_ctx.ignore_equipment_triggers = true
+
+	await gw._execute_match_context(cascade_ctx)
+
+	_assert(player.cur_health == player_hp_before, "Secondary cascade does not damage player")
+	_assert(enemy_red_track.next_entry_cursor == cursor_before, "Secondary cascade does not advance monster loadout cursor or trigger equipment")
+
+	gw.queue_free()
+	await get_tree().process_frame
+
+# ------------------------------------------------------------------------------
+# 6. Direct-Resource Rewards & 3-Option Post-Combat Draft
+# ------------------------------------------------------------------------------
+func _test_direct_equipment_rewards_and_three_source_draft() -> void:
+	print("\n--- 6. Direct-Resource Rewards & 3-Source Draft ---")
+	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	player.reset_stats_at_beginning_of_game()
+	var boar: EnemyResource = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
+	Global.cur_char = player
+	Global.set_up_enemy(boar)
+
+	# Check that warrior.tres class_rewards contains direct Equipment and unified Reward resources
+	var combat_pool: Array[Resource] = player.get_active_combat_pool()
+	var has_direct_equipment: bool = false
+	for item in combat_pool:
+		if item is Equipment:
+			has_direct_equipment = true
+			break
+	_assert(has_direct_equipment, "Warrior class_rewards pool contains direct Equipment resources without Reward wrappers")
+	_assert(not boar.loot_table.is_empty(), "Wild Boar has a populated monster loot_table")
+
+	var reward_scene: PackedScene = load("res://rewards/reward_screen.tscn")
+	var rs = reward_scene.instantiate()
+	add_child(rs)
+	await get_tree().process_frame
+
+	# Test deterministic 3rd-slot source selection: < 0.5 chooses monster, >= 0.5 chooses class
+	var draft_monster_3rd: Array[Resource] = rs.generate_three_choice_draft(boar.loot_table, combat_pool, 0.25)
+	_assert(draft_monster_3rd.size() == 3, "Post-combat draft offers exactly 3 choices")
+	_assert(rs.last_draft_sources == ["monster", "class", "monster"], "With roll 0.25 (< 0.5), sources are [monster, class, monster]")
+
+	var draft_class_3rd: Array[Resource] = rs.generate_three_choice_draft(boar.loot_table, combat_pool, 0.75)
+	_assert(rs.last_draft_sources == ["monster", "class", "class"], "With roll 0.75 (>= 0.5), sources are [monster, class, class]")
+
+	# Verify resource isolation when drafting direct Equipment with rolled rarity
+	var template_rush: Equipment = load("res://equipment/items/rush.tres")
+	var orig_rarity: Equipment.Rarity = template_rush.rarity
+	var drafted_epic_rush: Resource = RewardGrantHandler.prepare_draft_instance(template_rush, "EPIC")
+	_assert(drafted_epic_rush is Equipment and drafted_epic_rush != template_rush, "Drafted Equipment is an independent instance")
+	_assert((drafted_epic_rush as Equipment).rarity == Equipment.Rarity.EPIC, "Drafted Equipment takes the rolled rarity (EPIC)")
+	_assert(template_rush.rarity == orig_rarity, "Source Equipment template in pool was NOT mutated by rarity roll")
+
+	# Verify claiming direct Equipment adds an independent copy to the player
+	var owned_before: int = player.get_all_owned_modifiers().size()
+	RewardGrantHandler.grant_reward(drafted_epic_rush, true, player)
+	var owned_after: int = player.get_all_owned_modifiers().size()
+	_assert(owned_after == owned_before + 1, "Claiming direct Equipment reward grants 1 independent item to player")
+
+	rs.queue_free()
+	await get_tree().process_frame
+
+# ------------------------------------------------------------------------------
+# 7. Per-Action Critical Hits
+# ------------------------------------------------------------------------------
+func _test_per_action_critical_hits() -> void:
+	print("\n--- 7. Per-Action Critical Hits ---")
+	var player := PlayerResource.new()
+	var enemy := EnemyResource.new()
+
+	# 1. 0% crit chance never rolls true
+	player.crit_chance = 0
+	var zero_crit_procs: int = 0
+	for _i in range(50):
+		if player.roll_crit():
+			zero_crit_procs += 1
+	_assert(zero_crit_procs == 0, "0% crit chance never produces critical strike")
+
+	# 2. 100% crit chance always rolls true
+	player.crit_chance = 100
+	var full_crit_procs: int = 0
+	for _i in range(50):
+		if player.roll_crit():
+			full_crit_procs += 1
+	_assert(full_crit_procs == 50, "100% crit chance always produces critical strike")
+
+	# 3. Statistical distribution with 5% crit chance
+	player.crit_chance = 5
+	var count_5pct: int = 0
+	for _i in range(1000):
+		if player.roll_crit():
+			count_5pct += 1
+	_assert(count_5pct >= 15 and count_5pct <= 90, "5% crit chance rolls within expected statistical range (got " + str(count_5pct) + " / 1000)")
+
+	# 4. Independent actor rolling: player vs enemy
+	player.crit_chance = 0
+	enemy.crit_chance = 100
+	_assert(not player.roll_crit(), "Player with 0% crit does not crit")
+	_assert(enemy.roll_crit(), "Enemy with 100% crit crits independently of player")
+
+	# 5. Equipment damage scaling with explicit is_crit = true
+	var attacker := PlayerResource.new()
+	attacker.crit_chance = 0
+	attacker.crit_mutly = 100.0 # +100% damage bonus = 2x total
+	var dummy_target := EnemyResource.new()
+	dummy_target.max_health = 100.0
+	dummy_target.cur_health = 100.0
+
+	var strike_eq := Equipment.new()
+	strike_eq.piece_name = "Test Strike"
+	strike_eq.base_damage = 10.0
+	strike_eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	strike_eq.hit_count = 1
+
+	# Normal non-crit hit: exactly 10 damage
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target,
+		"is_crit": false
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 90.0), "Non-crit equipment deals exact base damage (100 -> 90)")
+
+	# Crit hit: 10 * 2.0 = 20 damage (90 -> 70)
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target,
+		"is_crit": true
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 70.0), "Critical equipment strike deals base * (1 + crit_mutly/100) (90 -> 70)")
+
+	# 6. Manual criting property consumption
+	strike_eq.criting = true
+	strike_eq.activate({
+		"attacker": attacker,
+		"target": dummy_target
+	})
+	_assert(is_equal_approx(dummy_target.cur_health, 50.0), "Equipment with criting=true deals critical damage (70 -> 50)")
+	_assert(strike_eq.criting == false, "Equipment criting flag resets to false after activation")
+
+	# 7. Tile neutrality: board tile scene has no crit_shader or is_criting
+	var tile_scene: PackedScene = load("res://combat/tiles/tile.tscn")
+	_assert(tile_scene != null, "Tile scene loads cleanly")
+	var tile_instance = tile_scene.instantiate()
+	_assert(not ("is_criting" in tile_instance), "Tile has no is_criting property")
+	_assert(not ("crit_shader" in tile_instance), "Tile has no crit_shader property")
+	tile_instance.queue_free()
+
+# ------------------------------------------------------------------------------
+# 8. Save/Load Persistence
+# ------------------------------------------------------------------------------
+func _test_save_load_persistence() -> void:
+	print("\n--- 8. Save/Load Persistence ---")
+	var user_dir_path := ProjectSettings.globalize_path("user://")
+	if not DirAccess.dir_exists_absolute(user_dir_path):
+		DirAccess.make_dir_recursive_absolute(user_dir_path)
+	var test_save_path := "user://test_rework_save.tres"
+	var prev_save_path: String = Global.save_path
+	Global.save_path = test_save_path
+
+	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	player.reset_stats_at_beginning_of_game()
+	var base_might: float = player.might
+	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
+	red_track.next_entry_cursor = 1
+	player.set_flag("test_tag_persisted", true)
+	var p_saved := Reward.new()
+	p_saved.reward_type = Reward.RewardType.PASSIVE
+	p_saved.name = "SavedPassive"
+	p_saved.might = 3.0
+	player.equip_passive(p_saved)
+
+	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	cap.cur_health = cap.max_health
+	cap.reset_stats_at_beginning_of_fight()
+	cap.advance_hybrid_action_state() # hybrid_next_is_beast = true
+
+	Global.cur_char = player
+	Global.cur_enemy = cap
+	Global.cur_scene = "res://map/locations_screen.tscn"
+	Global.save()
+
+	# Clear runtime state and reload
+	Global.cur_char = null
+	Global.cur_enemy = null
+	Global.load_data()
+
+	_assert(Global.cur_char != null, "Reloaded cur_char from save")
+	var loaded_red: ColorLoadoutTrack = Global.cur_char.get_track_for_color(Global.TileColor.RED)
+	_assert(loaded_red != null and loaded_red.max_slots == 5, "Reloaded Red track preserves 5-slot normal capacity")
+	_assert(loaded_red.next_entry_cursor == 1, "Reloaded Red track preserves next_entry_cursor == 1")
+	_assert(Global.cur_char.has_flag("test_tag_persisted"), "Reloaded PlayerResource preserves unlocked_tags")
+	_assert(Global.cur_char.equipped_passives.size() == 1, "Reloaded cur_char preserves 1 equipped passive")
+	_assert(Global.cur_char.equipped_passives[0].name == "SavedPassive", "Reloaded passive is SavedPassive")
+	_assert(is_equal_approx(Global.cur_char.might, base_might + 3.0), "Reloaded passive grants +3 might")
+	_assert(Global.cur_enemy != null and Global.cur_enemy.hybrid_next_is_beast == true, "Reloaded EnemyResource preserves hybrid_next_is_beast state")
+
+	if FileAccess.file_exists(test_save_path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(test_save_path))
+	Global.save_path = prev_save_path
+
+# ------------------------------------------------------------------------------
+# 9. Unified Buffs & Debuffs System (Player & Enemy + UI)
+# ------------------------------------------------------------------------------
+func _test_unified_buffs_and_debuffs() -> void:
+	print("\n--- 9. Unified Buffs & Debuffs System ---")
+	var dodge_def: BuffRegistry.BuffDef = BuffRegistry.get_def("dodge")
+	var combo_def: BuffRegistry.BuffDef = BuffRegistry.get_def("combo")
+	_assert(dodge_def != null and dodge_def.get_icon() != null, "BuffRegistry loads buff-dodge.png icon")
+	_assert(combo_def != null and combo_def.get_icon() != null, "BuffRegistry loads buff-combo.png icon")
+	_assert(BuffRegistry.normalize_id("dodging") == "dodge", "BuffRegistry normalizes 'dodging' -> 'dodge'")
+	_assert(BuffRegistry.normalize_id("hand_combo") == "combo", "BuffRegistry normalizes 'hand_combo' -> 'combo'")
+	_assert(BuffRegistry.normalize_id("combo") == "combo", "BuffRegistry normalizes 'combo' -> 'combo'")
+
+	var plr := PlayerResource.new()
+	var enm := EnemyResource.new()
+	plr.max_health = 50.0
+	plr.cur_health = 50.0
+	enm.max_health = 50.0
+	enm.cur_health = 50.0
+
+	# Test Player & Enemy buff API and property bridging
+	plr.add_buff("dodge", 1)
+	plr.add_buff("combo", 3)
+	_assert(plr.has_buff("dodge") and plr.dodge == true and plr.dodging == true, "Player has_buff('dodge') syncs with plr.dodge and plr.dodging")
+	_assert(plr.get_buff_stacks("combo") == 3 and plr.combo == 3 and plr.hand_combo == 3, "Player get_buff_stacks('combo') syncs with plr.combo and plr.hand_combo")
+
+	enm.modify_stat("dodge", true, false)
+	enm.modify_stat("combo", 4, false)
+	_assert(enm.has_buff("dodge") and enm.dodge == true, "Enemy modify_stat('dodge') activates 'dodge' buff")
+	_assert(enm.get_buff_stacks("combo") == 4 and enm.combo == 4, "Enemy modify_stat('combo') sets 'combo' stacks to 4")
+
+	# Test Dodge negating physical damage on both Player and Enemy
+	var dealt_to_plr: float = plr.take_damage(15.0, false, 0, enm)
+	_assert(is_equal_approx(dealt_to_plr, 0.0) and is_equal_approx(plr.cur_health, 50.0), "Player Dodge negates incoming physical attack")
+	_assert(not plr.has_buff("dodge") and plr.dodge == false, "Player Dodge buff is consumed after dodging")
+
+	var dealt_to_enm: float = enm.take_damage(20.0, false, 0, plr)
+	_assert(is_equal_approx(dealt_to_enm, 0.0) and is_equal_approx(enm.cur_health, 50.0), "Enemy Dodge negates incoming physical attack")
+	_assert(not enm.has_buff("dodge") and enm.dodge == false, "Enemy Dodge buff is consumed after dodging")
+
+	# Test Custom Debuff Registration & Turn-Start Decay
+	BuffRegistry.register_buff(
+		"test_bleed",
+		"Bleed",
+		"res://assets/sprites/ui/combat/buff_combo.png",
+		true,
+		true,
+		false,
+		1,
+		"Loses stacks each turn."
+	)
+	enm.add_buff("test_bleed", 2)
+	_assert(enm.get_buff_stacks("test_bleed") == 2, "Custom debuff 'test_bleed' applied with 2 stacks on Enemy")
+	enm.tick_buffs_at_turn_start()
+	_assert(enm.get_buff_stacks("test_bleed") == 1, "Turn start decays 'test_bleed' from 2 -> 1 and clears 'combo'")
+	_assert(enm.get_buff_stacks("combo") == 0, "Turn start clears turn-scoped 'combo' buff")
+
+	# Test Unified Turn-End Reset for Player and Enemy
+	plr.reset_stats_at_end_of_turn()
+	plr.add_buff("combo", 4)
+	_assert(plr.combo == 4, "Player has 4 combo stacks")
+	plr.reset_stats_at_end_of_turn()
+	_assert(plr.combo == 0 and not plr.has_buff("combo"), "Player combo resets to 0 on turn end")
+
+	enm.add_buff("combo", 3)
+	_assert(enm.combo == 3, "Enemy has 3 combo stacks")
+	enm.reset_stats_at_end_of_turn()
+	_assert(enm.combo == 0 and not enm.has_buff("combo"), "Enemy combo resets to 0 on turn end")
+
+	# Test Start Combo retention on Turn End
+	plr.start_combo = 1
+	plr.reset_stats_at_end_of_turn()
+	plr.add_buff("combo", 5) # Combo rises 1 + 5 = 6
+	_assert(plr.combo == 6, "Player accumulated 6 combo with start_combo=1")
+	plr.reset_stats_at_end_of_turn()
+	_assert(plr.combo == 1, "Player turn end resets to start_combo (1)")
+	plr.start_combo = 0
+	plr.reset_stats_at_end_of_turn()
+
+	# Test that moves exhaustion only triggers on positive -> zero transition, never during end-of-turn reset
+	var turn_finish_emitted: Array = [0]
+	var count_turn_finish := func(): turn_finish_emitted[0] += 1
+	plr.playerFinishedTurn.connect(count_turn_finish)
+	plr.moves_left = 2
+	plr.modify_stat("moves_left", -1) # moves_left = 1, should not emit
+	_assert(turn_finish_emitted[0] == 0, "Decreasing moves_left (2 -> 1) does not emit playerFinishedTurn")
+	plr.modify_stat("moves_left", -1) # moves_left = 0, should emit once
+	_assert(turn_finish_emitted[0] == 1, "Exhausting moves_left (1 -> 0) emits playerFinishedTurn exactly once")
+	plr.reset_stats_at_end_of_turn() # Should clean up without re-emitting
+	_assert(turn_finish_emitted[0] == 1, "reset_stats_at_end_of_turn() does not re-emit playerFinishedTurn (no infinite recursion)")
+	plr.modify_stat("moves_left", 0, false) # Setting 0 when already 0 should not re-emit
+	_assert(turn_finish_emitted[0] == 1, "Setting moves_left to 0 when already 0 does not re-emit playerFinishedTurn")
+	plr.playerFinishedTurn.disconnect(count_turn_finish)
+
+	# Test BuffContainer UI for both Player and Enemy
+	var buff_scene: PackedScene = load("res://ui/hud/buff_container.tscn")
+	var plr_buff_ui: BuffContainer = buff_scene.instantiate() as BuffContainer
+	var enm_buff_ui: BuffContainer = buff_scene.instantiate() as BuffContainer
+	add_child(plr_buff_ui)
+	add_child(enm_buff_ui)
+
+	plr.clear_all_buffs()
+	plr_buff_ui.bind_entity(plr)
+	_assert(plr_buff_ui.get_active_slot_count() == 0, "BuffContainer shows 0 active slots when entity has no buffs")
+
+	plr.set_buff("dodge", 1)
+	plr.set_buff("combo", 5)
+	_assert(plr_buff_ui.get_active_slot_count() == 2, "BuffContainer reactively shows 2 active slots for Dodge + Combo")
+	_assert(plr_buff_ui.get_slot_buff_id(0) == "dodge", "Slot 0 displays 'dodge'")
+	var slot0_lbl: Label = plr_buff_ui.get_slot_node(0).get_node("StackLabel") as Label
+	_assert(slot0_lbl.visible == false, "Single-stack Dodge hides stack number badge")
+	_assert(plr_buff_ui.get_slot_buff_id(1) == "combo" and plr_buff_ui.get_slot_stacks(1) == 5, "Slot 1 displays 'combo' with 5 stacks")
+	var slot1_lbl: Label = plr_buff_ui.get_slot_node(1).get_node("StackLabel") as Label
+	_assert(slot1_lbl.visible == true and slot1_lbl.text == "5", "Combo slot displays stack count '5'")
+
+	enm_buff_ui.bind_entity(enm)
+	_assert(enm_buff_ui.get_active_slot_count() == 1 and enm_buff_ui.get_slot_buff_id(0) == "test_bleed", "Enemy BuffContainer displays active debuff")
+	enm.remove_buff("test_bleed")
+	_assert(enm_buff_ui.get_active_slot_count() == 0, "Enemy BuffContainer clears slot when debuff is removed")
+
+	# Test 5xX dynamic row expansion when more than 10 buffs/debuffs are active
+	plr.clear_all_buffs()
+	for i in range(12):
+		var extra_id := "test_buff_%d" % i
+		BuffRegistry.register_buff(
+			extra_id,
+			"Test Buff %d" % i,
+			"res://assets/sprites/ui/combat/buff_dodge.png",
+			false,
+			false,
+			true,
+			0,
+			"Test buff slot overflow."
+		)
+		plr.set_buff(extra_id, 1)
+	_assert(plr_buff_ui.get_active_slot_count() == 12, "BuffContainer dynamically expands to display all 12 active buffs")
+	var slot_10: Control = plr_buff_ui.get_slot_node(10)
+	var slot_11: Control = plr_buff_ui.get_slot_node(11)
+	_assert(slot_10 != null and slot_10.position == Vector2(0, 84), "11th buff (index 10) creates a new 3rd row at (0, 84)")
+	_assert(slot_11 != null and slot_11.position == Vector2(42, 84), "12th buff (index 11) sits on 3rd row col 1 at (42, 84)")
+
+	plr_buff_ui.queue_free()
+	enm_buff_ui.queue_free()
+
+	# Test Magic Armor capping at max_health
+	plr.max_health = 20.0
+	plr.cur_mage_armor = 0.0
+	plr.modify_stat("cur_mage_armor", 15.0)
+	_assert(plr.cur_mage_armor == 15.0, "Magic armor accumulates to 15 when below max_health (20)")
+	plr.modify_stat("cur_mage_armor", 10.0)
+	_assert(plr.cur_mage_armor == 20.0, "Magic armor caps at max_health (20) when receiving +10 at 15")
+	plr.modify_stat("cur_mage_armor", 50.0)
+	_assert(plr.cur_mage_armor == 20.0, "Magic armor remains capped at max_health (20) even with large bonus")
+	# Clamping when max_health decreases
+	plr.max_health = 16.0
+	_assert(plr.cur_mage_armor == 16.0, "Magic armor clamps down to 16 when max_health drops to 16")
+	# Floor at 0
+	plr.modify_stat("cur_mage_armor", -30.0)
+	_assert(plr.cur_mage_armor == 0.0, "Magic armor cannot drop below 0")
+
+func _test_five_passive_slots_and_inventory_removal() -> void:
+	print("\n--- 10. Five Passive Slots & Inventory Bag Removal ---")
+	var plr := PlayerResource.new()
+	plr.reset_stats_at_beginning_of_game()
+
+	_assert(PlayerResource.MAX_PASSIVE_SLOTS == 5, "PlayerResource.MAX_PASSIVE_SLOTS is exactly 5")
+	_assert(plr.equipped_passives.is_empty(), "equipped_passives starts empty")
+	_assert(plr.can_equip_passive() == true, "can_equip_passive is true when slots are open")
+
+	# Equip 5 passives
+	for i in range(5):
+		var rew := Reward.new()
+		rew.name = "Passive_%d" % i
+		rew.might = 2.0
+		var ok: bool = plr.equip_passive(rew)
+		_assert(ok == true, "Passive %d equipped successfully" % i)
+
+	_assert(plr.equipped_passives.size() == 5, "Player has exactly 5 passives equipped")
+	_assert(plr.can_equip_passive() == false, "can_equip_passive is false when 5/5 slots are full")
+	_assert(is_equal_approx(plr.might, 2.0 + 10.0), "5 passives grant +10 might (total 12.0)")
+
+	# Attempt to equip 6th passive without replace_index -> rejected
+	var rew_6 := Reward.new()
+	rew_6.name = "Passive_6"
+	rew_6.might = 5.0
+	var rejected: bool = plr.equip_passive(rew_6)
+	_assert(rejected == false, "6th passive is rejected without replace_index")
+	_assert(plr.equipped_passives.size() == 5, "Passives count remains 5 after rejected equip")
+
+	# Replace passive at slot index 2 with rew_6
+	var replaced: bool = plr.equip_passive(rew_6, 2)
+	_assert(replaced == true, "Replacing passive at index 2 succeeds")
+	_assert(plr.equipped_passives.size() == 5, "Passives count remains 5 after replacement")
+	_assert(plr.equipped_passives[2].name == "Passive_6", "Passive at slot 2 is now Passive_6")
+	# might: base 2.0 + 4*2.0 (8.0) + 1*5.0 (5.0) = 15.0
+	_assert(is_equal_approx(plr.might, 15.0), "Passive stats reconciled with zero drift: might is 15.0")
+
+	# Unequip passive at slot index 0
+	var unequipped = plr.unequip_passive(0)
+	_assert(unequipped != null and unequipped.name == "Passive_0", "Unequipped Passive_0 from index 0")
+	_assert(plr.equipped_passives.size() == 4, "Passives count is now 4")
+	_assert(plr.can_equip_passive() == true, "can_equip_passive is true again after unequipping")
+	# might: 15.0 - 2.0 = 13.0
+	_assert(is_equal_approx(plr.might, 13.0), "Passive stats correctly revoked after unequipping: might is 13.0")
+
+	# Test replacing equipment on full color line (no inventory bag)
+	var red_track: ColorLoadoutTrack = plr.get_track_for_color(Global.TileColor.RED)
+	red_track.max_slots = 5
+	red_track.equipped_modifiers.clear()
+	for i in range(5):
+		var eq := _make_test_equipment("OldMod_%d" % i, 10.0, 1)
+		eq.allowed_colors = [Global.TileColor.RED]
+		red_track.equipped_modifiers.append(eq)
+
+	_assert(red_track.get_used_slots() == 5, "Red track is full (5/5 slots)")
+	_assert(plr.modifier_inventory.is_empty(), "modifier_inventory bag is empty")
+
+	var new_mod := _make_test_equipment("NewBlade", 25.0, 1)
+	new_mod.allowed_colors = [Global.TileColor.RED]
+	var rep_ok: bool = plr.replace_modifier_on_track(red_track, 1, new_mod)
+	_assert(rep_ok == true, "replace_modifier_on_track successfully replaced slot 1")
+	_assert(red_track.equipped_modifiers[1].piece_name == "NewBlade", "Slot 1 now holds NewBlade")
+	_assert(plr.modifier_inventory.is_empty(), "Displaced item was discarded; modifier_inventory remains empty")
+
+# ------------------------------------------------------------------------------
+# 11. Unified 4 Reward Types & Build-Affinity Class Pool Algorithm
+# ------------------------------------------------------------------------------
+func _test_unified_four_reward_types_and_build_affinity() -> void:
+	print("\n--- 11. Unified 4 Reward Types & Build-Affinity Class Pool ---")
+	var plr: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	plr.reset_stats_at_beginning_of_game()
+
+	# 1. Verify all 4 RewardType enum values exist and work on unified Reward
+	var punch_eq: Equipment = load("res://equipment/items/punch.tres")
+	var eq_reward: Reward = Reward.from_equipment(punch_eq, int(Equipment.Rarity.RARE), 2)
+	_assert(eq_reward.reward_type == Reward.RewardType.EQUIPMENT, "Reward.from_equipment sets reward_type == EQUIPMENT")
+	_assert(eq_reward.get_effective_family() == "fists", "EQUIPMENT Reward inherits 'fists' family from Punch")
+	_assert(eq_reward.get_display_name() == "Punch", "EQUIPMENT Reward inherits display name from Punch")
+	_assert(eq_reward.equipment_to_grant.size() == 2, "EQUIPMENT Reward grants 2 copies when count=2")
+	_assert(eq_reward.get_effective_shop_price() == 75, "RARE Reward defaults to 75 gold shop price")
+
+	# 2. Verify Type 1 (PASSIVE), Type 2 (STAT_BUFF), Type 3 (MECHANIC_UNLOCK)
+	var pas_rew: Reward = load("res://rewards/cards/fists/fists1_5_iron_muscles.tres").duplicate(true)
+	_assert(pas_rew.reward_type == Reward.RewardType.PASSIVE, "Iron Muscles is RewardType.PASSIVE")
+	_assert(pas_rew.get_effective_family() == "fists", "Iron Muscles has family 'fists'")
+	var might_before: float = plr.might
+	RewardGrantHandler.grant_reward(pas_rew, true, plr)
+	_assert(plr.equipped_passives.size() == 1, "Granting PASSIVE reward equips it into passives ring")
+	_assert(is_equal_approx(plr.might, might_before + 1.0), "Equipped PASSIVE reward boosts Might by +1")
+
+	var stat_rew: Reward = load("res://rewards/cards/body/body0_strong_body_1.tres").duplicate(true)
+	_assert(stat_rew.reward_type == Reward.RewardType.STAT_BUFF, "Strong Body I is RewardType.STAT_BUFF")
+	var max_hp_before: float = plr.max_health
+	RewardGrantHandler.grant_reward(stat_rew, true, plr)
+	_assert(is_equal_approx(plr.max_health, max_hp_before + 2.0), "Granting STAT_BUFF reward permanently increases max_health by +2")
+	_assert(plr.has_flag("flg_rew_body_1"), "Strong Body I unlocks tag 'flg_rew_body_1'")
+
+	var mech_rew: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres").duplicate(true)
+	_assert(mech_rew.reward_type == Reward.RewardType.MECHANIC_UNLOCK, "Horizontal Bombs is RewardType.MECHANIC_UNLOCK")
+	_assert(not plr.flg_can_spawn_row_bombs, "Row bombs initially locked")
+	_assert(RewardGrantHandler.can_be_offered_to(mech_rew, plr) == true, "Horizontal Bombs can be offered while locked")
+	RewardGrantHandler.grant_reward(mech_rew, true, plr)
+	_assert(plr.flg_can_spawn_row_bombs == true, "Granting MECHANIC_UNLOCK unlocks row bombs on player")
+	_assert(mech_rew.is_already_unlocked(plr) == true, "is_already_unlocked returns true after unlocking row bombs")
+	_assert(RewardGrantHandler.can_be_offered_to(mech_rew, plr) == false, "Already-unlocked mechanic cannot be offered again")
+
+	# Test Extra Mechanic Unlocks: Color Pool Addition, Transmutation, and Slot Expansion
+	var add_purple_rew := Reward.new()
+	add_purple_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	add_purple_rew.mechanic_type = Reward.MechanicType.ADD_COLOR_TO_POOL
+	add_purple_rew.target_color = Global.TileColor.PURPLE
+	RewardGrantHandler.grant_reward(add_purple_rew, true, plr)
+	_assert(plr.active_color_pool.has(Global.TileColor.PURPLE), "MECHANIC_UNLOCK (ADD_COLOR_TO_POOL) adds Purple to active_color_pool")
+
+	var transmute_rew := Reward.new()
+	transmute_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	transmute_rew.mechanic_type = Reward.MechanicType.TRANSMUTE_COLOR
+	transmute_rew.target_color = Global.TileColor.RED
+	transmute_rew.transmute_to_color = Global.TileColor.DARK_CRIMSON
+	RewardGrantHandler.grant_reward(transmute_rew, true, plr)
+	_assert(plr.active_color_pool.has(Global.TileColor.DARK_CRIMSON), "MECHANIC_UNLOCK (TRANSMUTE_COLOR) transmutes Red to Dark Crimson")
+
+	var expand_slots_rew := Reward.new()
+	expand_slots_rew.reward_type = Reward.RewardType.MECHANIC_UNLOCK
+	expand_slots_rew.mechanic_type = Reward.MechanicType.EXPAND_TRACK_SLOTS
+	expand_slots_rew.target_color = Global.TileColor.BLUE
+	expand_slots_rew.slot_expansion_amount = 1
+	var blue_slots_before: int = plr.get_track_for_color(Global.TileColor.BLUE).max_slots
+	RewardGrantHandler.grant_reward(expand_slots_rew, true, plr)
+	_assert(plr.get_track_for_color(Global.TileColor.BLUE).max_slots == blue_slots_before + 1, "MECHANIC_UNLOCK (EXPAND_TRACK_SLOTS) expands Blue track slots by +1")
+
+	# 3. Verify Build-Affinity Weighting Algorithm
+	var fist_player := PlayerResource.new()
+	fist_player.reset_stats_at_beginning_of_game()
+	# Equip 4 fists items on fist_player (3 Punches on Red track + 1 Iron Muscles passive)
+	for _i in range(3):
+		fist_player.add_modifier_reward(punch_eq, true)
+	fist_player.equip_passive(pas_rew)
+
+	var fam_counts: Dictionary = fist_player.get_build_family_counts()
+	_assert(int(fam_counts.get("fists", 0)) == 4, "Build family counter detects 4 equipped 'fists' items (3 active + 1 passive)")
+
+	var fist_cand: Reward = load("res://rewards/cards/fists/fists1_punch.tres")
+	var sword_cand: Reward = load("res://rewards/cards/sword/sword0_small_sword.tres")
+	var w_fist_affinity: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, true)
+	var w_sword_affinity: float = RewardGrantHandler.compute_selection_weight(sword_cand, fist_player, true)
+	var w_fist_monster: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, false)
+
+	# With 4 fists items and 0.75 per item: weight = 1.0 * (1.0 + 4 * 0.75) = 4.0
+	_assert(is_equal_approx(w_fist_affinity, 4.0), "Fists reward weight scales to 4.0x on a 4-item fists build")
+	_assert(is_equal_approx(w_sword_affinity, 1.0), "Unrelated sword reward stays at 1.0x weight")
+	_assert(is_equal_approx(w_fist_monster, 1.0), "Monster pool draw (use_build_affinity=false) ignores build affinity (1.0x)")
+
+	# Statistical check: drawing 200 times between [fist_cand, sword_cand] with build affinity enabled
+	var test_candidates: Array[Resource] = [fist_cand, sword_cand]
+	var fist_picks: int = 0
+	for _i in range(200):
+		var picked_res: Resource = RewardGrantHandler.pick_weighted_candidate(test_candidates, fist_player, true)
+		if picked_res == fist_cand:
+			fist_picks += 1
+	# Expected: ~80% (160/200). Assert strongly > 60% (> 120/200)
+	_assert(fist_picks >= 125, "Build-affinity weighted draw strongly favors fists reward (%d / 200 picks)" % fist_picks)
+
+	# 4. Verify Dynamic Rarity Scaling, Fixed Rarity, and Rarity Floor / Ceiling
+	var dyn_stat_rew := Reward.new()
+	dyn_stat_rew.reward_type = Reward.RewardType.STAT_BUFF
+	dyn_stat_rew.name = "Vitality Blessing"
+	dyn_stat_rew.max_health = 2.0
+	dyn_stat_rew.auto_scale_stats_with_rarity = true
+	dyn_stat_rew.min_rarity = Reward.Rarity.UNCOMMON # Floor: UNCOMMON
+	dyn_stat_rew.max_rarity = Reward.Rarity.EPIC     # Ceiling: EPIC
+
+	_assert(not dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.COMMON)), "Floor UNCOMMON blocks COMMON roll")
+	_assert(dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.UNCOMMON)), "Floor UNCOMMON allows UNCOMMON roll")
+	_assert(dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.EPIC)), "Ceiling EPIC allows EPIC roll")
+	_assert(not dyn_stat_rew.can_roll_at_rarity(int(Reward.Rarity.LEGENDARY)), "Ceiling EPIC blocks LEGENDARY roll")
+
+	# Clamping behavior when duplicated outside [min_rarity, max_rarity]
+	var clamped_low: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.COMMON)
+	var clamped_high: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.GODLY)
+	var rolled_epic: Reward = dyn_stat_rew.duplicate_with_rarity(Reward.Rarity.EPIC)
+	_assert(clamped_low.rarity == Reward.Rarity.UNCOMMON, "Clamps COMMON up to min_rarity floor (UNCOMMON)")
+	_assert(clamped_high.rarity == Reward.Rarity.EPIC, "Clamps GODLY down to max_rarity ceiling (EPIC)")
+	_assert(is_equal_approx(rolled_epic.get_effective_max_health(), 5.0), "Dynamic STAT_BUFF scales max_health at EPIC (2.0 * 2.5 = 5.0)")
+
+	# Explicit RewardRarityTier multi-tier manual override test (e.g. Base=10 HP, Uncommon=12 HP, Rare=16 HP + 5 Heal)
+	var hp_pickup := Reward.new()
+	hp_pickup.reward_type = Reward.RewardType.STAT_BUFF
+	hp_pickup.name = "Health Pickup"
+	hp_pickup.max_health = 10.0
+
+	var tier_uncommon := RewardRarityTier.new()
+	tier_uncommon.rarity = RewardRarityTier.Rarity.UNCOMMON
+	tier_uncommon.max_health = 12.0 # is_stat_override defaults to true
+
+	var tier_rare := RewardRarityTier.new()
+	tier_rare.rarity = RewardRarityTier.Rarity.RARE
+	tier_rare.max_health = 16.0
+	tier_rare.heal_hp = 5.0
+
+	hp_pickup.rarity_tiers = [tier_uncommon, tier_rare]
+
+	var hp_common: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.COMMON)
+	var hp_uncommon: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.UNCOMMON)
+	var hp_rare: Reward = hp_pickup.duplicate_with_rarity(Reward.Rarity.RARE)
+
+	_assert(is_equal_approx(hp_common.get_effective_max_health(), 10.0) and is_equal_approx(hp_common.get_effective_heal_hp(), 0.0), "Base COMMON Health Pickup gives 10 Max HP and 0 Heal")
+	_assert(is_equal_approx(hp_uncommon.get_effective_max_health(), 12.0) and is_equal_approx(hp_uncommon.get_effective_heal_hp(), 0.0), "Manual UNCOMMON override gives 12 Max HP and 0 Heal")
+	_assert(is_equal_approx(hp_rare.get_effective_max_health(), 16.0) and is_equal_approx(hp_rare.get_effective_heal_hp(), 5.0), "Manual RARE override gives 16 Max HP AND +5 Heal")
+
+	# Verify applying manual RARE override actually grants both +16 max_health (which also raises cur_health by +16) and +5 cur_health heal to player
+	var test_plr := PlayerResource.new()
+	test_plr.max_health = 20.0
+	test_plr.cur_health = 10.0 # Missing 10 HP
+	RewardGrantHandler.grant_reward(hp_rare, true, test_plr)
+	_assert(is_equal_approx(test_plr.max_health, 36.0), "Claiming manual RARE Health Pickup raises max_health 20 -> 36 (+16)")
+	# max_health increase (+16) raises cur_health 10 -> 26, and heal_hp (+5) heals 26 -> 31!
+	_assert(is_equal_approx(test_plr.cur_health, 31.0), "Claiming manual RARE Health Pickup raises cur_health by +16 (from max_health) + 5 (from heal_hp) = 31")
+
+	# Fixed rarity lock test (e.g. Bomb unlocks locked at LEGENDARY)
+	var fixed_bomb: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres")
+	_assert(fixed_bomb.fixed_rarity == true and fixed_bomb.rarity == Reward.Rarity.LEGENDARY, "Horizontal Bombs has fixed_rarity=true at LEGENDARY")
+	_assert(not RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "COMMON"), "Fixed LEGENDARY reward cannot roll at COMMON")
+	_assert(RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "LEGENDARY"), "Fixed LEGENDARY reward rolls at LEGENDARY")
+
+	# Equipment-granting Reward scales its embedded Equipment to the rolled rarity
+	var punch_card: Reward = load("res://rewards/cards/fists/fists1_punch.tres")
+	var epic_punch_card: Reward = RewardGrantHandler.prepare_draft_instance(punch_card, "EPIC") as Reward
+	_assert(epic_punch_card != null and epic_punch_card.rarity == Reward.Rarity.EPIC, "Drafted EQUIPMENT Reward scales to EPIC")
+	var granted_mods: Array[Equipment] = epic_punch_card.get_resolved_modifiers()
+	_assert(not granted_mods.is_empty() and granted_mods[0].rarity == Equipment.Rarity.EPIC, "Embedded Equipment inside drafted Reward also scales to EPIC")
+
+# ------------------------------------------------------------------------------
+# 12. Core Pillars & Low-Number Derived Stat Scaling System
+# ------------------------------------------------------------------------------
+func _test_core_pillars_and_derived_stat_scaling() -> void:
+	print("\n--- 12. Core Pillars & Low-Number Derived Stat Scaling System ---")
+	var plr := PlayerResource.new()
+	plr.might = 4.0
+	plr.grit = 6.0
+	plr.agility = 5.0
+	plr.spirit = 4.0
+	plr.bonus_max_health = 0.0
+
+	# 1. Health Formula: Base 15 + (Might * 1.0) + (Grit * 2.0) + bonus_max_health
+	# 15 + 4 + 12 = 31 HP
+	plr.recalculate_max_health()
+	_assert(is_equal_approx(plr.max_health, 31.0), "Derived Health = 15 + (4 * 1) + (6 * 2) = 31.0")
+
+	# Adding direct health buff: +5 HP -> 36 HP
+	plr.modify_stat("max_health", 5.0)
+	_assert(is_equal_approx(plr.max_health, 36.0), "Adding +5 direct HP buff increases max_health to 36.0")
+	_assert(is_equal_approx(plr.bonus_max_health, 5.0), "bonus_max_health accurately tracks direct HP buff (+5.0)")
+
+	# Increasing Might by 2 -> raises max_health by 2 (36 -> 38)
+	plr.modify_stat("might", 2.0)
+	_assert(is_equal_approx(plr.might, 6.0), "Might updated to 6.0")
+	_assert(is_equal_approx(plr.max_health, 38.0), "+2 Might automatically increases max_health from 36 to 38 (+2 HP)")
+
+	# Increasing Grit by 2 -> raises max_health by 4 (38 -> 42)
+	plr.modify_stat("grit", 2.0)
+	_assert(is_equal_approx(plr.grit, 8.0), "Grit updated to 8.0")
+	_assert(is_equal_approx(plr.max_health, 42.0), "+2 Grit automatically increases max_health from 38 to 42 (+4 HP)")
+
+	# 2. Luck & Magic Find
+	# Luck = Agility + Spirit + bonus_luck: 5.0 + 4.0 = 9.0
+	_assert(is_equal_approx(plr.get_luck(), 9.0), "Luck = Agility (5) + Spirit (4) = 9.0 (pure sum, no division)")
+	_assert(is_equal_approx(plr.get_magic_find(), 9.0), "Magic Find = Luck (9.0)")
+	plr.bonus_magic_find = 3.0
+	_assert(is_equal_approx(plr.get_magic_find(), 12.0), "Magic Find with +3 bonus = 12.0")
+	_assert(plr.rarity_bonus == 12, "Player rarity_bonus property matches Magic Find (12)")
+
+	# 3. Physical Attack Scaling: 25% vs 50%
+	var dummy := EnemyResource.new()
+	dummy.max_health = 100.0
+	dummy.cur_health = 100.0
+
+	# Fast weapon (25% scaling): Base 2 + round(6 Might * 0.25 = 1.5 -> 2) = 4 DMG
+	var dagger := Equipment.new()
+	dagger.piece_name = "Dagger"
+	dagger.base_damage = 2.0
+	dagger.damage_stat_scaling = Equipment.StatScaling.MIGHT
+	dagger.stat_scaling_ratio = 0.25
+	dagger.damage_type = Equipment.DamageType.PHYSICAL
+	dagger.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(dummy.cur_health, 96.0), "25% scaling weapon deals Base 2 + 2 = 4 DMG (100 -> 96)")
+
+	# Heavy weapon (50% scaling): Base 4 + round(6 Might * 0.50 = 3) = 7 DMG
+	var greatsword := Equipment.new()
+	greatsword.piece_name = "Greatsword"
+	greatsword.base_damage = 4.0
+	greatsword.damage_stat_scaling = Equipment.StatScaling.MIGHT
+	greatsword.stat_scaling_ratio = 0.50
+	greatsword.damage_type = Equipment.DamageType.PHYSICAL
+	greatsword.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(dummy.cur_health, 89.0), "50% scaling weapon deals Base 4 + 3 = 7 DMG (96 -> 89)")
+
+	# 4. Mystic DMG: Always fixed at 50% of Spirit (Spirit = 4.0 -> +2 DMG)
+	var spell := Equipment.new()
+	spell.piece_name = "Arcane Spark"
+	spell.base_damage = 3.0
+	spell.damage_type = Equipment.DamageType.MAGIC
+	spell.damage_stat_scaling = Equipment.StatScaling.SPIRIT
+	spell.stat_scaling_ratio = 0.10 # Ignored! Mystic DMG always scales at 50%
+	spell.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	# Base 3 + round(4 Spirit * 0.50 = 2) = 5 DMG (89 -> 84)
+	_assert(is_equal_approx(dummy.cur_health, 84.0), "Mystic DMG fixed at 50% Spirit: Base 3 + 2 = 5 DMG (89 -> 84)")
+
+	# 5. Armor Scaling: Physical (Fixed 25% of Grit) vs Mystic Armor (Fixed 50% of Spirit)
+	plr.cur_armor = 0.0
+	plr.cur_mystic_armor = 0.0
+
+	# Physical Shield: Base 2 + round(8 Grit * 0.25 = 2) = 4 Armor
+	var shield := Equipment.new()
+	shield.piece_name = "Iron Shield"
+	shield.base_armor = 2.0
+	shield.armor_stat_scaling = Equipment.StatScaling.GRIT
+	shield.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(plr.cur_armor, 4.0), "Physical Shield scales fixed 25% Grit: Base 2 + 2 = 4 Armor")
+
+	# Mystic Ward: Base 2 + round(4 Spirit * 0.50 = 2) = 4 Mystic Armor
+	var ward := Equipment.new()
+	ward.piece_name = "Mystic Ward"
+	ward.is_mystical = true
+	ward.base_mystic_armor = 2.0
+	ward.mystic_armor_stat_scaling = Equipment.StatScaling.SPIRIT
+	ward.activate({"attacker": plr, "target": dummy, "is_crit": false})
+	_assert(is_equal_approx(plr.cur_mystic_armor, 4.0), "Mystic Ward scales fixed 50% Spirit: Base 2 + 2 = 4 Mystic Armor")
+
+	# 6. Explicit Inspector Toggle (is_mystical): Physical (Agility) vs Mystical (Spirit) CDR
+	plr.cooldown_reduction = 0.0
+	plr.agility = 10.0 # -2 turns CDR for physical
+	plr.spirit = 5.0   # -1 turn CDR for mystical
+
+	var phys_item := Equipment.new()
+	phys_item.piece_name = "Physical Dash"
+	phys_item.is_mystical = false # Explicit Physical toggle
+	phys_item.cooldown_turns = 3
+	phys_item.on_triggered(plr)
+	_assert(phys_item.current_cooldown == 1, "is_mystical=false uses Agility CDR: 3 - (10/5 = 2) = 1 turn")
+
+	var myst_item := Equipment.new()
+	myst_item.piece_name = "Mystic Flash"
+	myst_item.is_mystical = true # Explicit Mystical toggle
+	myst_item.cooldown_turns = 3
+	myst_item.on_triggered(plr)
+	_assert(myst_item.current_cooldown == 2, "is_mystical=true uses Spirit CDR: 3 - (5/5 = 1) = 2 turns")

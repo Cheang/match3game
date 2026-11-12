@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://ubrv4prv25xe" path="res://ui/hud/attack_dock.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://ui/hud/monster_track_diamond.tscn" id="2_diamond"]
+
+[node name="attackDock" type="Control"]
+z_index = 250
+layout_mode = 3
+anchors_preset = 0
+offset_left = 9.0
+offset_top = 85.0
+offset_right = 281.0
+offset_bottom = 187.0
+script = ExtResource("1_script")
+
+[node name="Slot1" parent="." instance=ExtResource("2_diamond")]
+offset_top = 34.0
+offset_bottom = 102.0
+default_color = 100
+
+[node name="Slot2" parent="." instance=ExtResource("2_diamond")]
+offset_left = 34.0
+offset_top = 0.0
+offset_right = 102.0
+offset_bottom = 68.0
+default_color = 400
+
+[node name="Slot3" parent="." instance=ExtResource("2_diamond")]
+offset_left = 68.0
+offset_top = 34.0
+offset_right = 136.0
+offset_bottom = 102.0
+default_color = 200
+
+[node name="Slot4" parent="." instance=ExtResource("2_diamond")]
+offset_left = 102.0
+offset_top = 0.0
+offset_right = 170.0
+offset_bottom = 68.0
+default_color = 500
+
+[node name="Slot5" parent="." instance=ExtResource("2_diamond")]
+offset_left = 136.0
+offset_top = 34.0
+offset_right = 204.0
+offset_bottom = 102.0
+default_color = 300
+
+[node name="Slot6" parent="." instance=ExtResource("2_diamond")]
+offset_left = 170.0
+offset_top = 0.0
+offset_right = 238.0
+offset_bottom = 68.0
+default_color = 0
+
+[node name="Slot7" parent="." instance=ExtResource("2_diamond")]
+offset_left = 204.0
+offset_top = 34.0
+offset_right = 272.0
+offset_bottom = 102.0
+default_color = 100

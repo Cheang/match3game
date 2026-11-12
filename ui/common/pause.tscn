@@ -1,0 +1,804 @@
+[gd_scene format=3 uid="uid://b0elnudfkd65c"]
+
+[ext_resource type="Script" uid="uid://dnmifd028g8xu" path="res://ui/common/pause.gd" id="1_drcth"]
+[ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/sprites/ui/legacy/btn/btn_disabled.png" id="2_8aufw"]
+[ext_resource type="Texture2D" uid="uid://7trj67p4k2av" path="res://assets/sprites/ui/legacy/btn/btn_2_hover.png" id="3_hw4hm"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="4_5o83o"]
+[ext_resource type="Texture2D" uid="uid://cbn51l2fif0f5" path="res://assets/sprites/ui/legacy/btn/btn_2.png" id="4_g3erw"]
+[ext_resource type="Texture2D" uid="uid://bcr8je46e1jtq" path="res://assets/sprites/ui/legacy/icons/settings.png" id="5_h1nck"]
+[ext_resource type="Texture2D" uid="uid://dxclfssfpgodb" path="res://assets/sprites/ui/legacy/icons/gold.png" id="6_gk11h"]
+[ext_resource type="Texture2D" uid="uid://bm7gbwqth4aa2" path="res://assets/sprites/ui/legacy/icons/backpack.png" id="8_cxg1n"]
+[ext_resource type="Texture2D" uid="uid://c4nol0lsxhees" path="res://assets/sprites/ui/legacy/icons/backpack_p.png" id="9_iv3av"]
+[ext_resource type="StyleBox" uid="uid://ixohy6piondu" path="res://assets/sprites/ui/legacy/btn/new_style_box_texture.tres" id="10_h3k5d"]
+[ext_resource type="Script" uid="uid://dj6484hl28642" path="res://ui/inventory_overlay/stats_panel.gd" id="10_rk6m7"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/font_153.ttf" id="11_flpho"]
+[ext_resource type="Texture2D" uid="uid://demwyq5vri1pv" path="res://assets/sprites/ui/legacy/pause_bg.png" id="12_xej0p"]
+[ext_resource type="Texture2D" uid="uid://ccnv4q1dqhdo2" path="res://assets/sprites/ui/legacy/btn/btn_2_light.png" id="12_xyn8i"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7w8bp"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d58vm"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ffxwl"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p0rtf"]
+texture = ExtResource("2_8aufw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_udpcd"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7tuy4"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gg176"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d54e2"]
+texture = ExtResource("3_hw4hm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4ggku"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8adbt"]
+texture = ExtResource("12_xyn8i")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pawyc"]
+texture = ExtResource("4_g3erw")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8gdkv"]
+texture = ExtResource("12_xyn8i")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qwfgh"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("12_xej0p")
+texture_margin_left = 120.0
+texture_margin_top = 120.0
+texture_margin_right = 120.0
+texture_margin_bottom = 120.0
+
+[node name="pause" type="Control" unique_id=782633682]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_drcth")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1690545878]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1152315543]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=228489318]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="pause_btn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=535708049]
+custom_minimum_size = Vector2(61, 61)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_7w8bp")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_d58vm")
+theme_override_styles/hover = SubResource("StyleBoxTexture_ffxwl")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_p0rtf")
+icon = ExtResource("5_h1nck")
+
+[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1150278477]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=855088250]
+custom_minimum_size = Vector2(269, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxTexture_udpcd")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer" unique_id=1497530795]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_outline_color = Color(0.384314, 0.333333, 0.396078, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 32
+text = "text"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="spacer2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1335217661]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=895667638]
+custom_minimum_size = Vector2(61, 61)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control" unique_id=200829297]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -21.0
+offset_right = 21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_7tuy4")
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer" unique_id=246694142]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer" unique_id=22951037]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer" unique_id=1622480069]
+layout_mode = 2
+texture = ExtResource("6_gk11h")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer" unique_id=1421972740]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer" unique_id=1931524594]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+
+[node name="gold" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/CenterContainer/HBoxContainer/VBoxContainer" unique_id=1727712827]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_outline_color = Color(0.384314, 0.333333, 0.396078, 1)
+theme_override_constants/line_spacing = -13
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "9999"
+horizontal_alignment = 1
+vertical_alignment = 3
+visible_characters = 4
+
+[node name="TextureButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer" unique_id=1576210551]
+layout_mode = 2
+flat = true
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1964176730]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="stats_overlay" type="MarginContainer" parent="." unique_id=1755790192]
+visible = false
+custom_minimum_size = Vector2(576, 1024)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -288.0
+offset_right = 288.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 140
+theme_override_constants/margin_right = 20
+
+[node name="Container" type="PanelContainer" parent="stats_overlay" unique_id=1884693361]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_gg176")
+
+[node name="MarginContainer" type="MarginContainer" parent="stats_overlay/Container" unique_id=292439489]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer" unique_id=1589015356]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer" unique_id=1034455969]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TextureButton" type="TextureButton" parent="stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1485099188]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+keep_pressed_outside = true
+texture_normal = ExtResource("8_cxg1n")
+texture_pressed = ExtResource("9_iv3av")
+stretch_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer" unique_id=1091147314]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 0
+
+[node name="Panel" type="Panel" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer" unique_id=521984787]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_d54e2")
+
+[node name="MarginContainer" type="MarginContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer" unique_id=1440472044]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer" unique_id=1863955145]
+layout_mode = 2
+
+[node name="player_class" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container" unique_id=1386627562]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_font_sizes/font_size = 22
+text = "Player Class"
+horizontal_alignment = 1
+
+[node name="infocontainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container" unique_id=933595165]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Deck" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer" unique_id=904879709]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck" unique_id=972733339]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="deck_container" type="HFlowContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Deck/ScrollContainer" unique_id=1910185260]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Stats" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer" unique_id=643525775]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("10_rk6m7")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats" unique_id=358839674]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="stat_container" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer" unique_id=427796546]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="health_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container" unique_id=1902017662]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part" unique_id=1940994040]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_health" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer" unique_id=1463816411]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
+theme_override_font_sizes/font_size = 32
+text = "Health"
+
+[node name="cat_health_max" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer" unique_id=1717837906]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max" unique_id=1363828235]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Max Health"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_max" unique_id=122267385]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_health_cur" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer" unique_id=486841252]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur" unique_id=733127763]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Current Health"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_cur" unique_id=235815448]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_health_lifesteal" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer" unique_id=1668912849]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal" unique_id=695815087]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Life Steal"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/health_part/VBoxContainer/cat_health_lifesteal" unique_id=471718453]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="defence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container" unique_id=1259506578]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part" unique_id=1780107097]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_defence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer" unique_id=1495253134]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
+theme_override_font_sizes/font_size = 32
+text = "Defence"
+
+[node name="cat_defence_startarmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer" unique_id=68943249]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor" unique_id=1566557441]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Starting Armor"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startarmor" unique_id=2060034582]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_defence_startmagearmor" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer" unique_id=173026456]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor" unique_id=1921841821]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Starting Magic Armor"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_startmagearmor" unique_id=978547144]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_defence_dmgreduction" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer" unique_id=196608844]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction" unique_id=500482999]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Flat Damage Reducion"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction" unique_id=919921139]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_defence_dmgreduction2" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer" unique_id=1319910633]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2" unique_id=446112807]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Damage Reducion"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2" unique_id=1625572422]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/defence_part/VBoxContainer/cat_defence_dmgreduction2" unique_id=86608013]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="offence_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container" unique_id=804631942]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part" unique_id=48123245]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_offence" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=1836094887]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
+theme_override_font_sizes/font_size = 32
+text = "Offence"
+
+[node name="cat_offence_str" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=941616565]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str" unique_id=2047274021]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Strength"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_str" unique_id=698715108]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_prof" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=323432397]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof" unique_id=403659152]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Proficiency"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_prof" unique_id=1321168951]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_dmgfluf" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=1388386810]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf" unique_id=843236257]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Empty Tile Damge"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_dmgfluf" unique_id=2025955911]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_offence_crit" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=2077936050]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit" unique_id=1646636130]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Critical Strike Chance"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit" unique_id=227948885]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_crit" unique_id=1802409361]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="cat_offence_critdmg" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer" unique_id=81135776]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg" unique_id=1817767550]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Critical Strike Damage"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg" unique_id=1532849047]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="percent" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/offence_part/VBoxContainer/cat_offence_critdmg" unique_id=326181810]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "%"
+
+[node name="magic_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container" unique_id=1029854860]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part" unique_id=560864394]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_magic" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer" unique_id=593497666]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
+theme_override_font_sizes/font_size = 32
+text = "Mysticism"
+
+[node name="cat_magic_mana" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer" unique_id=764594046]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana" unique_id=2061533562]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Energy"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/magic_part/VBoxContainer/cat_magic_mana" unique_id=483028342]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="utility_part" type="PanelContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container" unique_id=1229227547]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("10_h3k5d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part" unique_id=523247923]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="cat_utility" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer" unique_id=98773701]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.243137, 0.207843, 0.27451, 1)
+theme_override_font_sizes/font_size = 32
+text = "Utility"
+
+[node name="cat_utility_spd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer" unique_id=1412712284]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd" unique_id=1215590113]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Speed"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_spd" unique_id=1676383752]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_agility" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer" unique_id=611282920]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility" unique_id=1845293248]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Agility"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_agility" unique_id=1893448666]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_rerolls" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer" unique_id=334792917]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls" unique_id=589750775]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Rerolls"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_rerolls" unique_id=1932120566]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="cat_utility_cd" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer" unique_id=1333021235]
+layout_mode = 2
+
+[node name="name" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd" unique_id=2034252233]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "Cooldown Reduction"
+
+[node name="value" type="Label" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/infocontainer/Stats/ScrollContainer/stat_container/utility_part/VBoxContainer/cat_utility_cd" unique_id=1956826377]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.180392, 0.133333, 0.184314, 1)
+theme_override_fonts/font = ExtResource("11_flpho")
+text = "0000"
+
+[node name="tabs" type="HBoxContainer" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container" unique_id=1042293804]
+layout_mode = 2
+
+[node name="deck_btn" type="Button" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs" unique_id=1123667624]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_hover_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_4ggku")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8adbt")
+theme_override_styles/hover = SubResource("StyleBoxTexture_pawyc")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_8gdkv")
+toggle_mode = true
+button_pressed = true
+text = "Deck"
+
+[node name="stats_btn" type="Button" parent="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs" unique_id=1113908386]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_colors/font_hover_color = Color(0.698039, 0.729412, 0.564706, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.321569, 0.2, 0.247059, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_4ggku")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_8adbt")
+theme_override_styles/hover = SubResource("StyleBoxTexture_pawyc")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_8gdkv")
+toggle_mode = true
+text = "Stats"
+
+[node name="pause_overlay" type="PanelContainer" parent="." unique_id=1050894856]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxTexture_qwfgh")
+
+[node name="CenterContainer" type="CenterContainer" parent="pause_overlay" unique_id=32938013]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="pause_overlay/CenterContainer" unique_id=806171020]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="pause_overlay/CenterContainer/VBoxContainer" unique_id=412275115]
+custom_minimum_size = Vector2(350, 0)
+clip_contents = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "The game is paused"
+horizontal_alignment = 1
+
+[node name="resume" parent="pause_overlay/CenterContainer/VBoxContainer" unique_id=1575417691 instance=ExtResource("4_5o83o")]
+layout_mode = 2
+text = "Resume"
+
+[node name="help" parent="pause_overlay/CenterContainer/VBoxContainer" unique_id=2035215850 instance=ExtResource("4_5o83o")]
+layout_mode = 2
+disabled = true
+text = "Almanac"
+
+[node name="options" parent="pause_overlay/CenterContainer/VBoxContainer" unique_id=2045394872 instance=ExtResource("4_5o83o")]
+layout_mode = 2
+disabled = true
+text = "Settings"
+
+[node name="back_to_mm" parent="pause_overlay/CenterContainer/VBoxContainer" unique_id=1790010658 instance=ExtResource("4_5o83o")]
+layout_mode = 2
+text = "Main Menu"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/pause_btn" to="." method="_on_pause_btn_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Control/PanelContainer/TextureButton" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/HBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/deck_btn" to="." method="_on_deck_btn_pressed"]
+[connection signal="pressed" from="stats_overlay/Container/MarginContainer/VBoxContainer/MarginContainer/MarginContainer/container/tabs/stats_btn" to="." method="_on_stats_btn_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/help" to="." method="_on_help_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="pause_overlay/CenterContainer/VBoxContainer/back_to_mm" to="." method="_on_back_to_mm_pressed"]

@@ -84,7 +84,7 @@ func create_default_page(title: String, category: String = "Event", desc: String
 		"title": title,
 		"category": category,
 		"description": desc,
-		"background": "res://assets/level_ui/event/event_bg_general.png",
+		"background": "res://assets/sprites/events/event_bg_general.png",
 		"choices": [],
 		"incoming_choice_text": incoming_choice,
 		"graph_pos": Vector2(80, 120)
@@ -119,9 +119,9 @@ func create_default_choice(text: String = "Proceed") -> Dictionary:
 		"reward_desc": "You received a reward.",
 		"reward_stat": "gold",
 		"reward_stat_amount": 25.0,
-		"reward_piece_path": "res://tiles/equipment/short_sword.tres",
-		"enemy_path": "res://enemies/minion/pesents/pesent_1.tres",
-		"next_scene": "res://scenes/locations_screen.tscn",
+		"reward_piece_path": "res://equipment/items/short_sword.tres",
+		"enemy_path": "res://entities/enemies/minions/peasant/peasant_1.tres",
+		"next_scene": "res://map/locations_screen.tscn",
 		"gold_cost": 0,
 		"req_class": "None",
 		"req_stat": "None",
@@ -791,7 +791,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 				p_browse.pressed.connect(func():
 					file_dialog_mode = "pick_piece"
 					file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-					file_dialog.current_dir = "res://tiles/equipment"
+					file_dialog.current_dir = "res://equipment/items"
 					file_dialog.filters = PackedStringArray(["*.tres ; Equipment Resources"])
 					file_dialog.popup_centered(Vector2i(800, 500))
 					active_picking_choice = c_data
@@ -851,7 +851,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 						
 						var cur_scene = c_data.get("next_scene", "")
 						if cur_scene == "":
-							cur_scene = "res://scenes/locations_screen.tscn"
+							cur_scene = "res://map/locations_screen.tscn"
 							c_data["next_scene"] = cur_scene
 						
 						var sc_edit = LineEdit.new()
@@ -886,7 +886,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 						f_row.add_child(f_lbl)
 						var en_edit = LineEdit.new()
 						en_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-						en_edit.text = c_data.get("enemy_path", "res://enemies/minion/pesents/pesent_1.tres")
+						en_edit.text = c_data.get("enemy_path", "res://entities/enemies/minions/peasant/peasant_1.tres")
 						en_edit.text_changed.connect(func(t):
 							c_data["enemy_path"] = t
 							is_dirty = true
@@ -898,7 +898,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 						en_browse.pressed.connect(func():
 							file_dialog_mode = "pick_enemy"
 							file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-							file_dialog.current_dir = "res://enemies"
+							file_dialog.current_dir = "res://entities/enemies"
 							file_dialog.filters = PackedStringArray(["*.tres ; Enemy Resources"])
 							file_dialog.popup_centered(Vector2i(800, 500))
 							active_picking_choice = c_data
@@ -1019,7 +1019,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			row.add_child(lbl)
 			var en_edit = LineEdit.new()
 			en_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			en_edit.text = c_data.get("enemy_path", "res://enemies/minion/pesents/pesent_1.tres")
+			en_edit.text = c_data.get("enemy_path", "res://entities/enemies/minions/peasant/peasant_1.tres")
 			en_edit.text_changed.connect(func(t): c_data["enemy_path"] = t; is_dirty = true; rebuild_graph_ui())
 			row.add_child(en_edit)
 			var en_browse = Button.new()
@@ -1027,7 +1027,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			en_browse.pressed.connect(func():
 				file_dialog_mode = "pick_enemy"
 				file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-				file_dialog.current_dir = "res://enemies"
+				file_dialog.current_dir = "res://entities/enemies"
 				file_dialog.filters = PackedStringArray(["*.tres ; Enemy Resources"])
 				file_dialog.popup_centered(Vector2i(800, 500))
 				active_picking_choice = c_data
@@ -1089,7 +1089,7 @@ func render_choice_outcome_details(outcome_details: VBoxContainer, c_data: Dicti
 			
 			var cur_scene = c_data.get("next_scene", "")
 			if cur_scene == "":
-				cur_scene = "res://scenes/locations_screen.tscn"
+				cur_scene = "res://map/locations_screen.tscn"
 				c_data["next_scene"] = cur_scene
 			
 			var sc_edit = LineEdit.new()
@@ -1224,13 +1224,13 @@ func save_event_to_file(file_path: String) -> bool:
 						"scene_change":
 							c_rew.fight_overwrite = false
 							c_rew.next_event = null
-							c_rew.next_scene = c.get("next_scene", "res://scenes/locations_screen.tscn")
+							c_rew.next_scene = c.get("next_scene", "res://map/locations_screen.tscn")
 					
 					choice_res = c_rew
 					
 				"scene_change":
 					var c_sc = EvtChoiseSceneChange.new()
-					c_sc.next_scene = c.get("next_scene", "res://scenes/locations_screen.tscn")
+					c_sc.next_scene = c.get("next_scene", "res://map/locations_screen.tscn")
 					choice_res = c_sc
 			
 			if choice_res != null:
@@ -1541,7 +1541,7 @@ func _on_new_btn_pressed() -> void:
 func _on_open_btn_pressed() -> void:
 	file_dialog_mode = "open"
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	file_dialog.current_dir = "res://event"
+	file_dialog.current_dir = "res://events/definitions"
 	file_dialog.filters = PackedStringArray(["*.tres ; Event Resource Files"])
 	file_dialog.popup_centered(Vector2i(800, 500))
 
@@ -1554,7 +1554,7 @@ func _on_save_btn_pressed() -> void:
 func _on_save_as_btn_pressed() -> void:
 	file_dialog_mode = "save_as"
 	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	file_dialog.current_dir = "res://event"
+	file_dialog.current_dir = "res://events/definitions"
 	file_dialog.filters = PackedStringArray(["*.tres ; Event Resource Files"])
 	file_dialog.popup_centered(Vector2i(800, 500))
 

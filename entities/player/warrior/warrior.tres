@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="PlayerResource" format=3 uid="uid://b8jo32hmbbisk"]
+
+[ext_resource type="Script" uid="uid://cbex40bcq7b0h" path="res://entities/player/player_resource.gd" id="10_ljvcx"]
+[ext_resource type="PackedScene" uid="uid://du6ruvncrt5c4" path="res://entities/player/warrior/warrior.tscn" id="11_pi64o"]
+[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="22_pbase"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="23_ssword"]
+[ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="24_rshield"]
+[ext_resource type="Resource" path="res://equipment/items/rush.tres" id="25_rush"]
+[ext_resource type="Resource" uid="uid://dv3yjpg60n6se" path="res://equipment/items/holy_shield.tres" id="26_hshield"]
+[ext_resource type="Resource" uid="uid://brjtyx8s2586c" path="res://rewards/cards/utility/faith_weak.tres" id="30_faith"]
+[ext_resource type="Resource" uid="uid://ccc1v2ecr51ht" path="res://rewards/cards/utility/general_healing_potion.tres" id="31_hp"]
+[ext_resource type="Resource" uid="uid://b335wc8yb4wk6" path="res://rewards/cards/utility/general_rush.tres" id="32_rush"]
+[ext_resource type="Resource" uid="uid://cagd82mbptaxb" path="res://rewards/cards/body/body0_strong_body_1.tres" id="33_body1"]
+[ext_resource type="Resource" uid="uid://cewus0hksgaha" path="res://rewards/cards/fists/fists0_way_of_the_fist.tres" id="34_fist0"]
+[ext_resource type="Resource" uid="uid://cixkhr2d08byy" path="res://rewards/cards/utility/bomb0_hbombs.tres" id="35_hbomb"]
+[ext_resource type="Resource" uid="uid://bl1o8hvfvj5r8" path="res://rewards/cards/utility/bomb0_vbombs.tres" id="36_vbomb"]
+[ext_resource type="Resource" uid="uid://cfwtml06b68ol" path="res://rewards/cards/utility/bomb0_adjbombs.tres" id="37_abomb"]
+[ext_resource type="Resource" uid="uid://b0plli2xp6jww" path="res://rewards/cards/sword/sword0_sword_practice.tres" id="38_spractice"]
+[ext_resource type="Resource" uid="uid://dkl4627h6stmo" path="res://rewards/cards/fists/fists1_punch.tres" id="39_punch"]
+[ext_resource type="Resource" uid="uid://1g8k2n3dctqp" path="res://rewards/cards/fists/fists1_block.tres" id="40_block"]
+[ext_resource type="Resource" uid="uid://cuos01tmjw73" path="res://rewards/cards/fists/fists1_crushing_fist.tres" id="41_cfist"]
+[ext_resource type="Resource" uid="uid://c8u0muk13emap" path="res://rewards/cards/fists/fists1_way_of_the_fists.tres" id="42_wfists"]
+[ext_resource type="Resource" uid="uid://crjm3y0sf2w6e" path="res://rewards/cards/fists/fists1_5_iron_muscles.tres" id="43_muscles"]
+[ext_resource type="Resource" uid="uid://d2qx8mlmggpn3" path="res://rewards/cards/fists/fists1_5_iron_will.tres" id="44_will"]
+[ext_resource type="Resource" uid="uid://cx2mjhpakp6od" path="res://rewards/cards/body/body1_strong_body_2.tres" id="45_body2"]
+[ext_resource type="Resource" uid="uid://btbeym0gywx1p" path="res://rewards/cards/body/body1_strong_body_3.tres" id="46_body3"]
+[ext_resource type="Resource" uid="uid://cmjoks4qyf1di" path="res://rewards/cards/body/body2_strong_body_4.tres" id="47_body4"]
+[ext_resource type="Resource" uid="uid://bmk2xjwav8p24" path="res://rewards/cards/body/body3_strong_body_5.tres" id="48_body5"]
+[ext_resource type="Resource" uid="uid://duw7nlh5pgakp" path="res://rewards/cards/utility/general_rush_smoke_screen.tres" id="49_smoke"]
+[ext_resource type="Resource" uid="uid://cvtwyslh18515" path="res://rewards/cards/sword/sword0_small_sword.tres" id="50_msword"]
+[ext_resource type="Resource" path="res://rewards/cards/utility/iron_wall.tres" id="51_iwall"]
+[ext_resource type="Resource" path="res://rewards/cards/utility/shields_up.tres" id="52_shieldup"]
+
+[resource]
+script = ExtResource("10_ljvcx")
+start_reroll = 999
+starting_modifiers = Array[ExtResource("22_pbase")]([ExtResource("23_ssword"), ExtResource("23_ssword"), ExtResource("24_rshield"), ExtResource("25_rush"), ExtResource("26_hshield")])
+class_rewards = Array[Resource]([ExtResource("23_ssword"), ExtResource("24_rshield"), ExtResource("30_faith"), ExtResource("31_hp"), ExtResource("32_rush"), ExtResource("33_body1"), ExtResource("34_fist0"), ExtResource("35_hbomb"), ExtResource("36_vbomb"), ExtResource("37_abomb"), ExtResource("38_spractice"), ExtResource("39_punch"), ExtResource("40_block"), ExtResource("41_cfist"), ExtResource("42_wfists"), ExtResource("43_muscles"), ExtResource("44_will"), ExtResource("45_body2"), ExtResource("46_body3"), ExtResource("47_body4"), ExtResource("48_body5"), ExtResource("49_smoke"), ExtResource("50_msword"), ExtResource("51_iwall"), ExtResource("52_shieldup")])
+sprite = ExtResource("11_pi64o")
+might = 20.0

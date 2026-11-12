@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://b87x2raa1k4m0"]
+
+[ext_resource type="Script" uid="uid://cnh4aa5po75ud" path="res://ui/inventory_overlay/inventory_overlay_track_row.gd" id="1_row"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/inventory_overlay/ability_color_track_empty.png" id="2_empty"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/inventory_overlay/ability_multislot_connection.png" id="3_conn"]
+
+[node name="InventoryOverlayTrackRow" type="Control"]
+custom_minimum_size = Vector2(520, 71)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 520.0
+offset_bottom = 71.0
+mouse_filter = 1
+script = ExtResource("1_row")
+
+[node name="BgTexture" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(520, 71)
+layout_mode = 0
+offset_right = 520.0
+offset_bottom = 71.0
+mouse_filter = 2
+texture = ExtResource("2_empty")
+
+[node name="Connection_0" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(40, 43)
+layout_mode = 0
+offset_left = 155.0
+offset_top = 14.0
+offset_right = 195.0
+offset_bottom = 57.0
+mouse_filter = 2
+texture = ExtResource("3_conn")
+
+[node name="Connection_1" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(40, 43)
+layout_mode = 0
+offset_left = 240.0
+offset_top = 14.0
+offset_right = 280.0
+offset_bottom = 57.0
+mouse_filter = 2
+texture = ExtResource("3_conn")
+
+[node name="Connection_2" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(40, 43)
+layout_mode = 0
+offset_left = 325.0
+offset_top = 14.0
+offset_right = 365.0
+offset_bottom = 57.0
+mouse_filter = 2
+texture = ExtResource("3_conn")
+
+[node name="Connection_3" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(40, 43)
+layout_mode = 0
+offset_left = 410.0
+offset_top = 14.0
+offset_right = 450.0
+offset_bottom = 57.0
+mouse_filter = 2
+texture = ExtResource("3_conn")
