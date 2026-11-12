@@ -389,6 +389,8 @@ func _test_monster_tracks_and_colorless_fallback() -> void:
 	for ep in enemy_paths:
 		var er: EnemyResource = load(ep)
 		_assert(er != null and not er.loot_table.is_empty(), "Authored monster resource loads cleanly with loot_table: " + ep.get_file())
+		for item in er.loot_table:
+			_assert(item is Reward, "Monster loot_table item must strictly be a Reward resource in: " + ep.get_file())
 
 # ------------------------------------------------------------------------------
 # 5. Board AI: Smart, Beast, Hybrid, and Bomb Majority Color

@@ -18,6 +18,10 @@
 [ext_resource type="Resource" path="res://equipment/items/block.tres" id="16_block"]
 [ext_resource type="Resource" path="res://equipment/items/holy_shield.tres" id="17_hshield"]
 [ext_resource type="Resource" path="res://rewards/cards/sword/sword0_sword_practice.tres" id="18_spractice"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="19_rew_scr"]
+[ext_resource type="Resource" uid="uid://brjtyx8s2586c" path="res://rewards/cards/utility/faith_weak.tres" id="20_rew_faith"]
+[ext_resource type="Resource" uid="uid://cuos01tmjw73" path="res://rewards/cards/fists/fists1_crushing_fist.tres" id="21_rew_upper"]
+[ext_resource type="Resource" uid="uid://duw7nlh5pgakp" path="res://rewards/cards/utility/general_rush_smoke_screen.tres" id="22_rew_smoke"]
 
 [resource]
 script = ExtResource("7_fkeyq")
@@ -29,7 +33,7 @@ red_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("10_upper"), E
 green_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("12_smoke"), ExtResource("13_rush")])
 purple_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("14_hpot")])
 colorless_fallback_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("15_punch"), ExtResource("16_block")])
-loot_table = Array[Resource]([ExtResource("17_hshield"), ExtResource("10_upper"), ExtResource("12_smoke"), ExtResource("18_spractice")])
+loot_table = Array[ExtResource("19_rew_scr")]([ExtResource("20_rew_faith"), ExtResource("21_rew_upper"), ExtResource("22_rew_smoke"), ExtResource("18_spractice")])
 max_health = 65.0
 cur_health = 0.0
 physical_dmg_reduction = 0.0

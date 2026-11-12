@@ -13,6 +13,9 @@
 [ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="11_rshield"]
 [ext_resource type="Resource" path="res://equipment/items/punch.tres" id="12_punch"]
 [ext_resource type="Resource" uid="uid://ccc1v2ecr51ht" path="res://rewards/cards/utility/general_healing_potion.tres" id="13_hp"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="14_rew_scr"]
+[ext_resource type="Resource" uid="uid://cvtwyslh18515" path="res://rewards/cards/sword/sword0_small_sword.tres" id="15_rew_ssword"]
+[ext_resource type="Resource" path="res://rewards/cards/utility/shields_up.tres" id="16_rew_rshield"]
 
 [sub_resource type="Resource" id="Resource_uao6c"]
 script = ExtResource("2_xas1u")
@@ -45,7 +48,7 @@ explicit_track_colors = Array[int]([100, 200])
 red_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("10_ssword")])
 blue_track_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("11_rshield")])
 colorless_fallback_modifiers = Array[ExtResource("9_eq_scr")]([ExtResource("12_punch")])
-loot_table = Array[Resource]([ExtResource("10_ssword"), ExtResource("11_rshield"), ExtResource("13_hp")])
+loot_table = Array[ExtResource("14_rew_scr")]([ExtResource("15_rew_ssword"), ExtResource("16_rew_rshield"), ExtResource("13_hp")])
 has_phases = true
 attacks = Array[ExtResource("1_lkmlp")]([SubResource("Resource_uao6c")])
 attacks_p2 = Array[ExtResource("1_lkmlp")]([SubResource("Resource_0cb8h")])

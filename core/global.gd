@@ -201,7 +201,7 @@ func prepare_post_combat_rewards(defeated_enemy: EnemyResource = null) -> void:
 		if def_enemy == null and ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
 			def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
 		enemy_res = def_enemy
-	var monster_loot: Array[Resource] = []
+	var monster_loot: Array[Reward] = []
 	if enemy_res != null and enemy_res.loot_table != null:
 		for item in enemy_res.loot_table:
 			if item != null:

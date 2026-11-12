@@ -32,8 +32,8 @@ enum BehaviorCategory {
 
 #------------------------------------------------------------------------------#
 @export_category("Monster Loot")
-## Pool of rewards (direct Equipment resources or Reward resources) specific to this monster.
-@export var loot_table: Array[Resource] = []
+## Pool of Reward resources specific to this monster.
+@export var loot_table: Array[Reward] = []
 
 #------------------------------------------------------------------------------#
 @export_category("Legacy Offence & Phases")

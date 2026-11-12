@@ -12,6 +12,8 @@
 [ext_resource type="Resource" uid="uid://ccvtfa00ywplh" path="res://rewards/enemy_loot/wild_boar/boar_hide.tres" id="8_qe126"]
 [ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="8_rshield"]
 [ext_resource type="Resource" path="res://equipment/items/punch.tres" id="9_punch"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="10_rew_scr"]
+[ext_resource type="Resource" uid="uid://cawaw370rqyj1" path="res://rewards/enemy_loot/wild_boar/boar_tusk.tres" id="11_tusk"]
 
 [resource]
 script = ExtResource("2_owds6")
@@ -21,7 +23,7 @@ explicit_track_colors = Array[int]([100, 200])
 red_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("6_rush"), ExtResource("7_ssword")])
 blue_track_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("8_rshield")])
 colorless_fallback_modifiers = Array[ExtResource("5_eq_scr")]([ExtResource("9_punch")])
-loot_table = Array[Resource]([ExtResource("7_robod"), ExtResource("8_qe126")])
+loot_table = Array[ExtResource("10_rew_scr")]([ExtResource("7_robod"), ExtResource("8_qe126"), ExtResource("11_tusk")])
 damage = 2.0
 attacks = Array[ExtResource("1_cfbcj")]([ExtResource("2_luuok"), ExtResource("2_luuok")])
 empty_spaces = Array[Vector2]([Vector2(0, 0), Vector2(0, 8), Vector2(7, 0), Vector2(7, 8)])

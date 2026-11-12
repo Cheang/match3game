@@ -11,6 +11,8 @@
 [ext_resource type="Resource" uid="uid://dv3yjpg60n6se" path="res://equipment/items/holy_shield.tres" id="8_hshield"]
 [ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="9_ssword"]
 [ext_resource type="Resource" uid="uid://brjtyx8s2586c" path="res://rewards/cards/utility/faith_weak.tres" id="10_faith"]
+[ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="11_rew_scr"]
+[ext_resource type="Resource" uid="uid://ccc1v2ecr51ht" path="res://rewards/cards/utility/general_healing_potion.tres" id="12_rew_hpot"]
 
 [sub_resource type="Resource" id="Resource_li333"]
 script = ExtResource("2_vagb6")
@@ -28,7 +30,7 @@ explicit_track_colors = Array[int]([400, 500])
 purple_track_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("7_hpot")])
 white_track_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("8_hshield")])
 colorless_fallback_modifiers = Array[ExtResource("6_eq_scr")]([ExtResource("9_ssword")])
-loot_table = Array[Resource]([ExtResource("8_hshield"), ExtResource("7_hpot"), ExtResource("10_faith")])
+loot_table = Array[ExtResource("11_rew_scr")]([ExtResource("10_faith"), ExtResource("12_rew_hpot")])
 damage = 3.0
 attacks = Array[ExtResource("1_kjfkh")]([SubResource("Resource_li333"), SubResource("Resource_c4817")])
 shader = ExtResource("5_2m358")
