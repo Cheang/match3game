@@ -8,6 +8,7 @@ extends Control
 ## Supports drag-and-drop to move, reorder, and swap abilities.
 
 signal slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
+signal slot_drag_requested(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int, mouse_pos: Vector2)
 signal equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int)
 
 const TEX_BASIC_SELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_selected.png")
@@ -108,6 +109,8 @@ func _ensure_structure() -> void:
 
 		if not ult_slot.slot_clicked.is_connected(_on_child_slot_clicked):
 			ult_slot.slot_clicked.connect(_on_child_slot_clicked)
+		if not ult_slot.slot_drag_requested.is_connected(_on_child_slot_drag_requested):
+			ult_slot.slot_drag_requested.connect(_on_child_slot_drag_requested)
 		if not ult_slot.equipment_dropped.is_connected(_on_child_equipment_dropped):
 			ult_slot.equipment_dropped.connect(_on_child_equipment_dropped)
 
@@ -160,6 +163,8 @@ func _ensure_structure() -> void:
 
 			if not slot_ctrl.slot_clicked.is_connected(_on_child_slot_clicked):
 				slot_ctrl.slot_clicked.connect(_on_child_slot_clicked)
+			if not slot_ctrl.slot_drag_requested.is_connected(_on_child_slot_drag_requested):
+				slot_ctrl.slot_drag_requested.connect(_on_child_slot_drag_requested)
 			if not slot_ctrl.equipment_dropped.is_connected(_on_child_equipment_dropped):
 				slot_ctrl.equipment_dropped.connect(_on_child_equipment_dropped)
 
@@ -372,6 +377,9 @@ func _apply_palette(s_mat: ShaderMaterial, c_id: int) -> void:
 
 func _on_child_slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, s_idx: int) -> void:
 	slot_clicked.emit(mod, track, is_ult, s_idx)
+
+func _on_child_slot_drag_requested(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, s_idx: int, m_pos: Vector2) -> void:
+	slot_drag_requested.emit(mod, track, is_ult, s_idx, m_pos)
 
 func _on_child_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> void:
 	equipment_dropped.emit(drag_data, target_track, target_is_ult, target_slot_idx)

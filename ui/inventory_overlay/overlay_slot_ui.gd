@@ -8,6 +8,7 @@ extends Control
 ##  3. Receiving dropped equipment.
 
 signal slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
+signal slot_drag_requested(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int, mouse_pos: Vector2)
 signal equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int)
 
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
@@ -46,7 +47,11 @@ func _ensure_nodes() -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		slot_clicked.emit(modifier, track_ref, is_ultimate, slot_idx)
+		if modifier != null and track_ref != null:
+			slot_drag_requested.emit(modifier, track_ref, is_ultimate, slot_idx, event.global_position)
+			accept_event()
+		else:
+			slot_clicked.emit(modifier, track_ref, is_ultimate, slot_idx)
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if modifier == null or track_ref == null:

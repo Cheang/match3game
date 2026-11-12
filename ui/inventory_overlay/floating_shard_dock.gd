@@ -7,6 +7,7 @@ extends Control
 ## Supports direct drag-and-drop to slots and drop-to-unequip interactions.
 
 signal shard_selected(eq: Equipment)
+signal drag_requested(eq: Equipment, mouse_pos: Vector2)
 signal shard_dropped_on_dock(drag_data: Dictionary)
 signal floating_equipment_changed(eq: Equipment)
 
@@ -17,6 +18,7 @@ const DOCK_SIZE = Vector2(520, 68)
 
 var current_equipment: Equipment = null
 var _bob_timer: float = 0.0
+var is_shard_hidden: bool = false
 
 var shard_item: FloatingShardItem
 var frame_rect: TextureRect
@@ -92,6 +94,11 @@ func _setup_particles() -> void:
 	fire_particles.emission_rect_extents = Vector2(14.0, 6.0)
 	shard_item.add_child(fire_particles)
 
+func set_shard_hidden(hidden: bool) -> void:
+	is_shard_hidden = hidden
+	if shard_item != null:
+		shard_item.visible = not hidden and (current_equipment != null)
+
 func set_equipment(eq: Equipment) -> void:
 	_ensure_components()
 	current_equipment = eq
@@ -102,7 +109,7 @@ func set_equipment(eq: Equipment) -> void:
 		_apply_frame_palette(c_id)
 		_update_particles_color(c_id)
 
-		shard_item.visible = true
+		shard_item.visible = not is_shard_hidden
 		frame_rect.visible = true
 		icon_rect.visible = (current_equipment.icon != null)
 		icon_rect.texture = current_equipment.icon
@@ -241,7 +248,8 @@ class FloatingShardItem extends Control:
 	func _gui_input(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if dock_ref != null and dock_ref.current_equipment != null:
-				dock_ref.shard_selected.emit(dock_ref.current_equipment)
+				dock_ref.drag_requested.emit(dock_ref.current_equipment, event.global_position)
+				accept_event()
 
 	func _get_drag_data(at_position: Vector2) -> Variant:
 		if dock_ref != null:

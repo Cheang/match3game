@@ -317,6 +317,24 @@ func _ready() -> void:
 	assert(drag_data.get("modifier") == red_shard, "Drag data must hold the red shard")
 	assert(drag_data.get("source_is_floating") == true, "Drag data must mark source_is_floating")
 
+	# Verify custom interactive drag and drop: picking up shard moves avatar + fire particles
+	overlay._on_floating_shard_drag_requested(red_shard, Vector2(260, 500))
+	overlay._start_custom_drag(Vector2(260, 500))
+	assert(overlay.is_custom_dragging == true, "Overlay must report is_custom_dragging")
+	assert(overlay.drag_avatar != null and overlay.drag_avatar.visible == true, "Drag avatar must be visible")
+	assert(overlay.drag_avatar.fire_particles.emitting == true, "Drag avatar fire particles must be emitting during drag")
+	assert(overlay.floating_shard_dock.is_shard_hidden == true, "Dock shard must hide while being dragged by cursor")
+
+	# Move cursor
+	overlay.drag_avatar.update_position(Vector2(200, 300))
+	assert(overlay.drag_avatar.global_position == Vector2(200, 300) - overlay.drag_avatar.DIAMOND_SIZE / 2.0, "Drag avatar must follow cursor position")
+
+	# Cancel/cleanup custom drag
+	overlay._cleanup_custom_drag()
+	assert(overlay.is_custom_dragging == false, "Custom dragging should be false after cleanup")
+	assert(overlay.drag_avatar.visible == false, "Drag avatar must be hidden after cleanup")
+	assert(overlay.floating_shard_dock.is_shard_hidden == false, "Dock shard must unhide after drag ends")
+
 	# Test dropping floating shard on Red track slot 0 to replace existing Greatsword
 	var initial_item: Equipment = red_track.get_modifier_at_slot_index(0)
 	overlay._handle_floating_shard_drop(red_shard, red_track, false, 0)

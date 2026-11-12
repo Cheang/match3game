@@ -67,10 +67,22 @@ var stats_nav_btn: Button
 var settings_nav_btn: Button
 var done_btn: Button
 
+const DragAvatarClass = preload("res://ui/inventory_overlay/drag_avatar.gd")
+
 var is_slotting_mode: bool = false
 var pending_slotting_queue: Array[Equipment] = []
 var floating_shard_dock: FloatingShardDock = null
 var _cached_floating_equipment: Equipment = null
+
+var drag_avatar: Control = null
+var _drag_pending: bool = false
+var _drag_start_mouse_pos: Vector2 = Vector2.ZERO
+var _drag_candidate_item: Equipment = null
+var _drag_source_is_floating: bool = false
+var _drag_source_track: ColorLoadoutTrack = null
+var _drag_source_is_ult: bool = false
+var _drag_source_slot_idx: int = -1
+var is_custom_dragging: bool = false
 
 var selected_ability: Equipment = null
 var selected_track: ColorLoadoutTrack = null
@@ -229,6 +241,7 @@ func open() -> void:
 	overlay_opened.emit()
 
 func close() -> void:
+	_cleanup_custom_drag()
 	visible = false
 	Global.game_is_played = _saved_game_is_played
 	overlay_closed.emit()
@@ -238,6 +251,185 @@ func toggle() -> void:
 		close()
 	else:
 		open()
+
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+
+	if _drag_pending and not is_custom_dragging:
+		if event is InputEventMouseMotion:
+			if event.global_position.distance_to(_drag_start_mouse_pos) > 3.0:
+				_start_custom_drag(event.global_position)
+		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_drag_pending = false
+			if _drag_source_is_floating:
+				_on_floating_shard_selected(_drag_candidate_item)
+			else:
+				_on_slot_clicked(_drag_candidate_item, _drag_source_track, _drag_source_is_ult, _drag_source_slot_idx)
+
+	elif is_custom_dragging:
+		if event is InputEventMouseMotion:
+			if drag_avatar != null:
+				drag_avatar.update_position(event.global_position)
+			get_viewport().set_input_as_handled()
+		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_finish_custom_drop(event.global_position)
+			get_viewport().set_input_as_handled()
+
+func _on_floating_shard_drag_requested(eq: Equipment, mouse_pos: Vector2) -> void:
+	if eq == null:
+		return
+	_drag_pending = true
+	_drag_start_mouse_pos = mouse_pos
+	_drag_candidate_item = eq
+	_drag_source_is_floating = true
+	_drag_source_track = null
+	_drag_source_is_ult = eq.is_ultimate
+	_drag_source_slot_idx = -1
+
+func _on_row_slot_drag_requested(eq: Equipment, track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, mouse_pos: Vector2) -> void:
+	if eq == null:
+		return
+	_drag_pending = true
+	_drag_start_mouse_pos = mouse_pos
+	_drag_candidate_item = eq
+	_drag_source_is_floating = false
+	_drag_source_track = track
+	_drag_source_is_ult = is_ult
+	_drag_source_slot_idx = slot_idx
+
+func _start_custom_drag(mouse_pos: Vector2) -> void:
+	if _drag_candidate_item == null:
+		_drag_pending = false
+		return
+	is_custom_dragging = true
+	_drag_pending = false
+
+	if _drag_source_is_floating:
+		if floating_shard_dock != null:
+			floating_shard_dock.set_shard_hidden(true)
+	else:
+		_set_slot_visual_lifted(_drag_source_track, _drag_source_is_ult, _drag_source_slot_idx, true)
+
+	if drag_avatar != null:
+		var c_id: int = _drag_source_track.color if _drag_source_track != null else -1
+		drag_avatar.start_drag(_drag_candidate_item, mouse_pos, c_id)
+
+func _finish_custom_drop(pos: Vector2) -> void:
+	if not is_custom_dragging or _drag_candidate_item == null:
+		_cleanup_custom_drag()
+		return
+
+	var target := _find_drop_target_at_pos(pos)
+	var dropped_item: Equipment = _drag_candidate_item
+	var src_floating: bool = _drag_source_is_floating
+	var src_track: ColorLoadoutTrack = _drag_source_track
+	var src_is_ult: bool = _drag_source_is_ult
+	var src_slot_idx: int = _drag_source_slot_idx
+
+	_cleanup_custom_drag()
+
+	match target.get("type", "none"):
+		"dock":
+			if not src_floating:
+				_on_shard_dropped_to_dock({
+					"type": "equipment_drag",
+					"modifier": dropped_item,
+					"source_track": src_track,
+					"source_is_ult": src_is_ult,
+					"source_slot_idx": src_slot_idx,
+					"source_is_floating": false
+				})
+			else:
+				if floating_shard_dock != null:
+					floating_shard_dock.set_shard_hidden(false)
+		"slot":
+			var target_track: ColorLoadoutTrack = target.get("track")
+			var target_is_ult: bool = target.get("is_ult", false)
+			var target_slot_idx: int = target.get("slot_idx", -1)
+
+			if target_track != null and target_track.is_color_compatible(dropped_item) and target_is_ult == dropped_item.is_ultimate:
+				if src_floating:
+					_handle_floating_shard_drop(dropped_item, target_track, target_is_ult, target_slot_idx)
+				else:
+					_on_equipment_dropped({
+						"type": "equipment_drag",
+						"modifier": dropped_item,
+						"source_track": src_track,
+						"source_is_ult": src_is_ult,
+						"source_slot_idx": src_slot_idx,
+						"source_is_floating": false
+					}, target_track, target_is_ult, target_slot_idx)
+			else:
+				_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
+		_:
+			_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
+
+func _cancel_custom_drag(_item: Equipment, from_dock: bool, src_track: ColorLoadoutTrack, src_is_ult: bool, src_slot_idx: int) -> void:
+	if from_dock:
+		if floating_shard_dock != null:
+			floating_shard_dock.set_shard_hidden(false)
+	else:
+		_set_slot_visual_lifted(src_track, src_is_ult, src_slot_idx, false)
+
+func _cleanup_custom_drag() -> void:
+	is_custom_dragging = false
+	_drag_pending = false
+	_drag_candidate_item = null
+	if drag_avatar != null:
+		drag_avatar.end_drag()
+	if floating_shard_dock != null:
+		floating_shard_dock.set_shard_hidden(false)
+
+func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool) -> void:
+	if track == null:
+		return
+	for row in track_rows:
+		if row != null and row.track_ref == track:
+			if is_ult:
+				if row.ult_slot != null:
+					row.ult_slot.modulate.a = 0.25 if lifted else 1.0
+			elif slot_idx >= 0 and slot_idx < row.diamond_slots.size():
+				if row.diamond_slots[slot_idx] != null:
+					row.diamond_slots[slot_idx].modulate.a = 0.25 if lifted else 1.0
+
+func _find_drop_target_at_pos(pos: Vector2) -> Dictionary:
+	if floating_shard_dock != null and floating_shard_dock.visible:
+		if floating_shard_dock.get_global_rect().has_point(pos):
+			return { "type": "dock" }
+
+	for row in track_rows:
+		if row == null or not row.visible or row.track_ref == null or row.track_color <= 0:
+			continue
+		if not row.get_global_rect().has_point(pos):
+			continue
+
+		if row.ult_slot != null and row.ult_slot.visible and row.ult_slot.get_global_rect().has_point(pos):
+			return {
+				"type": "slot",
+				"track": row.track_ref,
+				"is_ult": true,
+				"slot_idx": -1
+			}
+
+		for i in range(row.diamond_slots.size()):
+			var s: OverlaySlotUI = row.diamond_slots[i]
+			if s != null and s.visible and s.get_global_rect().has_point(pos):
+				return {
+					"type": "slot",
+					"track": row.track_ref,
+					"is_ult": false,
+					"slot_idx": i
+				}
+
+		return {
+			"type": "slot",
+			"track": row.track_ref,
+			"is_ult": _drag_candidate_item != null and _drag_candidate_item.is_ultimate,
+			"slot_idx": -1
+		}
+
+	return { "type": "none" }
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_slotting_mode:
@@ -372,6 +564,8 @@ func _build_ui_if_needed() -> void:
 			if r != null:
 				if not r.slot_clicked.is_connected(_on_slot_clicked):
 					r.slot_clicked.connect(_on_slot_clicked)
+				if not r.slot_drag_requested.is_connected(_on_row_slot_drag_requested):
+					r.slot_drag_requested.connect(_on_row_slot_drag_requested)
 				if not r.equipment_dropped.is_connected(_on_equipment_dropped):
 					r.equipment_dropped.connect(_on_equipment_dropped)
 				track_rows.append(r)
@@ -385,6 +579,7 @@ func _build_ui_if_needed() -> void:
 				row = InventoryOverlayTrackRow.new()
 			row.name = "TrackRow_%d" % i
 			row.slot_clicked.connect(_on_slot_clicked)
+			row.slot_drag_requested.connect(_on_row_slot_drag_requested)
 			row.equipment_dropped.connect(_on_equipment_dropped)
 			tracks_box.add_child(row)
 			track_rows.append(row)
@@ -440,8 +635,15 @@ func _build_ui_if_needed() -> void:
 	floating_shard_dock.visible = is_slotting_mode
 	if not floating_shard_dock.shard_selected.is_connected(_on_floating_shard_selected):
 		floating_shard_dock.shard_selected.connect(_on_floating_shard_selected)
+	if not floating_shard_dock.drag_requested.is_connected(_on_floating_shard_drag_requested):
+		floating_shard_dock.drag_requested.connect(_on_floating_shard_drag_requested)
 	if not floating_shard_dock.shard_dropped_on_dock.is_connected(_on_shard_dropped_to_dock):
 		floating_shard_dock.shard_dropped_on_dock.connect(_on_shard_dropped_to_dock)
+
+	if drag_avatar == null:
+		drag_avatar = DragAvatarClass.new()
+		drag_avatar.name = "DragAvatar"
+		add_child(drag_avatar)
 
 	# 3. Stats View (empty placeholder for future design)
 	stats_view = vbox.find_child("StatsView", true, false) as Control
@@ -936,6 +1138,7 @@ func _on_floating_shard_selected(eq: Equipment) -> void:
 	_display_ability_description(eq, c_id, eq.is_ultimate)
 
 func _on_done_btn_pressed() -> void:
+	_cleanup_custom_drag()
 	if is_slotting_mode:
 		_cached_floating_equipment = null
 		pending_slotting_queue.clear()
