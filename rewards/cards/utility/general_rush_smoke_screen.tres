@@ -15,4 +15,4 @@ description = "Adds 1 Dodge"
 icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 rarity = 4
-equipment_to_grant = Array[ExtResource("2_j0vlu")]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

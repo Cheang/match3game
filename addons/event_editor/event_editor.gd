@@ -1342,9 +1342,9 @@ func _parse_event_recursive(evt: Event, visited: Dictionary, incoming_choice_tex
 					c_data["reward_type"] = "piece"
 					c_data["reward_piece_path"] = c.reward.resource_path
 				elif c.reward is Reward:
-					if not c.reward.equipment_to_grant.is_empty() and c.reward.equipment_to_grant[0] != null:
+					if c.reward.equipment_to_grant != null:
 						c_data["reward_type"] = "piece"
-						c_data["reward_piece_path"] = c.reward.equipment_to_grant[0].resource_path
+						c_data["reward_piece_path"] = c.reward.equipment_to_grant.resource_path
 					else:
 						c_data["reward_type"] = "stat"
 						if c.reward.gold > 0:

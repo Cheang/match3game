@@ -15,4 +15,4 @@ description = "Adds 1 Holy Shield"
 icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 rarity = 1
-equipment_to_grant = Array[ExtResource("2_7t6y8")]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

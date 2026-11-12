@@ -15,4 +15,4 @@ description = "Adds 3 Healing Potions"
 icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 rarity = 3
-equipment_to_grant = Array[ExtResource("2_fjc1v")]([ExtResource("4_eq"), ExtResource("4_eq"), ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

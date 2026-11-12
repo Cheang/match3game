@@ -14,5 +14,5 @@ description = "Adds 1 Round Shield"
 base = ExtResource("2_base")
 icon = ExtResource("3_icon")
 rarity = 0
-equipment_to_grant = Array[Resource]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")
 remove_from_pool_when_picked = false

@@ -53,16 +53,7 @@ enum Rarity {
 @export var rerolls: int = 0
 
 # ==============================================================================
-# 3. EQUIPMENT OVERRIDES / BONUSES
-# ==============================================================================
-@export_group("Equipment at This Rarity")
-## If non-empty, completely replaces the base Reward's `equipment_to_grant` at this rarity tier.
-@export var equipment_override: Array[Equipment] = []
-## Optional extra copies of the primary equipment to grant at this rarity tier (when equipment_override is empty).
-@export var extra_equipment_copies: int = 0
-
-# ==============================================================================
-# 4. MECHANIC & FLAG OVERRIDES / BONUSES
+# 3. MECHANIC & FLAG OVERRIDES / BONUSES
 # ==============================================================================
 @export_group("Mechanics & Flags at This Rarity")
 ## Additional custom flags unlocked when claimed (or equipped as a passive) at this rarity tier.

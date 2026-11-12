@@ -117,8 +117,8 @@ enum RewardCategory {
 # 4. EQUIPMENT PAYLOAD (RewardType.EQUIPMENT)
 # ==============================================================================
 @export_group("Equipment Payload")
-## Equipment resources granted when this reward is claimed.
-@export var equipment_to_grant: Array[Equipment] = []
+## Equipment resource granted when this reward is claimed.
+@export var equipment_to_grant: Equipment = null
 
 # ==============================================================================
 # 5. STAT MODIFIERS (RewardType.PASSIVE & RewardType.STAT_BUFF)
@@ -179,7 +179,7 @@ func _validate_property(property: Dictionary) -> void:
 		return
 	match reward_type:
 		RewardType.EQUIPMENT:
-			if p_name in ["might", "grit", "spirit", "agility", "max_health", "crit_chance", "heal_hp", "gold", "rerolls", "auto_scale_stats_with_rarity"]:
+			if p_name in ["might", "grit", "spirit", "agility", "max_health", "crit_chance", "heal_hp", "gold", "rerolls", "auto_scale_stats_with_rarity", "rarity_tiers"]:
 				property.usage = PROPERTY_USAGE_NO_EDITOR
 			elif p_name in ["mechanic_type", "unlock_row_bombs", "unlock_col_bombs", "unlock_adj_bombs", "unlock_color_bombs", "target_color", "transmute_to_color", "slot_expansion_amount"]:
 				property.usage = PROPERTY_USAGE_NO_EDITOR
@@ -219,39 +219,26 @@ func clamp_to_allowed_rarity(target_rarity: int) -> Rarity:
 
 ## Returns the configured RewardRarityTier for the current `rarity`, or null if none is defined.
 func get_active_tier() -> RewardRarityTier:
+	if reward_type == RewardType.EQUIPMENT:
+		return null
 	for tier in rarity_tiers:
 		if tier != null and int(tier.rarity) == int(rarity):
 			return tier
 	return null
 
 ## Creates an independent clone of this reward scaled to `target_rarity` (respecting floor/ceiling/fixed rules).
-## Also scales or replaces all granted Equipment inside `equipment_to_grant` according to the active tier!
 func duplicate_with_rarity(target_rarity: Rarity) -> Reward:
 	var dup: Reward = duplicate(true)
 	var final_r: Rarity = clamp_to_allowed_rarity(int(target_rarity))
 	dup.rarity = final_r
 	dup.source_template = source_template if source_template != null else self
 
-	var tier: RewardRarityTier = dup.get_active_tier()
 	var eq_rarity: Equipment.Rarity = int(final_r) as Equipment.Rarity
 
-	# If this rarity tier specifies an explicit equipment_override, use it; otherwise scale base equipment_to_grant
-	if tier != null and not tier.equipment_override.is_empty():
-		var override_list: Array[Equipment] = []
-		for eq in tier.equipment_override:
-			if eq != null:
-				override_list.append(eq.duplicate_with_rarity(eq_rarity))
-		dup.equipment_to_grant = override_list
-	elif not dup.equipment_to_grant.is_empty():
-		var scaled_eq_list: Array[Equipment] = []
-		for eq in dup.equipment_to_grant:
-			if eq != null:
-				scaled_eq_list.append(eq.duplicate_with_rarity(eq_rarity))
-		if tier != null and tier.extra_equipment_copies > 0 and not scaled_eq_list.is_empty():
-			var base_eq: Equipment = scaled_eq_list[0]
-			for _i in range(tier.extra_equipment_copies):
-				scaled_eq_list.append(base_eq.duplicate_with_rarity(eq_rarity))
-		dup.equipment_to_grant = scaled_eq_list
+	if reward_type == RewardType.EQUIPMENT:
+		if dup.equipment_to_grant != null:
+			dup.equipment_to_grant = dup.equipment_to_grant.duplicate_with_rarity(eq_rarity)
+		return dup
 
 	return dup
 
@@ -331,7 +318,7 @@ var category: int:
 			reward_type = _infer_non_passive_type()
 
 func _infer_non_passive_type() -> RewardType:
-	if not equipment_to_grant.is_empty():
+	if equipment_to_grant != null:
 		return RewardType.EQUIPMENT
 	if mechanic_type != MechanicType.NONE or unlock_row_bombs or unlock_col_bombs or unlock_adj_bombs or unlock_color_bombs:
 		return RewardType.MECHANIC_UNLOCK
@@ -343,7 +330,7 @@ func _infer_non_passive_type() -> RewardType:
 func get_effective_reward_type() -> RewardType:
 	if reward_type == RewardType.PASSIVE:
 		return RewardType.PASSIVE
-	if reward_type == RewardType.EQUIPMENT and equipment_to_grant.is_empty():
+	if reward_type == RewardType.EQUIPMENT and equipment_to_grant == null:
 		if mechanic_type != MechanicType.NONE or unlock_row_bombs or unlock_col_bombs or unlock_adj_bombs or unlock_color_bombs:
 			return RewardType.MECHANIC_UNLOCK
 		if might != 0.0 or grit != 0.0 or spirit != 0.0 or agility != 0 or max_health != 0.0 or heal_hp != 0.0 or gold != 0 or rerolls != 0 or crit_chance != 0:
@@ -403,7 +390,7 @@ static func from_equipment(eq: Equipment, rolled_rarity: int = -1) -> Reward:
 	var clamped_r: Equipment.Rarity = eq.clamp_to_allowed_rarity(raw_r)
 	rew.rarity = int(clamped_r) as Rarity
 	# Strictly exactly 1 equipment instance per reward
-	rew.equipment_to_grant = [eq.duplicate_with_rarity(clamped_r)]
+	rew.equipment_to_grant = eq.duplicate_with_rarity(clamped_r)
 	rew.name = eq.piece_name
 	rew.description = eq.description
 	rew.icon = eq.icon
@@ -415,10 +402,7 @@ static func from_equipment(eq: Equipment, rolled_rarity: int = -1) -> Reward:
 	return rew
 
 func get_primary_equipment() -> Equipment:
-	for eq in equipment_to_grant:
-		if eq != null:
-			return eq
-	return null
+	return equipment_to_grant
 
 func get_effective_family() -> String:
 	if family != "":
@@ -544,25 +528,12 @@ func is_already_unlocked(player: Object) -> bool:
 
 	return checks > 0 and checks == already_active
 
-## Returns resolved equipment items granted by this reward, scaled to this reward's current rarity (and respecting tier overrides).
+## Returns resolved equipment items granted by this reward, scaled to this reward's current rarity.
 func get_resolved_modifiers() -> Array[Equipment]:
 	var mods: Array[Equipment] = []
-	var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
-	var tier: RewardRarityTier = get_active_tier()
-	if tier != null and not tier.equipment_override.is_empty():
-		for eq in tier.equipment_override:
-			if eq != null:
-				mods.append(eq.duplicate_with_rarity(target_eq_rarity))
-		return mods
-
-	for eq in equipment_to_grant:
-		if eq != null:
-			var dup_eq: Equipment = eq.duplicate_with_rarity(target_eq_rarity)
-			mods.append(dup_eq)
-	if tier != null and tier.extra_equipment_copies > 0 and not mods.is_empty():
-		var base_eq: Equipment = mods[0]
-		for _i in range(tier.extra_equipment_copies):
-			mods.append(base_eq.duplicate_with_rarity(target_eq_rarity))
+	if equipment_to_grant != null:
+		var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
+		mods.append(equipment_to_grant.duplicate_with_rarity(target_eq_rarity))
 	return mods
 
 ## Returns all custom flags active on this reward at its current rarity (base custom_flags + tier extra_custom_flags).
@@ -619,7 +590,7 @@ func apply_to_player(player: Object, grant_equipment: bool = true) -> void:
 	_apply_mechanics_to_player(player)
 
 	# 3. Apply Equipment (if not already handled interactively by SlotEquipModal)
-	if grant_equipment and not equipment_to_grant.is_empty():
+	if grant_equipment and equipment_to_grant != null:
 		for eq in get_resolved_modifiers():
 			player.add_modifier_reward(eq, true)
 
@@ -689,19 +660,21 @@ func apply_progression(player: Object = null) -> void:
 
 ## Returns dynamic BBCode text summarizing all effects granted by this reward at its current rarity.
 func get_effect_description() -> String:
+	if reward_type == RewardType.EQUIPMENT:
+		if equipment_to_grant != null:
+			var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
+			var eq: Equipment = equipment_to_grant
+			if int(eq.rarity) != int(target_eq_rarity):
+				eq = eq.duplicate_with_rarity(target_eq_rarity)
+			var eq_desc: String = eq.get_effect_description()
+			return "Gain [color=#f2c94c]%s[/color]: %s" % [eq.piece_name, eq_desc]
+		return ""
+
 	var tier: RewardRarityTier = get_active_tier()
 	if tier != null and tier.custom_description != "":
 		return tier.custom_description
 
 	var lines: Array[String] = []
-	var target_eq_rarity: Equipment.Rarity = int(rarity) as Equipment.Rarity
-
-	if not equipment_to_grant.is_empty() and equipment_to_grant[0] != null:
-		var eq: Equipment = equipment_to_grant[0]
-		if int(eq.rarity) != int(target_eq_rarity):
-			eq = eq.duplicate_with_rarity(target_eq_rarity)
-		var eq_desc: String = eq.get_effect_description()
-		lines.append("Gain [color=#f2c94c]%s[/color]: %s" % [eq.piece_name, eq_desc])
 
 	var eff_might: float = get_effective_might()
 	var eff_grit: float = get_effective_grit()

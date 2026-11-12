@@ -316,12 +316,12 @@ func test_reward_single_equipment_and_bonus_display() -> bool:
 
 	# 1. Reward.from_equipment creates strictly 1 equipment
 	var rew: Reward = Reward.from_equipment(eq, int(Equipment.Rarity.UNCOMMON))
-	if rew.equipment_to_grant.size() != 1:
-		printerr("FAIL: Reward.from_equipment must strictly grant 1 equipment, got: ", rew.equipment_to_grant.size())
+	if rew.equipment_to_grant == null:
+		printerr("FAIL: Reward.from_equipment must strictly grant 1 equipment, got null")
 		return false
 
 	# 2. Rolled bonuses appear in effect description
-	var rolled_eq: Equipment = rew.equipment_to_grant[0]
+	var rolled_eq: Equipment = rew.equipment_to_grant
 	var desc: String = rolled_eq.get_effect_description()
 	if not desc.contains("+2 Might"):
 		printerr("FAIL: Rolled equipment description should display '+2 Might', got: ", desc)

@@ -19,7 +19,7 @@ name = "Punch"
 description = "Gain 1 Punch"
 icon = ExtResource("4_5mejo")
 base = ExtResource("3_2vumd")
-equipment_to_grant = Array[ExtResource("5_8hwnc")]([ExtResource("3_wd4vi")])
+equipment_to_grant = ExtResource("3_wd4vi")
 
 [sub_resource type="Resource" id="Resource_bajvr"]
 script = ExtResource("4_3e2a6")

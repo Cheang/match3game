@@ -17,4 +17,4 @@ icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 rarity = 1
 remove_from_pool_when_picked = false
-equipment_to_grant = Array[ExtResource("2_nid3q")]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

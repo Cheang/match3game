@@ -16,4 +16,4 @@ icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 unlock_tags = Array[String](["flg_rew_fists_lvl_1_5"])
 remove_from_pool_when_picked = false
-equipment_to_grant = Array[ExtResource("2_aoxpa")]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

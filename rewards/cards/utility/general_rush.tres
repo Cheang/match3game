@@ -16,4 +16,4 @@ icon = ExtResource("3_icon")
 base = ExtResource("2_base")
 rarity = 3
 unlock_tags = Array[String](["flg_rew_rush"])
-equipment_to_grant = Array[ExtResource("2_od3ue")]([ExtResource("4_eq")])
+equipment_to_grant = ExtResource("4_eq")

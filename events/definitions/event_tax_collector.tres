@@ -21,7 +21,7 @@ name = "Old Sword"
 description = "Gain 1 Short Sword with 2*"
 icon = ExtResource("6_isglo")
 base = ExtResource("3_o1m3v")
-equipment_to_grant = Array[ExtResource("5_gc0j7")]([ExtResource("5_bfl87")])
+equipment_to_grant = ExtResource("5_bfl87")
 
 [sub_resource type="Resource" id="Resource_cb017"]
 script = ExtResource("6_r32wb")

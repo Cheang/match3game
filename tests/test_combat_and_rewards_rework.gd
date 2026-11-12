@@ -967,7 +967,7 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 	_assert(eq_reward.reward_type == Reward.RewardType.EQUIPMENT, "Reward.from_equipment sets reward_type == EQUIPMENT")
 	_assert(eq_reward.get_effective_family() == "fists", "EQUIPMENT Reward inherits 'fists' family from Punch")
 	_assert(eq_reward.get_display_name() == "Punch", "EQUIPMENT Reward inherits display name from Punch")
-	_assert(eq_reward.equipment_to_grant.size() == 1, "EQUIPMENT Reward strictly grants 1 equipment instance")
+	_assert(eq_reward.equipment_to_grant != null, "EQUIPMENT Reward strictly grants 1 equipment instance")
 	_assert(eq_reward.get_effective_shop_price() == 75, "RARE Reward defaults to 75 gold shop price")
 
 	# 2. Verify Type 1 (PASSIVE), Type 2 (STAT_BUFF), Type 3 (MECHANIC_UNLOCK)
