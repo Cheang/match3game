@@ -130,17 +130,24 @@ layout_mode = 2
 [node name="TrackRow_4" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/TracksBox" unique_id=578550824 instance=ExtResource("4_row")]
 layout_mode = 2
 
-[node name="DescriptionPanel" type="NinePatchRect" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView" unique_id=172039200]
+[node name="DescriptionRow" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView"]
 custom_minimum_size = Vector2(520, 160)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DescriptionPanel" type="NinePatchRect" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionRow" unique_id=172039200]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 texture = ExtResource("3_desc")
 patch_margin_left = 4
 patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="Margin" type="MarginContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel" unique_id=374234983]
+[node name="Margin" type="MarginContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionRow/DescriptionPanel" unique_id=374234983]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -152,11 +159,11 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Scroll" type="ScrollContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin" unique_id=115403182]
+[node name="Scroll" type="ScrollContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionRow/DescriptionPanel/Margin" unique_id=115403182]
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="DescriptionLabel" type="RichTextLabel" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/Scroll" unique_id=257197523]
+[node name="DescriptionLabel" type="RichTextLabel" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionRow/DescriptionPanel/Margin/Scroll" unique_id=257197523]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

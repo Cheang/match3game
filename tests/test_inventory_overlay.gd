@@ -300,6 +300,12 @@ func _ready() -> void:
 	assert(overlay.floating_shard_dock != null and overlay.floating_shard_dock.visible == true, "Floating shard dock must be visible")
 	assert(overlay.floating_shard_dock.current_equipment == red_shard, "Floating shard dock must hold the new shard")
 	assert(overlay.floating_shard_dock.fire_particles.emitting == true, "Fire particles must be emitting on floating shard")
+	assert(overlay.description_panel.custom_minimum_size.y == overlay.description_panel_height, "Description panel height must remain at normal height (%f) in slotting mode" % overlay.description_panel_height)
+	assert(overlay.floating_shard_dock.custom_minimum_size == Vector2(90, 160), "Floating shard dock must be 90x160 side-dock")
+	assert(overlay.description_row != null, "DescriptionRow HBoxContainer must exist")
+	assert(overlay.description_panel.get_parent() == overlay.description_row, "Description panel must be inside DescriptionRow")
+	assert(overlay.floating_shard_dock.get_parent() == overlay.description_row, "Floating shard dock must be inside DescriptionRow")
+	assert(overlay.description_row.get_children().find(overlay.description_panel) < overlay.description_row.get_children().find(overlay.floating_shard_dock), "Description panel must be on left and floating shard dock on right")
 
 	# Verify compatibility highlights: Red track normal, other tracks disabled (including empty tracks)
 	for row in overlay.track_rows:

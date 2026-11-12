@@ -14,7 +14,7 @@ signal floating_equipment_changed(eq: Equipment)
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const DIAMOND_SIZE = Vector2(59, 59)
-const DOCK_SIZE = Vector2(520, 68)
+const DOCK_SIZE = Vector2(90, 160)
 
 var current_equipment: Equipment = null
 var _bob_timer: float = 0.0
@@ -41,7 +41,9 @@ func _ensure_components() -> void:
 	# Centered floating shard item (no socket background box, no label text)
 	shard_item = FloatingShardItem.new(self)
 	shard_item.name = "FloatingShardItem"
-	shard_item.position = Vector2((DOCK_SIZE.x - DIAMOND_SIZE.x) / 2.0, (DOCK_SIZE.y - DIAMOND_SIZE.y) / 2.0)
+	var base_x: float = (DOCK_SIZE.x - DIAMOND_SIZE.x) / 2.0
+	var base_y: float = (DOCK_SIZE.y - DIAMOND_SIZE.y) / 2.0
+	shard_item.position = Vector2(base_x, base_y)
 	add_child(shard_item)
 
 	# 1. Fire Particles (rising flames in shard color)
@@ -127,8 +129,9 @@ func _process(delta: float) -> void:
 	if not visible or current_equipment == null or shard_item == null:
 		return
 	_bob_timer += delta * 3.5
+	var base_x: float = (DOCK_SIZE.x - DIAMOND_SIZE.x) / 2.0
 	var base_y: float = (DOCK_SIZE.y - DIAMOND_SIZE.y) / 2.0
-	shard_item.position.y = base_y + sin(_bob_timer) * 4.0
+	shard_item.position = Vector2(base_x, base_y + sin(_bob_timer) * 4.0)
 
 func _get_equipment_color(eq: Equipment) -> int:
 	if eq == null or eq.is_colorless():
