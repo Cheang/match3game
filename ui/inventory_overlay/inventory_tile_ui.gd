@@ -85,7 +85,7 @@ func _build_ui() -> void:
 	center_box.add_child(base_rect)
 
 	icon_rect = TextureRect.new()
-	icon_rect.custom_minimum_size = Vector2(28, 28)
+	icon_rect.custom_minimum_size = Vector2(40, 40)
 	icon_rect.set_anchors_preset(Control.PRESET_CENTER)
 	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

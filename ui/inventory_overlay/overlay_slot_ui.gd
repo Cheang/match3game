@@ -46,9 +46,10 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 	var preview := Control.new()
 	var box := PanelContainer.new()
-	box.custom_minimum_size = Vector2(50, 50)
-	box.size = Vector2(50, 50)
-	box.position = Vector2(-25, -25)
+	var preview_sz := Vector2(83, 59) if is_ultimate else Vector2(59, 59)
+	box.custom_minimum_size = preview_sz
+	box.size = preview_sz
+	box.position = -preview_sz / 2.0
 
 	var sb := StyleBoxFlat.new()
 	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(track_ref.color)

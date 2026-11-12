@@ -131,13 +131,13 @@ func _ensure_structure() -> void:
 		if ult_icon == null:
 			ult_icon = TextureRect.new()
 			ult_icon.name = "Icon"
-			ult_icon.position = Vector2(20, 8)
-			ult_icon.size = Vector2(42, 42)
-			ult_icon.custom_minimum_size = Vector2(42, 42)
-			ult_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			ult_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			ult_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			ult_slot.add_child(ult_icon)
+		ult_icon.position = Vector2.ZERO
+		ult_icon.size = ULT_SIZE
+		ult_icon.custom_minimum_size = ULT_SIZE
+		ult_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ult_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		ult_slot.icon_rect = ult_icon
 
 	# 3. Basic Diamond Slots (Right: 59x59 each at x = 103, 188, 273, 358, 443)
@@ -180,13 +180,13 @@ func _ensure_structure() -> void:
 			if icon_rect == null:
 				icon_rect = TextureRect.new()
 				icon_rect.name = "Icon"
-				icon_rect.position = Vector2(13, 13)
-				icon_rect.size = Vector2(32, 32)
-				icon_rect.custom_minimum_size = Vector2(32, 32)
-				icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-				icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 				icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 				slot_ctrl.add_child(icon_rect)
+			icon_rect.position = Vector2.ZERO
+			icon_rect.size = DIAMOND_SIZE
+			icon_rect.custom_minimum_size = DIAMOND_SIZE
+			icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			slot_ctrl.icon_rect = icon_rect
 
 			diamond_slots.append(slot_ctrl)
