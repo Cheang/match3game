@@ -1,9 +1,17 @@
 [gd_resource type="Resource" script_class="Reward" format=3 uid="uid://cawaw370rqyj1"]
 
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="1_3ydcq"]
+[ext_resource type="Texture2D" uid="uid://ckhhsexgcbi6m" path="res://assets/sprites/rewards/red_crystal_1.png" id="1_wte5x"]
 [ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="2_lifhx"]
+[ext_resource type="Texture2D" uid="uid://px4nfl4bc8o1" path="res://assets/sprites/rewards/icons/wild_boar/boar_tusk.png" id="3_1foyt"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="3_wte5x"]
 
 [resource]
 script = ExtResource("3_wte5x")
+family = "beast"
+name = "Wild Tusk"
+icon = ExtResource("3_1foyt")
+base = ExtResource("1_wte5x")
+rarity = 2
+fixed_rarity = true
 metadata/_custom_type_script = "uid://55ybcdssir3b"

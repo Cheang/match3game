@@ -108,8 +108,8 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Dedicated unique perk unlocked exclusively when this item is generated or upgraded to Godly.
 ## If null, this equipment CANNOT roll or appear at Godly tier.
 @export var godly_bonus: EquipmentBonus = null
-## Active rolled bonuses currently granted by this instantiated equipment piece.
-@export var rolled_bonuses: Array[EquipmentRolledBonus] = []
+## Active rolled bonuses currently granted by this instantiated equipment piece (stored for save/load, hidden from Inspector).
+@export_storage var rolled_bonuses: Array[EquipmentRolledBonus] = []
 
 # ==============================================================================
 # 3. TRIGGER & RESTRICTIONS
