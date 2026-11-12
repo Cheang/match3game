@@ -203,7 +203,7 @@ func _spawn_enemy_popup(text_str: String, col: Color) -> void:
 	tw.chain().tween_callback(lbl.queue_free)
 
 func update_ui(stat: String):
-	if stat in ["cur_health", "max_health", "cur_armor", "cur_mage_armor", "cur_mystic_armor"]:
+	if stat in ["cur_health", "max_health", "cur_armor", "cur_mystic_armor"]:
 		update_health()
 	elif stat in ["combo", "hand_combo", "dodge", "dodging"]:
 		if buff_container != null and Global.cur_enemy != null:

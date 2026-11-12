@@ -230,8 +230,8 @@ func _get_preferred_auto_equip_color(mod: Equipment) -> int:
 	if not mod.is_colorless():
 		return mod.bound_color if mod.bound_color >= 100 else mod.allowed_colors[0]
 	
-	# Special check for magic-oriented shields
-	if mod.family == "shields" and mod.get_effective_base_magic_armor() > 0.0:
+	# Special check for mystic-oriented shields
+	if mod.family == "shields" and mod.get_effective_base_mystic_armor() > 0.0:
 		return 500 if active_color_pool.has(500) else 200
 
 	# Query the central registry in Global
@@ -633,7 +633,7 @@ func extract_modifier_from_scene(scene: PackedScene) -> Equipment:
 		"res://piece/_blue_sq/b_round_shield.tscn": "res://equipment/items/round_shield.tres",
 		"res://piece/_blue_sq/b_iron_shield.tscn": "res://equipment/items/iron_shield.tres",
 		"res://piece/_blue_sq/b_block.tscn": "res://equipment/items/block.tres",
-		"res://piece/_blue_sq/b_magic_shield.tscn": "res://equipment/items/magic_shield.tres",
+		"res://piece/_blue_sq/b_magic_shield.tscn": "res://equipment/items/mystic_shield.tres",
 		"res://piece/_green_sq/g_rush.tscn": "res://equipment/items/rush.tres",
 		"res://piece/_green_sq/g_dodge.tscn": "res://equipment/items/dodge.tres",
 		"res://piece/_purple_sq/p_bandage.tscn": "res://equipment/items/bandage.tres",

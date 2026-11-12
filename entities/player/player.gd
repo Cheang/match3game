@@ -13,7 +13,7 @@ var cur_character: PlayerResource = null
 var _is_initialized: bool = false
 var _last_hp: float = 0.0
 var _last_armor: float = 0.0
-var _last_mage_armor: float = 0.0
+var _last_mystic_armor: float = 0.0
 var _last_combo: int = 0
 var _last_dodge: bool = false
 var _last_gold: int = 0
@@ -36,7 +36,7 @@ func _ready() -> void:
 	update_ui("gold")
 	_last_hp = Global.cur_char.cur_health
 	_last_armor = Global.cur_char.cur_armor
-	_last_mage_armor = Global.cur_char.cur_mage_armor
+	_last_mystic_armor = Global.cur_char.cur_mystic_armor
 	_last_combo = Global.cur_char.combo
 	_last_dodge = Global.cur_char.dodge
 	_last_gold = int(Global.cur_char.gold)
@@ -54,13 +54,13 @@ func _update_ui_internal(stat: String) -> void:
 		return
 	cur_character = Global.cur_char
 
-	if stat == "cur_health" or stat == "max_health" or stat == "cur_armor" or stat == "cur_mage_armor" or stat == "cur_mystic_armor":
+	if stat in ["cur_health", "max_health", "cur_armor", "cur_mystic_armor"]:
 		var cur_hp: float = Global.cur_char.cur_health
 		var max_hp: float = max(1.0, Global.cur_char.max_health)
 		var armor: float = Global.cur_char.cur_armor
-		var mage_armor: float = Global.cur_char.cur_mystic_armor
+		var mystic_armor: float = Global.cur_char.cur_mystic_armor
 		if globes != null:
-			globes.set_defenses(cur_hp, max_hp, armor, mage_armor, _is_initialized)
+			globes.set_defenses(cur_hp, max_hp, armor, mystic_armor, _is_initialized)
 
 		if _is_initialized:
 			if stat == "cur_health":
@@ -76,15 +76,15 @@ func _update_ui_internal(stat: String) -> void:
 					_spawn_combat_popup("+%d Armor" % int(roundf(diff_a)), Color(0.42, 0.68, 1.0))
 				elif diff_a < -0.05:
 					_spawn_combat_popup("-%d Armor" % int(roundf(abs(diff_a))), Color(0.65, 0.75, 0.85))
-			elif stat == "cur_mage_armor" or stat == "cur_mystic_armor":
-				var diff_ma: float = mage_armor - _last_mage_armor
+			elif stat == "cur_mystic_armor":
+				var diff_ma: float = mystic_armor - _last_mystic_armor
 				if diff_ma > 0.05:
 					_spawn_combat_popup("+%d Mystic Armor" % int(roundf(diff_ma)), Color(0.28, 0.88, 0.98))
 				elif diff_ma < -0.05:
 					_spawn_combat_popup("-%d Mystic Armor" % int(roundf(abs(diff_ma))), Color(0.28, 0.88, 0.98))
 		_last_hp = cur_hp
 		_last_armor = armor
-		_last_mage_armor = mage_armor
+		_last_mystic_armor = mystic_armor
 		return
 
 	if stat == "moves_left" or stat == "agility" or stat == "speed" or stat == "max_energy":

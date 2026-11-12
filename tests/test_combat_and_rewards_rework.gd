@@ -873,21 +873,21 @@ func _test_unified_buffs_and_debuffs() -> void:
 	plr_buff_ui.queue_free()
 	enm_buff_ui.queue_free()
 
-	# Test Magic Armor capping at max_health
+	# Test Mystic Armor capping at max_health
 	plr.max_health = 20.0
-	plr.cur_mage_armor = 0.0
-	plr.modify_stat("cur_mage_armor", 15.0)
-	_assert(plr.cur_mage_armor == 15.0, "Magic armor accumulates to 15 when below max_health (20)")
-	plr.modify_stat("cur_mage_armor", 10.0)
-	_assert(plr.cur_mage_armor == 20.0, "Magic armor caps at max_health (20) when receiving +10 at 15")
-	plr.modify_stat("cur_mage_armor", 50.0)
-	_assert(plr.cur_mage_armor == 20.0, "Magic armor remains capped at max_health (20) even with large bonus")
+	plr.cur_mystic_armor = 0.0
+	plr.modify_stat("cur_mystic_armor", 15.0)
+	_assert(plr.cur_mystic_armor == 15.0, "Mystic armor accumulates to 15 when below max_health (20)")
+	plr.modify_stat("cur_mystic_armor", 10.0)
+	_assert(plr.cur_mystic_armor == 20.0, "Mystic armor caps at max_health (20) when receiving +10 at 15")
+	plr.modify_stat("cur_mystic_armor", 50.0)
+	_assert(plr.cur_mystic_armor == 20.0, "Mystic armor remains capped at max_health (20) even with large bonus")
 	# Clamping when max_health decreases
 	plr.max_health = 16.0
-	_assert(plr.cur_mage_armor == 16.0, "Magic armor clamps down to 16 when max_health drops to 16")
+	_assert(plr.cur_mystic_armor == 16.0, "Mystic armor clamps down to 16 when max_health drops to 16")
 	# Floor at 0
-	plr.modify_stat("cur_mage_armor", -30.0)
-	_assert(plr.cur_mage_armor == 0.0, "Magic armor cannot drop below 0")
+	plr.modify_stat("cur_mystic_armor", -30.0)
+	_assert(plr.cur_mystic_armor == 0.0, "Mystic armor cannot drop below 0")
 
 func _test_five_passive_slots_and_inventory_removal() -> void:
 	print("\n--- 10. Five Passive Slots & Inventory Bag Removal ---")
@@ -1194,7 +1194,6 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	spell.damage_type = Equipment.DamageType.MYSTICAL
 	_assert(spell.damage_stat_scaling == Equipment.StatScaling.SPIRIT, "Mystical damage weapon automatically scales with Spirit")
 	_assert(spell.is_mystical == true, "Mystical damage weapon automatically sets is_mystical=true")
-	_assert(Equipment.MAGIC == Equipment.DamageType.MYSTICAL, "Equipment.MAGIC backwards-compat alias matches MYSTICAL")
 	spell.stat_scaling_ratio = 0.10 # Ignored! Mystic DMG always scales at 50%
 	spell.activate({"attacker": plr, "target": dummy, "is_crit": false})
 	# Base 3 + round(4 Spirit * 0.50 = 2) = 5 DMG (89 -> 84)

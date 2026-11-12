@@ -19,7 +19,7 @@ const BuffRegistryRef = preload("res://combat/buff_registry.gd")
 		might = new_might
 		recalculate_max_health()
 
-## Blue Pillar: Increases physical armor and magic armor granted by defensive equipment.
+## Blue Pillar: Increases physical armor and mystic armor granted by defensive equipment.
 @export var grit: float = 0.0:
 	set(new_grit):
 		grit = new_grit
@@ -86,10 +86,6 @@ func recalculate_max_health() -> void:
 @export var start_armor: float = 0.0
 ## Mystic armor granted automatically at the start of every battle.
 @export var start_mystic_armor: float = 0.0
-## Compatibility alias for start_mystic_armor
-var start_mage_armor: float:
-	get: return start_mystic_armor
-	set(val): start_mystic_armor = val
 
 ## Flat bonus to physical armor gain.
 var bonus_armor_gain: float = 0.0
@@ -161,10 +157,6 @@ var cur_mystic_armor: float = 0.0:
 		var cap: float = max(0.0, max_health)
 		cur_mystic_armor = clampf(new_mystic_armor, 0.0, cap)
 
-## Compatibility alias for cur_mystic_armor
-var cur_mage_armor: float:
-	get: return cur_mystic_armor
-	set(val): cur_mystic_armor = val
 ## Remaining actions / tile swaps in the current combat turn. Clamped between 0 and max_energy.
 var moves_left: int = 0:
 	set(new_moves):
@@ -453,16 +445,10 @@ func apply_armor_reduction(damage: float, armor_property: String) -> float:
 		set(armor_property, remaining_armor)
 		_on_stat_modified(armor_property)
 		statChanged.emit(armor_property)
-		if armor_property == "cur_mystic_armor":
-			_on_stat_modified("cur_mage_armor")
-			statChanged.emit("cur_mage_armor")
 		return 0.0
 	set(armor_property, 0.0)
 	_on_stat_modified(armor_property)
 	statChanged.emit(armor_property)
-	if armor_property == "cur_mystic_armor":
-		_on_stat_modified("cur_mage_armor")
-		statChanged.emit("cur_mage_armor")
 	return abs(remaining_armor)
 
 func modify_stat(stat: String, value, increment: bool = true) -> void:
@@ -475,11 +461,7 @@ func modify_stat(stat: String, value, increment: bool = true) -> void:
 			next_stacks = (get_buff_stacks(norm_id) + int(value)) if increment else int(value)
 		set_buff(norm_id, next_stacks)
 		return
-	if stat == "cur_mage_armor":
-		stat = "cur_mystic_armor"
-	elif stat == "start_mage_armor":
-		stat = "start_mystic_armor"
-	elif stat == "max_health":
+	if stat == "max_health":
 		if increment:
 			bonus_max_health += float(value)
 		else:
@@ -497,12 +479,6 @@ func modify_stat(stat: String, value, increment: bool = true) -> void:
 		_on_moves_exhausted()
 	_on_stat_modified(stat)
 	statChanged.emit(stat)
-	if stat == "cur_mystic_armor":
-		_on_stat_modified("cur_mage_armor")
-		statChanged.emit("cur_mage_armor")
-	elif stat == "start_mystic_armor":
-		_on_stat_modified("start_mage_armor")
-		statChanged.emit("start_mage_armor")
 
 # Compatibility aliases used across existing enemy and event scripts
 func take_dmg(dmg: float, dmg_type: int = 0, attacker: EntityResource = null) -> float:

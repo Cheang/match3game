@@ -35,8 +35,7 @@ func expand():
 	get_stat_and_set(ls_display, cat_health_lifesteal, true, "Life Steal (%)")
 
 	get_stat_and_set(Global.cur_char.grit, cat_defence_startarmor, false, "Grit (Blue)", eq_bonuses.get("grit", 0.0))
-	var m_arm = Global.cur_char.start_mystic_armor if "start_mystic_armor" in Global.cur_char else Global.cur_char.start_mage_armor
-	get_stat_and_set(m_arm, cat_defence_startmagearmor, true, "Starting Mystic Armor", eq_bonuses.get("start_mystic_armor", eq_bonuses.get("start_mage_armor", 0.0)))
+	get_stat_and_set(Global.cur_char.start_mystic_armor, cat_defence_startmagearmor, true, "Starting Mystic Armor", eq_bonuses.get("start_mystic_armor", 0.0))
 	get_stat_and_set(Global.cur_char.dmg_reduction_flat, cat_defence_dmgreduction, true, "Flat DMG Reduction", eq_bonuses.get("dmg_reduction_flat", 0.0))
 	get_stat_and_set(Global.cur_char.dmg_reduction, cat_defence_dmgreduction2, true, "Damage Reduction (%)", eq_bonuses.get("dmg_reduction", 0.0))
 

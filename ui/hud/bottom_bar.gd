@@ -150,6 +150,5 @@ func set_gold(new_gold: int, _animate: bool = true) -> void:
 		gold_label.text = str(current_gold)
 
 
-## Optional compatibility alias matching PlayerGlobes API
-func set_defenses(new_hp: float, new_max_hp: float, _new_armor: float = 0.0, _new_mage_armor: float = 0.0, animate: bool = true) -> void:
+func set_defenses(new_hp: float, new_max_hp: float, _new_armor: float = 0.0, _new_mystic_armor: float = 0.0, animate: bool = true) -> void:
 	set_hp(new_hp, new_max_hp, animate)

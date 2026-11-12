@@ -19,7 +19,6 @@ enum DamageType {
 	PHYSICAL = 0,           ## Reduced by enemy Armor, scales with Might, cooldown reduced by Agility.
 	MYSTICAL = 1            ## Reduced by enemy Mystic Armor, scales with Spirit, cooldown reduced by Spirit.
 }
-const MAGIC = DamageType.MYSTICAL ## Backwards compatibility alias.
 
 ## Player stat used to scale an equipment effect.
 enum StatScaling {
@@ -163,24 +162,10 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var multiply_armor_by_combo: bool = false
 ## Base Mystic Armor granted when triggered (0 = none).
 @export var base_mystic_armor: float = 0.0
-## Compatibility alias for base_mystic_armor
-var base_magic_armor: float:
-	get: return base_mystic_armor
-	set(val): base_mystic_armor = val
-
 ## Which player stat is added to base_mystic_armor.
 @export var mystic_armor_stat_scaling: StatScaling = StatScaling.SPIRIT
-## Compatibility alias for mystic_armor_stat_scaling
-var magic_armor_stat_scaling: StatScaling:
-	get: return mystic_armor_stat_scaling
-	set(val): mystic_armor_stat_scaling = val
-
 ## If true, multiplies total Mystic Armor granted by the player's current Hand Combo.
 @export var multiply_mystic_armor_by_combo: bool = false
-## Compatibility alias for multiply_mystic_armor_by_combo
-var multiply_magic_armor_by_combo: bool:
-	get: return multiply_mystic_armor_by_combo
-	set(val): multiply_mystic_armor_by_combo = val
 
 ## Base HP restored to the player when triggered (0 = none).
 @export var base_heal: float = 0.0
@@ -441,13 +426,8 @@ func get_effective_base_mystic_armor() -> float:
 	if tier == null:
 		return base_mystic_armor
 	if tier.is_effect_override:
-		var tier_m_arm: float = tier.base_mystic_armor if ("base_mystic_armor" in tier and tier.base_mystic_armor > 0.0) else (tier.base_magic_armor if "base_magic_armor" in tier else 0.0)
-		return tier_m_arm if tier_m_arm > 0.0 else base_mystic_armor
-	var tier_m_arm_add: float = tier.base_mystic_armor if "base_mystic_armor" in tier else (tier.base_magic_armor if "base_magic_armor" in tier else 0.0)
-	return base_mystic_armor + tier_m_arm_add
-
-func get_effective_base_magic_armor() -> float:
-	return get_effective_base_mystic_armor()
+		return tier.base_mystic_armor if tier.base_mystic_armor > 0.0 else base_mystic_armor
+	return base_mystic_armor + tier.base_mystic_armor
 
 func get_effective_base_heal() -> float:
 	var tier = get_active_tier()
@@ -541,9 +521,6 @@ func apply_progression() -> void:
 		p.set_flag(tag, true)
 	if p.has_method("on_reward_chosen"):
 		p.on_reward_chosen(self)
-
-func boost() -> void:
-	apply_progression()
 
 ## Executes all active effects configured on this equipment.
 func activate(context = null) -> void:

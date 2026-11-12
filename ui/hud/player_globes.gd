@@ -27,10 +27,7 @@ var _magic_tween: Tween
 var current_hp: float = 20.0
 var max_hp: float = 20.0
 var current_armor: float = 0.0
-var current_mage_armor: float = 0.0
-var current_mystic_armor: float:
-	get: return current_mage_armor
-	set(val): current_mage_armor = val
+var current_mystic_armor: float = 0.0
 var current_energy: int = 2
 var max_energy: int = 2
 var current_gold: int = 10
@@ -56,8 +53,8 @@ const COLOR_HP_OUTLINE := Color(0.12, 0.08, 0.15)
 const COLOR_ARMOR_TEXT := Color(1.0, 1.0, 1.0)
 const COLOR_ARMOR_OUTLINE := Color(0.11, 0.15, 0.22)
 
-const COLOR_MAGIC_TEXT := Color(0.72, 0.95, 1.0)
-const COLOR_MAGIC_OUTLINE := Color(0.04, 0.10, 0.26)
+const COLOR_MYSTIC_TEXT := Color(0.72, 0.95, 1.0)
+const COLOR_MYSTIC_OUTLINE := Color(0.04, 0.10, 0.26)
 
 
 func _ready() -> void:
@@ -107,18 +104,18 @@ func _ready() -> void:
 		_energy_mat.set_shader_parameter("time_offset", 2.7)
 
 	# Set initial visual state
-	set_defenses(current_hp, max_hp, current_armor, current_mage_armor, false)
+	set_defenses(current_hp, max_hp, current_armor, current_mystic_armor, false)
 	set_energy(current_energy, max_energy, false)
 	set_gold(current_gold)
 
 
-func set_defenses(new_hp: float, new_max_hp: float, new_armor: float, new_mage_armor: float, animate: bool = true) -> void:
+func set_defenses(new_hp: float, new_max_hp: float, new_armor: float, new_mystic_armor: float, animate: bool = true) -> void:
 	current_hp = new_hp
 	max_hp = max(1.0, new_max_hp)
 	current_armor = max(0.0, new_armor)
-	current_mage_armor = max(0.0, new_mage_armor)
+	current_mystic_armor = max(0.0, new_mystic_armor)
 
-	# 1. Update Number Display (Priority: Magic Armor -> Armor -> Health)
+	# 1. Update Number Display (Priority: Mystic Armor -> Armor -> Health)
 	_update_number_display()
 
 	# 2. Update Red Health Liquid Fill Level
@@ -144,7 +141,7 @@ func set_defenses(new_hp: float, new_max_hp: float, new_armor: float, new_mage_a
 				SLOSH_WAVE_AMP, BASE_WAVE_AMP, 0.6
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-	# 3. Update Stacked Armor Visuals (Steel plate & Magic shield)
+	# 3. Update Stacked Armor Visuals (Steel plate & Mystic shield)
 	_update_armor_layers(animate)
 
 
@@ -152,11 +149,11 @@ func _update_number_display() -> void:
 	if not hp_label:
 		return
 
-	if current_mage_armor > 0.0:
-		# Magic Armor is taking incoming damage first
-		hp_label.text = str(int(roundf(current_mage_armor)))
-		hp_label.add_theme_color_override("font_color", COLOR_MAGIC_TEXT)
-		hp_label.add_theme_color_override("font_outline_color", COLOR_MAGIC_OUTLINE)
+	if current_mystic_armor > 0.0:
+		# Mystic Armor is taking incoming damage first
+		hp_label.text = str(int(roundf(current_mystic_armor)))
+		hp_label.add_theme_color_override("font_color", COLOR_MYSTIC_TEXT)
+		hp_label.add_theme_color_override("font_outline_color", COLOR_MYSTIC_OUTLINE)
 		hp_label.add_theme_constant_override("outline_size", 4)
 	elif current_armor > 0.0:
 		# Physical Armor is taking incoming damage
@@ -174,11 +171,11 @@ func _update_number_display() -> void:
 
 func _update_armor_layers(animate: bool) -> void:
 	var has_armor: bool = current_armor > 0.0
-	var has_mage_armor: bool = current_mage_armor > 0.0
+	var has_mystic_armor: bool = current_mystic_armor > 0.0
 
-	# When Magic Armor is stacked on top of Physical Armor, mask the outer rim of the steel plate
+	# When Mystic Armor is stacked on top of Physical Armor, mask the outer rim of the steel plate
 	if _armor_mat:
-		_armor_mat.set_shader_parameter("hide_outer_rim", 1.0 if has_mage_armor else 0.0)
+		_armor_mat.set_shader_parameter("hide_outer_rim", 1.0 if has_mystic_armor else 0.0)
 
 	# Physical Armor Plate Layer
 	if armor_plate:
@@ -201,12 +198,12 @@ func _update_armor_layers(animate: bool) -> void:
 				armor_plate.visible = false
 				armor_plate.modulate.a = 0.0
 
-	# Magic Armor Shield Layer
+	# Mystic Armor Shield Layer
 	if magic_armor_shield:
 		if _magic_tween and _magic_tween.is_valid():
 			_magic_tween.kill()
 
-		if has_mage_armor:
+		if has_mystic_armor:
 			magic_armor_shield.visible = true
 			if animate and is_inside_tree():
 				_magic_tween = create_tween()
@@ -223,13 +220,12 @@ func _update_armor_layers(animate: bool) -> void:
 				magic_armor_shield.modulate.a = 0.0
 
 
-# Backward-compatible convenience methods
 func set_hp(new_hp: float, new_max_hp: float, animate: bool = true) -> void:
-	set_defenses(new_hp, new_max_hp, current_armor, current_mage_armor, animate)
+	set_defenses(new_hp, new_max_hp, current_armor, current_mystic_armor, animate)
 
 
-func set_armor(new_armor: float, new_mage_armor: float, animate: bool = true) -> void:
-	set_defenses(current_hp, max_hp, new_armor, new_mage_armor, animate)
+func set_armor(new_armor: float, new_mystic_armor: float, animate: bool = true) -> void:
+	set_defenses(current_hp, max_hp, new_armor, new_mystic_armor, animate)
 
 
 func set_gold(new_gold: int) -> void:

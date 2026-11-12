@@ -47,10 +47,6 @@ enum Rarity {
 @export var start_armor: float = 0.0
 ## Passive Starting Mystic Armor granted at the start of every combat encounter.
 @export var start_mystic_armor: float = 0.0
-## Compatibility alias for start_mystic_armor
-var start_mage_armor: float:
-	get: return start_mystic_armor
-	set(val): start_mystic_armor = val
 ## Passive percentage damage reduction (0% to 90%).
 @export var dmg_reduction: float = 0.0
 ## Passive flat incoming damage reduction.
@@ -61,9 +57,6 @@ var start_mage_armor: float:
 @export_range(0, 100) var gold_chance: int = 0
 ## Passive starting combo points at the start of combat turns.
 @export var start_combo: int = 0
-var start_hand_combo: int:
-	get: return start_combo
-	set(val): start_combo = val
 
 # ==============================================================================
 # 3. EFFECT SCALING & OVERRIDES
@@ -84,10 +77,6 @@ var start_hand_combo: int:
 @export var base_armor: float = 0.0
 ## Base Mystic Armor granted when triggered.
 @export var base_mystic_armor: float = 0.0
-## Compatibility alias for base_mystic_armor
-var base_magic_armor: float:
-	get: return base_mystic_armor
-	set(val): base_mystic_armor = val
 ## Base HP restored when triggered.
 @export var base_heal: float = 0.0
 
@@ -130,7 +119,7 @@ func get_stat_boosts() -> Dictionary:
 	if crit_mutly != 0.0: boosts["crit_mutly"] = crit_mutly
 	if life_steal != 0.0: boosts["life_steal"] = life_steal
 	if start_armor != 0.0: boosts["start_armor"] = start_armor
-	if start_mage_armor != 0.0: boosts["start_mage_armor"] = start_mage_armor
+	if start_mystic_armor != 0.0: boosts["start_mystic_armor"] = start_mystic_armor
 	if dmg_reduction != 0.0: boosts["dmg_reduction"] = dmg_reduction
 	if dmg_reduction_flat != 0.0: boosts["dmg_reduction_flat"] = dmg_reduction_flat
 	if cooldown_reduction != 0: boosts["cooldown_reduction"] = cooldown_reduction
@@ -159,8 +148,8 @@ func get_stat_boosts_bbcode() -> String:
 		parts.append("[color=#934988]%s%% Lifesteal[/color]" % ("+" + str(int(life_steal * 100)) if life_steal > 0 else str(int(life_steal * 100))))
 	if start_armor != 0.0:
 		parts.append("[color=#4d65b4]%s Start Armor[/color]" % ("+" + str(start_armor) if start_armor > 0 else str(start_armor)))
-	if start_mage_armor != 0.0:
-		parts.append("[color=#0b8a8f]%s Start M.Armor[/color]" % ("+" + str(start_mage_armor) if start_mage_armor > 0 else str(start_mage_armor)))
+	if start_mystic_armor != 0.0:
+		parts.append("[color=#0b8a8f]%s Start Mystic Armor[/color]" % ("+" + str(start_mystic_armor) if start_mystic_armor > 0 else str(start_mystic_armor)))
 	if dmg_reduction != 0.0:
 		parts.append("[color=#5d7a88]%s%% DMG Red[/color]" % ("+" + str(dmg_reduction) if dmg_reduction > 0 else str(dmg_reduction)))
 	if dmg_reduction_flat != 0.0:

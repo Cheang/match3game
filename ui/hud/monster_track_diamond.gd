@@ -75,8 +75,8 @@ func _display_active_move() -> void:
 		val = int(roundf(mod.base_damage))
 	elif mod.base_armor > 0.0:
 		val = int(roundf(mod.base_armor))
-	elif mod.base_magic_armor > 0.0:
-		val = int(roundf(mod.base_magic_armor))
+	elif mod.base_mystic_armor > 0.0:
+		val = int(roundf(mod.base_mystic_armor))
 	elif mod.base_heal > 0.0:
 		val = int(roundf(mod.base_heal))
 	elif mod.moves_to_give > 0:

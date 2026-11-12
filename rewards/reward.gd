@@ -682,10 +682,6 @@ func apply_progression(player: Object = null) -> void:
 	if p.has_method("on_reward_chosen"):
 		p.on_reward_chosen(self)
 
-## Legacy alias for apply_progression().
-func boost() -> void:
-	apply_progression()
-
 ## Returns dynamic BBCode text summarizing all effects granted by this reward at its current rarity.
 func get_effect_description() -> String:
 	var tier: RewardRarityTier = get_active_tier()
