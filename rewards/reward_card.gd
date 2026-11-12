@@ -104,15 +104,8 @@ func _ensure_icon_material() -> void:
 	if reward_icon == null:
 		reward_icon = find_child("reward_icon", true, false)
 	if reward_icon != null:
-		if reward_icon.material == null or not (reward_icon.material is ShaderMaterial):
-			var mat := ShaderMaterial.new()
-			mat.shader = RARITY_SHADER
-			mat.set_shader_parameter("rarity_tier", 0)
-			mat.set_meta("_is_duplicated", true)
-			reward_icon.material = mat
-		elif not reward_icon.material.has_meta("_is_duplicated"):
-			reward_icon.material = reward_icon.material.duplicate()
-			reward_icon.material.set_meta("_is_duplicated", true)
+		reward_icon.material = null
+		reward_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 static func get_track_palette_material(c_id: int) -> ShaderMaterial:
 	var base_fam: int = ColorLoadoutTrack.get_base_family(c_id)
@@ -207,8 +200,9 @@ func load_btn() -> void:
 
 	if backplate != null and backplate.material is ShaderMaterial:
 		backplate.material.set_shader_parameter("rarity_tier", int(r_enum))
-	if reward_icon != null and reward_icon.material is ShaderMaterial:
-		reward_icon.material.set_shader_parameter("rarity_tier", int(r_enum))
+	if reward_icon != null:
+		reward_icon.material = null
+		reward_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	# Resolve equipment if applicable
 	var eq: Equipment = null
@@ -218,12 +212,8 @@ func load_btn() -> void:
 		eq = (reward_resource as Reward).get_primary_equipment()
 
 	if reward_base != null:
-		if eq != null:
-			reward_base.visible = true
-			reward_base.texture = RewardGrantHandler.get_base_texture(reward_resource)
-		else:
-			reward_base.visible = false
-			reward_base.texture = null
+		reward_base.visible = false
+		reward_base.texture = null
 	if reward_icon != null:
 		reward_icon.texture = RewardGrantHandler.get_icon(reward_resource)
 

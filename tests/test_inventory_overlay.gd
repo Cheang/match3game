@@ -301,15 +301,21 @@ func _ready() -> void:
 	assert(overlay.floating_shard_dock.current_equipment == red_shard, "Floating shard dock must hold the new shard")
 	assert(overlay.floating_shard_dock.fire_particles.emitting == true, "Fire particles must be emitting on floating shard")
 
-	# Verify compatibility highlights: Red track normal, other tracks disabled
+	# Verify compatibility highlights: Red track normal, other tracks disabled (including empty tracks)
 	for row in overlay.track_rows:
 		if row.track_color == 100:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Red track must use normal empty sprite")
 			assert(row.diamond_slots[0].modulate == Color.WHITE, "Red track diamond slots must not be dimmed")
 			assert(row.ult_slot.modulate.a < 0.9, "Ultimate slot must be dimmed for non-ultimate shard")
-		elif row.track_color > 0:
-			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible track (%d) must use disabled sprite" % row.track_color)
-			assert(row.diamond_slots[0].modulate.a < 0.9, "Incompatible track slots must be grayed out")
+		else:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible or empty track (%d) must use disabled sprite" % row.track_color)
+			assert(row.diamond_slots[0].modulate.a < 0.9, "Incompatible/empty track slots must be grayed out")
+
+	# Verify drag initiation from floating shard item
+	var drag_data: Variant = overlay.floating_shard_dock.shard_item._get_drag_data(Vector2(20, 20))
+	assert(drag_data != null and drag_data is Dictionary, "Floating shard item must provide valid drag data on drag")
+	assert(drag_data.get("modifier") == red_shard, "Drag data must hold the red shard")
+	assert(drag_data.get("source_is_floating") == true, "Drag data must mark source_is_floating")
 
 	# Test dropping floating shard on Red track slot 0 to replace existing Greatsword
 	var initial_item: Equipment = red_track.get_modifier_at_slot_index(0)

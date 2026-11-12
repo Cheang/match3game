@@ -10,6 +10,10 @@ extends Control
 signal slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
 signal equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int)
 
+const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
+const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
+
 @export var is_ultimate: bool = false
 @export var slot_idx: int = -1
 
@@ -35,6 +39,10 @@ func _ensure_nodes() -> void:
 		icon_rect = get_node_or_null("Icon") as TextureRect
 	if shader_mat == null and frame_rect != null and frame_rect.material is ShaderMaterial:
 		shader_mat = frame_rect.material as ShaderMaterial
+	if frame_rect != null:
+		frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if icon_rect != null:
+		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -45,35 +53,50 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 		return null
 
 	var preview := Control.new()
-	var box := PanelContainer.new()
+	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var preview_sz := Vector2(83, 59) if is_ultimate else Vector2(59, 59)
-	box.custom_minimum_size = preview_sz
-	box.size = preview_sz
-	box.position = -preview_sz / 2.0
 
-	var sb := StyleBoxFlat.new()
+	var inner := Control.new()
+	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner.position = -preview_sz / 2.0
+	preview.add_child(inner)
+
+	var preview_frame := TextureRect.new()
+	preview_frame.size = preview_sz
+	preview_frame.custom_minimum_size = preview_sz
+	preview_frame.texture = TEX_ULT_UNSELECTED if is_ultimate else TEX_BASIC_UNSELECTED
+	preview_frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview_frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	preview_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	preview_frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+	var s_mat := ShaderMaterial.new()
+	s_mat.shader = PALETTE_SHADER
 	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(track_ref.color)
-	sb.bg_color = pal.base.darkened(0.3)
-	sb.border_width_left = 2
-	sb.border_width_top = 2
-	sb.border_width_right = 2
-	sb.border_width_bottom = 2
-	sb.border_color = pal.highlight
-	sb.corner_radius_top_left = 4
-	sb.corner_radius_top_right = 4
-	sb.corner_radius_bottom_left = 4
-	sb.corner_radius_bottom_right = 4
-	box.add_theme_stylebox_override("panel", sb)
+	s_mat.set_shader_parameter("target_color_1", pal.highlight)
+	s_mat.set_shader_parameter("target_color_2", pal.lightbase)
+	s_mat.set_shader_parameter("target_color_3", pal.base)
+	s_mat.set_shader_parameter("target_color_4", pal.shadebase)
+	s_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	preview_frame.material = s_mat
+	inner.add_child(preview_frame)
 
-	var icon_preview := TextureRect.new()
-	icon_preview.set_anchors_preset(Control.PRESET_FULL_RECT)
-	icon_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon_preview.texture = modifier.icon
-	box.add_child(icon_preview)
+	if modifier.icon != null:
+		var icon_preview := TextureRect.new()
+		icon_preview.position = Vector2.ZERO
+		icon_preview.size = preview_sz
+		icon_preview.custom_minimum_size = preview_sz
+		icon_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_preview.texture = modifier.icon
+		icon_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		inner.add_child(icon_preview)
 
-	preview.add_child(box)
-	set_drag_preview(preview)
+	if is_inside_tree() and get_viewport() != null and get_viewport().gui_is_dragging():
+		set_drag_preview(preview)
+	else:
+		preview.queue_free()
 
 	return {
 		"type": "equipment_drag",

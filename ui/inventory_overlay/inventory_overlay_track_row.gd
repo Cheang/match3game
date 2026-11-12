@@ -50,7 +50,7 @@ var diamond_shader_mats: Array[ShaderMaterial] = []
 func _init() -> void:
 	custom_minimum_size = TRACK_SIZE
 	size = TRACK_SIZE
-	mouse_filter = Control.MOUSE_FILTER_PASS
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _ready() -> void:
 	_ensure_structure()
@@ -119,6 +119,7 @@ func _ensure_structure() -> void:
 			ult_frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			ult_frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			ult_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			ult_frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			ult_slot.add_child(ult_frame)
 
 		if ult_shader_mat == null:
@@ -133,6 +134,7 @@ func _ensure_structure() -> void:
 			ult_icon = TextureRect.new()
 			ult_icon.name = "Icon"
 			ult_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			ult_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			ult_slot.add_child(ult_icon)
 		ult_icon.position = Vector2.ZERO
 		ult_icon.size = ULT_SIZE
@@ -169,6 +171,7 @@ func _ensure_structure() -> void:
 				frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 				frame_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 				slot_ctrl.add_child(frame_rect)
 
 			var s_mat := ShaderMaterial.new()
@@ -182,12 +185,14 @@ func _ensure_structure() -> void:
 				icon_rect = TextureRect.new()
 				icon_rect.name = "Icon"
 				icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 				slot_ctrl.add_child(icon_rect)
 			icon_rect.position = Vector2.ZERO
 			icon_rect.size = DIAMOND_SIZE
 			icon_rect.custom_minimum_size = DIAMOND_SIZE
 			icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			slot_ctrl.icon_rect = icon_rect
 
 			diamond_slots.append(slot_ctrl)
@@ -208,7 +213,14 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 	ult_slot.modifier = ult_mod
 	ult_slot.is_selected_slot = false
 
-	if track_color > 0:
+	if track_color > 0 and track_ref != null:
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY
+		if ult_slot != null:
+			ult_slot.modulate = Color.WHITE
+		for s in diamond_slots:
+			if s != null:
+				s.modulate = Color.WHITE
 		_apply_palette(ult_shader_mat, track_color)
 		ult_frame.visible = true
 		ult_frame.texture = TEX_ULT_UNSELECTED
@@ -219,6 +231,14 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 			ult_icon.texture = null
 			ult_icon.visible = false
 	else:
+		# Empty / unused track row: always use disabled sprite and gray out
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
+		if ult_slot != null:
+			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		for s in diamond_slots:
+			if s != null:
+				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
 		ult_frame.visible = false
 		ult_icon.visible = false
 
@@ -294,7 +314,18 @@ func update_selection(selected_mod: Equipment, is_ult: bool, _slot_idx: int, is_
 ## Sets compatibility visual state (disabled track sprite & grayed-out slots) for candidate equipment.
 func set_compatibility_state(candidate: Equipment) -> void:
 	_ensure_structure()
-	if candidate == null or track_ref == null or track_color <= 0:
+	# Unused / empty tracks: always disabled
+	if track_ref == null or track_color <= 0:
+		if bg_rect != null:
+			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
+		if ult_slot != null:
+			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		for s in diamond_slots:
+			if s != null:
+				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		return
+
+	if candidate == null:
 		if bg_rect != null:
 			bg_rect.texture = TEX_TRACK_EMPTY
 		if ult_slot != null:
