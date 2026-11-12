@@ -392,8 +392,12 @@ static func from_equipment(eq: Equipment, rolled_rarity: int = -1, count: int = 
 	var rew := Reward.new()
 	rew.reward_type = RewardType.EQUIPMENT
 	rew.fixed_rarity = eq.fixed_rarity
-	rew.min_rarity = int(eq.min_rarity) as Rarity
-	rew.max_rarity = int(eq.max_rarity) as Rarity
+	if eq.fixed_rarity:
+		rew.min_rarity = int(eq.rarity) as Rarity
+		rew.max_rarity = int(eq.rarity) as Rarity
+	else:
+		rew.min_rarity = Rarity.COMMON
+		rew.max_rarity = Rarity.GODLY
 	var raw_r: int = int(eq.rarity) if rolled_rarity < 0 else rolled_rarity
 	var clamped_r: Equipment.Rarity = eq.clamp_to_allowed_rarity(raw_r)
 	rew.rarity = int(clamped_r) as Rarity

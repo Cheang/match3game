@@ -261,7 +261,32 @@ func test_rarity_duplication() -> bool:
 		printerr("FAIL: Rolled item does not have Epic stat boosts!")
 		return false
 
-	print("   PASSED: duplicate_with_rarity creates independent instances safely.")
+	# Test fixed_rarity behavior: equipment is either locked to a specific rarity or can be all
+	# 1. Non-fixed equipment can be all rarities (COMMON through GODLY)
+	for r in range(int(Equipment.Rarity.COMMON), int(Equipment.Rarity.GODLY) + 1):
+		if not base_item.can_roll_at_rarity(r):
+			printerr("FAIL: Non-fixed equipment should be eligible for all rarities, rejected: ", r)
+			return false
+
+	# 2. Fixed-rarity equipment is locked to its configured rarity
+	var fixed_item := Equipment.new()
+	fixed_item.piece_name = "Legendary Relic"
+	fixed_item.rarity = Equipment.Rarity.LEGENDARY
+	fixed_item.fixed_rarity = true
+
+	if not fixed_item.can_roll_at_rarity(int(Equipment.Rarity.LEGENDARY)):
+		printerr("FAIL: Fixed equipment should be eligible at its locked rarity!")
+		return false
+	if fixed_item.can_roll_at_rarity(int(Equipment.Rarity.COMMON)) or fixed_item.can_roll_at_rarity(int(Equipment.Rarity.RARE)):
+		printerr("FAIL: Fixed equipment should NOT be eligible at different rarities!")
+		return false
+
+	var rolled_fixed: Equipment = fixed_item.duplicate_with_rarity(Equipment.Rarity.COMMON)
+	if rolled_fixed.rarity != Equipment.Rarity.LEGENDARY:
+		printerr("FAIL: Fixed equipment duplicated with COMMON should stay locked to LEGENDARY!")
+		return false
+
+	print("   PASSED: duplicate_with_rarity and fixed_rarity vs all-rarity rules verified.")
 	return true
 
 func test_existing_equipment_compatibility() -> bool:

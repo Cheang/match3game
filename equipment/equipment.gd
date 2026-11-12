@@ -98,11 +98,8 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Higher rarities grant passive stats, scaled effects, and extra colors configured in rarity_tiers.
 @export var rarity: Rarity = Rarity.COMMON
 ## If true, this equipment is locked to its configured `rarity` and will only appear at that exact tier.
+## If false (default), this equipment can appear and scale across all rarity tiers (Common through Godly).
 @export var fixed_rarity: bool = false
-## Minimum rarity tier this equipment can roll (Rarity Floor).
-@export var min_rarity: Rarity = Rarity.COMMON
-## Maximum rarity tier this equipment can roll (Rarity Ceiling).
-@export var max_rarity: Rarity = Rarity.GODLY
 ## Specific tier configurations (passive stats, effect scaling, and color options) for higher rarities.
 @export var rarity_tiers: Array[EquipmentRarityTier] = []
 
@@ -482,21 +479,18 @@ func set_rarity(new_rarity: Rarity) -> void:
 	if p != null:
 		p.recalculate_equipment_passives()
 
-## Returns true if this equipment can be rolled at `target_rarity` given its fixed_rarity, min_rarity (floor), and max_rarity (ceiling).
+## Returns true if this equipment can be rolled at `target_rarity`.
+## If fixed_rarity is true, only rolls at its configured rarity; otherwise rolls at all rarities.
 func can_roll_at_rarity(target_rarity: int) -> bool:
 	if fixed_rarity:
 		return int(rarity) == target_rarity
-	var floor_r: int = mini(int(min_rarity), int(max_rarity))
-	var ceil_r: int = maxi(int(min_rarity), int(max_rarity))
-	return target_rarity >= floor_r and target_rarity <= ceil_r
+	return true
 
-## Clamps `target_rarity` into this equipment's valid [min_rarity, max_rarity] range (or `rarity` if fixed_rarity is true).
+## Clamps `target_rarity` to this equipment's allowed rarity (locked to rarity if fixed_rarity is true).
 func clamp_to_allowed_rarity(target_rarity: int) -> Rarity:
 	if fixed_rarity:
 		return rarity
-	var floor_r: int = mini(int(min_rarity), int(max_rarity))
-	var ceil_r: int = maxi(int(min_rarity), int(max_rarity))
-	return clampi(target_rarity, floor_r, ceil_r) as Rarity
+	return clampi(target_rarity, int(Rarity.COMMON), int(Rarity.GODLY)) as Rarity
 
 ## Creates an independent clone of this equipment initialized to a specific rarity tier (respecting floor/ceiling/fixed rules).
 ## Designed for Class Pools, Combat Drops, Events, and Shop inventories.
