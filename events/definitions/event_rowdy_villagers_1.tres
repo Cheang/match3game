@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="4_v23nn"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="5_drwhw"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_lr1ko"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_mbdn5"]
 [ext_resource type="Resource" uid="uid://8koqx7511051" path="res://entities/enemies/minions/peasant/peasant_1.tres" id="7_4nv4i"]
 [ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://events/choices/event_choice_event.gd" id="7_h0m8j"]
 [ext_resource type="Script" uid="uid://bng6oewrwnmlg" path="res://events/choices/event_choice_fight.gd" id="9_18ry6"]

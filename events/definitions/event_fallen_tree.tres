@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://duwwp183j67gq" path="res://entities/enemies/minions/wild_boar/wild_boar_2.tres" id="4_jy64e"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="6_obeb2"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="7_5ffkd"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="7_lsbeq"]
 [ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://events/choices/event_choice_event.gd" id="9_yrxgu"]
 
 [sub_resource type="Resource" id="Resource_4vsok"]

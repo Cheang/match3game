@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://1m0uwv4yiykk" path="res://assets/sprites/icons/red/red_icon_2.png" id="4_5mejo"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="5_8hwnc"]
 [ext_resource type="Script" uid="uid://rvdi8rqonnau" path="res://events/choices/event_choice_event.gd" id="6_vaaq1"]
+[ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="7_e5r4h"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="7_jw8hl"]
 
 [sub_resource type="Resource" id="Resource_gv3y7"]

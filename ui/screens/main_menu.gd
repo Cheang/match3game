@@ -91,4 +91,3 @@ func _on_test_pressed() -> void:
 func _on_quit_pressed() -> void:
 	Global.save()
 	get_tree().quit()
-

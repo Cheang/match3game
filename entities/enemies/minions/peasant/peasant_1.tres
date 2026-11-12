@@ -9,10 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://bbkd3pub8df8b" path="res://assets/sprites/ui/legacy/enemy_health.png" id="6_ykc4h"]
 [ext_resource type="PackedScene" uid="uid://edbwrl52wbsb" path="res://entities/enemies/minions/peasant/peasant_1.tscn" id="8_3ygr2"]
 [ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="9_eq_scr"]
-[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="10_ssword"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="10_ssword"]
 [ext_resource type="Resource" path="res://equipment/items/round_shield.tres" id="11_rshield"]
 [ext_resource type="Resource" path="res://equipment/items/punch.tres" id="12_punch"]
-[ext_resource type="Resource" path="res://rewards/cards/utility/general_healing_potion.tres" id="13_hp"]
+[ext_resource type="Resource" uid="uid://ccc1v2ecr51ht" path="res://rewards/cards/utility/general_healing_potion.tres" id="13_hp"]
 
 [sub_resource type="Resource" id="Resource_uao6c"]
 script = ExtResource("2_xas1u")

@@ -23,4 +23,3 @@ func set_display_dimentions() -> void:
 	if OS.has_feature("mobile"):
 		var primary_screen_size: Vector2i = DisplayServer.screen_get_size(0)
 		DisplayServer.window_set_size(primary_screen_size)
-

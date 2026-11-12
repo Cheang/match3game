@@ -10,9 +10,9 @@
 [ext_resource type="Resource" path="res://equipment/items/uppercut.tres" id="8_upper"]
 [ext_resource type="Resource" path="res://equipment/items/punch.tres" id="9_punch"]
 [ext_resource type="Resource" path="res://equipment/items/rush.tres" id="10_rush"]
-[ext_resource type="Resource" path="res://equipment/items/short_sword.tres" id="11_ssword"]
+[ext_resource type="Resource" uid="uid://bdl5lb62iu4tv" path="res://equipment/items/short_sword.tres" id="11_ssword"]
 [ext_resource type="Resource" path="res://equipment/items/block.tres" id="12_block"]
-[ext_resource type="Resource" path="res://rewards/cards/body/body0_strong_body_1.tres" id="13_body1"]
+[ext_resource type="Resource" uid="uid://cagd82mbptaxb" path="res://rewards/cards/body/body0_strong_body_1.tres" id="13_body1"]
 
 [sub_resource type="Resource" id="Resource_po0pf"]
 script = ExtResource("2_r7b1o")
