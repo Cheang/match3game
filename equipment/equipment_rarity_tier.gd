@@ -33,7 +33,7 @@ enum Rarity {
 @export var grit: float = 0.0
 ## Passive Agility granted to the hero (Green Pillar: determines actions per turn / Max Energy).
 @export var agility: float = 0.0
-## Passive Spirit granted to the hero (Purple/White Pillar: boosts healing and magic).
+## Passive Spirit granted to the hero (Purple/White Pillar: boosts healing and mystical effects).
 @export var spirit: float = 0.0
 ## Passive Max Health added to the hero.
 @export var max_health: float = 0.0

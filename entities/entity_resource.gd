@@ -31,7 +31,7 @@ const BuffRegistryRef = preload("res://combat/buff_registry.gd")
 		agility = new_val
 		moves_left = clamp(moves_left, 0, max_energy)
 
-## Purple/White Pillar: Increases healing potency, magic effects, and status scaling.
+## Purple/White Pillar: Increases healing potency, mystical effects, and status scaling.
 @export var spirit: float = 0.0
 
 ## Base energy (moves per turn) before Agility scaling. Players default to 2; enemies default to 1.

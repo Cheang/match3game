@@ -128,7 +128,7 @@ enum RewardCategory {
 @export var might: float = 0.0
 ## Increase to the player's Grit stat (boosts physical armor).
 @export var grit: float = 0.0
-## Increase to the player's Spirit stat (boosts magic and healing).
+## Increase to the player's Spirit stat (boosts mystical effects and healing).
 @export var spirit: float = 0.0
 ## Increase to the player's Agility stat (determines actions per turn / Max Energy).
 @export var agility: float = 0.0
