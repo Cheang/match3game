@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://u86fsgs2fg7p" path="res://assets/sprites/icons/purple/purple_icon_3.png" id="3_u5k8t"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="3_ye4l4"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="4_q28c1"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="5_lufad"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="7_lyp7t"]
 [ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="7_v16ri"]
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="8_kdhdn"]

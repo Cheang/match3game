@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://bhjibs7fk43u7" path="res://events/choices/event_choice_scene_change.gd" id="2_f35as"]
 [ext_resource type="Script" uid="uid://be5ekvdfv5nu4" path="res://events/event_resource.gd" id="2_x30kn"]
 [ext_resource type="Texture2D" uid="uid://d3pbumh33ucln" path="res://assets/sprites/tiles/white_0_sq.png" id="4_6gs8v"]
-[ext_resource type="Script" uid="uid://qfjuk48hs7ea" path="res://equipment/equipment.gd" id="4_v23nn"]
 [ext_resource type="Script" uid="uid://8hkvkfoakar" path="res://events/choices/event_choice_reward.gd" id="5_drwhw"]
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="5_lr1ko"]
 [ext_resource type="Script" uid="uid://bay3878mtg0ej" path="res://rewards/reward_rarity_tier.gd" id="5_mbdn5"]

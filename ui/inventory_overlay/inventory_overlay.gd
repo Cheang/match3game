@@ -30,8 +30,6 @@ const TITLE_FONT = preload("res://assets/theme/title.ttf")
 		description_panel_height = val
 		if description_panel != null:
 			description_panel.custom_minimum_size.y = val
-		if description_row != null:
-			description_row.custom_minimum_size.y = val
 
 @export var header_title: String = "Loadout":
 	set(val):
@@ -51,7 +49,7 @@ var passives_ring: InventoryOverlayPassivesRing = null
 var spacer: Control
 var tracks_box: VBoxContainer
 var track_rows: Array[InventoryOverlayTrackRow] = []
-var description_row: HBoxContainer = null
+var description_hbox: HBoxContainer = null
 var description_panel: NinePatchRect
 var description_label: RichTextLabel
 
@@ -398,7 +396,7 @@ func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: i
 
 func _find_drop_target_at_pos(pos: Vector2) -> Dictionary:
 	if floating_shard_dock != null and floating_shard_dock.visible:
-		if floating_shard_dock.get_global_rect().has_point(pos):
+		if floating_shard_dock.get_global_rect().has_point(pos) or (description_panel != null and description_panel.get_global_rect().has_point(pos)):
 			return { "type": "dock" }
 
 	for row in track_rows:
@@ -587,23 +585,7 @@ func _build_ui_if_needed() -> void:
 			tracks_box.add_child(row)
 			track_rows.append(row)
 
-	# Ability Description & Floating Shard Row (side-by-side: Description on Left, Shard Dock on Right)
-	description_row = vbox.find_child("DescriptionRow", true, false) as HBoxContainer
-	if description_row == null:
-		description_row = HBoxContainer.new()
-		description_row.name = "DescriptionRow"
-		description_row.custom_minimum_size = Vector2(520, description_panel_height)
-		description_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		description_row.add_theme_constant_override("separation", 8)
-		if tracks_box != null and tracks_box.get_parent() == loadout_view:
-			loadout_view.add_child(description_row)
-			loadout_view.move_child(description_row, tracks_box.get_index() + 1)
-		else:
-			loadout_view.add_child(description_row)
-	elif description_row.get_parent() != loadout_view and loadout_view != null:
-		description_row.reparent(loadout_view)
-
-	# Ability Description Field
+	# Ability Description Field (full-width 520x160 NinePatchRect as in normal inventory screen)
 	description_panel = vbox.find_child("DescriptionPanel", true, false) as NinePatchRect
 	if description_panel == null:
 		description_panel = NinePatchRect.new()
@@ -613,13 +595,25 @@ func _build_ui_if_needed() -> void:
 		description_panel.patch_margin_top = 4
 		description_panel.patch_margin_right = 4
 		description_panel.patch_margin_bottom = 4
-		description_panel.custom_minimum_size = Vector2(0, description_panel_height)
+		description_panel.custom_minimum_size = Vector2(520, description_panel_height)
 		description_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		description_panel.size_flags_vertical = Control.SIZE_FILL
 		description_panel.mouse_filter = Control.MOUSE_FILTER_PASS
-		description_row.add_child(description_panel)
+		loadout_view.add_child(description_panel)
+	else:
+		description_panel.custom_minimum_size = Vector2(520, description_panel_height)
+		description_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if description_panel.get_parent() != loadout_view and loadout_view != null:
+			description_panel.reparent(loadout_view)
 
-		var d_margin := MarginContainer.new()
+	# Clean up obsolete DescriptionRow if present
+	var old_row := loadout_view.find_child("DescriptionRow", true, false)
+	if old_row != null and old_row != description_panel:
+		old_row.queue_free()
+
+	var d_margin := description_panel.find_child("Margin", true, false) as MarginContainer
+	if d_margin == null:
+		d_margin = MarginContainer.new()
+		d_margin.name = "Margin"
 		d_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 		d_margin.add_theme_constant_override("margin_left", 14)
 		d_margin.add_theme_constant_override("margin_top", 10)
@@ -627,12 +621,33 @@ func _build_ui_if_needed() -> void:
 		d_margin.add_theme_constant_override("margin_bottom", 10)
 		description_panel.add_child(d_margin)
 
-		var scroll := ScrollContainer.new()
-		scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-		d_margin.add_child(scroll)
+	description_hbox = d_margin.find_child("DescriptionHBox", true, false) as HBoxContainer
+	if description_hbox == null:
+		description_hbox = HBoxContainer.new()
+		description_hbox.name = "DescriptionHBox"
+		description_hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+		description_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		description_hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		description_hbox.add_theme_constant_override("separation", 8)
+		d_margin.add_child(description_hbox)
 
+	var scroll := description_hbox.find_child("Scroll", true, false) as ScrollContainer
+	if scroll == null:
+		scroll = d_margin.find_child("Scroll", true, false) as ScrollContainer
+		if scroll == null:
+			scroll = ScrollContainer.new()
+			scroll.name = "Scroll"
+			scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+			scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+			scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+			description_hbox.add_child(scroll)
+		else:
+			scroll.reparent(description_hbox)
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	description_label = scroll.find_child("DescriptionLabel", true, false) as RichTextLabel
+	if description_label == null:
 		description_label = RichTextLabel.new()
 		description_label.name = "DescriptionLabel"
 		description_label.bbcode_enabled = true
@@ -641,25 +656,18 @@ func _build_ui_if_needed() -> void:
 		description_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		description_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		scroll.add_child(description_label)
-	else:
-		description_label = description_panel.find_child("DescriptionLabel", true, false) as RichTextLabel
-		description_panel.custom_minimum_size = Vector2(0, description_panel_height)
-		description_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		description_panel.size_flags_vertical = Control.SIZE_FILL
-		if description_panel.get_parent() != description_row and description_row != null:
-			description_panel.reparent(description_row)
 
-	# Floating Shard Dock (Slotting Mode only, on the right side of DescriptionRow)
+	# Floating Shard Dock (Slotting Mode only, on top of DescriptionPanel on the right side)
 	floating_shard_dock = vbox.find_child("FloatingShardDock", true, false) as FloatingShardDock
 	if floating_shard_dock == null:
 		floating_shard_dock = FloatingShardDock.new()
 		floating_shard_dock.name = "FloatingShardDock"
-		description_row.add_child(floating_shard_dock)
+		description_hbox.add_child(floating_shard_dock)
 	else:
-		if floating_shard_dock.get_parent() != description_row and description_row != null:
-			floating_shard_dock.reparent(description_row)
+		if floating_shard_dock.get_parent() != description_hbox:
+			floating_shard_dock.reparent(description_hbox)
 	floating_shard_dock.size_flags_horizontal = Control.SIZE_SHRINK_END
-	floating_shard_dock.size_flags_vertical = Control.SIZE_FILL
+	floating_shard_dock.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	floating_shard_dock.custom_minimum_size = FloatingShardDock.DOCK_SIZE
 	floating_shard_dock.visible = is_slotting_mode
 	if not floating_shard_dock.shard_selected.is_connected(_on_floating_shard_selected):
@@ -669,11 +677,11 @@ func _build_ui_if_needed() -> void:
 	if not floating_shard_dock.shard_dropped_on_dock.is_connected(_on_shard_dropped_to_dock):
 		floating_shard_dock.shard_dropped_on_dock.connect(_on_shard_dropped_to_dock)
 
-	# Ensure horizontal ordering: DescriptionPanel on left, FloatingShardDock on right
-	if description_panel != null and description_panel.get_parent() == description_row:
-		description_row.move_child(description_panel, 0)
-	if floating_shard_dock != null and floating_shard_dock.get_parent() == description_row:
-		description_row.move_child(floating_shard_dock, 1)
+	# Ensure horizontal ordering: Description text on left, FloatingShardDock on right
+	if scroll != null and scroll.get_parent() == description_hbox:
+		description_hbox.move_child(scroll, 0)
+	if floating_shard_dock != null and floating_shard_dock.get_parent() == description_hbox:
+		description_hbox.move_child(floating_shard_dock, 1)
 
 	if drag_avatar == null:
 		drag_avatar = DragAvatarClass.new()
