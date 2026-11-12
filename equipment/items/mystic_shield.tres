@@ -10,5 +10,5 @@ icon = ExtResource("2_icon")
 description = "Gives 2 + 50% Spirit Mystic Armor"
 family = "shields"
 cooldown_turns = 1
-is_mystical = true
+damage_type = 1
 base_mystic_armor = 2.0

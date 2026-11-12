@@ -111,18 +111,6 @@ static func get_rarity_hex(r: Rarity) -> String:
 @export var trigger_condition: TriggerCondition = TriggerCondition.ALWAYS
 ## Number of player turns before this equipment can trigger again (0 = no cooldown, can fire multiple times per turn).
 @export var cooldown_turns: int = 0
-## Discipline flag for skills/utility with cooldowns: if true, cooldown reduces with Spirit (Mystical).
-## If false (default), cooldown reduces with Agility (Physical).
-## (For attack equipment with base_damage > 0, this is automatically synchronized with Damage Type).
-@export var is_mystical: bool:
-	get:
-		if base_damage > 0.0 or damage_combo_multiplier > 0.0:
-			return damage_type == DamageType.MYSTICAL or _is_mystical
-		return _is_mystical
-	set(val):
-		_is_mystical = val
-		if base_damage > 0.0 or damage_combo_multiplier > 0.0:
-			damage_type = DamageType.MYSTICAL if val else DamageType.PHYSICAL
 ## If true, this equipment can only trigger once per combat encounter.
 @export var once_per_battle: bool = false
 ## Leave empty for Colorless (equippable on any color track). Add colors here only to restrict this equipment to specific color tracks.
@@ -135,12 +123,9 @@ static func get_rarity_hex(r: Rarity) -> String:
 ## Base damage dealt per hit (0 = does not deal damage).
 @export var base_damage: float = 0.0
 ## Damage discipline: Physical (scales with Might, Agility CDR) or Mystical (scales with Spirit, Spirit CDR).
-@export var damage_type: DamageType = DamageType.PHYSICAL:
-	set(val):
-		damage_type = val
-		_is_mystical = (damage_type == DamageType.MYSTICAL)
+@export var damage_type: DamageType = DamageType.PHYSICAL
 ## Stat scaling ratio for this attack (0.25 = 25%, 0.50 = 50%).
-## Physical attacks scale with Might; Mystical attacks scale with Spirit. Default is 0.50 (50%).
+## Physical attacks scale with Might; Mystical attacks scale with Spirit. Default is 0.50 (50%). Set 0.0 for flat damage.
 @export_range(0.0, 1.0, 0.05) var stat_scaling_ratio: float = 0.50
 ## Number of times the attack strikes when triggered (1 = single hit, 2+ = multi-hit).
 @export var hit_count: int = 1
@@ -209,20 +194,6 @@ static func get_rarity_hex(r: Rarity) -> String:
 # ==============================================================================
 # RUNTIME STATE (Non-exported)
 # ==============================================================================
-var _is_mystical: bool = false
-var _custom_damage_stat_scaling: int = -1
-
-## Player stat used for damage scaling.
-## Automatically inferred from damage_type / is_mystical (Physical -> Might, Mystical -> Spirit).
-## Can be explicitly overridden via code if needed (e.g. StatScaling.NONE).
-var damage_stat_scaling: StatScaling:
-	get:
-		if _custom_damage_stat_scaling >= 0:
-			return _custom_damage_stat_scaling as StatScaling
-		return StatScaling.SPIRIT if is_mystical else StatScaling.MIGHT
-	set(val):
-		_custom_damage_stat_scaling = val
-
 var bound_color: int = 0
 var criting: bool = false
 var current_cooldown: int = 0
@@ -332,7 +303,7 @@ func on_triggered(actor: EntityResource = null) -> void:
 		var cdr: int = 0
 		if owner_entity != null:
 			var stat_cdr: int = 0
-			if is_mystical:
+			if damage_type == DamageType.MYSTICAL:
 				stat_cdr = int(floor(owner_entity.spirit / 5.0))
 			else:
 				stat_cdr = int(floor(owner_entity.agility / 5.0))
@@ -546,9 +517,9 @@ func activate(context = null) -> void:
 	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
 		if cur_enemy != null:
 			var loops: int = get_effective_hit_count()
-			var raw_stat: float = _get_stat_value(cur_char, damage_stat_scaling)
-			var eff_ratio: float = 0.50 if (damage_type == DamageType.MYSTICAL or is_mystical) else stat_scaling_ratio
-			var stat_bonus: float = roundf(raw_stat * eff_ratio)
+			var stat_scaling: StatScaling = StatScaling.SPIRIT if damage_type == DamageType.MYSTICAL else StatScaling.MIGHT
+			var raw_stat: float = _get_stat_value(cur_char, stat_scaling)
+			var stat_bonus: float = roundf(raw_stat * stat_scaling_ratio)
 			var flat_upg: float = float(upgrade) if not upgrade_scales_combo_mult else 0.0
 			var total_combo_mult: float = eff_combo_mult + (float(upgrade) if upgrade_scales_combo_mult else 0.0)
 
@@ -636,14 +607,14 @@ func get_effect_description(char_resource = null, upgrades: int = -1) -> String:
 	var eff_dmg: float = get_effective_base_damage()
 	var eff_combo_mult: float = get_effective_damage_combo_multiplier()
 	if eff_dmg > 0.0 or eff_combo_mult > 0.0:
-		var raw_stat: float = _get_stat_value(c_res, damage_stat_scaling)
-		var eff_ratio: float = 0.50 if (damage_type == DamageType.MYSTICAL or is_mystical) else stat_scaling_ratio
-		var stat_bonus: float = roundf(raw_stat * eff_ratio)
+		var stat_scaling: StatScaling = StatScaling.SPIRIT if damage_type == DamageType.MYSTICAL else StatScaling.MIGHT
+		var raw_stat: float = _get_stat_value(c_res, stat_scaling)
+		var stat_bonus: float = roundf(raw_stat * stat_scaling_ratio)
 		var flat_upg: float = float(upg) if not upgrade_scales_combo_mult else 0.0
 		var dmg: float = eff_dmg + stat_bonus + flat_upg
 		var combo_mult: float = eff_combo_mult + (float(upg) if upgrade_scales_combo_mult else 0.0)
 		var count: int = get_effective_hit_count()
-		var is_myst: bool = (damage_type == DamageType.MYSTICAL or is_mystical)
+		var is_myst: bool = (damage_type == DamageType.MYSTICAL)
 		var color_str: String = "#3ca370" if is_myst else "#ae2334"
 		var type_label: String = " Mystical" if is_myst else ""
 

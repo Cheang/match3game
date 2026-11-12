@@ -12,5 +12,5 @@ family = "shields"
 slot_cost = 2
 cooldown_turns = 2
 once_per_battle = true
-is_mystical = true
+damage_type = 1
 base_mystic_armor = 6.0

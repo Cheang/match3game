@@ -30,7 +30,7 @@ func _make_test_equipment(eq_name: String, dmg: float, cost: int = 1) -> Equipme
 	var eq := Equipment.new()
 	eq.piece_name = eq_name
 	eq.base_damage = dmg
-	eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	eq.stat_scaling_ratio = 0.0
 	eq.slot_cost = cost
 	return eq
 
@@ -116,7 +116,7 @@ func _test_shared_entity_resource() -> void:
 	_assert(is_equal_approx(enemy.cur_health, 15.0), "Enemy lifesteal healed the enemy (+5 HP), not the player")
 
 	# Verify equipment cooldown reduction reads from the acting entity
-	# Heavy Slam is Physical (is_mystical = false), so CDR scales with Agility (-1 per 5 Agility)
+	# Heavy Slam is Physical (damage_type = PHYSICAL), so CDR scales with Agility (-1 per 5 Agility)
 	enemy.cooldown_reduction = 1
 	enemy.agility = 5.0 # +1 CDR from agility (floor(5.0 / 5.0))
 	var cd_eq := _make_test_equipment("Heavy Slam", 5.0)
@@ -126,7 +126,7 @@ func _test_shared_entity_resource() -> void:
 
 	# Verify Mystical equipment cooldown reduction reads Spirit (-1 per 5 Spirit)
 	var myst_eq := _make_test_equipment("Mystic Blast", 5.0)
-	myst_eq.is_mystical = true
+	myst_eq.damage_type = Equipment.DamageType.MYSTICAL
 	myst_eq.cooldown_turns = 4
 	enemy.spirit = 5.0 # +1 CDR from spirit
 	myst_eq.on_triggered(enemy)
@@ -640,7 +640,7 @@ func _test_per_action_critical_hits() -> void:
 	var strike_eq := Equipment.new()
 	strike_eq.piece_name = "Test Strike"
 	strike_eq.base_damage = 10.0
-	strike_eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	strike_eq.stat_scaling_ratio = 0.0
 	strike_eq.hit_count = 1
 
 	# Normal non-crit hit: exactly 10 damage
@@ -1172,8 +1172,7 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	dagger.base_damage = 2.0
 	dagger.stat_scaling_ratio = 0.25
 	dagger.damage_type = Equipment.DamageType.PHYSICAL
-	_assert(dagger.damage_stat_scaling == Equipment.StatScaling.MIGHT, "Physical damage weapon automatically scales with Might")
-	_assert(dagger.is_mystical == false, "Physical damage weapon is automatically not mystical")
+	_assert(dagger.damage_type == Equipment.DamageType.PHYSICAL, "Physical damage weapon has damage_type PHYSICAL")
 	dagger.activate({"attacker": plr, "target": dummy, "is_crit": false})
 	_assert(is_equal_approx(dummy.cur_health, 96.0), "25% scaling weapon deals Base 2 + 2 = 4 DMG (100 -> 96)")
 
@@ -1183,21 +1182,20 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	greatsword.base_damage = 4.0
 	greatsword.stat_scaling_ratio = 0.50
 	greatsword.damage_type = Equipment.DamageType.PHYSICAL
-	_assert(greatsword.damage_stat_scaling == Equipment.StatScaling.MIGHT, "Physical greatsword automatically scales with Might")
+	_assert(greatsword.damage_type == Equipment.DamageType.PHYSICAL, "Physical greatsword has damage_type PHYSICAL")
 	greatsword.activate({"attacker": plr, "target": dummy, "is_crit": false})
 	_assert(is_equal_approx(dummy.cur_health, 89.0), "50% scaling weapon deals Base 4 + 3 = 7 DMG (96 -> 89)")
 
-	# 4. Mystical DMG: Always fixed at 50% of Spirit (Spirit = 4.0 -> +2 DMG), automatically scales with Spirit
+	# 4. Mystical DMG: Scales with Spirit (Spirit = 4.0, ratio 0.50 -> +2 DMG)
 	var spell := Equipment.new()
 	spell.piece_name = "Arcane Spark"
 	spell.base_damage = 3.0
 	spell.damage_type = Equipment.DamageType.MYSTICAL
-	_assert(spell.damage_stat_scaling == Equipment.StatScaling.SPIRIT, "Mystical damage weapon automatically scales with Spirit")
-	_assert(spell.is_mystical == true, "Mystical damage weapon automatically sets is_mystical=true")
-	spell.stat_scaling_ratio = 0.10 # Ignored! Mystic DMG always scales at 50%
+	spell.stat_scaling_ratio = 0.50
+	_assert(spell.damage_type == Equipment.DamageType.MYSTICAL, "Mystical damage weapon has damage_type MYSTICAL")
 	spell.activate({"attacker": plr, "target": dummy, "is_crit": false})
 	# Base 3 + round(4 Spirit * 0.50 = 2) = 5 DMG (89 -> 84)
-	_assert(is_equal_approx(dummy.cur_health, 84.0), "Mystic DMG fixed at 50% Spirit: Base 3 + 2 = 5 DMG (89 -> 84)")
+	_assert(is_equal_approx(dummy.cur_health, 84.0), "Mystic DMG at 50% Spirit: Base 3 + 2 = 5 DMG (89 -> 84)")
 
 	# 5. Armor Scaling: Physical (Fixed 25% of Grit) vs Mystic Armor (Fixed 50% of Spirit)
 	plr.cur_armor = 0.0
@@ -1214,7 +1212,7 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	# Mystic Ward: Base 2 + round(4 Spirit * 0.50 = 2) = 4 Mystic Armor
 	var ward := Equipment.new()
 	ward.piece_name = "Mystic Ward"
-	ward.is_mystical = true
+	ward.damage_type = Equipment.DamageType.MYSTICAL
 	ward.base_mystic_armor = 2.0
 	ward.mystic_armor_stat_scaling = Equipment.StatScaling.SPIRIT
 	ward.activate({"attacker": plr, "target": dummy, "is_crit": false})
@@ -1227,17 +1225,17 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 
 	var phys_item := Equipment.new()
 	phys_item.piece_name = "Physical Dash"
-	phys_item.is_mystical = false # Explicit Physical toggle for non-damaging utility
+	phys_item.damage_type = Equipment.DamageType.PHYSICAL
 	phys_item.cooldown_turns = 3
 	phys_item.on_triggered(plr)
-	_assert(phys_item.current_cooldown == 1, "is_mystical=false uses Agility CDR: 3 - (10/5 = 2) = 1 turn")
+	_assert(phys_item.current_cooldown == 1, "damage_type=PHYSICAL uses Agility CDR: 3 - (10/5 = 2) = 1 turn")
 
 	var myst_item := Equipment.new()
 	myst_item.piece_name = "Mystic Flash"
-	myst_item.is_mystical = true # Explicit Mystical toggle for non-damaging utility
+	myst_item.damage_type = Equipment.DamageType.MYSTICAL
 	myst_item.cooldown_turns = 3
 	myst_item.on_triggered(plr)
-	_assert(myst_item.current_cooldown == 2, "is_mystical=true uses Spirit CDR: 3 - (5/5 = 1) = 2 turns")
+	_assert(myst_item.current_cooldown == 2, "damage_type=MYSTICAL uses Spirit CDR: 3 - (5/5 = 1) = 2 turns")
 
 	# 7. Attack weapons automatically use their DamageType for CDR
 	var phys_attack := Equipment.new()

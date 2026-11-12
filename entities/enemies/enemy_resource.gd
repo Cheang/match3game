@@ -159,7 +159,7 @@ func _populate_default_fallback_from_legacy() -> void:
 	var fallback_eq := Equipment.new()
 	fallback_eq.piece_name = name + " Strike"
 	fallback_eq.base_damage = max(1.0, damage)
-	fallback_eq.damage_stat_scaling = Equipment.StatScaling.NONE
+	fallback_eq.stat_scaling_ratio = 0.0
 	fallback_eq.slot_cost = 1
 	colorless_fallback_track.equip_modifier(fallback_eq)
 
