@@ -2,6 +2,7 @@
 .godot/
 /android/
 .tmp.driveupload/
+.tmp.drivedownload/
 *.bak
 *.tmp
 scratch/
