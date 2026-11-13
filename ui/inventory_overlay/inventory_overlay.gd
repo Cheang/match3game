@@ -31,7 +31,7 @@ const DescPreviewFrameClass = preload("res://ui/inventory_overlay/desc_preview_f
 const DescColorBadgeClass = preload("res://ui/inventory_overlay/desc_color_badge.gd")
 const DescSlotBadgeClass = preload("res://ui/inventory_overlay/desc_slot_badge.gd")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
-const BODY_FONT = preload("res://assets/theme/plain.ttf")
+const BODY_FONT = preload("res://assets/theme/font_153.ttf")
 
 @export var description_panel_height: float = 200.0:
 	set(val):
@@ -848,9 +848,6 @@ func _build_ui_if_needed() -> void:
 		desc_rarity_label.add_theme_font_override("font", BODY_FONT)
 		desc_rarity_label.add_theme_font_size_override("font_size", 18)
 		desc_rarity_label.add_theme_color_override("font_color", Color("#e6e2ec"))
-		desc_rarity_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
-		desc_rarity_label.add_theme_constant_override("shadow_offset_x", 1)
-		desc_rarity_label.add_theme_constant_override("shadow_offset_y", 1)
 		desc_header_hbox.add_child(desc_rarity_label)
 
 		var header_spacer := Control.new()
@@ -878,9 +875,6 @@ func _build_ui_if_needed() -> void:
 		desc_title_label.add_theme_font_override("font", TITLE_FONT)
 		desc_title_label.add_theme_font_size_override("font_size", 28)
 		desc_title_label.add_theme_color_override("font_color", Color.WHITE)
-		desc_title_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
-		desc_title_label.add_theme_constant_override("shadow_offset_x", 1)
-		desc_title_label.add_theme_constant_override("shadow_offset_y", 1)
 		desc_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		desc_title_label.visible = false
 		desc_right_vbox.add_child(desc_title_label)
@@ -1884,9 +1878,8 @@ func _style_description_label() -> void:
 	description_label.add_theme_font_size_override("bold_font_size", 20)
 	description_label.add_theme_color_override("default_color", Color("#f4f1f8"))
 	description_label.add_theme_constant_override("outline_size", 0)
-	description_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
-	description_label.add_theme_constant_override("shadow_offset_x", 1)
-	description_label.add_theme_constant_override("shadow_offset_y", 1)
+	description_label.add_theme_constant_override("shadow_offset_x", 0)
+	description_label.add_theme_constant_override("shadow_offset_y", 0)
 	description_label.add_theme_constant_override("line_separation", 3)
 
 static func _get_dark_panel_rarity_hex(r: int) -> String:

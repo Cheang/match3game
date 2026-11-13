@@ -7,10 +7,22 @@
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_font"]
 [ext_resource type="PackedScene" path="res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn" id="6_ring"]
 [ext_resource type="Texture2D" uid="uid://b4u1op0e762r" path="res://assets/sprites/ui/general_button_unpressed.png" id="7_btn"]
-[ext_resource type="FontFile" path="res://assets/theme/plain.ttf" id="8_body_font"]
-[ext_resource type="Script" path="res://ui/inventory_overlay/desc_preview_frame.gd" id="9_preview_frame"]
-[ext_resource type="Script" path="res://ui/inventory_overlay/desc_color_badge.gd" id="10_color_badge"]
-[ext_resource type="Script" path="res://ui/inventory_overlay/desc_slot_badge.gd" id="11_slot_badge"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/font_153.ttf" id="8_body_font"]
+[ext_resource type="Script" uid="uid://cs5g3dc5ygn8b" path="res://ui/inventory_overlay/desc_preview_frame.gd" id="9_preview_frame"]
+[ext_resource type="Script" uid="uid://dvypw4hydlvy2" path="res://ui/inventory_overlay/desc_color_badge.gd" id="10_color_badge"]
+[ext_resource type="Script" uid="uid://58ivk1opy8lb" path="res://ui/inventory_overlay/desc_slot_badge.gd" id="11_slot_badge"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("7_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(0.65, 0.65, 0.65, 0.7)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
 content_margin_left = 10.0
@@ -22,18 +34,6 @@ texture_margin_left = 4.0
 texture_margin_top = 4.0
 texture_margin_right = 4.0
 texture_margin_bottom = 4.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-texture = ExtResource("7_btn")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
-modulate_color = Color(1.12, 1.12, 1.12, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
 content_margin_left = 10.0
@@ -47,7 +47,7 @@ texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 modulate_color = Color(0.85, 0.85, 0.85, 1)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
 content_margin_left = 10.0
 content_margin_top = 6.0
 content_margin_right = 10.0
@@ -57,7 +57,7 @@ texture_margin_left = 4.0
 texture_margin_top = 4.0
 texture_margin_right = 4.0
 texture_margin_bottom = 4.0
-modulate_color = Color(0.65, 0.65, 0.65, 0.7)
+modulate_color = Color(1.12, 1.12, 1.12, 1)
 
 [node name="InventoryOverlay" type="CanvasLayer" unique_id=1056276658]
 process_mode = 3
@@ -106,7 +106,7 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="LoadoutView" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+[node name="LoadoutView" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=628210270]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
@@ -156,61 +156,56 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="DescriptionHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin"]
+[node name="DescriptionHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin" unique_id=1648781076]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="DescPreviewFrame" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox"]
+[node name="DescPreviewFrame" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox" unique_id=588014138]
 custom_minimum_size = Vector2(168, 168)
 layout_mode = 2
 size_flags_vertical = 4
+mouse_filter = 1
 script = ExtResource("9_preview_frame")
 
-[node name="DescRightVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox"]
+[node name="DescRightVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox" unique_id=1408726625]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 2
 
-[node name="DescHeaderHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox"]
+[node name="DescHeaderHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox" unique_id=621558809]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="RarityLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+[node name="RarityLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox" unique_id=1366266362]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.494118, 0.721569, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("8_body_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 26
 text = "Rare"
 
-[node name="HeaderSpacer" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+[node name="HeaderSpacer" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox" unique_id=421066379]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="ColorBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+[node name="ColorBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox" unique_id=312969734]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("10_color_badge")
 
-[node name="SlotBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+[node name="SlotBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox" unique_id=1432042811]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("11_slot_badge")
 
-[node name="TitleLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox"]
+[node name="TitleLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox" unique_id=1458483521]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 28
 text = "Tusk Dagger"
@@ -227,77 +222,74 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.956863, 0.945098, 0.972549, 1)
-theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
 theme_override_constants/line_separation = 3
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_constants/outline_size = 0
 theme_override_fonts/normal_font = ExtResource("8_body_font")
 theme_override_fonts/bold_font = ExtResource("5_font")
-theme_override_font_sizes/normal_font_size = 18
-theme_override_font_sizes/bold_font_size = 20
+theme_override_font_sizes/normal_font_size = 26
+theme_override_font_sizes/bold_font_size = 26
 bbcode_enabled = true
 text = "[color=#ffd966]Trigger:[/color] Any Match
 Deals: [color=#ff7b7b]6 x 2[/color] DMG
 [color=#7eb8ff]• +1 Base Damage[/color]"
 fit_content = true
 
-[node name="StatsView" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+[node name="StatsView" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=1651349498]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SettingsView" type="CenterContainer" parent="Center/MainPanel/MarginContainer/ContentVBox"]
+[node name="SettingsView" type="CenterContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=1987928695]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SettingsVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView"]
+[node name="SettingsVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView" unique_id=1560401009]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="AlmanacBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox"]
+[node name="AlmanacBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=504298805]
 custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
-disabled = true
 theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+disabled = true
 text = "Almanac"
 
-[node name="SoundBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox"]
+[node name="SoundBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=1588936572]
 custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
-disabled = true
 theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+disabled = true
 text = "Sound"
 
-[node name="GraphicsBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox"]
+[node name="GraphicsBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=1324135877]
 custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
-disabled = true
 theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+disabled = true
 text = "Graphics"
 
-[node name="MainMenuBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox"]
+[node name="MainMenuBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=2098008964]
 custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 text = "Main Menu"
 
 [node name="BottomNavBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=576035909]
@@ -311,39 +303,39 @@ custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 text = "Loadout"
 
-[node name="NavBtn_Stats" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/BottomNavBox"]
+[node name="NavBtn_Stats" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/BottomNavBox" unique_id=750296375]
 custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 text = "Stats"
 
-[node name="NavBtn_Settings" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/BottomNavBox"]
+[node name="NavBtn_Settings" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/BottomNavBox" unique_id=996085969]
 custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
 text = "Settings"
