@@ -15,7 +15,7 @@ const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
-const DOCK_SIZE = Vector2(90, 140)
+const DOCK_SIZE = Vector2(168, 168)
 
 var current_equipment: Equipment = null
 var _bob_timer: float = 0.0
@@ -44,6 +44,8 @@ func _ensure_components() -> void:
 	# Centered floating shard item (no socket background box, no label text)
 	shard_item = FloatingShardItem.new(self)
 	shard_item.name = "FloatingShardItem"
+	shard_item.pivot_offset = DIAMOND_SIZE / 2.0
+	shard_item.scale = Vector2(2.0, 2.0)
 	var base_x: float = (DOCK_SIZE.x - DIAMOND_SIZE.x) / 2.0
 	var base_y: float = (DOCK_SIZE.y - DIAMOND_SIZE.y) / 2.0
 	shard_item.position = Vector2(base_x, base_y)

@@ -188,15 +188,15 @@ func _ready() -> void:
 	assert(p_ring.selected_slot_index == 0, "Slot 0 must be selected")
 	assert(p_ring.slots[0].is_selected_slot == true, "Slot 0 must report is_selected_slot")
 	assert(p_ring.slots[1].is_selected_slot == false, "Slot 1 must not be selected")
-	assert(overlay.description_label.text.contains("Iron Will"), "Description must contain 'Iron Will'")
-	assert(overlay.description_label.text.contains("Rare"), "Description must show Rarity")
+	assert(overlay.desc_title_label.text == "Iron Will", "Title label must contain 'Iron Will'")
+	assert(overlay.desc_rarity_label.text == "Rare", "Rarity label must show 'Rare'")
 
 	# Test Clicking Slot 1: Description updates with Amulet details & slot 1 becomes selected
 	p_ring.slots[1].slot_clicked.emit(1, p_equip)
 	assert(p_ring.selected_slot_index == 1, "Slot 1 must be selected")
 	assert(p_ring.slots[0].is_selected_slot == false, "Slot 0 must no longer be selected")
 	assert(p_ring.slots[1].is_selected_slot == true, "Slot 1 must report is_selected_slot")
-	assert(overlay.description_label.text.contains("Amulet of Vitality"), "Description must contain 'Amulet of Vitality'")
+	assert(overlay.desc_title_label.text == "Amulet of Vitality", "Title label must contain 'Amulet of Vitality'")
 
 	# Test Drag and Drop: Drag p_equip (slot 1) onto slot 0 (swapping with p_reward)
 	print("Testing drag and drop swap on passives ring...")
@@ -209,7 +209,7 @@ func _ready() -> void:
 	overlay._on_slot_clicked(greatsword, red_track, false, 0)
 	assert(p_ring.selected_slot_index == -1, "Passives ring must deselect when track ability clicked")
 	assert(p_ring.slots[0].is_selected_slot == false, "Slot 0 is_selected_slot must be false")
-	assert(overlay.description_label.text.contains("Greatsword"), "Description must switch to Greatsword")
+	assert(overlay.desc_title_label.text == "Greatsword", "Title label must switch to Greatsword")
 	print("Passives ring component verified!")
 
 	# E. Test Multi-tab Views (Loadout, Stats, Settings)
@@ -302,7 +302,8 @@ func _ready() -> void:
 	assert(overlay.floating_shard_dock.fire_particles.emitting == true, "Fire particles must be emitting on floating shard")
 	assert(overlay.description_panel.custom_minimum_size == Vector2(520, overlay.description_panel_height), "Description panel must maintain full 520x%f normal size in slotting mode" % overlay.description_panel_height)
 	assert(overlay.description_panel.get_parent() == overlay.loadout_view, "Description panel must be a direct child of LoadoutView with normal full size")
-	assert(overlay.floating_shard_dock.custom_minimum_size == Vector2(90, 140), "Floating shard dock must be 90x140 side-dock")
+	assert(overlay.floating_shard_dock.custom_minimum_size == Vector2(168, 168), "Floating shard dock must fill 168x168 left preview frame")
+	assert(overlay.desc_preview_frame.get_index() == 0, "Preview frame must be on the left side of DescriptionHBox")
 	assert(overlay.description_panel.is_ancestor_of(overlay.floating_shard_dock) == true, "Floating shard dock must be on top of (inside) DescriptionPanel")
 	assert(overlay.description_hbox != null, "DescriptionHBox HBoxContainer must exist inside DescriptionPanel Margin")
 
@@ -380,9 +381,12 @@ func _ready() -> void:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Active tracks must restore normal sprite after drag ends")
 	print("Track disabling during normal inventory drag verified!")
 
-	# Test description panel readability styling and high-contrast BBCode remapping
+	# Test description panel readability styling, larger fonts, and mockup structure
+	assert(overlay.description_panel_height >= 200.0, "Description panel must be at least 200px tall for larger readable text")
 	assert(overlay.description_label.get_theme_font("normal_font") == overlay.BODY_FONT, "DescriptionLabel must use pixel BODY_FONT")
-	assert(overlay.description_label.get_theme_constant("outline_size") == 3, "DescriptionLabel must have crisp outline_size 3")
+	assert(overlay.description_label.get_theme_font_size("normal_font_size") >= 18, "DescriptionLabel body font size must be >= 18 for readability")
+	assert(overlay.description_label.get_theme_constant("outline_size") == 0, "DescriptionLabel must avoid muddy outlines on pixel font")
+	assert(overlay.desc_title_label.get_theme_font_size("font_size") >= 28, "Title label must be >= 28px")
 	var rare_dagger := Equipment.new()
 	rare_dagger.piece_name = "Tusk Dagger"
 	rare_dagger.rarity = Equipment.Rarity.RARE
@@ -393,8 +397,11 @@ func _ready() -> void:
 	rare_bonus.base_val = 4.0
 	rare_bonus.effective_val = 4.0
 	rare_dagger.rolled_bonuses.append(rare_bonus)
+	overlay._display_ability_description(rare_dagger, 100, false)
+	assert(overlay.desc_title_label.text == "Tusk Dagger", "Title label must show Tusk Dagger")
+	assert(overlay.desc_rarity_label.text == "Rare", "Rarity label must show Rare")
+	assert(overlay.desc_slot_badge._label.text == "I", "Slot badge must show Roman numeral I")
 	var bb: String = overlay._format_ability_bbcode(rare_dagger, 100, false)
-	assert(bb.contains("#7eb8ff"), "Rare title and bonus on dark purple panel must use bright sky blue #7eb8ff")
 	assert(bb.contains("#ff7b7b"), "Damage text on dark purple panel must remap dark red to bright coral #ff7b7b")
 	assert(not bb.contains("Passive Stats:"), "Passive Stats footer must not duplicate bulleted rarity bonuses")
 	print("Description panel readability styling verified!")

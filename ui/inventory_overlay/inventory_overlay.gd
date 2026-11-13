@@ -21,12 +21,15 @@ static var instance: InventoryOverlay = null
 const TEX_OVERLAY_BG = preload("res://assets/sprites/ui/combat/inventory_btn_unpressed.png")
 const TEX_DESC_PANEL = preload("res://assets/sprites/ui/inventory_overlay/ability_description_panel.png")
 const TEX_GENERAL_BTN = preload("res://assets/sprites/ui/general_button_unpressed.png")
+const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
+const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_unselected.png")
+const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const TRACK_ROW_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_track_row.tscn")
 const PASSIVES_RING_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
 const BODY_FONT = preload("res://assets/theme/plain.ttf")
 
-@export var description_panel_height: float = 160.0:
+@export var description_panel_height: float = 200.0:
 	set(val):
 		description_panel_height = val
 		if description_panel != null:
@@ -52,6 +55,17 @@ var tracks_box: VBoxContainer
 var track_rows: Array[InventoryOverlayTrackRow] = []
 var description_hbox: HBoxContainer = null
 var description_panel: NinePatchRect
+var desc_preview_frame: DescPreviewFrame = null
+var normal_preview_root: Control = null
+var normal_preview_frame_rect: TextureRect = null
+var normal_preview_icon_rect: TextureRect = null
+var normal_preview_shader: ShaderMaterial = null
+var desc_right_vbox: VBoxContainer = null
+var desc_header_hbox: HBoxContainer = null
+var desc_rarity_label: Label = null
+var desc_color_badge: DescColorBadge = null
+var desc_slot_badge: DescSlotBadge = null
+var desc_title_label: Label = null
 var description_label: RichTextLabel
 
 var stats_view: Control
@@ -214,6 +228,8 @@ func _update_slotting_mode_ui(slotting_active: bool) -> void:
 		header_label.text = "Equip Shard" if slotting_active else header_title
 	if floating_shard_dock != null:
 		floating_shard_dock.visible = slotting_active
+	if normal_preview_root != null:
+		normal_preview_root.visible = (not slotting_active) and (selected_ability != null or selected_passive != null)
 	if description_panel != null:
 		description_panel.custom_minimum_size.y = description_panel_height
 	if done_btn != null:
@@ -682,11 +698,11 @@ func _build_ui_if_needed() -> void:
 		d_margin = MarginContainer.new()
 		d_margin.name = "Margin"
 		d_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-		d_margin.add_theme_constant_override("margin_left", 14)
-		d_margin.add_theme_constant_override("margin_top", 10)
-		d_margin.add_theme_constant_override("margin_right", 14)
-		d_margin.add_theme_constant_override("margin_bottom", 10)
 		description_panel.add_child(d_margin)
+	d_margin.add_theme_constant_override("margin_left", 12)
+	d_margin.add_theme_constant_override("margin_top", 12)
+	d_margin.add_theme_constant_override("margin_right", 12)
+	d_margin.add_theme_constant_override("margin_bottom", 12)
 
 	description_hbox = d_margin.find_child("DescriptionHBox", true, false) as HBoxContainer
 	if description_hbox == null:
@@ -695,21 +711,138 @@ func _build_ui_if_needed() -> void:
 		description_hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
 		description_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		description_hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		description_hbox.add_theme_constant_override("separation", 8)
 		d_margin.add_child(description_hbox)
+	description_hbox.add_theme_constant_override("separation", 14)
 
-	var scroll := description_hbox.find_child("Scroll", true, false) as ScrollContainer
+	# Left Square Preview Box (168x168 framed box holding selected item OR FloatingShardDock)
+	desc_preview_frame = description_hbox.find_child("DescPreviewFrame", true, false) as DescPreviewFrame
+	if desc_preview_frame == null:
+		desc_preview_frame = DescPreviewFrame.new()
+		desc_preview_frame.name = "DescPreviewFrame"
+		desc_preview_frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		description_hbox.add_child(desc_preview_frame)
+
+	if normal_preview_root == null:
+		normal_preview_root = Control.new()
+		normal_preview_root.name = "NormalPreview"
+		normal_preview_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+		normal_preview_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		normal_preview_root.visible = false
+		desc_preview_frame.add_child(normal_preview_root)
+
+		var preview_holder := Control.new()
+		preview_holder.name = "Holder"
+		preview_holder.custom_minimum_size = Vector2(59, 59)
+		preview_holder.size = Vector2(59, 59)
+		preview_holder.pivot_offset = Vector2(29.5, 29.5)
+		preview_holder.scale = Vector2(2.0, 2.0)
+		preview_holder.position = Vector2((168.0 - 59.0) * 0.5, (168.0 - 59.0) * 0.5)
+		preview_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		normal_preview_root.add_child(preview_holder)
+
+		normal_preview_frame_rect = TextureRect.new()
+		normal_preview_frame_rect.size = Vector2(59, 59)
+		normal_preview_frame_rect.texture = TEX_BASIC_UNSELECTED
+		normal_preview_frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		normal_preview_frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		normal_preview_frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		normal_preview_frame_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		normal_preview_shader = ShaderMaterial.new()
+		normal_preview_shader.shader = PALETTE_SHADER
+		normal_preview_frame_rect.material = normal_preview_shader
+		preview_holder.add_child(normal_preview_frame_rect)
+
+		normal_preview_icon_rect = TextureRect.new()
+		normal_preview_icon_rect.size = Vector2(59, 59)
+		normal_preview_icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		normal_preview_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		normal_preview_icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		normal_preview_icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		preview_holder.add_child(normal_preview_icon_rect)
+
+	# Floating Shard Dock (Slotting Mode only, inside the left square preview box)
+	floating_shard_dock = vbox.find_child("FloatingShardDock", true, false) as FloatingShardDock
+	if floating_shard_dock == null:
+		floating_shard_dock = FloatingShardDock.new()
+		floating_shard_dock.name = "FloatingShardDock"
+		desc_preview_frame.add_child(floating_shard_dock)
+	else:
+		if floating_shard_dock.get_parent() != desc_preview_frame:
+			floating_shard_dock.reparent(desc_preview_frame)
+	floating_shard_dock.set_anchors_preset(Control.PRESET_FULL_RECT)
+	floating_shard_dock.custom_minimum_size = FloatingShardDock.DOCK_SIZE
+	floating_shard_dock.visible = is_slotting_mode
+	if not floating_shard_dock.shard_selected.is_connected(_on_floating_shard_selected):
+		floating_shard_dock.shard_selected.connect(_on_floating_shard_selected)
+	if not floating_shard_dock.drag_requested.is_connected(_on_floating_shard_drag_requested):
+		floating_shard_dock.drag_requested.connect(_on_floating_shard_drag_requested)
+	if not floating_shard_dock.shard_dropped_on_dock.is_connected(_on_shard_dropped_to_dock):
+		floating_shard_dock.shard_dropped_on_dock.connect(_on_shard_dropped_to_dock)
+
+	# Right Column: Header (Rarity + Color/Slot Badges) -> Title -> Scrollable Description Body
+	desc_right_vbox = description_hbox.find_child("DescRightVBox", true, false) as VBoxContainer
+	if desc_right_vbox == null:
+		desc_right_vbox = VBoxContainer.new()
+		desc_right_vbox.name = "DescRightVBox"
+		desc_right_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		desc_right_vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		desc_right_vbox.add_theme_constant_override("separation", 2)
+		description_hbox.add_child(desc_right_vbox)
+
+	if desc_header_hbox == null:
+		desc_header_hbox = HBoxContainer.new()
+		desc_header_hbox.name = "DescHeaderHBox"
+		desc_header_hbox.add_theme_constant_override("separation", 6)
+		desc_header_hbox.visible = false
+		desc_right_vbox.add_child(desc_header_hbox)
+
+		desc_rarity_label = Label.new()
+		desc_rarity_label.name = "RarityLabel"
+		desc_rarity_label.add_theme_font_override("font", BODY_FONT)
+		desc_rarity_label.add_theme_font_size_override("font_size", 18)
+		desc_rarity_label.add_theme_color_override("font_color", Color("#e6e2ec"))
+		desc_rarity_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
+		desc_rarity_label.add_theme_constant_override("shadow_offset_x", 1)
+		desc_rarity_label.add_theme_constant_override("shadow_offset_y", 1)
+		desc_header_hbox.add_child(desc_rarity_label)
+
+		var header_spacer := Control.new()
+		header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		header_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		desc_header_hbox.add_child(header_spacer)
+
+		desc_color_badge = DescColorBadge.new()
+		desc_color_badge.name = "ColorBadge"
+		desc_header_hbox.add_child(desc_color_badge)
+
+		desc_slot_badge = DescSlotBadge.new()
+		desc_slot_badge.name = "SlotBadge"
+		desc_header_hbox.add_child(desc_slot_badge)
+
+	if desc_title_label == null:
+		desc_title_label = Label.new()
+		desc_title_label.name = "TitleLabel"
+		desc_title_label.add_theme_font_override("font", TITLE_FONT)
+		desc_title_label.add_theme_font_size_override("font_size", 28)
+		desc_title_label.add_theme_color_override("font_color", Color.WHITE)
+		desc_title_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
+		desc_title_label.add_theme_constant_override("shadow_offset_x", 1)
+		desc_title_label.add_theme_constant_override("shadow_offset_y", 1)
+		desc_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc_title_label.visible = false
+		desc_right_vbox.add_child(desc_title_label)
+
+	var scroll := desc_right_vbox.find_child("Scroll", true, false) as ScrollContainer
 	if scroll == null:
 		scroll = d_margin.find_child("Scroll", true, false) as ScrollContainer
 		if scroll == null:
 			scroll = ScrollContainer.new()
 			scroll.name = "Scroll"
-			scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 			scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 			scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-			description_hbox.add_child(scroll)
+			desc_right_vbox.add_child(scroll)
 		else:
-			scroll.reparent(description_hbox)
+			scroll.reparent(desc_right_vbox)
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
@@ -725,31 +858,11 @@ func _build_ui_if_needed() -> void:
 		scroll.add_child(description_label)
 	_style_description_label()
 
-	# Floating Shard Dock (Slotting Mode only, on top of DescriptionPanel on the right side)
-	floating_shard_dock = vbox.find_child("FloatingShardDock", true, false) as FloatingShardDock
-	if floating_shard_dock == null:
-		floating_shard_dock = FloatingShardDock.new()
-		floating_shard_dock.name = "FloatingShardDock"
-		description_hbox.add_child(floating_shard_dock)
-	else:
-		if floating_shard_dock.get_parent() != description_hbox:
-			floating_shard_dock.reparent(description_hbox)
-	floating_shard_dock.size_flags_horizontal = Control.SIZE_SHRINK_END
-	floating_shard_dock.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	floating_shard_dock.custom_minimum_size = FloatingShardDock.DOCK_SIZE
-	floating_shard_dock.visible = is_slotting_mode
-	if not floating_shard_dock.shard_selected.is_connected(_on_floating_shard_selected):
-		floating_shard_dock.shard_selected.connect(_on_floating_shard_selected)
-	if not floating_shard_dock.drag_requested.is_connected(_on_floating_shard_drag_requested):
-		floating_shard_dock.drag_requested.connect(_on_floating_shard_drag_requested)
-	if not floating_shard_dock.shard_dropped_on_dock.is_connected(_on_shard_dropped_to_dock):
-		floating_shard_dock.shard_dropped_on_dock.connect(_on_shard_dropped_to_dock)
-
-	# Ensure horizontal ordering: Description text on left, FloatingShardDock on right
-	if scroll != null and scroll.get_parent() == description_hbox:
-		description_hbox.move_child(scroll, 0)
-	if floating_shard_dock != null and floating_shard_dock.get_parent() == description_hbox:
-		description_hbox.move_child(floating_shard_dock, 1)
+	# Ensure horizontal ordering: PreviewFrame on left, DescRightVBox on right
+	if desc_preview_frame != null and desc_preview_frame.get_parent() == description_hbox:
+		description_hbox.move_child(desc_preview_frame, 0)
+	if desc_right_vbox != null and desc_right_vbox.get_parent() == description_hbox:
+		description_hbox.move_child(desc_right_vbox, 1)
 
 	if drag_avatar == null:
 		drag_avatar = DragAvatarClass.new()
@@ -1366,14 +1479,122 @@ func _on_passive_dropped(source_idx: int, target_idx: int) -> void:
 	refresh_overlay_data()
 	_on_passive_clicked(target_idx, passives[target_idx])
 
+func _slot_roman(slot_cost: int, is_ult: bool) -> String:
+	if is_ult:
+		return "U"
+	match clampi(slot_cost, 1, 5):
+		1: return "I"
+		2: return "II"
+		3: return "III"
+		4: return "IV"
+		5: return "V"
+	return "I"
+
+func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
+	if normal_preview_root == null:
+		return
+	if is_slotting_mode or mod == null:
+		normal_preview_root.visible = false
+		return
+	normal_preview_root.visible = true
+	if normal_preview_frame_rect != null:
+		normal_preview_frame_rect.texture = TEX_BASIC_UNSELECTED
+		var c_id: int = color_id if color_id > 0 else _get_equipment_color(mod)
+		var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
+		if normal_preview_shader != null:
+			normal_preview_frame_rect.material = normal_preview_shader
+			normal_preview_shader.set_shader_parameter("target_color_1", pal.highlight)
+			normal_preview_shader.set_shader_parameter("target_color_2", pal.lightbase)
+			normal_preview_shader.set_shader_parameter("target_color_3", pal.base)
+			normal_preview_shader.set_shader_parameter("target_color_4", pal.shadebase)
+			normal_preview_shader.set_shader_parameter("target_color_5", pal.deepshade)
+	if normal_preview_icon_rect != null:
+		normal_preview_icon_rect.texture = mod.icon
+		normal_preview_icon_rect.visible = (mod.icon != null)
+
+func _update_normal_preview_passive(p_res: Resource) -> void:
+	if normal_preview_root == null:
+		return
+	if is_slotting_mode or p_res == null:
+		normal_preview_root.visible = false
+		return
+	normal_preview_root.visible = true
+	if normal_preview_frame_rect != null:
+		normal_preview_frame_rect.texture = TEX_PASSIVE_UNSELECTED
+		normal_preview_frame_rect.material = null
+	if normal_preview_icon_rect != null:
+		var ico: Texture2D = null
+		if p_res is Reward:
+			ico = (p_res as Reward).get_display_icon()
+		elif p_res.get("icon") != null:
+			ico = p_res.get("icon") as Texture2D
+		normal_preview_icon_rect.texture = ico
+		normal_preview_icon_rect.visible = (ico != null)
+
 func _display_ability_description(mod: Equipment, color_id: int, is_ult: bool) -> void:
 	if description_label == null:
 		return
+	if mod == null:
+		_show_empty_description()
+		return
+	if desc_header_hbox != null:
+		desc_header_hbox.visible = true
+	if desc_rarity_label != null:
+		desc_rarity_label.text = Equipment.get_rarity_name(mod.rarity)
+		desc_rarity_label.add_theme_color_override("font_color", Color(_get_dark_panel_rarity_hex(mod.rarity)))
+	if desc_color_badge != null:
+		var badge_c: int = 0 if mod.is_colorless() else (color_id if color_id > 0 else _get_equipment_color(mod))
+		desc_color_badge.set_color_id(badge_c)
+		desc_color_badge.visible = true
+	if desc_slot_badge != null:
+		desc_slot_badge.set_badge_text(_slot_roman(mod.slot_cost, is_ult or mod.is_ultimate))
+		desc_slot_badge.visible = true
+	if desc_title_label != null:
+		desc_title_label.text = mod.piece_name
+		desc_title_label.visible = true
+	_update_normal_preview_ability(mod, color_id)
 	description_label.text = _format_ability_bbcode(mod, color_id, is_ult)
 
 func _display_passive_description(p_res: Resource) -> void:
 	if description_label == null:
 		return
+	if p_res == null:
+		_show_passive_empty_description()
+		return
+	if desc_header_hbox != null:
+		desc_header_hbox.visible = true
+	if desc_color_badge != null:
+		desc_color_badge.visible = false
+	if desc_slot_badge != null:
+		desc_slot_badge.set_badge_text("P")
+		desc_slot_badge.visible = true
+
+	var p_title := "Passive"
+	var p_rarity := "Common"
+	var p_rarity_hex := "#e6e2ec"
+	if p_res is Reward:
+		var rew := p_res as Reward
+		p_title = rew.name
+		p_rarity = Equipment.get_rarity_name(int(rew.rarity))
+		p_rarity_hex = _get_dark_panel_rarity_hex(int(rew.rarity))
+	elif p_res is Equipment:
+		var eq := p_res as Equipment
+		p_title = eq.piece_name
+		p_rarity = Equipment.get_rarity_name(eq.rarity)
+		p_rarity_hex = _get_dark_panel_rarity_hex(eq.rarity)
+	else:
+		if p_res.get("piece_name") != null:
+			p_title = str(p_res.get("piece_name"))
+		elif p_res.get("name") != null:
+			p_title = str(p_res.get("name"))
+
+	if desc_rarity_label != null:
+		desc_rarity_label.text = p_rarity
+		desc_rarity_label.add_theme_color_override("font_color", Color(p_rarity_hex))
+	if desc_title_label != null:
+		desc_title_label.text = p_title
+		desc_title_label.visible = true
+	_update_normal_preview_passive(p_res)
 	description_label.text = _format_passive_bbcode(p_res)
 
 func _style_description_label() -> void:
@@ -1381,13 +1602,14 @@ func _style_description_label() -> void:
 		return
 	description_label.add_theme_font_override("normal_font", BODY_FONT)
 	description_label.add_theme_font_override("bold_font", TITLE_FONT)
+	description_label.add_theme_font_size_override("normal_font_size", 18)
+	description_label.add_theme_font_size_override("bold_font_size", 20)
 	description_label.add_theme_color_override("default_color", Color("#f4f1f8"))
-	description_label.add_theme_color_override("font_outline_color", Color("#1e1824"))
-	description_label.add_theme_constant_override("outline_size", 3)
-	description_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.75))
+	description_label.add_theme_constant_override("outline_size", 0)
+	description_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.85))
 	description_label.add_theme_constant_override("shadow_offset_x", 1)
 	description_label.add_theme_constant_override("shadow_offset_y", 1)
-	description_label.add_theme_constant_override("line_separation", 2)
+	description_label.add_theme_constant_override("line_separation", 3)
 
 static func _get_dark_panel_rarity_hex(r: int) -> String:
 	match r:
@@ -1408,22 +1630,39 @@ static func _remap_colors_for_dark_panel(bbcode_str: String) -> String:
 		.replace("#a854a8", "#e394ff") \
 		.replace("#b0b0b0", "#e6e2ec")
 
+func _clear_desc_header_and_preview() -> void:
+	if desc_header_hbox != null:
+		desc_header_hbox.visible = false
+	if desc_title_label != null:
+		desc_title_label.visible = false
+	if normal_preview_root != null:
+		normal_preview_root.visible = false
+
 func _show_empty_description() -> void:
 	if description_label == null:
 		return
-	description_label.text = "[center][color=#d6d0e0]\nSelect an ability or passive to view its details.[/color][/center]"
+	_clear_desc_header_and_preview()
+	description_label.text = "[font_size=18][color=#d6d0e0]\nSelect an ability or passive to view its details.[/color][/font_size]"
 
 func _show_slot_empty_description(track: ColorLoadoutTrack, is_ult: bool) -> void:
 	if description_label == null:
 		return
+	_clear_desc_header_and_preview()
 	var c_name := ColorLoadoutTrack.get_color_name(track.color) if track != null else "Passive"
 	var type_str := "Ultimate Slot" if is_ult else "Slot"
-	description_label.text = "[center][color=#d6d0e0]\nEmpty %s %s\nEquip abilities by acquiring them during your run.[/color][/center]" % [c_name, type_str]
+	if desc_title_label != null:
+		desc_title_label.text = "Empty %s %s" % [c_name, type_str]
+		desc_title_label.visible = true
+	description_label.text = "[font_size=18][color=#d6d0e0]Equip abilities by acquiring them during your run.[/color][/font_size]"
 
 func _show_passive_empty_description() -> void:
 	if description_label == null:
 		return
-	description_label.text = "[center][color=#d6d0e0]\nEmpty Passive Slot\nAcquire passives during your run to fill this slot.[/color][/center]"
+	_clear_desc_header_and_preview()
+	if desc_title_label != null:
+		desc_title_label.text = "Empty Passive Slot"
+		desc_title_label.visible = true
+	description_label.text = "[font_size=18][color=#d6d0e0]Acquire passives during your run to fill this slot.[/color][/font_size]"
 
 func _format_passive_bbcode(p_res: Resource) -> String:
 	if p_res == null:
@@ -1432,22 +1671,14 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 	var text := ""
 	if p_res is Reward:
 		var rew := p_res as Reward
-		var r_color := _get_dark_panel_rarity_hex(int(rew.rarity))
-		var r_name := Equipment.get_rarity_name(int(rew.rarity))
-		text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, rew.name]
-		text += "[font_size=12][color=#d6d0e0]%s  •  Passive Card[/color][/font_size]\n" % r_name
 		var eff := _remap_colors_for_dark_panel(rew.get_effect_description())
 		if not eff.is_empty():
-			text += "[font_size=14]%s[/font_size]\n" % eff
+			text += "[font_size=18]%s[/font_size]\n" % eff
 	elif p_res is Equipment:
 		var eq := p_res as Equipment
-		var r_color := _get_dark_panel_rarity_hex(eq.rarity)
-		var r_name := Equipment.get_rarity_name(eq.rarity)
-		text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, eq.piece_name]
-		text += "[font_size=12][color=#d6d0e0]%s  •  Passive Equipment[/color][/font_size]\n" % r_name
 		var eff := _remap_colors_for_dark_panel(eq.get_effect_description())
 		if not eff.is_empty():
-			text += "[font_size=14]%s[/font_size]\n" % eff
+			text += "[font_size=18]%s[/font_size]\n" % eff
 		var boosts := eq.get_stat_boosts()
 		if not boosts.is_empty() and not eff.contains("• "):
 			var stat_parts: Array[String] = []
@@ -1456,42 +1687,27 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 				var sign_str := "+" if val > 0 else ""
 				stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 			if not stat_parts.is_empty():
-				text += "[font_size=12][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+				text += "[font_size=16][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 	else:
-		var p_name: String = p_res.get("piece_name") if p_res.get("piece_name") != null else (p_res.get("name") if p_res.get("name") != null else "Passive")
-		text += "[font_size=18][b][color=#ffffff]%s[/color][/b][/font_size]\n" % p_name
-		text += "[font_size=12][color=#d6d0e0]Passive[/color][/font_size]\n"
 		var desc: String = p_res.get("description") if p_res.get("description") != null else ""
 		if not desc.is_empty():
-			text += "[font_size=14]%s[/font_size]\n" % desc
+			text += "[font_size=18]%s[/font_size]\n" % desc
 	return text
 
-func _format_ability_bbcode(mod: Equipment, color_id: int, is_ult: bool) -> String:
+func _format_ability_bbcode(mod: Equipment, _color_id: int, is_ult: bool) -> String:
 	if mod == null:
 		return ""
 
-	var r_color := _get_dark_panel_rarity_hex(mod.rarity)
-	var r_name := Equipment.get_rarity_name(mod.rarity)
-	var c_name := ColorLoadoutTrack.get_color_name(color_id) if color_id > 0 else "Wild"
-
 	var text := ""
-	# Title
-	text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, mod.piece_name]
-
-	# Subtitle
-	var type_str := "Ultimate" if (is_ult or mod.is_ultimate) else ("%d Slot%s" % [mod.slot_cost, "" if mod.slot_cost == 1 else "s"])
-	var color_tag := "%s Track" % c_name if color_id > 0 else "Wild / Any Track"
-	text += "[font_size=12][color=#d6d0e0]%s  •  %s  •  %s[/color][/font_size]\n" % [r_name, type_str, color_tag]
-
 	# Trigger condition (if basic ability)
 	if not is_ult and not mod.is_ultimate:
 		var trig_desc := _get_trigger_description(mod.trigger_condition)
-		text += "[font_size=13][color=#ffd966]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
+		text += "[font_size=18][color=#ffd966]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
 
 	# Effect text (remapped for high contrast on dark purple panel)
 	var eff := _remap_colors_for_dark_panel(mod.get_effect_description())
 	if not eff.is_empty():
-		text += "[font_size=14]%s[/font_size]\n" % eff
+		text += "[font_size=18]%s[/font_size]\n" % eff
 
 	# Passive stats fallback (only if not already included in eff)
 	var boosts := mod.get_stat_boosts()
@@ -1502,7 +1718,7 @@ func _format_ability_bbcode(mod: Equipment, color_id: int, is_ult: bool) -> Stri
 			var sign_str := "+" if val > 0 else ""
 			stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 		if not stat_parts.is_empty():
-			text += "[font_size=12][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+			text += "[font_size=16][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 
 	return text
 
@@ -1522,3 +1738,109 @@ func _get_trigger_description(tc: Equipment.TriggerCondition) -> String:
 func _on_dimmer_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		close()
+
+
+## Pixel-art dark framed square preview box on the left of the DescriptionPanel.
+class DescPreviewFrame extends Control:
+	const BOX_SIZE = Vector2(168, 168)
+
+	func _init() -> void:
+		custom_minimum_size = BOX_SIZE
+		size = BOX_SIZE
+		mouse_filter = Control.MOUSE_FILTER_PASS
+
+	func _draw() -> void:
+		var w := size.x
+		var h := size.y
+		# Dark recessed fill + outer/inner pixel borders
+		draw_rect(Rect2(2, 2, w - 4, h - 4), Color("#2b222e"))
+		draw_rect(Rect2(0, 0, w, h), Color("#19131c"), false, 2.0)
+		draw_rect(Rect2(3, 3, w - 6, h - 6), Color("#4c3d52"), false, 1.0)
+		# Corner pixel accents
+		var dot_col := Color("#66546e")
+		draw_rect(Rect2(5, 5, 3, 3), dot_col)
+		draw_rect(Rect2(w - 8, 5, 3, 3), dot_col)
+		draw_rect(Rect2(5, h - 8, 3, 3), dot_col)
+		draw_rect(Rect2(w - 8, h - 8, 3, 3), dot_col)
+		# 4 inward midpoint pixel triangles
+		var mx := floorf(w * 0.5)
+		var my := floorf(h * 0.5)
+		draw_polygon(PackedVector2Array([Vector2(mx - 4, 4), Vector2(mx + 4, 4), Vector2(mx, 8)]), PackedColorArray([dot_col]))
+		draw_polygon(PackedVector2Array([Vector2(mx - 4, h - 4), Vector2(mx + 4, h - 4), Vector2(mx, h - 8)]), PackedColorArray([dot_col]))
+		draw_polygon(PackedVector2Array([Vector2(4, my - 4), Vector2(4, my + 4), Vector2(8, my)]), PackedColorArray([dot_col]))
+		draw_polygon(PackedVector2Array([Vector2(w - 4, my - 4), Vector2(w - 4, my + 4), Vector2(w - 8, my)]), PackedColorArray([dot_col]))
+
+
+## Pixel-art color badge (6-color wheel for Wild, or track-colored orb).
+class DescColorBadge extends Control:
+	var color_id: int = 0
+
+	func _init() -> void:
+		custom_minimum_size = Vector2(24, 24)
+		size = Vector2(24, 24)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func set_color_id(c_id: int) -> void:
+		color_id = c_id
+		queue_redraw()
+
+	func _draw() -> void:
+		var center := size * 0.5
+		var r := 9.0
+		draw_circle(center, r + 1.5, Color("#19131c"))
+		if color_id <= 0:
+			var wheel_colors: Array[Color] = [
+				Color("#e04444"),
+				Color("#f09838"),
+				Color("#4bc468"),
+				Color("#84e0f0"),
+				Color("#4d78e0"),
+				Color("#a65ae0")
+			]
+			for i in range(6):
+				var a0 := -PI * 0.5 + float(i) * (TAU / 6.0)
+				var a1 := a0 + (TAU / 6.0)
+				var pts := PackedVector2Array([center])
+				for s in range(5):
+					var a := lerpf(a0, a1, float(s) / 4.0)
+					pts.append(center + Vector2(cos(a), sin(a)) * r)
+				draw_polygon(pts, PackedColorArray([wheel_colors[i]]))
+		else:
+			var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(color_id)
+			draw_circle(center, r, pal.base)
+			draw_circle(center + Vector2(-2, -2), r * 0.45, pal.highlight)
+
+
+## Pixel-art circular Roman numeral slot-cost badge (I, II, III, U, P).
+class DescSlotBadge extends Control:
+	var _label: Label
+
+	func _init() -> void:
+		custom_minimum_size = Vector2(24, 24)
+		size = Vector2(24, 24)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_label = Label.new()
+		_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_label.add_theme_font_override("font", preload("res://assets/theme/title.ttf"))
+		_label.add_theme_font_size_override("font_size", 15)
+		_label.add_theme_color_override("font_color", Color.WHITE)
+		_label.text = "I"
+		_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_label)
+
+	func set_badge_text(t: String) -> void:
+		if _label != null:
+			_label.text = t
+			if t == "U":
+				_label.add_theme_color_override("font_color", Color("#ffd966"))
+			else:
+				_label.add_theme_color_override("font_color", Color.WHITE)
+		queue_redraw()
+
+	func _draw() -> void:
+		var center := size * 0.5
+		draw_circle(center, 10.5, Color("#19131c"))
+		draw_circle(center, 9.5, Color("#d6d0e0"))
+		draw_circle(center, 7.5, Color("#3b2f3d"))
