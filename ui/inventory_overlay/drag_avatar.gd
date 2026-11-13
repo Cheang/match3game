@@ -28,7 +28,7 @@ func _build_ui() -> void:
 	fire_particles = CPUParticles2D.new()
 	fire_particles.name = "FireParticles"
 	fire_particles.emitting = false
-	fire_particles.amount = 40
+	fire_particles.amount = 56
 	fire_particles.lifetime = 0.75
 	fire_particles.lifetime_randomness = 0.35
 	fire_particles.speed_scale = 1.0
@@ -37,8 +37,9 @@ func _build_ui() -> void:
 	fire_particles.gravity = Vector2(0, -60.0)
 	fire_particles.initial_velocity_min = 35.0
 	fire_particles.initial_velocity_max = 65.0
-	fire_particles.scale_amount_min = 2.0
-	fire_particles.scale_amount_max = 4.5
+	fire_particles.scale_amount_min = 1.0
+	fire_particles.scale_amount_max = 1.0
+	fire_particles.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	fire_particles.position = Vector2(29.5, 38.0)
 	fire_particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
 	fire_particles.emission_rect_extents = Vector2(14.0, 6.0)
@@ -127,10 +128,15 @@ func _update_particles(c_id: int, is_ult: bool) -> void:
 		return
 	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
 	var grad := Gradient.new()
-	grad.set_color(0, Color(pal.highlight.r, pal.highlight.g, pal.highlight.b, 1.0))
-	grad.add_point(0.35, Color(pal.lightbase.r, pal.lightbase.g, pal.lightbase.b, 0.9))
-	grad.add_point(0.7, Color(pal.base.r, pal.base.g, pal.base.b, 0.6))
-	grad.set_color(1, Color(pal.deepshade.r, pal.deepshade.g, pal.deepshade.b, 0.0))
+	grad.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_CONSTANT
+	grad.offsets = PackedFloat32Array([0.0, 0.25, 0.5, 0.75, 0.92])
+	grad.colors = PackedColorArray([
+		Color(pal.highlight.r, pal.highlight.g, pal.highlight.b, 1.0),
+		Color(pal.lightbase.r, pal.lightbase.g, pal.lightbase.b, 1.0),
+		Color(pal.base.r, pal.base.g, pal.base.b, 1.0),
+		Color(pal.shadebase.r, pal.shadebase.g, pal.shadebase.b, 1.0),
+		Color(pal.deepshade.r, pal.deepshade.g, pal.deepshade.b, 0.0)
+	])
 	fire_particles.color_ramp = grad
 
 	if is_ult:
