@@ -13,6 +13,7 @@ signal floating_equipment_changed(eq: Equipment)
 
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
+const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
 const DOCK_SIZE = Vector2(90, 140)
 
@@ -24,7 +25,7 @@ var shard_item: FloatingShardItem
 var frame_rect: TextureRect
 var icon_rect: TextureRect
 var shader_mat: ShaderMaterial
-var fire_particles: CPUParticles2D
+var fire_particles: Node2D
 
 func _init() -> void:
 	custom_minimum_size = DOCK_SIZE
@@ -77,24 +78,14 @@ func _ensure_components() -> void:
 	shard_item.add_child(icon_rect)
 
 func _setup_particles() -> void:
-	fire_particles = CPUParticles2D.new()
+	fire_particles = PixelFireParticlesClass.new()
 	fire_particles.name = "FireParticles"
 	fire_particles.emitting = false
-	fire_particles.amount = 48
-	fire_particles.lifetime = 0.75
-	fire_particles.lifetime_randomness = 0.35
-	fire_particles.speed_scale = 1.0
-	fire_particles.direction = Vector2(0, -1)
-	fire_particles.spread = 24.0
-	fire_particles.gravity = Vector2(0, -55.0)
-	fire_particles.initial_velocity_min = 28.0
-	fire_particles.initial_velocity_max = 58.0
-	fire_particles.scale_amount_min = 1.0
-	fire_particles.scale_amount_max = 1.0
-	fire_particles.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	fire_particles.position = Vector2(29.5, 38.0)
-	fire_particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	fire_particles.emission_rect_extents = Vector2(14.0, 6.0)
+	fire_particles.local_coords = true
+	fire_particles.spawn_rate = 135.0
+	fire_particles.max_particles = 160
+	fire_particles.position = Vector2(29.0, 34.0)
+	fire_particles.emission_rect_extents = Vector2(18.0, 8.0)
 	shard_item.add_child(fire_particles)
 
 func set_shard_hidden(hidden: bool) -> void:
@@ -134,7 +125,7 @@ func _process(delta: float) -> void:
 	var cur_h: float = size.y if size.y > 0.0 else DOCK_SIZE.y
 	var base_x: float = (cur_w - DIAMOND_SIZE.x) / 2.0
 	var base_y: float = (cur_h - DIAMOND_SIZE.y) / 2.0
-	shard_item.position = Vector2(base_x, base_y + sin(_bob_timer) * 4.0)
+	shard_item.position = Vector2(roundf(base_x), roundf(base_y + sin(_bob_timer) * 4.0))
 
 func _get_equipment_color(eq: Equipment) -> int:
 	if eq == null or eq.is_colorless():
@@ -155,18 +146,7 @@ func _apply_frame_palette(c_id: int) -> void:
 func _update_particles_color(c_id: int) -> void:
 	if fire_particles == null:
 		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	var grad := Gradient.new()
-	grad.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_CONSTANT
-	grad.offsets = PackedFloat32Array([0.0, 0.25, 0.5, 0.75, 0.92])
-	grad.colors = PackedColorArray([
-		Color(pal.highlight.r, pal.highlight.g, pal.highlight.b, 1.0),
-		Color(pal.lightbase.r, pal.lightbase.g, pal.lightbase.b, 1.0),
-		Color(pal.base.r, pal.base.g, pal.base.b, 1.0),
-		Color(pal.shadebase.r, pal.shadebase.g, pal.shadebase.b, 1.0),
-		Color(pal.deepshade.r, pal.deepshade.g, pal.deepshade.b, 0.0)
-	])
-	fire_particles.color_ramp = grad
+	fire_particles.set_palette_for_color(c_id)
 
 func get_floating_drag_data(_at_position: Vector2) -> Variant:
 	if current_equipment == null:

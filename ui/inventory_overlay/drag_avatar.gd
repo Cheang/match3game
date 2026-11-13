@@ -8,6 +8,7 @@ extends Control
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
 const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
+const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
 const ULT_SIZE = Vector2(83, 59)
 
@@ -15,7 +16,7 @@ var current_equipment: Equipment = null
 var frame_rect: TextureRect
 var icon_rect: TextureRect
 var shader_mat: ShaderMaterial
-var fire_particles: CPUParticles2D
+var fire_particles: Node2D
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -24,26 +25,15 @@ func _init() -> void:
 	_build_ui()
 
 func _build_ui() -> void:
-	# 1. Fire Particles (rising flames in shard color, trailing in world space)
-	fire_particles = CPUParticles2D.new()
+	# 1. Fire Particles (pixel-grid-aligned rising flames, trailing in world space)
+	fire_particles = PixelFireParticlesClass.new()
 	fire_particles.name = "FireParticles"
 	fire_particles.emitting = false
-	fire_particles.amount = 56
-	fire_particles.lifetime = 0.75
-	fire_particles.lifetime_randomness = 0.35
-	fire_particles.speed_scale = 1.0
-	fire_particles.direction = Vector2(0, -1)
-	fire_particles.spread = 26.0
-	fire_particles.gravity = Vector2(0, -60.0)
-	fire_particles.initial_velocity_min = 35.0
-	fire_particles.initial_velocity_max = 65.0
-	fire_particles.scale_amount_min = 1.0
-	fire_particles.scale_amount_max = 1.0
-	fire_particles.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	fire_particles.position = Vector2(29.5, 38.0)
-	fire_particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	fire_particles.emission_rect_extents = Vector2(14.0, 6.0)
 	fire_particles.local_coords = false # Leaves trails behind moving cursor!
+	fire_particles.spawn_rate = 155.0
+	fire_particles.max_particles = 180
+	fire_particles.position = Vector2(29.0, 34.0)
+	fire_particles.emission_rect_extents = Vector2(18.0, 8.0)
 	add_child(fire_particles)
 
 	# 2. Diamond Frame
@@ -126,22 +116,11 @@ func _apply_palette(c_id: int) -> void:
 func _update_particles(c_id: int, is_ult: bool) -> void:
 	if fire_particles == null:
 		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	var grad := Gradient.new()
-	grad.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_CONSTANT
-	grad.offsets = PackedFloat32Array([0.0, 0.25, 0.5, 0.75, 0.92])
-	grad.colors = PackedColorArray([
-		Color(pal.highlight.r, pal.highlight.g, pal.highlight.b, 1.0),
-		Color(pal.lightbase.r, pal.lightbase.g, pal.lightbase.b, 1.0),
-		Color(pal.base.r, pal.base.g, pal.base.b, 1.0),
-		Color(pal.shadebase.r, pal.shadebase.g, pal.shadebase.b, 1.0),
-		Color(pal.deepshade.r, pal.deepshade.g, pal.deepshade.b, 0.0)
-	])
-	fire_particles.color_ramp = grad
+	fire_particles.set_palette_for_color(c_id)
 
 	if is_ult:
-		fire_particles.position = Vector2(41.5, 38.0)
-		fire_particles.emission_rect_extents = Vector2(24.0, 6.0)
+		fire_particles.position = Vector2(41.0, 34.0)
+		fire_particles.emission_rect_extents = Vector2(26.0, 8.0)
 	else:
-		fire_particles.position = Vector2(29.5, 38.0)
-		fire_particles.emission_rect_extents = Vector2(14.0, 6.0)
+		fire_particles.position = Vector2(29.0, 34.0)
+		fire_particles.emission_rect_extents = Vector2(18.0, 8.0)
