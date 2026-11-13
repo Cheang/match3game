@@ -41,6 +41,11 @@ const BODY_FONT = preload("res://assets/theme/plain.ttf")
 		if header_label != null:
 			header_label.text = val
 
+## When false (default), equipped shards can only be rearranged within their own track/row,
+## and popped-out shards in slotting mode can only return to their original track/row.
+## Set true for special Shop/Event reshuffle screens.
+@export var allow_cross_track_moving: bool = false
+
 enum Tab { LOADOUT, STATS, SETTINGS }
 var current_tab: Tab = Tab.LOADOUT
 
@@ -62,6 +67,7 @@ var normal_preview_frame_rect: TextureRect = null
 var normal_preview_icon_rect: TextureRect = null
 var normal_preview_shader: ShaderMaterial = null
 var _active_fly_ghosts: Array[Control] = []
+var _active_fly_tweens: Array[Tween] = []
 var desc_right_vbox: VBoxContainer = null
 var desc_header_hbox: HBoxContainer = null
 var desc_rarity_label: Label = null
@@ -91,6 +97,8 @@ var is_slotting_mode: bool = false
 var pending_slotting_queue: Array[Equipment] = []
 var floating_shard_dock: FloatingShardDock = null
 var _cached_floating_equipment: Equipment = null
+var _floating_origin_track: ColorLoadoutTrack = null
+var _popped_queue_origins: Dictionary = {}
 
 var drag_avatar: Control = null
 var _drag_pending: bool = false
@@ -203,21 +211,25 @@ func start_slotting_mode(equipment_list: Array) -> void:
 	_build_ui_if_needed()
 	is_slotting_mode = true
 	pending_slotting_queue.clear()
+	_floating_origin_track = null
+	_popped_queue_origins.clear()
 	for item in equipment_list:
 		if item is Equipment:
 			pending_slotting_queue.append(item)
 	var first_eq: Equipment = pending_slotting_queue.pop_front() if not pending_slotting_queue.is_empty() else null
 	_update_slotting_mode_ui(true)
 	open()
-	set_floating_equipment(first_eq)
+	set_floating_equipment(first_eq, null)
 
-func set_floating_equipment(eq: Equipment) -> void:
+func set_floating_equipment(eq: Equipment, origin_track: ColorLoadoutTrack = null) -> void:
 	_cached_floating_equipment = eq
+	_floating_origin_track = origin_track if eq != null else null
 	if floating_shard_dock != null:
 		floating_shard_dock.set_equipment(eq)
+	var req_track: ColorLoadoutTrack = null if allow_cross_track_moving else _floating_origin_track
 	for row in track_rows:
 		if row != null:
-			row.set_compatibility_state(eq)
+			row.set_compatibility_state(eq, req_track)
 	if eq != null:
 		_display_ability_description(eq, _get_equipment_color(eq), eq.is_ultimate)
 	else:
@@ -357,9 +369,12 @@ func _start_custom_drag(mouse_pos: Vector2) -> void:
 		var c_id: int = _drag_source_track.color if _drag_source_track != null else -1
 		drag_avatar.start_drag(_drag_candidate_item, mouse_pos, c_id, src_positions)
 
+	var req_track: ColorLoadoutTrack = null
+	if not allow_cross_track_moving:
+		req_track = _floating_origin_track if _drag_source_is_floating else _drag_source_track
 	for row in track_rows:
 		if row != null:
-			row.set_compatibility_state(_drag_candidate_item)
+			row.set_compatibility_state(_drag_candidate_item, req_track)
 
 func _finish_custom_drop(pos: Vector2) -> void:
 	if not is_custom_dragging or _drag_candidate_item == null:
@@ -462,9 +477,12 @@ func _reset_drag_input_state() -> void:
 	_drag_pending = false
 	_drag_candidate_item = null
 	var restore_eq: Equipment = _cached_floating_equipment if is_slotting_mode else null
+	var req_track: ColorLoadoutTrack = null
+	if not allow_cross_track_moving and is_slotting_mode:
+		req_track = _floating_origin_track
 	for row in track_rows:
 		if row != null:
-			row.set_compatibility_state(restore_eq)
+			row.set_compatibility_state(restore_eq, req_track)
 
 func _cleanup_custom_drag() -> void:
 	_clear_fly_ghosts()
@@ -477,21 +495,9 @@ func _cleanup_custom_drag() -> void:
 func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool, eq: Equipment = null) -> void:
 	if track == null:
 		return
-	var target_indices: Array[int] = []
-	if not is_ult:
-		if eq != null:
-			target_indices = track.get_slot_indices_for_modifier(eq)
-		if target_indices.is_empty() and slot_idx >= 0:
-			target_indices.append(slot_idx)
 	for row in track_rows:
 		if row != null and row.track_ref == track:
-			if is_ult:
-				if row.ult_slot != null:
-					row.ult_slot.modulate.a = 0.25 if lifted else 1.0
-			else:
-				for s_i in target_indices:
-					if s_i >= 0 and s_i < row.diamond_slots.size() and row.diamond_slots[s_i] != null:
-						row.diamond_slots[s_i].modulate.a = 0.25 if lifted else 1.0
+			row.set_equipment_lifted(eq, is_ult, slot_idx, lifted)
 
 func _find_drop_target_at_pos(pos: Vector2) -> Dictionary:
 	if floating_shard_dock != null and floating_shard_dock.visible:
@@ -1144,8 +1150,9 @@ func refresh_overlay_data() -> void:
 			row.setup_row(0, null)
 
 	if is_slotting_mode:
+		var req_track: ColorLoadoutTrack = null if allow_cross_track_moving else _floating_origin_track
 		for row in track_rows:
-			row.set_compatibility_state(_cached_floating_equipment)
+			row.set_compatibility_state(_cached_floating_equipment, req_track)
 
 	# 2. Update Passives Ring
 	var passives: Array = Global.cur_char.equipped_passives if Global.cur_char != null else []
@@ -1226,6 +1233,11 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 
 	# Color compatibility check
 	if not target_track.is_color_compatible(source_mod):
+		return false
+
+	# Track-locking rule: unless allow_cross_track_moving is enabled (Shop/Event),
+	# shards can only be rearranged within their own track/row.
+	if not allow_cross_track_moving and source_track != target_track:
 		return false
 
 	var changed: bool = false
@@ -1312,6 +1324,8 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 		return false
 	if not target_track.is_color_compatible(source_mod):
 		return false
+	if not allow_cross_track_moving and _floating_origin_track != null and target_track != _floating_origin_track:
+		return false
 	if _is_equipment_equipped_anywhere(source_mod):
 		push_warning("InventoryOverlay: Prevented duplicating already-equipped shard '%s'." % source_mod.piece_name)
 		return false
@@ -1347,6 +1361,7 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 				while target_track.get_free_slots() < needed_slots and not target_track.equipped_modifiers.is_empty():
 					var extra_displaced: Equipment = target_track.equipped_modifiers.pop_back()
 					if extra_displaced != null:
+						_popped_queue_origins[extra_displaced] = target_track
 						pending_slotting_queue.push_front(extra_displaced)
 				if not target_track.equip_modifier(source_mod, t_idx):
 					return false
@@ -1366,19 +1381,23 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 						if displaced_item == null:
 							displaced_item = popped
 						else:
+							_popped_queue_origins[popped] = target_track
 							pending_slotting_queue.push_front(popped)
 				if not target_track.equip_modifier(source_mod):
 					return false
 
-	# Displaced item becomes the new floating shard so the player can keep moving shards
+	# Displaced item becomes the new floating shard, locked to its original row unless allow_cross_track_moving
 	if displaced_item != null:
-		set_floating_equipment(displaced_item)
+		set_floating_equipment(displaced_item, target_track)
 		_animate_shards_group_to_dock(displaced_item, displaced_positions)
 	else:
 		if not pending_slotting_queue.is_empty():
-			set_floating_equipment(pending_slotting_queue.pop_front())
+			var next_eq: Equipment = pending_slotting_queue.pop_front()
+			var next_origin: ColorLoadoutTrack = _popped_queue_origins.get(next_eq, null)
+			_popped_queue_origins.erase(next_eq)
+			set_floating_equipment(next_eq, next_origin)
 		else:
-			set_floating_equipment(null)
+			set_floating_equipment(null, null)
 
 	target_track.clamp_cursor()
 	target_track.check_ultimate_ready_at_cycle_start()
@@ -1402,19 +1421,24 @@ func _on_shard_dropped_to_dock(drag_data: Dictionary) -> bool:
 	var changed: bool = false
 	var old_floating: Equipment = _cached_floating_equipment
 	if old_floating == null:
+		# Unless cross-track moving is allowed, don't let players pull equipped items out into an empty dock
+		if not allow_cross_track_moving:
+			return false
 		if source_is_ult:
 			source_track.unequip_ultimate()
 			changed = true
 		else:
 			changed = source_track.unequip_modifier(source_mod)
 		if changed:
-			set_floating_equipment(source_mod)
+			set_floating_equipment(source_mod, source_track)
 	else:
+		if not allow_cross_track_moving and _floating_origin_track != null and source_track != _floating_origin_track:
+			return false
 		if source_track.is_color_compatible(old_floating) and source_is_ult == old_floating.is_ultimate:
 			if source_is_ult:
 				source_track.unequip_ultimate()
 				if source_track.equip_ultimate(old_floating):
-					set_floating_equipment(source_mod)
+					set_floating_equipment(source_mod, source_track)
 					changed = true
 				else:
 					source_track.equip_ultimate(source_mod)
@@ -1424,7 +1448,7 @@ func _on_shard_dropped_to_dock(drag_data: Dictionary) -> bool:
 					source_track.equipped_modifiers.remove_at(s_idx)
 					if source_track.get_free_slots() >= clampi(old_floating.slot_cost, 1, source_track.max_slots):
 						source_track.equip_modifier(old_floating, s_idx)
-						set_floating_equipment(source_mod)
+						set_floating_equipment(source_mod, source_track)
 						changed = true
 					else:
 						source_track.equip_modifier(source_mod, s_idx)
@@ -1539,6 +1563,10 @@ func _get_slot_global_positions(track: ColorLoadoutTrack, eq: Equipment, is_ult:
 	return result
 
 func _clear_fly_ghosts() -> void:
+	for tw in _active_fly_tweens:
+		if tw != null and tw.is_valid():
+			tw.kill()
+	_active_fly_tweens.clear()
 	for g in _active_fly_ghosts:
 		if is_instance_valid(g):
 			g.queue_free()
@@ -1628,6 +1656,7 @@ func _animate_shards_slot_in(eq: Equipment, target_track: ColorLoadoutTrack, is_
 		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
 		ghost.global_position = start_pos
 		var tw := create_tween()
+		_active_fly_tweens.append(tw)
 		var delay := float(i) * 0.04
 		var dur := 0.20 + float(i) * 0.025
 		if delay > 0.0:
@@ -1658,6 +1687,7 @@ func _animate_shards_group_to_dock(eq: Equipment, start_positions: Array[Vector2
 		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
 		ghost.global_position = start_pos
 		var tw := create_tween()
+		_active_fly_tweens.append(tw)
 		var delay := float(i) * 0.035
 		var dur := 0.22 + float(i) * 0.02
 		if delay > 0.0:

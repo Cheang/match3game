@@ -83,8 +83,8 @@ func _ready() -> void:
 	assert(red_track.equipped_modifiers[1] == sword, "Sword should now be at index 1")
 	print("Same-track reordering verified!")
 
-	# B. Test moving colorless ring from Blue track to Red track
-	print("Testing drag-and-drop move from Blue track to Red track...")
+	# B. Test track-locking by default (no cross-track moving unless allow_cross_track_moving is true)
+	print("Testing track-locking and Shop/Event cross-track move...")
 	var drag_data_ring := {
 		"type": "equipment_drag",
 		"modifier": ring,
@@ -92,10 +92,14 @@ func _ready() -> void:
 		"source_is_ult": false,
 		"source_slot_idx": 0
 	}
-	overlay._on_equipment_dropped(drag_data_ring, red_track, false, -1)
+	assert(not overlay._on_equipment_dropped(drag_data_ring, red_track, false, -1), "Cross-track move must be blocked by default")
+	assert(blue_track.equipped_modifiers.has(ring), "Ring must remain on Blue track when cross-track move is blocked")
+	overlay.allow_cross_track_moving = true
+	assert(overlay._on_equipment_dropped(drag_data_ring, red_track, false, -1), "Cross-track move must succeed when allow_cross_track_moving is true")
+	overlay.allow_cross_track_moving = false
 	assert(blue_track.equipped_modifiers.is_empty(), "Blue track should now be empty")
 	assert(red_track.equipped_modifiers.has(ring), "Red track should now contain the Ring")
-	print("Inter-track move verified!")
+	print("Track-locking & inter-track move verified!")
 
 	# C. Test Multi-slot Connection Graphic
 	print("Testing multi-slot connection graphic...")
@@ -507,6 +511,35 @@ func _ready() -> void:
 	overlay._display_ability_description(tri_shard, 100, false)
 	assert(overlay.normal_preview_stack_frames[2].visible == true and overlay.normal_preview_stack_frames[3].visible == false, "NormalPreview must render 3 stacked shards")
 	print("Multi-slot shard stack and slot-in/group-up animations verified!")
+
+	# Test that starting a drag visually empties the source slot(s) and restores on cancel
+	overlay._on_row_slot_drag_requested(tri_shard, red_track, false, 0, Vector2(100, 100))
+	overlay._start_custom_drag(Vector2(120, 120))
+	var drag_red_row: InventoryOverlayTrackRow = overlay.track_rows[0]
+	assert(drag_red_row.diamond_frames[0].visible == false and drag_red_row.diamond_frames[1].visible == false and drag_red_row.diamond_frames[2].visible == false, "Dragged slots must visually become empty")
+	assert(drag_red_row.diamond_icons[0].visible == false, "Dragged slot icon must hide")
+	assert(drag_red_row.connection_rects[0].visible == false and drag_red_row.connection_rects[1].visible == false, "Dragged multi-slot connectors must hide")
+	overlay._cleanup_custom_drag()
+	overlay._set_slot_visual_lifted(red_track, false, 0, false, tri_shard)
+	assert(drag_red_row.diamond_frames[0].visible == true and drag_red_row.diamond_frames[1].visible == true and drag_red_row.diamond_frames[2].visible == true, "Cancelled drag must restore slot frames")
+	print("Visually empty dragged slot verified!")
+
+	# Test that a popped-out shard in slotting mode is locked to its original row (cannot move to another row)
+	var wild_a := Equipment.new(); wild_a.piece_name = "Wild A"; wild_a.allowed_colors = []; wild_a.slot_cost = 1
+	var wild_rew := Equipment.new(); wild_rew.piece_name = "Wild Reward"; wild_rew.allowed_colors = []; wild_rew.slot_cost = 1
+	red_track.equipped_modifiers.clear()
+	blue_track.equipped_modifiers.clear()
+	red_track.equip_modifier(wild_a)
+	overlay.start_slotting_mode([wild_rew])
+	assert(overlay._handle_floating_shard_drop(wild_rew, red_track, false, 0), "Reward shard must slot into Red track")
+	assert(overlay._cached_floating_equipment == wild_a, "Popped-out Wild A must be in floating dock")
+	assert(overlay._floating_origin_track == red_track, "Popped-out Wild A must remember Red track as origin")
+	assert(not overlay._handle_floating_shard_drop(wild_a, blue_track, false, 0), "Popped-out Wild A must NOT be allowed on Blue track")
+	assert(overlay._handle_floating_shard_drop(wild_a, red_track, false, 1), "Popped-out Wild A must be allowed back on Red track")
+	assert(overlay._cached_floating_equipment == null, "Dock must now be empty after slotting Wild A into empty slot")
+	assert(not overlay._on_shard_dropped_to_dock({"type": "equipment_drag", "modifier": wild_a, "source_track": red_track, "source_is_ult": false}), "Cannot pull shard out to empty dock when cross-track moving is disabled")
+	overlay._on_done_btn_pressed()
+	print("Popped-out shard row-locking verified!")
 
 	overlay.close()
 	overlay.queue_free()

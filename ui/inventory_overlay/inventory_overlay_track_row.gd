@@ -292,6 +292,31 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 		else:
 			conn_rect.visible = false
 
+## Visually empties or restores the slots of an equipment piece while it is being dragged.
+func set_equipment_lifted(eq: Equipment, is_ult: bool, slot_idx: int, lifted: bool) -> void:
+	_ensure_structure()
+	if not lifted:
+		setup_row(track_color, track_ref)
+		return
+	if is_ult:
+		if ult_frame != null:
+			ult_frame.visible = false
+		if ult_icon != null:
+			ult_icon.visible = false
+		return
+	var target_indices: Array[int] = []
+	if eq != null and track_ref != null:
+		target_indices = track_ref.get_slot_indices_for_modifier(eq)
+	if target_indices.is_empty() and slot_idx >= 0:
+		target_indices.append(slot_idx)
+	for s_i in target_indices:
+		if s_i >= 0 and s_i < diamond_frames.size():
+			diamond_frames[s_i].visible = false
+			diamond_icons[s_i].visible = false
+	for i in range(4):
+		if i in target_indices and (i + 1) in target_indices:
+			connection_rects[i].visible = false
+
 ## Updates highlight selection state on slots.
 func update_selection(selected_mod: Equipment, is_ult: bool, _slot_idx: int, is_same_track: bool) -> void:
 	_ensure_structure()
@@ -317,7 +342,7 @@ func update_selection(selected_mod: Equipment, is_ult: bool, _slot_idx: int, is_
 		frame.texture = TEX_BASIC_SELECTED if slot_is_selected else TEX_BASIC_UNSELECTED
 
 ## Sets compatibility visual state (disabled track sprite & grayed-out slots) for candidate equipment.
-func set_compatibility_state(candidate: Equipment) -> void:
+func set_compatibility_state(candidate: Equipment, required_track: ColorLoadoutTrack = null) -> void:
 	_ensure_structure()
 	# Unused / empty tracks: always disabled
 	if track_ref == null or track_color <= 0:
@@ -340,7 +365,7 @@ func set_compatibility_state(candidate: Equipment) -> void:
 				s.modulate = Color.WHITE
 		return
 
-	var is_compat: bool = track_ref.is_color_compatible(candidate)
+	var is_compat: bool = track_ref.is_color_compatible(candidate) and (required_track == null or track_ref == required_track)
 	if not is_compat:
 		if bg_rect != null:
 			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
