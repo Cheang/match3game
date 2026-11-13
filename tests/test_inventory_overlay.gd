@@ -360,6 +360,21 @@ func _ready() -> void:
 			assert(row.diamond_slots[0].modulate == Color.WHITE, "Slots must restore normal modulate")
 	print("Slotting mode completion and cleanup verified!")
 
+	# Test dragging an equipped shard in normal inventory mode disables incompatible tracks
+	overlay.open()
+	overlay._on_row_slot_drag_requested(red_shard, red_track, false, 0, Vector2(100, 300))
+	overlay._start_custom_drag(Vector2(100, 300))
+	for row in overlay.track_rows:
+		if row.track_color == 100:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Red track must stay normal while dragging red shard")
+		else:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible/empty track (%d) must be disabled while dragging red shard" % row.track_color)
+	overlay._cleanup_custom_drag()
+	for row in overlay.track_rows:
+		if row.track_color > 0:
+			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Active tracks must restore normal sprite after drag ends")
+	print("Track disabling during normal inventory drag verified!")
+
 	overlay.close()
 	overlay.queue_free()
 	print("--- ALL INVENTORY OVERLAY CORRECTIONS PASSED ---")

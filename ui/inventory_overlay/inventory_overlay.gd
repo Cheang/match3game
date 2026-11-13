@@ -316,6 +316,10 @@ func _start_custom_drag(mouse_pos: Vector2) -> void:
 		var c_id: int = _drag_source_track.color if _drag_source_track != null else -1
 		drag_avatar.start_drag(_drag_candidate_item, mouse_pos, c_id)
 
+	for row in track_rows:
+		if row != null:
+			row.set_compatibility_state(_drag_candidate_item)
+
 func _finish_custom_drop(pos: Vector2) -> void:
 	if not is_custom_dragging or _drag_candidate_item == null:
 		_cleanup_custom_drag()
@@ -381,6 +385,10 @@ func _cleanup_custom_drag() -> void:
 		drag_avatar.end_drag()
 	if floating_shard_dock != null:
 		floating_shard_dock.set_shard_hidden(false)
+	var restore_eq: Equipment = _cached_floating_equipment if is_slotting_mode else null
+	for row in track_rows:
+		if row != null:
+			row.set_compatibility_state(restore_eq)
 
 func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool) -> void:
 	if track == null:
