@@ -34,6 +34,7 @@ func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	z_index = 200
 	visible = false
+	set_process(false)
 	_build_ui()
 
 func _build_ui() -> void:
@@ -140,6 +141,7 @@ func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -
 	visible = true
 	fire_particles.emitting = true
 	fire_particles.restart()
+	set_process(not is_ult)
 
 	# If picked up from multiple track slots, animate the shards grouping up into the stack
 	if _stack_count > 1 and source_slot_positions.size() >= _stack_count and is_inside_tree():
@@ -209,6 +211,7 @@ func _finish_return() -> void:
 	var cb: Callable = _active_return_cleanup
 	_active_return_cleanup = Callable()
 	visible = false
+	set_process(false)
 	fire_particles.emitting = false
 	current_equipment = null
 	if cb.is_valid():
@@ -226,18 +229,12 @@ func _cancel_active_return() -> void:
 func end_drag() -> void:
 	_cancel_active_return()
 	visible = false
+	set_process(false)
 	fire_particles.emitting = false
 	current_equipment = null
 
 func _apply_palette(c_id: int) -> void:
-	if shader_mat == null:
-		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	shader_mat.set_shader_parameter("target_color_1", pal.highlight)
-	shader_mat.set_shader_parameter("target_color_2", pal.lightbase)
-	shader_mat.set_shader_parameter("target_color_3", pal.base)
-	shader_mat.set_shader_parameter("target_color_4", pal.shadebase)
-	shader_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	OverlaySlotUI.apply_palette(shader_mat, c_id)
 
 func _update_particles(c_id: int, is_ult: bool) -> void:
 	if fire_particles == null:

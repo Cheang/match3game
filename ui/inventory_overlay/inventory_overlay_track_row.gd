@@ -219,13 +219,7 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 	ult_slot.is_selected_slot = false
 
 	if track_color > 0 and track_ref != null:
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY
-		if ult_slot != null:
-			ult_slot.modulate = Color.WHITE
-		for s in diamond_slots:
-			if s != null:
-				s.modulate = Color.WHITE
+		_set_row_visual_state(false, true, true)
 		_apply_palette(ult_shader_mat, track_color)
 		ult_frame.visible = true
 		ult_frame.texture = TEX_ULT_UNSELECTED
@@ -237,13 +231,7 @@ func setup_row(color_id: int, track: ColorLoadoutTrack) -> void:
 			ult_icon.visible = false
 	else:
 		# Empty / unused track row: always use disabled sprite and gray out
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
-		if ult_slot != null:
-			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
-		for s in diamond_slots:
-			if s != null:
-				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		_set_row_visual_state(true, false, false)
 		ult_frame.visible = false
 		ult_icon.visible = false
 
@@ -346,59 +334,34 @@ func set_compatibility_state(candidate: Equipment, required_track: ColorLoadoutT
 	_ensure_structure()
 	# Unused / empty tracks: always disabled
 	if track_ref == null or track_color <= 0:
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
-		if ult_slot != null:
-			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
-		for s in diamond_slots:
-			if s != null:
-				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		_set_row_visual_state(true, false, false)
 		return
 
 	if candidate == null:
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY
-		if ult_slot != null:
-			ult_slot.modulate = Color.WHITE
-		for s in diamond_slots:
-			if s != null:
-				s.modulate = Color.WHITE
+		_set_row_visual_state(false, true, true)
 		return
 
 	var is_compat: bool = track_ref.is_color_compatible(candidate) and (required_track == null or track_ref == required_track)
 	if not is_compat:
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY_DISABLED
-		if ult_slot != null:
-			ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
-		for s in diamond_slots:
-			if s != null:
-				s.modulate = Color(0.35, 0.35, 0.4, 0.5)
+		_set_row_visual_state(true, false, false)
+	elif candidate.is_ultimate:
+		_set_row_visual_state(false, true, false)
 	else:
-		if bg_rect != null:
-			bg_rect.texture = TEX_TRACK_EMPTY
-		if candidate.is_ultimate:
-			if ult_slot != null:
-				ult_slot.modulate = Color.WHITE
-			for s in diamond_slots:
-				if s != null:
-					s.modulate = Color(0.35, 0.35, 0.4, 0.5)
-		else:
-			if ult_slot != null:
-				ult_slot.modulate = Color(0.35, 0.35, 0.4, 0.5)
-			for s in diamond_slots:
-				if s != null:
-					s.modulate = Color.WHITE
+		_set_row_visual_state(false, false, true)
+
+func _set_row_visual_state(disabled_bg: bool, ult_enabled: bool, basics_enabled: bool) -> void:
+	const DIMMED_COLOR := Color(0.35, 0.35, 0.4, 0.5)
+	if bg_rect != null:
+		bg_rect.texture = TEX_TRACK_EMPTY_DISABLED if disabled_bg else TEX_TRACK_EMPTY
+	if ult_slot != null:
+		ult_slot.modulate = Color.WHITE if ult_enabled else DIMMED_COLOR
+	var basic_col := Color.WHITE if basics_enabled else DIMMED_COLOR
+	for s in diamond_slots:
+		if s != null:
+			s.modulate = basic_col
 
 func _apply_palette(s_mat: ShaderMaterial, c_id: int) -> void:
-	if s_mat == null:
-		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	s_mat.set_shader_parameter("target_color_1", pal.highlight)
-	s_mat.set_shader_parameter("target_color_2", pal.lightbase)
-	s_mat.set_shader_parameter("target_color_3", pal.base)
-	s_mat.set_shader_parameter("target_color_4", pal.shadebase)
-	s_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	OverlaySlotUI.apply_palette(s_mat, c_id)
 
 func _on_child_slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, s_idx: int) -> void:
 	slot_clicked.emit(mod, track, is_ult, s_idx)

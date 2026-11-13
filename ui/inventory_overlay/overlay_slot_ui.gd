@@ -45,6 +45,16 @@ func _ensure_nodes() -> void:
 	if icon_rect != null:
 		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
+static func apply_palette(s_mat: ShaderMaterial, c_id: int) -> void:
+	if s_mat == null:
+		return
+	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
+	s_mat.set_shader_parameter("target_color_1", pal.highlight)
+	s_mat.set_shader_parameter("target_color_2", pal.lightbase)
+	s_mat.set_shader_parameter("target_color_3", pal.base)
+	s_mat.set_shader_parameter("target_color_4", pal.shadebase)
+	s_mat.set_shader_parameter("target_color_5", pal.deepshade)
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if modifier != null and track_ref != null:

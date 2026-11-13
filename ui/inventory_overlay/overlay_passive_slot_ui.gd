@@ -38,6 +38,7 @@ func _ensure_structure() -> void:
 			frame.set_anchors_preset(Control.PRESET_FULL_RECT)
 			frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			frame.visible = false
 			add_child(frame)
@@ -60,6 +61,7 @@ func _ensure_structure() -> void:
 			icon_rect.custom_minimum_size = Vector2(40, 40)
 			icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			icon_rect.visible = false
 			add_child(icon_rect)
@@ -93,14 +95,7 @@ func set_selected(val: bool) -> void:
 		frame.texture = TEX_PASSIVE_SELECTED if val else TEX_PASSIVE_UNSELECTED
 
 func _apply_palette(c_id: int) -> void:
-	if shader_mat == null:
-		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	shader_mat.set_shader_parameter("target_color_1", pal.highlight)
-	shader_mat.set_shader_parameter("target_color_2", pal.lightbase)
-	shader_mat.set_shader_parameter("target_color_3", pal.base)
-	shader_mat.set_shader_parameter("target_color_4", pal.shadebase)
-	shader_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	OverlaySlotUI.apply_palette(shader_mat, c_id)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

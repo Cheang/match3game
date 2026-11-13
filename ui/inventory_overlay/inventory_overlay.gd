@@ -22,6 +22,7 @@ const TEX_OVERLAY_BG = preload("res://assets/sprites/ui/combat/inventory_btn_unp
 const TEX_DESC_PANEL = preload("res://assets/sprites/ui/inventory_overlay/ability_description_panel.png")
 const TEX_GENERAL_BTN = preload("res://assets/sprites/ui/general_button_unpressed.png")
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
 const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const TRACK_ROW_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_track_row.tscn")
@@ -122,6 +123,7 @@ var selected_passive: Resource = null
 var selected_passive_idx: int = -1
 
 var _saved_game_is_played: bool = true
+var _ui_built: bool = false
 
 func _enter_tree() -> void:
 	instance = self
@@ -282,6 +284,14 @@ func close() -> void:
 	if is_slotting_mode:
 		_cached_floating_equipment = null
 		pending_slotting_queue.clear()
+		_popped_queue_origins.clear()
+		_floating_origin_track = null
+		selected_ability = null
+		selected_track = null
+		selected_is_ult = false
+		selected_slot_idx = -2
+		selected_passive = null
+		selected_passive_idx = -1
 		if floating_shard_dock != null:
 			floating_shard_dock.set_equipment(null)
 		for row in track_rows:
@@ -565,6 +575,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 
 func _build_ui_if_needed() -> void:
+	if _ui_built and is_instance_valid(main_panel):
+		return
 	dimmer = get_node_or_null("Dimmer") as ColorRect
 	if dimmer == null:
 		dimmer = ColorRect.new()
@@ -1032,6 +1044,7 @@ func _build_ui_if_needed() -> void:
 	done_btn.visible = is_slotting_mode
 	if not done_btn.pressed.is_connected(_on_done_btn_pressed):
 		done_btn.pressed.connect(_on_done_btn_pressed)
+	_ui_built = true
 
 func _create_nav_button(btn_text: String, is_disabled: bool = false) -> Button:
 	var btn := Button.new()
@@ -1087,7 +1100,7 @@ func switch_tab(tab: Tab) -> void:
 	match tab:
 		Tab.LOADOUT:
 			if header_label != null:
-				header_label.text = "Loadout"
+				header_label.text = "Equip Shard" if is_slotting_mode else header_title
 			_update_nav_button_highlights(loadout_nav_btn)
 			refresh_overlay_data()
 		Tab.STATS:
@@ -1284,7 +1297,7 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 						target_track.equipped_modifiers[s_idx] = target_mod
 						target_track.equipped_modifiers[t_idx] = source_mod
 						changed = true
-				elif target_mod == null:
+				elif target_mod == null and s_idx < source_track.equipped_modifiers.size() - 1:
 					source_track.equipped_modifiers.remove_at(s_idx)
 					source_track.equipped_modifiers.append(source_mod)
 					changed = true
@@ -1367,16 +1380,21 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 			# Replacing an occupied slot
 			var t_idx: int = target_track.equipped_modifiers.find(target_mod)
 			if t_idx != -1:
+				var prev_mods: Array[Equipment] = target_track.equipped_modifiers.duplicate()
+				var extra_popped: Array[Equipment] = []
 				displaced_item = target_mod
 				displaced_positions = _get_slot_global_positions(target_track, displaced_item, false)
 				target_track.equipped_modifiers.remove_at(t_idx)
 				while target_track.get_free_slots() < needed_slots and not target_track.equipped_modifiers.is_empty():
 					var extra_displaced: Equipment = target_track.equipped_modifiers.pop_back()
 					if extra_displaced != null:
-						_popped_queue_origins[extra_displaced] = target_track
-						pending_slotting_queue.push_front(extra_displaced)
+						extra_popped.append(extra_displaced)
 				if not target_track.equip_modifier(source_mod, t_idx):
+					target_track.equipped_modifiers = prev_mods
 					return false
+				for extra_eq in extra_popped:
+					_popped_queue_origins[extra_eq] = target_track
+					pending_slotting_queue.push_front(extra_eq)
 		else:
 			# Dropping onto empty slot or row
 			if target_track.can_equip(source_mod):
@@ -1590,8 +1608,16 @@ func _clear_fly_ghosts() -> void:
 			for s in row.diamond_slots:
 				if s != null:
 					s.modulate.a = 1.0
+	if floating_shard_dock != null:
+		floating_shard_dock.set_shard_hidden(floating_shard_dock.is_shard_hidden)
 
-func _spawn_fly_ghost(eq: Equipment, color_id: int, with_icon: bool) -> Control:
+func _build_fly_ghost_material(color_id: int) -> ShaderMaterial:
+	var s_mat := ShaderMaterial.new()
+	s_mat.shader = PALETTE_SHADER
+	OverlaySlotUI.apply_palette(s_mat, color_id)
+	return s_mat
+
+func _spawn_fly_ghost(eq: Equipment, color_id: int, with_icon: bool, shared_mat: ShaderMaterial = null) -> Control:
 	var ghost := Control.new()
 	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ghost.z_index = 210
@@ -1602,20 +1628,12 @@ func _spawn_fly_ghost(eq: Equipment, color_id: int, with_icon: bool) -> Control:
 	var frame := TextureRect.new()
 	frame.size = sz
 	frame.custom_minimum_size = sz
-	frame.texture = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png") if (eq != null and eq.is_ultimate) else TEX_BASIC_UNSELECTED
+	frame.texture = TEX_ULT_UNSELECTED if (eq != null and eq.is_ultimate) else TEX_BASIC_UNSELECTED
 	frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var s_mat := ShaderMaterial.new()
-	s_mat.shader = PALETTE_SHADER
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(color_id)
-	s_mat.set_shader_parameter("target_color_1", pal.highlight)
-	s_mat.set_shader_parameter("target_color_2", pal.lightbase)
-	s_mat.set_shader_parameter("target_color_3", pal.base)
-	s_mat.set_shader_parameter("target_color_4", pal.shadebase)
-	s_mat.set_shader_parameter("target_color_5", pal.deepshade)
-	frame.material = s_mat
+	frame.material = shared_mat if shared_mat != null else _build_fly_ghost_material(color_id)
 	ghost.add_child(frame)
 
 	if with_icon and eq != null and eq.icon != null:
@@ -1658,6 +1676,7 @@ func _animate_shards_slot_in(eq: Equipment, target_track: ColorLoadoutTrack, is_
 		return
 
 	var c_id: int = target_track.color if target_track.color > 0 else _get_equipment_color(eq)
+	var shared_mat := _build_fly_ghost_material(c_id)
 	for i in range(target_slots.size()):
 		var slot_ctrl: OverlaySlotUI = target_slots[i]
 		var end_pos: Vector2 = slot_ctrl.global_position
@@ -1665,7 +1684,7 @@ func _animate_shards_slot_in(eq: Equipment, target_track: ColorLoadoutTrack, is_
 		if start_pos.distance_to(end_pos) < 4.0:
 			continue
 		slot_ctrl.modulate.a = 0.0
-		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
+		var ghost := _spawn_fly_ghost(eq, c_id, i == 0, shared_mat)
 		ghost.global_position = start_pos
 		var tw := create_tween()
 		_active_fly_tweens.append(tw)
@@ -1690,13 +1709,14 @@ func _animate_shards_group_to_dock(eq: Equipment, start_positions: Array[Vector2
 		return
 	var count: int = mini(start_positions.size(), end_positions.size())
 	var c_id: int = _get_equipment_color(eq)
+	var shared_mat := _build_fly_ghost_material(c_id)
 	for i in range(count):
 		var start_pos: Vector2 = start_positions[i]
 		var end_pos: Vector2 = end_positions[i]
 		if start_pos.distance_to(end_pos) < 4.0:
 			continue
 		floating_shard_dock.set_shard_slot_hidden(i, true)
-		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
+		var ghost := _spawn_fly_ghost(eq, c_id, i == 0, shared_mat)
 		ghost.global_position = start_pos
 		var tw := create_tween()
 		_active_fly_tweens.append(tw)
@@ -1729,24 +1749,28 @@ func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
 		_update_desc_preview_visibility()
 		return
 	normal_preview_root.visible = true
-	var stack_count: int = 1 if mod.is_ultimate else clampi(mod.slot_cost, 1, 5)
+	var is_ult: bool = mod.is_ultimate
+	var stack_count: int = 1 if is_ult else clampi(mod.slot_cost, 1, 5)
+	var frame_sz: Vector2 = Vector2(83, 59) if is_ult else Vector2(59, 59)
+	var holder := normal_preview_frame_rect.get_parent() as Control
+	if holder != null:
+		holder.custom_minimum_size = frame_sz
+		holder.size = frame_sz
+		holder.pivot_offset = frame_sz * 0.5
+		holder.position = Vector2((168.0 - frame_sz.x) * 0.5, (168.0 - frame_sz.y) * 0.5)
 	var center_shift: float = -float(stack_count - 1) * 7.0 * 0.5
 	var c_id: int = color_id if color_id > 0 else _get_equipment_color(mod)
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	if normal_preview_shader != null:
-		normal_preview_shader.set_shader_parameter("target_color_1", pal.highlight)
-		normal_preview_shader.set_shader_parameter("target_color_2", pal.lightbase)
-		normal_preview_shader.set_shader_parameter("target_color_3", pal.base)
-		normal_preview_shader.set_shader_parameter("target_color_4", pal.shadebase)
-		normal_preview_shader.set_shader_parameter("target_color_5", pal.deepshade)
+	OverlaySlotUI.apply_palette(normal_preview_shader, c_id)
 	for i in range(normal_preview_stack_frames.size()):
 		var nf: TextureRect = normal_preview_stack_frames[i]
 		if nf != null:
 			nf.visible = (i < stack_count)
-			nf.texture = TEX_BASIC_UNSELECTED
+			nf.size = frame_sz if i == 0 else Vector2(59, 59)
+			nf.texture = TEX_ULT_UNSELECTED if (is_ult and i == 0) else TEX_BASIC_UNSELECTED
 			nf.material = normal_preview_shader
 			nf.position = Vector2(center_shift + float(i) * 7.0, 0.0)
 	if normal_preview_icon_rect != null:
+		normal_preview_icon_rect.size = frame_sz
 		normal_preview_icon_rect.texture = mod.icon
 		normal_preview_icon_rect.visible = (mod.icon != null)
 	_update_desc_preview_visibility()
@@ -1759,15 +1783,23 @@ func _update_normal_preview_passive(p_res: Resource) -> void:
 		_update_desc_preview_visibility()
 		return
 	normal_preview_root.visible = true
+	var holder := normal_preview_frame_rect.get_parent() as Control
+	if holder != null:
+		holder.custom_minimum_size = Vector2(59, 59)
+		holder.size = Vector2(59, 59)
+		holder.pivot_offset = Vector2(29.5, 29.5)
+		holder.position = Vector2((168.0 - 59.0) * 0.5, (168.0 - 59.0) * 0.5)
 	for i in range(normal_preview_stack_frames.size()):
 		var nf: TextureRect = normal_preview_stack_frames[i]
 		if nf != null:
 			nf.visible = (i == 0)
+			nf.size = Vector2(59, 59)
 			nf.position = Vector2.ZERO
 			if i == 0:
 				nf.texture = TEX_PASSIVE_UNSELECTED
 				nf.material = null
 	if normal_preview_icon_rect != null:
+		normal_preview_icon_rect.size = Vector2(59, 59)
 		var ico: Texture2D = null
 		if p_res is Reward:
 			ico = (p_res as Reward).get_display_icon()
@@ -1926,15 +1958,7 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 		var eff := _remap_colors_for_dark_panel(eq.get_effect_description())
 		if not eff.is_empty():
 			text += "[font_size=18]%s[/font_size]\n" % eff
-		var boosts := eq.get_stat_boosts()
-		if not boosts.is_empty() and not eff.contains("• "):
-			var stat_parts: Array[String] = []
-			for stat_name in boosts:
-				var val: float = boosts[stat_name]
-				var sign_str := "+" if val > 0 else ""
-				stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
-			if not stat_parts.is_empty():
-				text += "[font_size=16][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+		text += _format_passive_stats_bbcode(eq, eff)
 	else:
 		var desc: String = p_res.get("description") if p_res.get("description") != null else ""
 		if not desc.is_empty():
@@ -1956,18 +1980,21 @@ func _format_ability_bbcode(mod: Equipment, _color_id: int, is_ult: bool) -> Str
 	if not eff.is_empty():
 		text += "[font_size=18]%s[/font_size]\n" % eff
 
-	# Passive stats fallback (only if not already included in eff)
-	var boosts := mod.get_stat_boosts()
-	if not boosts.is_empty() and not eff.contains("• "):
-		var stat_parts: Array[String] = []
-		for stat_name in boosts:
-			var val: float = boosts[stat_name]
-			var sign_str := "+" if val > 0 else ""
-			stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
-		if not stat_parts.is_empty():
-			text += "[font_size=16][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
-
+	text += _format_passive_stats_bbcode(mod, eff)
 	return text
+
+func _format_passive_stats_bbcode(eq: Equipment, eff: String) -> String:
+	var boosts := eq.get_stat_boosts()
+	if boosts.is_empty() or eff.contains("• "):
+		return ""
+	var stat_parts: Array[String] = []
+	for stat_name in boosts:
+		var val: float = boosts[stat_name]
+		var sign_str := "+" if val > 0 else ""
+		stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
+	if stat_parts.is_empty():
+		return ""
+	return "[font_size=16][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 
 func _get_trigger_description(tc: Equipment.TriggerCondition) -> String:
 	match tc:

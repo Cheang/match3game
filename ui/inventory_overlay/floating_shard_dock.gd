@@ -12,9 +12,11 @@ signal shard_dropped_on_dock(drag_data: Dictionary)
 signal floating_equipment_changed(eq: Equipment)
 
 const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
+const ULT_SIZE = Vector2(83, 59)
 const DOCK_SIZE = Vector2(168, 168)
 const MAX_STACK = 5
 const STACK_OFFSET_X = 7.0
@@ -40,6 +42,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	_ensure_components()
+	set_process(current_equipment != null)
 
 func _ensure_components() -> void:
 	if shard_item != null:
@@ -132,14 +135,25 @@ func set_equipment(eq: Equipment) -> void:
 	_ensure_components()
 	current_equipment = eq
 	_bob_timer = 0.0
-	_stack_count = 1
-	if eq != null and not eq.is_ultimate:
-		_stack_count = clampi(eq.slot_cost, 1, MAX_STACK)
+	var is_ult: bool = (eq != null and eq.is_ultimate)
+	_stack_count = 1 if is_ult else (clampi(eq.slot_cost, 1, MAX_STACK) if eq != null else 1)
 
 	if current_equipment != null:
 		var c_id: int = _get_equipment_color(current_equipment)
 		_apply_frame_palette(c_id)
 		_update_particles_color(c_id)
+
+		var sz: Vector2 = ULT_SIZE if is_ult else DIAMOND_SIZE
+		shard_item.size = sz
+		shard_item.custom_minimum_size = sz
+		shard_item.pivot_offset = sz / 2.0
+		frame_rect.size = sz
+		frame_rect.custom_minimum_size = sz
+		frame_rect.texture = TEX_ULT_UNSELECTED if is_ult else TEX_BASIC_UNSELECTED
+		icon_rect.size = sz
+		icon_rect.custom_minimum_size = sz
+		fire_particles.position = Vector2(41.0, 34.0) if is_ult else Vector2(29.0, 34.0)
+		fire_particles.emission_rect_extents = Vector2(26.0, 8.0) if is_ult else Vector2(18.0, 8.0)
 
 		shard_item.visible = not is_shard_hidden
 		var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
@@ -147,11 +161,16 @@ func set_equipment(eq: Equipment) -> void:
 			var f: TextureRect = stack_frames[i]
 			if f != null:
 				f.visible = (i < _stack_count)
+				if i > 0:
+					f.size = DIAMOND_SIZE
+					f.custom_minimum_size = DIAMOND_SIZE
+					f.texture = TEX_BASIC_UNSELECTED
 				f.position = Vector2(center_shift + float(i) * STACK_OFFSET_X, 0.0)
 				_jolt_offsets[i] = Vector2.ZERO
 		icon_rect.visible = (current_equipment.icon != null)
 		icon_rect.texture = current_equipment.icon
 		fire_particles.emitting = true
+		set_process(true)
 	else:
 		shard_item.visible = false
 		for f in stack_frames:
@@ -160,6 +179,7 @@ func set_equipment(eq: Equipment) -> void:
 		icon_rect.visible = false
 		icon_rect.texture = null
 		fire_particles.emitting = false
+		set_process(false)
 
 	floating_equipment_changed.emit(current_equipment)
 
@@ -170,8 +190,9 @@ func _process(delta: float) -> void:
 
 	var cur_w: float = size.x if size.x > 0.0 else DOCK_SIZE.x
 	var cur_h: float = size.y if size.y > 0.0 else DOCK_SIZE.y
-	var base_x: float = (cur_w - DIAMOND_SIZE.x) / 2.0
-	var base_y: float = (cur_h - DIAMOND_SIZE.y) / 2.0
+	var item_sz: Vector2 = shard_item.size
+	var base_x: float = (cur_w - item_sz.x) / 2.0
+	var base_y: float = (cur_h - item_sz.y) / 2.0
 	shard_item.position = Vector2(roundf(base_x), roundf(base_y))
 
 	var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
@@ -201,14 +222,7 @@ func _get_equipment_color(eq: Equipment) -> int:
 	return eff[0] if not eff.is_empty() else 100
 
 func _apply_frame_palette(c_id: int) -> void:
-	if shader_mat == null:
-		return
-	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-	shader_mat.set_shader_parameter("target_color_1", pal.highlight)
-	shader_mat.set_shader_parameter("target_color_2", pal.lightbase)
-	shader_mat.set_shader_parameter("target_color_3", pal.base)
-	shader_mat.set_shader_parameter("target_color_4", pal.shadebase)
-	shader_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	OverlaySlotUI.apply_palette(shader_mat, c_id)
 
 func _update_particles_color(c_id: int) -> void:
 	if fire_particles == null:
