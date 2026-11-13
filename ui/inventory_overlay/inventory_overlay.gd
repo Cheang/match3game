@@ -26,6 +26,9 @@ const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overla
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const TRACK_ROW_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_track_row.tscn")
 const PASSIVES_RING_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn")
+const DescPreviewFrameClass = preload("res://ui/inventory_overlay/desc_preview_frame.gd")
+const DescColorBadgeClass = preload("res://ui/inventory_overlay/desc_color_badge.gd")
+const DescSlotBadgeClass = preload("res://ui/inventory_overlay/desc_slot_badge.gd")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
 const BODY_FONT = preload("res://assets/theme/plain.ttf")
 
@@ -60,7 +63,7 @@ var tracks_box: VBoxContainer
 var track_rows: Array[InventoryOverlayTrackRow] = []
 var description_hbox: HBoxContainer = null
 var description_panel: NinePatchRect
-var desc_preview_frame: DescPreviewFrame = null
+var desc_preview_frame: Control = null
 var normal_preview_root: Control = null
 var normal_preview_stack_frames: Array[TextureRect] = []
 var normal_preview_frame_rect: TextureRect = null
@@ -71,8 +74,8 @@ var _active_fly_tweens: Array[Tween] = []
 var desc_right_vbox: VBoxContainer = null
 var desc_header_hbox: HBoxContainer = null
 var desc_rarity_label: Label = null
-var desc_color_badge: DescColorBadge = null
-var desc_slot_badge: DescSlotBadge = null
+var desc_color_badge: Control = null
+var desc_slot_badge: Control = null
 var desc_title_label: Label = null
 var description_label: RichTextLabel
 
@@ -722,11 +725,11 @@ func _build_ui_if_needed() -> void:
 		d_margin = MarginContainer.new()
 		d_margin.name = "Margin"
 		d_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+		d_margin.add_theme_constant_override("margin_left", 12)
+		d_margin.add_theme_constant_override("margin_top", 12)
+		d_margin.add_theme_constant_override("margin_right", 12)
+		d_margin.add_theme_constant_override("margin_bottom", 12)
 		description_panel.add_child(d_margin)
-	d_margin.add_theme_constant_override("margin_left", 12)
-	d_margin.add_theme_constant_override("margin_top", 12)
-	d_margin.add_theme_constant_override("margin_right", 12)
-	d_margin.add_theme_constant_override("margin_bottom", 12)
 
 	description_hbox = d_margin.find_child("DescriptionHBox", true, false) as HBoxContainer
 	if description_hbox == null:
@@ -735,13 +738,13 @@ func _build_ui_if_needed() -> void:
 		description_hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
 		description_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		description_hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		description_hbox.add_theme_constant_override("separation", 14)
 		d_margin.add_child(description_hbox)
-	description_hbox.add_theme_constant_override("separation", 14)
 
 	# Left Square Preview Box (168x168 framed box holding selected item OR FloatingShardDock)
-	desc_preview_frame = description_hbox.find_child("DescPreviewFrame", true, false) as DescPreviewFrame
+	desc_preview_frame = description_hbox.find_child("DescPreviewFrame", true, false) as Control
 	if desc_preview_frame == null:
-		desc_preview_frame = DescPreviewFrame.new()
+		desc_preview_frame = DescPreviewFrameClass.new()
 		desc_preview_frame.name = "DescPreviewFrame"
 		desc_preview_frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		description_hbox.add_child(desc_preview_frame)
@@ -820,6 +823,7 @@ func _build_ui_if_needed() -> void:
 		desc_right_vbox.add_theme_constant_override("separation", 2)
 		description_hbox.add_child(desc_right_vbox)
 
+	desc_header_hbox = desc_right_vbox.find_child("DescHeaderHBox", true, false) as HBoxContainer
 	if desc_header_hbox == null:
 		desc_header_hbox = HBoxContainer.new()
 		desc_header_hbox.name = "DescHeaderHBox"
@@ -838,18 +842,24 @@ func _build_ui_if_needed() -> void:
 		desc_header_hbox.add_child(desc_rarity_label)
 
 		var header_spacer := Control.new()
+		header_spacer.name = "HeaderSpacer"
 		header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		header_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		desc_header_hbox.add_child(header_spacer)
 
-		desc_color_badge = DescColorBadge.new()
+		desc_color_badge = DescColorBadgeClass.new()
 		desc_color_badge.name = "ColorBadge"
 		desc_header_hbox.add_child(desc_color_badge)
 
-		desc_slot_badge = DescSlotBadge.new()
+		desc_slot_badge = DescSlotBadgeClass.new()
 		desc_slot_badge.name = "SlotBadge"
 		desc_header_hbox.add_child(desc_slot_badge)
+	else:
+		desc_rarity_label = desc_header_hbox.find_child("RarityLabel", true, false) as Label
+		desc_color_badge = desc_header_hbox.find_child("ColorBadge", true, false) as Control
+		desc_slot_badge = desc_header_hbox.find_child("SlotBadge", true, false) as Control
 
+	desc_title_label = desc_right_vbox.find_child("TitleLabel", true, false) as Label
 	if desc_title_label == null:
 		desc_title_label = Label.new()
 		desc_title_label.name = "TitleLabel"
@@ -1975,109 +1985,3 @@ func _get_trigger_description(tc: Equipment.TriggerCondition) -> String:
 func _on_dimmer_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		close()
-
-
-## Pixel-art dark framed square preview box on the left of the DescriptionPanel.
-class DescPreviewFrame extends Control:
-	const BOX_SIZE = Vector2(168, 168)
-
-	func _init() -> void:
-		custom_minimum_size = BOX_SIZE
-		size = BOX_SIZE
-		mouse_filter = Control.MOUSE_FILTER_PASS
-
-	func _draw() -> void:
-		var w := size.x
-		var h := size.y
-		# Dark recessed fill + outer/inner pixel borders
-		draw_rect(Rect2(2, 2, w - 4, h - 4), Color("#2b222e"))
-		draw_rect(Rect2(0, 0, w, h), Color("#19131c"), false, 2.0)
-		draw_rect(Rect2(3, 3, w - 6, h - 6), Color("#4c3d52"), false, 1.0)
-		# Corner pixel accents
-		var dot_col := Color("#66546e")
-		draw_rect(Rect2(5, 5, 3, 3), dot_col)
-		draw_rect(Rect2(w - 8, 5, 3, 3), dot_col)
-		draw_rect(Rect2(5, h - 8, 3, 3), dot_col)
-		draw_rect(Rect2(w - 8, h - 8, 3, 3), dot_col)
-		# 4 inward midpoint pixel triangles
-		var mx := floorf(w * 0.5)
-		var my := floorf(h * 0.5)
-		draw_polygon(PackedVector2Array([Vector2(mx - 4, 4), Vector2(mx + 4, 4), Vector2(mx, 8)]), PackedColorArray([dot_col]))
-		draw_polygon(PackedVector2Array([Vector2(mx - 4, h - 4), Vector2(mx + 4, h - 4), Vector2(mx, h - 8)]), PackedColorArray([dot_col]))
-		draw_polygon(PackedVector2Array([Vector2(4, my - 4), Vector2(4, my + 4), Vector2(8, my)]), PackedColorArray([dot_col]))
-		draw_polygon(PackedVector2Array([Vector2(w - 4, my - 4), Vector2(w - 4, my + 4), Vector2(w - 8, my)]), PackedColorArray([dot_col]))
-
-
-## Pixel-art color badge (6-color wheel for Wild, or track-colored orb).
-class DescColorBadge extends Control:
-	var color_id: int = 0
-
-	func _init() -> void:
-		custom_minimum_size = Vector2(24, 24)
-		size = Vector2(24, 24)
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	func set_color_id(c_id: int) -> void:
-		color_id = c_id
-		queue_redraw()
-
-	func _draw() -> void:
-		var center := size * 0.5
-		var r := 9.0
-		draw_circle(center, r + 1.5, Color("#19131c"))
-		if color_id <= 0:
-			var wheel_colors: Array[Color] = [
-				Color("#e04444"),
-				Color("#f09838"),
-				Color("#4bc468"),
-				Color("#84e0f0"),
-				Color("#4d78e0"),
-				Color("#a65ae0")
-			]
-			for i in range(6):
-				var a0 := -PI * 0.5 + float(i) * (TAU / 6.0)
-				var a1 := a0 + (TAU / 6.0)
-				var pts := PackedVector2Array([center])
-				for s in range(5):
-					var a := lerpf(a0, a1, float(s) / 4.0)
-					pts.append(center + Vector2(cos(a), sin(a)) * r)
-				draw_polygon(pts, PackedColorArray([wheel_colors[i]]))
-		else:
-			var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(color_id)
-			draw_circle(center, r, pal.base)
-			draw_circle(center + Vector2(-2, -2), r * 0.45, pal.highlight)
-
-
-## Pixel-art circular Roman numeral slot-cost badge (I, II, III, U, P).
-class DescSlotBadge extends Control:
-	var _label: Label
-
-	func _init() -> void:
-		custom_minimum_size = Vector2(24, 24)
-		size = Vector2(24, 24)
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_label = Label.new()
-		_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		_label.add_theme_font_override("font", preload("res://assets/theme/title.ttf"))
-		_label.add_theme_font_size_override("font_size", 15)
-		_label.add_theme_color_override("font_color", Color.WHITE)
-		_label.text = "I"
-		_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(_label)
-
-	func set_badge_text(t: String) -> void:
-		if _label != null:
-			_label.text = t
-			if t == "U":
-				_label.add_theme_color_override("font_color", Color("#ffd966"))
-			else:
-				_label.add_theme_color_override("font_color", Color.WHITE)
-		queue_redraw()
-
-	func _draw() -> void:
-		var center := size * 0.5
-		draw_circle(center, 10.5, Color("#19131c"))
-		draw_circle(center, 9.5, Color("#d6d0e0"))
-		draw_circle(center, 7.5, Color("#3b2f3d"))

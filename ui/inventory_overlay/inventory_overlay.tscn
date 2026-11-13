@@ -7,6 +7,10 @@
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_font"]
 [ext_resource type="PackedScene" path="res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn" id="6_ring"]
 [ext_resource type="Texture2D" uid="uid://b4u1op0e762r" path="res://assets/sprites/ui/general_button_unpressed.png" id="7_btn"]
+[ext_resource type="FontFile" path="res://assets/theme/plain.ttf" id="8_body_font"]
+[ext_resource type="Script" path="res://ui/inventory_overlay/desc_preview_frame.gd" id="9_preview_frame"]
+[ext_resource type="Script" path="res://ui/inventory_overlay/desc_color_badge.gd" id="10_color_badge"]
+[ext_resource type="Script" path="res://ui/inventory_overlay/desc_slot_badge.gd" id="11_slot_badge"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
 content_margin_left = 10.0
@@ -131,7 +135,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="DescriptionPanel" type="NinePatchRect" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView" unique_id=172039200]
-custom_minimum_size = Vector2(520, 160)
+custom_minimum_size = Vector2(520, 200)
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("3_desc")
@@ -147,30 +151,95 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="DescriptionHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 14
 
-[node name="Scroll" type="ScrollContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox" unique_id=115403182]
+[node name="DescPreviewFrame" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox"]
+custom_minimum_size = Vector2(168, 168)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("9_preview_frame")
+
+[node name="DescRightVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="DescHeaderHBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RarityLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.494118, 0.721569, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_body_font")
+theme_override_font_sizes/font_size = 18
+text = "Rare"
+
+[node name="HeaderSpacer" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ColorBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("10_color_badge")
+
+[node name="SlotBadge" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("11_slot_badge")
+
+[node name="TitleLabel" type="Label" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "Tusk Dagger"
+autowrap_mode = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox" unique_id=115403182]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="DescriptionLabel" type="RichTextLabel" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/Scroll" unique_id=257197523]
+[node name="DescriptionLabel" type="RichTextLabel" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/Scroll" unique_id=257197523]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.956863, 0.945098, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.05, 0.12, 0.85)
+theme_override_constants/line_separation = 3
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 0
+theme_override_fonts/normal_font = ExtResource("8_body_font")
+theme_override_fonts/bold_font = ExtResource("5_font")
+theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/bold_font_size = 20
 bbcode_enabled = true
-text = "[center][color=#9babb2]
-Select an ability or passive to view its details.[/color][/center]"
+text = "[color=#ffd966]Trigger:[/color] Any Match
+Deals: [color=#ff7b7b]6 x 2[/color] DMG
+[color=#7eb8ff]• +1 Base Damage[/color]"
 fit_content = true
 
 [node name="StatsView" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox"]
