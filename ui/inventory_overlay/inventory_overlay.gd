@@ -332,11 +332,15 @@ func _finish_custom_drop(pos: Vector2) -> void:
 	var src_is_ult: bool = _drag_source_is_ult
 	var src_slot_idx: int = _drag_source_slot_idx
 
-	_cleanup_custom_drag()
+	_reset_drag_input_state()
 
 	match target.get("type", "none"):
 		"dock":
 			if not src_floating:
+				if drag_avatar != null:
+					drag_avatar.end_drag()
+				if floating_shard_dock != null:
+					floating_shard_dock.set_shard_hidden(false)
 				_on_shard_dropped_to_dock({
 					"type": "equipment_drag",
 					"modifier": dropped_item,
@@ -346,14 +350,17 @@ func _finish_custom_drop(pos: Vector2) -> void:
 					"source_is_floating": false
 				})
 			else:
-				if floating_shard_dock != null:
-					floating_shard_dock.set_shard_hidden(false)
+				_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 		"slot":
 			var target_track: ColorLoadoutTrack = target.get("track")
 			var target_is_ult: bool = target.get("is_ult", false)
 			var target_slot_idx: int = target.get("slot_idx", -1)
 
 			if target_track != null and target_track.is_color_compatible(dropped_item) and target_is_ult == dropped_item.is_ultimate:
+				if drag_avatar != null:
+					drag_avatar.end_drag()
+				if floating_shard_dock != null:
+					floating_shard_dock.set_shard_hidden(false)
 				if src_floating:
 					_handle_floating_shard_drop(dropped_item, target_track, target_is_ult, target_slot_idx)
 				else:
@@ -370,25 +377,50 @@ func _finish_custom_drop(pos: Vector2) -> void:
 		_:
 			_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 
-func _cancel_custom_drag(_item: Equipment, from_dock: bool, src_track: ColorLoadoutTrack, src_is_ult: bool, src_slot_idx: int) -> void:
+func _get_drag_origin_global_pos(from_dock: bool, src_track: ColorLoadoutTrack, src_is_ult: bool, src_slot_idx: int) -> Vector2:
 	if from_dock:
-		if floating_shard_dock != null:
-			floating_shard_dock.set_shard_hidden(false)
-	else:
-		_set_slot_visual_lifted(src_track, src_is_ult, src_slot_idx, false)
+		if floating_shard_dock != null and floating_shard_dock.shard_item != null:
+			return floating_shard_dock.shard_item.global_position
+		return Vector2(INF, INF)
+	for row in track_rows:
+		if row != null and row.track_ref == src_track:
+			if src_is_ult and row.ult_slot != null:
+				return row.ult_slot.global_position
+			if src_slot_idx >= 0 and src_slot_idx < row.diamond_slots.size() and row.diamond_slots[src_slot_idx] != null:
+				return row.diamond_slots[src_slot_idx].global_position
+	return Vector2(INF, INF)
 
-func _cleanup_custom_drag() -> void:
+func _cancel_custom_drag(_item: Equipment, from_dock: bool, src_track: ColorLoadoutTrack, src_is_ult: bool, src_slot_idx: int) -> void:
+	var restore_cb := func() -> void:
+		if from_dock:
+			if floating_shard_dock != null:
+				floating_shard_dock.set_shard_hidden(false)
+		else:
+			_set_slot_visual_lifted(src_track, src_is_ult, src_slot_idx, false)
+
+	if drag_avatar != null and drag_avatar.visible:
+		var origin_pos := _get_drag_origin_global_pos(from_dock, src_track, src_is_ult, src_slot_idx)
+		if origin_pos.is_finite():
+			drag_avatar.return_to(origin_pos, restore_cb)
+			return
+		drag_avatar.end_drag()
+	restore_cb.call()
+
+func _reset_drag_input_state() -> void:
 	is_custom_dragging = false
 	_drag_pending = false
 	_drag_candidate_item = null
-	if drag_avatar != null:
-		drag_avatar.end_drag()
-	if floating_shard_dock != null:
-		floating_shard_dock.set_shard_hidden(false)
 	var restore_eq: Equipment = _cached_floating_equipment if is_slotting_mode else null
 	for row in track_rows:
 		if row != null:
 			row.set_compatibility_state(restore_eq)
+
+func _cleanup_custom_drag() -> void:
+	_reset_drag_input_state()
+	if drag_avatar != null:
+		drag_avatar.end_drag()
+	if floating_shard_dock != null:
+		floating_shard_dock.set_shard_hidden(false)
 
 func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool) -> void:
 	if track == null:

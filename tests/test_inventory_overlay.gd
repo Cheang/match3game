@@ -334,9 +334,14 @@ func _ready() -> void:
 	overlay.drag_avatar.update_position(Vector2(200, 300))
 	assert(overlay.drag_avatar.global_position == Vector2(200, 300) - overlay.drag_avatar.DIAMOND_SIZE / 2.0, "Drag avatar must follow cursor position")
 
-	# Cancel/cleanup custom drag
+	# Dropping outside valid slots initiates smooth float-back instead of snapping
+	overlay._finish_custom_drop(Vector2(-50, -50))
+	assert(overlay.is_custom_dragging == false, "Custom dragging should be false after drop release")
+	assert(overlay.drag_avatar.is_returning() == true, "Drag avatar must smoothly float back when released outside valid slots")
+
+	# Cleanup custom drag cancels return tween cleanly and restores dock shard
 	overlay._cleanup_custom_drag()
-	assert(overlay.is_custom_dragging == false, "Custom dragging should be false after cleanup")
+	assert(overlay.drag_avatar.is_returning() == false, "Return tween must stop after cleanup")
 	assert(overlay.drag_avatar.visible == false, "Drag avatar must be hidden after cleanup")
 	assert(overlay.floating_shard_dock.is_shard_hidden == false, "Dock shard must unhide after drag ends")
 

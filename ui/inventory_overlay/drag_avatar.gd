@@ -17,6 +17,8 @@ var frame_rect: TextureRect
 var icon_rect: TextureRect
 var shader_mat: ShaderMaterial
 var fire_particles: Node2D
+var _return_tween: Tween = null
+var _active_return_cleanup: Callable = Callable()
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -64,6 +66,7 @@ func _build_ui() -> void:
 	add_child(icon_rect)
 
 func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -1) -> void:
+	_cancel_active_return()
 	if eq == null:
 		return
 	current_equipment = eq
@@ -98,7 +101,43 @@ func update_position(mouse_pos: Vector2) -> void:
 	var sz: Vector2 = ULT_SIZE if (current_equipment != null and current_equipment.is_ultimate) else DIAMOND_SIZE
 	global_position = mouse_pos - sz / 2.0
 
+func is_returning() -> bool:
+	return _return_tween != null and _return_tween.is_valid()
+
+func return_to(target_global_pos: Vector2, on_complete: Callable = Callable()) -> void:
+	_cancel_active_return()
+	_active_return_cleanup = on_complete
+	var dist: float = global_position.distance_to(target_global_pos)
+	if dist < 4.0 or not is_inside_tree():
+		_finish_return()
+		return
+
+	var dur: float = clampf(dist / 1200.0, 0.14, 0.28)
+	_return_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_return_tween.tween_property(self, "global_position", target_global_pos, dur)
+	_return_tween.tween_callback(_finish_return)
+
+func _finish_return() -> void:
+	_return_tween = null
+	var cb: Callable = _active_return_cleanup
+	_active_return_cleanup = Callable()
+	visible = false
+	fire_particles.emitting = false
+	current_equipment = null
+	if cb.is_valid():
+		cb.call()
+
+func _cancel_active_return() -> void:
+	if _return_tween != null:
+		_return_tween.kill()
+		_return_tween = null
+	if _active_return_cleanup.is_valid():
+		var cb: Callable = _active_return_cleanup
+		_active_return_cleanup = Callable()
+		cb.call()
+
 func end_drag() -> void:
+	_cancel_active_return()
 	visible = false
 	fire_particles.emitting = false
 	current_equipment = null

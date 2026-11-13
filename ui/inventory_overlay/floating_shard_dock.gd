@@ -19,6 +19,8 @@ const DOCK_SIZE = Vector2(90, 140)
 
 var current_equipment: Equipment = null
 var _bob_timer: float = 0.0
+var _jolt_timer: float = 0.0
+var _jolt_offset: Vector2 = Vector2.ZERO
 var is_shard_hidden: bool = false
 
 var shard_item: FloatingShardItem
@@ -121,11 +123,24 @@ func _process(delta: float) -> void:
 	if not visible or current_equipment == null or shard_item == null:
 		return
 	_bob_timer += delta * 3.5
+
+	_jolt_timer -= delta
+	if _jolt_timer <= 0.0:
+		_jolt_timer = randf_range(0.08, 0.22)
+		var angle := randf_range(0.0, TAU)
+		var strength := randf_range(1.2, 2.2)
+		_jolt_offset = Vector2(cos(angle), sin(angle)) * strength
+	else:
+		_jolt_offset = _jolt_offset.lerp(Vector2.ZERO, minf(1.0, delta * 18.0))
+
 	var cur_w: float = size.x if size.x > 0.0 else DOCK_SIZE.x
 	var cur_h: float = size.y if size.y > 0.0 else DOCK_SIZE.y
 	var base_x: float = (cur_w - DIAMOND_SIZE.x) / 2.0
 	var base_y: float = (cur_h - DIAMOND_SIZE.y) / 2.0
-	shard_item.position = Vector2(roundf(base_x), roundf(base_y + sin(_bob_timer) * 4.0))
+	shard_item.position = Vector2(
+		roundf(base_x + _jolt_offset.x),
+		roundf(base_y + sin(_bob_timer) * 4.0 + _jolt_offset.y)
+	)
 
 func _get_equipment_color(eq: Equipment) -> int:
 	if eq == null or eq.is_colorless():
