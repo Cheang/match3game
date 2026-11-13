@@ -57,9 +57,11 @@ var description_hbox: HBoxContainer = null
 var description_panel: NinePatchRect
 var desc_preview_frame: DescPreviewFrame = null
 var normal_preview_root: Control = null
+var normal_preview_stack_frames: Array[TextureRect] = []
 var normal_preview_frame_rect: TextureRect = null
 var normal_preview_icon_rect: TextureRect = null
 var normal_preview_shader: ShaderMaterial = null
+var _active_fly_ghosts: Array[Control] = []
 var desc_right_vbox: VBoxContainer = null
 var desc_header_hbox: HBoxContainer = null
 var desc_rarity_label: Label = null
@@ -339,18 +341,21 @@ func _start_custom_drag(mouse_pos: Vector2) -> void:
 	if _drag_candidate_item == null:
 		_drag_pending = false
 		return
+	_clear_fly_ghosts()
 	is_custom_dragging = true
 	_drag_pending = false
 
+	var src_positions: Array[Vector2] = []
 	if _drag_source_is_floating:
 		if floating_shard_dock != null:
 			floating_shard_dock.set_shard_hidden(true)
 	else:
-		_set_slot_visual_lifted(_drag_source_track, _drag_source_is_ult, _drag_source_slot_idx, true)
+		src_positions = _get_slot_global_positions(_drag_source_track, _drag_candidate_item, _drag_source_is_ult)
+		_set_slot_visual_lifted(_drag_source_track, _drag_source_is_ult, _drag_source_slot_idx, true, _drag_candidate_item)
 
 	if drag_avatar != null:
 		var c_id: int = _drag_source_track.color if _drag_source_track != null else -1
-		drag_avatar.start_drag(_drag_candidate_item, mouse_pos, c_id)
+		drag_avatar.start_drag(_drag_candidate_item, mouse_pos, c_id, src_positions)
 
 	for row in track_rows:
 		if row != null:
@@ -367,6 +372,7 @@ func _finish_custom_drop(pos: Vector2) -> void:
 	var src_track: ColorLoadoutTrack = _drag_source_track
 	var src_is_ult: bool = _drag_source_is_ult
 	var src_slot_idx: int = _drag_source_slot_idx
+	var drag_positions: Array[Vector2] = drag_avatar.get_shard_global_positions() if drag_avatar != null else []
 
 	_reset_drag_input_state()
 
@@ -386,6 +392,7 @@ func _finish_custom_drop(pos: Vector2) -> void:
 						drag_avatar.end_drag()
 					if floating_shard_dock != null:
 						floating_shard_dock.set_shard_hidden(false)
+						_animate_shards_group_to_dock(dropped_item, drag_positions)
 				else:
 					_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 			else:
@@ -413,6 +420,7 @@ func _finish_custom_drop(pos: Vector2) -> void:
 						drag_avatar.end_drag()
 					if floating_shard_dock != null:
 						floating_shard_dock.set_shard_hidden(false)
+					_animate_shards_slot_in(dropped_item, target_track, target_is_ult, drag_positions)
 				else:
 					_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 			else:
@@ -459,23 +467,31 @@ func _reset_drag_input_state() -> void:
 			row.set_compatibility_state(restore_eq)
 
 func _cleanup_custom_drag() -> void:
+	_clear_fly_ghosts()
 	_reset_drag_input_state()
 	if drag_avatar != null:
 		drag_avatar.end_drag()
 	if floating_shard_dock != null:
 		floating_shard_dock.set_shard_hidden(false)
 
-func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool) -> void:
+func _set_slot_visual_lifted(track: ColorLoadoutTrack, is_ult: bool, slot_idx: int, lifted: bool, eq: Equipment = null) -> void:
 	if track == null:
 		return
+	var target_indices: Array[int] = []
+	if not is_ult:
+		if eq != null:
+			target_indices = track.get_slot_indices_for_modifier(eq)
+		if target_indices.is_empty() and slot_idx >= 0:
+			target_indices.append(slot_idx)
 	for row in track_rows:
 		if row != null and row.track_ref == track:
 			if is_ult:
 				if row.ult_slot != null:
 					row.ult_slot.modulate.a = 0.25 if lifted else 1.0
-			elif slot_idx >= 0 and slot_idx < row.diamond_slots.size():
-				if row.diamond_slots[slot_idx] != null:
-					row.diamond_slots[slot_idx].modulate.a = 0.25 if lifted else 1.0
+			else:
+				for s_i in target_indices:
+					if s_i >= 0 and s_i < row.diamond_slots.size() and row.diamond_slots[s_i] != null:
+						row.diamond_slots[s_i].modulate.a = 0.25 if lifted else 1.0
 
 func _find_drop_target_at_pos(pos: Vector2) -> Dictionary:
 	if floating_shard_dock != null and floating_shard_dock.visible:
@@ -740,17 +756,24 @@ func _build_ui_if_needed() -> void:
 		preview_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		normal_preview_root.add_child(preview_holder)
 
-		normal_preview_frame_rect = TextureRect.new()
-		normal_preview_frame_rect.size = Vector2(59, 59)
-		normal_preview_frame_rect.texture = TEX_BASIC_UNSELECTED
-		normal_preview_frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		normal_preview_frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		normal_preview_frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		normal_preview_frame_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		normal_preview_shader = ShaderMaterial.new()
 		normal_preview_shader.shader = PALETTE_SHADER
-		normal_preview_frame_rect.material = normal_preview_shader
-		preview_holder.add_child(normal_preview_frame_rect)
+		normal_preview_stack_frames.clear()
+		for i in range(4, -1, -1):
+			var nf := TextureRect.new()
+			nf.name = "NormalFrame_%d" % i
+			nf.size = Vector2(59, 59)
+			nf.texture = TEX_BASIC_UNSELECTED
+			nf.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			nf.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			nf.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			nf.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			nf.material = normal_preview_shader
+			nf.visible = (i == 0)
+			preview_holder.add_child(nf)
+		for i in range(5):
+			normal_preview_stack_frames.append(preview_holder.get_node("NormalFrame_%d" % i) as TextureRect)
+		normal_preview_frame_rect = normal_preview_stack_frames[0]
 
 		normal_preview_icon_rect = TextureRect.new()
 		normal_preview_icon_rect.size = Vector2(59, 59)
@@ -758,7 +781,7 @@ func _build_ui_if_needed() -> void:
 		normal_preview_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		normal_preview_icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		normal_preview_icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		preview_holder.add_child(normal_preview_icon_rect)
+		normal_preview_frame_rect.add_child(normal_preview_icon_rect)
 
 	# Floating Shard Dock (Slotting Mode only, inside the left square preview box)
 	floating_shard_dock = vbox.find_child("FloatingShardDock", true, false) as FloatingShardDock
@@ -1294,11 +1317,14 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 		return false
 
 	var displaced_item: Equipment = null
+	var displaced_positions: Array[Vector2] = []
 
 	if target_is_ult:
 		if not source_mod.is_ultimate:
 			return false
 		displaced_item = target_track.ultimate_skill
+		if displaced_item != null:
+			displaced_positions = _get_slot_global_positions(target_track, displaced_item, true)
 		target_track.unequip_ultimate()
 		if not target_track.equip_ultimate(source_mod):
 			if displaced_item != null:
@@ -1316,6 +1342,7 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 			var t_idx: int = target_track.equipped_modifiers.find(target_mod)
 			if t_idx != -1:
 				displaced_item = target_mod
+				displaced_positions = _get_slot_global_positions(target_track, displaced_item, false)
 				target_track.equipped_modifiers.remove_at(t_idx)
 				while target_track.get_free_slots() < needed_slots and not target_track.equipped_modifiers.is_empty():
 					var extra_displaced: Equipment = target_track.equipped_modifiers.pop_back()
@@ -1331,7 +1358,10 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 			else:
 				# Track full or not enough slots: displace from end without losing extra items
 				while not target_track.can_equip(source_mod) and not target_track.equipped_modifiers.is_empty():
-					var popped: Equipment = target_track.equipped_modifiers.pop_back()
+					var popped: Equipment = target_track.equipped_modifiers[target_track.equipped_modifiers.size() - 1]
+					if displaced_item == null and popped != null:
+						displaced_positions = _get_slot_global_positions(target_track, popped, false)
+					target_track.equipped_modifiers.pop_back()
 					if popped != null:
 						if displaced_item == null:
 							displaced_item = popped
@@ -1343,6 +1373,7 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 	# Displaced item becomes the new floating shard so the player can keep moving shards
 	if displaced_item != null:
 		set_floating_equipment(displaced_item)
+		_animate_shards_group_to_dock(displaced_item, displaced_positions)
 	else:
 		if not pending_slotting_queue.is_empty():
 			set_floating_equipment(pending_slotting_queue.pop_front())
@@ -1490,6 +1521,156 @@ func _slot_roman(slot_cost: int, is_ult: bool) -> String:
 		5: return "V"
 	return "I"
 
+func _get_slot_global_positions(track: ColorLoadoutTrack, eq: Equipment, is_ult: bool) -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	if track == null or eq == null:
+		return result
+	for row in track_rows:
+		if row != null and row.track_ref == track:
+			if is_ult:
+				if row.ult_slot != null:
+					result.append(row.ult_slot.global_position)
+			else:
+				var indices: Array[int] = track.get_slot_indices_for_modifier(eq)
+				for s_idx in indices:
+					if s_idx >= 0 and s_idx < row.diamond_slots.size() and row.diamond_slots[s_idx] != null:
+						result.append(row.diamond_slots[s_idx].global_position)
+			break
+	return result
+
+func _clear_fly_ghosts() -> void:
+	for g in _active_fly_ghosts:
+		if is_instance_valid(g):
+			g.queue_free()
+	_active_fly_ghosts.clear()
+	for row in track_rows:
+		if row != null:
+			if row.ult_slot != null:
+				row.ult_slot.modulate.a = 1.0
+			for s in row.diamond_slots:
+				if s != null:
+					s.modulate.a = 1.0
+
+func _spawn_fly_ghost(eq: Equipment, color_id: int, with_icon: bool) -> Control:
+	var ghost := Control.new()
+	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ghost.z_index = 210
+	var sz := Vector2(83, 59) if (eq != null and eq.is_ultimate) else Vector2(59, 59)
+	ghost.size = sz
+	ghost.custom_minimum_size = sz
+
+	var frame := TextureRect.new()
+	frame.size = sz
+	frame.custom_minimum_size = sz
+	frame.texture = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png") if (eq != null and eq.is_ultimate) else TEX_BASIC_UNSELECTED
+	frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var s_mat := ShaderMaterial.new()
+	s_mat.shader = PALETTE_SHADER
+	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(color_id)
+	s_mat.set_shader_parameter("target_color_1", pal.highlight)
+	s_mat.set_shader_parameter("target_color_2", pal.lightbase)
+	s_mat.set_shader_parameter("target_color_3", pal.base)
+	s_mat.set_shader_parameter("target_color_4", pal.shadebase)
+	s_mat.set_shader_parameter("target_color_5", pal.deepshade)
+	frame.material = s_mat
+	ghost.add_child(frame)
+
+	if with_icon and eq != null and eq.icon != null:
+		var ico := TextureRect.new()
+		ico.size = sz
+		ico.custom_minimum_size = sz
+		ico.texture = eq.icon
+		ico.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ico.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ico.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		ico.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ghost.add_child(ico)
+
+	add_child(ghost)
+	_active_fly_ghosts.append(ghost)
+	return ghost
+
+func _animate_shards_slot_in(eq: Equipment, target_track: ColorLoadoutTrack, is_ult: bool, start_positions: Array[Vector2]) -> void:
+	if eq == null or target_track == null or not is_inside_tree() or start_positions.is_empty():
+		return
+	var target_row: InventoryOverlayTrackRow = null
+	for row in track_rows:
+		if row != null and row.track_ref == target_track:
+			target_row = row
+			break
+	if target_row == null:
+		return
+
+	var target_slots: Array[OverlaySlotUI] = []
+	if is_ult:
+		if target_row.ult_slot != null:
+			target_slots.append(target_row.ult_slot)
+	else:
+		var indices: Array[int] = target_track.get_slot_indices_for_modifier(eq)
+		for s_idx in indices:
+			if s_idx >= 0 and s_idx < target_row.diamond_slots.size() and target_row.diamond_slots[s_idx] != null:
+				target_slots.append(target_row.diamond_slots[s_idx])
+
+	if target_slots.is_empty():
+		return
+
+	var c_id: int = target_track.color if target_track.color > 0 else _get_equipment_color(eq)
+	for i in range(target_slots.size()):
+		var slot_ctrl: OverlaySlotUI = target_slots[i]
+		var end_pos: Vector2 = slot_ctrl.global_position
+		var start_pos: Vector2 = start_positions[i] if i < start_positions.size() else start_positions[0]
+		if start_pos.distance_to(end_pos) < 4.0:
+			continue
+		slot_ctrl.modulate.a = 0.0
+		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
+		ghost.global_position = start_pos
+		var tw := create_tween()
+		var delay := float(i) * 0.04
+		var dur := 0.20 + float(i) * 0.025
+		if delay > 0.0:
+			tw.tween_interval(delay)
+		tw.tween_property(ghost, "global_position", end_pos, dur).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_callback(func():
+			if is_instance_valid(slot_ctrl):
+				slot_ctrl.modulate.a = 1.0
+			if is_instance_valid(ghost):
+				_active_fly_ghosts.erase(ghost)
+				ghost.queue_free()
+		)
+
+func _animate_shards_group_to_dock(eq: Equipment, start_positions: Array[Vector2]) -> void:
+	if eq == null or floating_shard_dock == null or not is_inside_tree() or start_positions.is_empty():
+		return
+	var end_positions: Array[Vector2] = floating_shard_dock.get_shard_global_positions()
+	if end_positions.is_empty():
+		return
+	var count: int = mini(start_positions.size(), end_positions.size())
+	var c_id: int = _get_equipment_color(eq)
+	for i in range(count):
+		var start_pos: Vector2 = start_positions[i]
+		var end_pos: Vector2 = end_positions[i]
+		if start_pos.distance_to(end_pos) < 4.0:
+			continue
+		floating_shard_dock.set_shard_slot_hidden(i, true)
+		var ghost := _spawn_fly_ghost(eq, c_id, i == 0)
+		ghost.global_position = start_pos
+		var tw := create_tween()
+		var delay := float(i) * 0.035
+		var dur := 0.22 + float(i) * 0.02
+		if delay > 0.0:
+			tw.tween_interval(delay)
+		tw.tween_property(ghost, "global_position", end_pos, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_callback(func():
+			if is_instance_valid(floating_shard_dock):
+				floating_shard_dock.set_shard_slot_hidden(i, false)
+			if is_instance_valid(ghost):
+				_active_fly_ghosts.erase(ghost)
+				ghost.queue_free()
+		)
+
 func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
 	if normal_preview_root == null:
 		return
@@ -1497,17 +1678,23 @@ func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
 		normal_preview_root.visible = false
 		return
 	normal_preview_root.visible = true
-	if normal_preview_frame_rect != null:
-		normal_preview_frame_rect.texture = TEX_BASIC_UNSELECTED
-		var c_id: int = color_id if color_id > 0 else _get_equipment_color(mod)
-		var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
-		if normal_preview_shader != null:
-			normal_preview_frame_rect.material = normal_preview_shader
-			normal_preview_shader.set_shader_parameter("target_color_1", pal.highlight)
-			normal_preview_shader.set_shader_parameter("target_color_2", pal.lightbase)
-			normal_preview_shader.set_shader_parameter("target_color_3", pal.base)
-			normal_preview_shader.set_shader_parameter("target_color_4", pal.shadebase)
-			normal_preview_shader.set_shader_parameter("target_color_5", pal.deepshade)
+	var stack_count: int = 1 if mod.is_ultimate else clampi(mod.slot_cost, 1, 5)
+	var center_shift: float = -float(stack_count - 1) * 7.0 * 0.5
+	var c_id: int = color_id if color_id > 0 else _get_equipment_color(mod)
+	var pal: Dictionary = ColorLoadoutTrack.get_palette_for_color(c_id)
+	if normal_preview_shader != null:
+		normal_preview_shader.set_shader_parameter("target_color_1", pal.highlight)
+		normal_preview_shader.set_shader_parameter("target_color_2", pal.lightbase)
+		normal_preview_shader.set_shader_parameter("target_color_3", pal.base)
+		normal_preview_shader.set_shader_parameter("target_color_4", pal.shadebase)
+		normal_preview_shader.set_shader_parameter("target_color_5", pal.deepshade)
+	for i in range(normal_preview_stack_frames.size()):
+		var nf: TextureRect = normal_preview_stack_frames[i]
+		if nf != null:
+			nf.visible = (i < stack_count)
+			nf.texture = TEX_BASIC_UNSELECTED
+			nf.material = normal_preview_shader
+			nf.position = Vector2(center_shift + float(i) * 7.0, 0.0)
 	if normal_preview_icon_rect != null:
 		normal_preview_icon_rect.texture = mod.icon
 		normal_preview_icon_rect.visible = (mod.icon != null)
@@ -1519,9 +1706,14 @@ func _update_normal_preview_passive(p_res: Resource) -> void:
 		normal_preview_root.visible = false
 		return
 	normal_preview_root.visible = true
-	if normal_preview_frame_rect != null:
-		normal_preview_frame_rect.texture = TEX_PASSIVE_UNSELECTED
-		normal_preview_frame_rect.material = null
+	for i in range(normal_preview_stack_frames.size()):
+		var nf: TextureRect = normal_preview_stack_frames[i]
+		if nf != null:
+			nf.visible = (i == 0)
+			nf.position = Vector2.ZERO
+			if i == 0:
+				nf.texture = TEX_PASSIVE_UNSELECTED
+				nf.material = null
 	if normal_preview_icon_rect != null:
 		var ico: Texture2D = null
 		if p_res is Reward:

@@ -478,6 +478,36 @@ func _ready() -> void:
 	assert(slotting_done_count[0] == 1, "close() during slotting mode must emit slotting_completed")
 	print("Anti-duplication and edge-case regression tests verified!")
 
+	# Test multi-slot shard stack rendering (3 slots = 3 shards) and slot-in / group-up animations
+	var tri_shard := Equipment.new()
+	tri_shard.piece_name = "Tri-Shard Hammer"
+	tri_shard.allowed_colors = [100]
+	tri_shard.slot_cost = 3
+	overlay.start_slotting_mode([tri_shard])
+	assert(overlay.floating_shard_dock.stack_frames[0].visible == true, "Shard 0 must be visible")
+	assert(overlay.floating_shard_dock.stack_frames[1].visible == true, "Shard 1 must be visible for 3-slot item")
+	assert(overlay.floating_shard_dock.stack_frames[2].visible == true, "Shard 2 must be visible for 3-slot item")
+	assert(overlay.floating_shard_dock.stack_frames[3].visible == false, "Shard 3 must be hidden for 3-slot item")
+	assert(overlay.floating_shard_dock.get_shard_global_positions().size() == 3, "Dock must report 3 shard positions for 3-slot item")
+
+	overlay.drag_avatar.start_drag(tri_shard, Vector2(200, 300), 100)
+	assert(overlay.drag_avatar.stack_frames[2].visible == true and overlay.drag_avatar.stack_frames[3].visible == false, "DragAvatar must render 3 stacked shards")
+	var drag_pos_3: Array[Vector2] = overlay.drag_avatar.get_shard_global_positions()
+	assert(drag_pos_3.size() == 3, "DragAvatar must report 3 shard positions")
+	overlay.drag_avatar.end_drag()
+
+	red_track.equipped_modifiers.clear()
+	assert(overlay._handle_floating_shard_drop(tri_shard, red_track, false, 0), "3-slot shard must equip cleanly")
+	overlay._animate_shards_slot_in(tri_shard, red_track, false, drag_pos_3)
+	overlay._clear_fly_ghosts()
+	overlay._on_done_btn_pressed()
+
+	# Normal preview must also show 3 stacked shards for 3-slot equipment
+	overlay.open()
+	overlay._display_ability_description(tri_shard, 100, false)
+	assert(overlay.normal_preview_stack_frames[2].visible == true and overlay.normal_preview_stack_frames[3].visible == false, "NormalPreview must render 3 stacked shards")
+	print("Multi-slot shard stack and slot-in/group-up animations verified!")
+
 	overlay.close()
 	overlay.queue_free()
 	print("--- ALL INVENTORY OVERLAY CORRECTIONS PASSED ---")

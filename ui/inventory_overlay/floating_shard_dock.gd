@@ -16,14 +16,18 @@ const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
 const DOCK_SIZE = Vector2(168, 168)
+const MAX_STACK = 5
+const STACK_OFFSET_X = 7.0
 
 var current_equipment: Equipment = null
 var _bob_timer: float = 0.0
-var _jolt_timer: float = 0.0
-var _jolt_offset: Vector2 = Vector2.ZERO
+var _jolt_timers: Array[float] = []
+var _jolt_offsets: Array[Vector2] = []
+var _stack_count: int = 1
 var is_shard_hidden: bool = false
 
 var shard_item: FloatingShardItem
+var stack_frames: Array[TextureRect] = []
 var frame_rect: TextureRect
 var icon_rect: TextureRect
 var shader_mat: ShaderMaterial
@@ -54,22 +58,34 @@ func _ensure_components() -> void:
 	# 1. Fire Particles (rising flames in shard color)
 	_setup_particles()
 
-	# 2. Diamond Frame (59x59)
-	frame_rect = TextureRect.new()
-	frame_rect.name = "Frame"
-	frame_rect.size = DIAMOND_SIZE
-	frame_rect.custom_minimum_size = DIAMOND_SIZE
-	frame_rect.texture = TEX_BASIC_UNSELECTED
-	frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	frame_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# 2. Stacked Diamond Frames (back shards first so index 0 is front-most)
 	shader_mat = ShaderMaterial.new()
 	shader_mat.shader = PALETTE_SHADER
-	frame_rect.material = shader_mat
-	shard_item.add_child(frame_rect)
+	stack_frames.clear()
+	_jolt_timers.clear()
+	_jolt_offsets.clear()
+	for i in range(MAX_STACK - 1, -1, -1):
+		var f := TextureRect.new()
+		f.name = "Frame_%d" % i
+		f.size = DIAMOND_SIZE
+		f.custom_minimum_size = DIAMOND_SIZE
+		f.texture = TEX_BASIC_UNSELECTED
+		f.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		f.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		f.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		f.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		f.material = shader_mat
+		f.visible = (i == 0)
+		shard_item.add_child(f)
+	# Store in front-to-back order (0 = front-most)
+	for i in range(MAX_STACK):
+		var node := shard_item.get_node("Frame_%d" % i) as TextureRect
+		stack_frames.append(node)
+		_jolt_timers.append(randf_range(0.2, 1.0))
+		_jolt_offsets.append(Vector2.ZERO)
+	frame_rect = stack_frames[0]
 
-	# 3. Equipment Icon (59x59, full diamond size, pixel-perfect unaltered artwork)
+	# 3. Equipment Icon (attached to front-most shard frame so it moves with frame 0)
 	icon_rect = TextureRect.new()
 	icon_rect.name = "Icon"
 	icon_rect.position = Vector2.ZERO
@@ -79,7 +95,7 @@ func _ensure_components() -> void:
 	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	shard_item.add_child(icon_rect)
+	frame_rect.add_child(icon_rect)
 
 func _setup_particles() -> void:
 	fire_particles = PixelFireParticlesClass.new()
@@ -96,11 +112,29 @@ func set_shard_hidden(hidden: bool) -> void:
 	is_shard_hidden = hidden
 	if shard_item != null:
 		shard_item.visible = not hidden and (current_equipment != null)
+	if not hidden:
+		for i in range(stack_frames.size()):
+			if stack_frames[i] != null:
+				stack_frames[i].visible = (current_equipment != null and i < _stack_count)
+
+func set_shard_slot_hidden(idx: int, hidden: bool) -> void:
+	if idx >= 0 and idx < stack_frames.size() and stack_frames[idx] != null:
+		stack_frames[idx].visible = (not hidden) and (current_equipment != null and idx < _stack_count)
+
+func get_shard_global_positions() -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	for i in range(_stack_count):
+		if i < stack_frames.size() and stack_frames[i] != null:
+			result.append(stack_frames[i].global_position)
+	return result
 
 func set_equipment(eq: Equipment) -> void:
 	_ensure_components()
 	current_equipment = eq
 	_bob_timer = 0.0
+	_stack_count = 1
+	if eq != null and not eq.is_ultimate:
+		_stack_count = clampi(eq.slot_cost, 1, MAX_STACK)
 
 	if current_equipment != null:
 		var c_id: int = _get_equipment_color(current_equipment)
@@ -108,13 +142,21 @@ func set_equipment(eq: Equipment) -> void:
 		_update_particles_color(c_id)
 
 		shard_item.visible = not is_shard_hidden
-		frame_rect.visible = true
+		var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
+		for i in range(stack_frames.size()):
+			var f: TextureRect = stack_frames[i]
+			if f != null:
+				f.visible = (i < _stack_count)
+				f.position = Vector2(center_shift + float(i) * STACK_OFFSET_X, 0.0)
+				_jolt_offsets[i] = Vector2.ZERO
 		icon_rect.visible = (current_equipment.icon != null)
 		icon_rect.texture = current_equipment.icon
 		fire_particles.emitting = true
 	else:
 		shard_item.visible = false
-		frame_rect.visible = false
+		for f in stack_frames:
+			if f != null:
+				f.visible = false
 		icon_rect.visible = false
 		icon_rect.texture = null
 		fire_particles.emitting = false
@@ -126,23 +168,31 @@ func _process(delta: float) -> void:
 		return
 	_bob_timer += delta * 3.5
 
-	_jolt_timer -= delta
-	if _jolt_timer <= 0.0:
-		_jolt_timer = randf_range(0.45, 1.15)
-		var angle := randf_range(0.0, TAU)
-		var strength := randf_range(1.2, 2.2)
-		_jolt_offset = Vector2(cos(angle), sin(angle)) * strength
-	else:
-		_jolt_offset = _jolt_offset.lerp(Vector2.ZERO, minf(1.0, delta * 18.0))
-
 	var cur_w: float = size.x if size.x > 0.0 else DOCK_SIZE.x
 	var cur_h: float = size.y if size.y > 0.0 else DOCK_SIZE.y
 	var base_x: float = (cur_w - DIAMOND_SIZE.x) / 2.0
 	var base_y: float = (cur_h - DIAMOND_SIZE.y) / 2.0
-	shard_item.position = Vector2(
-		roundf(base_x + _jolt_offset.x),
-		roundf(base_y + sin(_bob_timer) * 4.0 + _jolt_offset.y)
-	)
+	shard_item.position = Vector2(roundf(base_x), roundf(base_y))
+
+	var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
+	for i in range(_stack_count):
+		if i >= stack_frames.size() or stack_frames[i] == null:
+			continue
+		_jolt_timers[i] -= delta
+		if _jolt_timers[i] <= 0.0:
+			_jolt_timers[i] = randf_range(0.45, 1.15)
+			var angle := randf_range(0.0, TAU)
+			var strength := randf_range(1.0, 2.0)
+			_jolt_offsets[i] = Vector2(cos(angle), sin(angle)) * strength
+		else:
+			_jolt_offsets[i] = _jolt_offsets[i].lerp(Vector2.ZERO, minf(1.0, delta * 18.0))
+
+		var phase := float(i) * 1.35
+		var bob_y := sin(_bob_timer + phase) * 3.5
+		stack_frames[i].position = Vector2(
+			roundf(center_shift + float(i) * STACK_OFFSET_X + _jolt_offsets[i].x),
+			roundf(bob_y + _jolt_offsets[i].y)
+		)
 
 func _get_equipment_color(eq: Equipment) -> int:
 	if eq == null or eq.is_colorless():

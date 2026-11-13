@@ -11,13 +11,23 @@ const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
 const ULT_SIZE = Vector2(83, 59)
+const MAX_STACK = 5
+const STACK_OFFSET_X = 7.0
 
 var current_equipment: Equipment = null
+var stack_frames: Array[TextureRect] = []
 var frame_rect: TextureRect
 var icon_rect: TextureRect
 var shader_mat: ShaderMaterial
 var fire_particles: Node2D
 var _return_tween: Tween = null
+var _group_tween: Tween = null
+var _group_progress: float = 1.0
+var _group_start_offsets: Array[Vector2] = []
+var _bob_timer: float = 0.0
+var _jolt_timers: Array[float] = []
+var _jolt_offsets: Array[Vector2] = []
+var _stack_count: int = 1
 var _active_return_cleanup: Callable = Callable()
 
 func _init() -> void:
@@ -38,22 +48,35 @@ func _build_ui() -> void:
 	fire_particles.emission_rect_extents = Vector2(18.0, 8.0)
 	add_child(fire_particles)
 
-	# 2. Diamond Frame
-	frame_rect = TextureRect.new()
-	frame_rect.name = "Frame"
-	frame_rect.size = DIAMOND_SIZE
-	frame_rect.custom_minimum_size = DIAMOND_SIZE
-	frame_rect.texture = TEX_BASIC_UNSELECTED
-	frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	frame_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# 2. Stacked Diamond Frames (back shards first so index 0 is front-most)
 	shader_mat = ShaderMaterial.new()
 	shader_mat.shader = PALETTE_SHADER
-	frame_rect.material = shader_mat
-	add_child(frame_rect)
+	stack_frames.clear()
+	_jolt_timers.clear()
+	_jolt_offsets.clear()
+	_group_start_offsets.clear()
+	for i in range(MAX_STACK - 1, -1, -1):
+		var f := TextureRect.new()
+		f.name = "Frame_%d" % i
+		f.size = DIAMOND_SIZE
+		f.custom_minimum_size = DIAMOND_SIZE
+		f.texture = TEX_BASIC_UNSELECTED
+		f.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		f.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		f.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		f.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		f.material = shader_mat
+		f.visible = (i == 0)
+		add_child(f)
+	for i in range(MAX_STACK):
+		var node := get_node("Frame_%d" % i) as TextureRect
+		stack_frames.append(node)
+		_jolt_timers.append(randf_range(0.2, 1.0))
+		_jolt_offsets.append(Vector2.ZERO)
+		_group_start_offsets.append(Vector2.ZERO)
+	frame_rect = stack_frames[0]
 
-	# 3. Equipment Icon
+	# 3. Equipment Icon (attached to front-most frame)
 	icon_rect = TextureRect.new()
 	icon_rect.name = "Icon"
 	icon_rect.position = Vector2.ZERO
@@ -63,14 +86,26 @@ func _build_ui() -> void:
 	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	add_child(icon_rect)
+	frame_rect.add_child(icon_rect)
 
-func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -1) -> void:
+func get_shard_global_positions() -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	for i in range(_stack_count):
+		if i < stack_frames.size() and stack_frames[i] != null:
+			result.append(stack_frames[i].global_position)
+	return result
+
+func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -1, source_slot_positions: Array[Vector2] = []) -> void:
 	_cancel_active_return()
+	if _group_tween != null:
+		_group_tween.kill()
+		_group_tween = null
 	if eq == null:
 		return
 	current_equipment = eq
+	_bob_timer = 0.0
 	var is_ult: bool = eq.is_ultimate
+	_stack_count = 1 if is_ult else clampi(eq.slot_cost, 1, MAX_STACK)
 	var sz: Vector2 = ULT_SIZE if is_ult else DIAMOND_SIZE
 	size = sz
 	custom_minimum_size = sz
@@ -78,6 +113,15 @@ func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -
 	frame_rect.size = sz
 	frame_rect.custom_minimum_size = sz
 	frame_rect.texture = TEX_ULT_UNSELECTED if is_ult else TEX_BASIC_UNSELECTED
+
+	for i in range(stack_frames.size()):
+		var f: TextureRect = stack_frames[i]
+		if f != null:
+			f.visible = (i < _stack_count)
+			if i > 0:
+				f.size = DIAMOND_SIZE
+				f.custom_minimum_size = DIAMOND_SIZE
+				f.texture = TEX_BASIC_UNSELECTED
 
 	icon_rect.size = sz
 	icon_rect.custom_minimum_size = sz
@@ -96,6 +140,49 @@ func start_drag(eq: Equipment, start_mouse_pos: Vector2, color_override: int = -
 	visible = true
 	fire_particles.emitting = true
 	fire_particles.restart()
+
+	# If picked up from multiple track slots, animate the shards grouping up into the stack
+	if _stack_count > 1 and source_slot_positions.size() >= _stack_count and is_inside_tree():
+		_group_progress = 0.0
+		var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
+		for i in range(_stack_count):
+			var target_local := Vector2(center_shift + float(i) * STACK_OFFSET_X, 0.0)
+			var start_local := source_slot_positions[i] - global_position
+			_group_start_offsets[i] = start_local - target_local
+			stack_frames[i].position = start_local
+		_group_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		_group_tween.tween_property(self, "_group_progress", 1.0, 0.18)
+	else:
+		_group_progress = 1.0
+		var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
+		for i in range(_stack_count):
+			_group_start_offsets[i] = Vector2.ZERO
+			stack_frames[i].position = Vector2(center_shift + float(i) * STACK_OFFSET_X, 0.0)
+
+func _process(delta: float) -> void:
+	if not visible or current_equipment == null or current_equipment.is_ultimate:
+		return
+	_bob_timer += delta * 4.0
+	var center_shift: float = -float(_stack_count - 1) * STACK_OFFSET_X * 0.5
+	var inv_group: float = 1.0 - _group_progress
+	for i in range(_stack_count):
+		if i >= stack_frames.size() or stack_frames[i] == null:
+			continue
+		_jolt_timers[i] -= delta
+		if _jolt_timers[i] <= 0.0:
+			_jolt_timers[i] = randf_range(0.45, 1.15)
+			var angle := randf_range(0.0, TAU)
+			var strength := randf_range(0.8, 1.6)
+			_jolt_offsets[i] = Vector2(cos(angle), sin(angle)) * strength
+		else:
+			_jolt_offsets[i] = _jolt_offsets[i].lerp(Vector2.ZERO, minf(1.0, delta * 18.0))
+
+		var bob_y: float = sin(_bob_timer + float(i) * 1.35) * 2.5 * _group_progress
+		var base_pos := Vector2(center_shift + float(i) * STACK_OFFSET_X, 0.0) + _group_start_offsets[i] * inv_group
+		stack_frames[i].position = Vector2(
+			roundf(base_pos.x + _jolt_offsets[i].x * _group_progress),
+			roundf(base_pos.y + bob_y + _jolt_offsets[i].y * _group_progress)
+		)
 
 func update_position(mouse_pos: Vector2) -> void:
 	var sz: Vector2 = ULT_SIZE if (current_equipment != null and current_equipment.is_ultimate) else DIAMOND_SIZE
