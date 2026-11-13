@@ -126,7 +126,7 @@ func _process(delta: float) -> void:
 
 	_jolt_timer -= delta
 	if _jolt_timer <= 0.0:
-		_jolt_timer = randf_range(0.08, 0.22)
+		_jolt_timer = randf_range(0.45, 1.15)
 		var angle := randf_range(0.0, TAU)
 		var strength := randf_range(1.2, 2.2)
 		_jolt_offset = Vector2(cos(angle), sin(angle)) * strength
