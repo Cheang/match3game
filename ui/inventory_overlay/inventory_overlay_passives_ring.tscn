@@ -6,11 +6,11 @@
 [ext_resource type="Script" path="res://ui/inventory_overlay/overlay_passive_slot_ui.gd" id="4_slot"]
 
 [node name="InventoryOverlayPassivesRing" type="Control"]
-custom_minimum_size = Vector2(342, 313)
+custom_minimum_size = Vector2(342, 333)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 342.0
-offset_bottom = 313.0
+offset_bottom = 333.0
 script = ExtResource("1_ring")
 
 [node name="DecoRing" type="TextureRect" parent="."]

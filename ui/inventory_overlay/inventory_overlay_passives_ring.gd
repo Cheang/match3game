@@ -17,6 +17,7 @@ const TEX_SLOTS_BG = preload("res://assets/sprites/ui/inventory_overlay/passive_
 const RING_POS = Vector2(18, 27)
 const RING_SIZE = Vector2(306, 306)
 const SLOTS_SIZE = Vector2(342, 313)
+const CONTROL_SIZE = Vector2(342, 333)
 
 # Exact pixel offsets for the 5 octagon sockets:
 # 0: Top, 1: Mid-Right, 2: Bottom-Right, 3: Bottom-Left, 4: Mid-Left
@@ -34,8 +35,8 @@ var slots: Array[OverlayPassiveSlotUI] = []
 var selected_slot_index: int = -1
 
 func _ready() -> void:
-	custom_minimum_size = SLOTS_SIZE
-	size = SLOTS_SIZE
+	custom_minimum_size = CONTROL_SIZE
+	size = CONTROL_SIZE
 	_ensure_structure()
 
 func _ensure_structure() -> void:
