@@ -388,7 +388,7 @@ func _ready() -> void:
 	# Test description panel readability styling, larger fonts, and mockup structure
 	assert(overlay.description_panel_height >= 200.0, "Description panel must be at least 200px tall for larger readable text")
 	assert(overlay.description_label.get_theme_font("normal_font") == overlay.BODY_FONT, "DescriptionLabel must use pixel BODY_FONT")
-	assert(overlay.description_label.get_theme_font_size("normal_font_size") >= 18, "DescriptionLabel body font size must be >= 18 for readability")
+	assert(overlay.description_label.get_theme_font_size("normal_font_size") == 16, "DescriptionLabel body font size must be 16")
 	assert(overlay.description_label.get_theme_constant("outline_size") == 0, "DescriptionLabel must avoid muddy outlines on pixel font")
 	assert(overlay.desc_title_label.get_theme_font_size("font_size") >= 28, "Title label must be >= 28px")
 	var rare_dagger := Equipment.new()

@@ -1874,8 +1874,8 @@ func _style_description_label() -> void:
 		return
 	description_label.add_theme_font_override("normal_font", BODY_FONT)
 	description_label.add_theme_font_override("bold_font", TITLE_FONT)
-	description_label.add_theme_font_size_override("normal_font_size", 18)
-	description_label.add_theme_font_size_override("bold_font_size", 20)
+	description_label.add_theme_font_size_override("normal_font_size", 16)
+	description_label.add_theme_font_size_override("bold_font_size", 16)
 	description_label.add_theme_color_override("default_color", Color("#f4f1f8"))
 	description_label.add_theme_constant_override("outline_size", 0)
 	description_label.add_theme_constant_override("shadow_offset_x", 0)
@@ -1914,7 +1914,7 @@ func _show_empty_description() -> void:
 	if description_label == null:
 		return
 	_clear_desc_header_and_preview()
-	description_label.text = "[font_size=18][color=#d6d0e0]\nSelect an ability or passive to view its details.[/color][/font_size]"
+	description_label.text = "[font_size=16][color=#d6d0e0]\nSelect an ability or passive to view its details.[/color][/font_size]"
 
 func _show_slot_empty_description(track: ColorLoadoutTrack, is_ult: bool) -> void:
 	if description_label == null:
@@ -1925,7 +1925,7 @@ func _show_slot_empty_description(track: ColorLoadoutTrack, is_ult: bool) -> voi
 	if desc_title_label != null:
 		desc_title_label.text = "Empty %s %s" % [c_name, type_str]
 		desc_title_label.visible = true
-	description_label.text = "[font_size=18][color=#d6d0e0]Equip abilities by acquiring them during your run.[/color][/font_size]"
+	description_label.text = "[font_size=16][color=#d6d0e0]Equip abilities by acquiring them during your run.[/color][/font_size]"
 
 func _show_passive_empty_description() -> void:
 	if description_label == null:
@@ -1934,7 +1934,7 @@ func _show_passive_empty_description() -> void:
 	if desc_title_label != null:
 		desc_title_label.text = "Empty Passive Slot"
 		desc_title_label.visible = true
-	description_label.text = "[font_size=18][color=#d6d0e0]Acquire passives during your run to fill this slot.[/color][/font_size]"
+	description_label.text = "[font_size=16][color=#d6d0e0]Acquire passives during your run to fill this slot.[/color][/font_size]"
 
 func _format_passive_bbcode(p_res: Resource) -> String:
 	if p_res == null:
@@ -1945,17 +1945,17 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 		var rew := p_res as Reward
 		var eff := _remap_colors_for_dark_panel(rew.get_effect_description())
 		if not eff.is_empty():
-			text += "[font_size=18]%s[/font_size]\n" % eff
+			text += "[font_size=16]%s[/font_size]\n" % eff
 	elif p_res is Equipment:
 		var eq := p_res as Equipment
 		var eff := _remap_colors_for_dark_panel(eq.get_effect_description())
 		if not eff.is_empty():
-			text += "[font_size=18]%s[/font_size]\n" % eff
+			text += "[font_size=16]%s[/font_size]\n" % eff
 		text += _format_passive_stats_bbcode(eq, eff)
 	else:
 		var desc: String = p_res.get("description") if p_res.get("description") != null else ""
 		if not desc.is_empty():
-			text += "[font_size=18]%s[/font_size]\n" % desc
+			text += "[font_size=16]%s[/font_size]\n" % desc
 	return text
 
 func _format_ability_bbcode(mod: Equipment, _color_id: int, is_ult: bool) -> String:
@@ -1966,12 +1966,12 @@ func _format_ability_bbcode(mod: Equipment, _color_id: int, is_ult: bool) -> Str
 	# Trigger condition (if basic ability)
 	if not is_ult and not mod.is_ultimate:
 		var trig_desc := _get_trigger_description(mod.trigger_condition)
-		text += "[font_size=18][color=#ffd966]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
+		text += "[font_size=16][color=#ffd966]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
 
 	# Effect text (remapped for high contrast on dark purple panel)
 	var eff := _remap_colors_for_dark_panel(mod.get_effect_description())
 	if not eff.is_empty():
-		text += "[font_size=18]%s[/font_size]\n" % eff
+		text += "[font_size=16]%s[/font_size]\n" % eff
 
 	text += _format_passive_stats_bbcode(mod, eff)
 	return text

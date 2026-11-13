@@ -183,7 +183,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 theme_override_colors/font_color = Color(0.494118, 0.721569, 1, 1)
 theme_override_fonts/font = ExtResource("8_body_font")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 16
 text = "Rare"
 
 [node name="HeaderSpacer" type="Control" parent="Center/MainPanel/MarginContainer/ContentVBox/LoadoutView/DescriptionPanel/Margin/DescriptionHBox/DescRightVBox/DescHeaderHBox" unique_id=421066379]
@@ -226,8 +226,8 @@ theme_override_constants/line_separation = 3
 theme_override_constants/outline_size = 0
 theme_override_fonts/normal_font = ExtResource("8_body_font")
 theme_override_fonts/bold_font = ExtResource("5_font")
-theme_override_font_sizes/normal_font_size = 26
-theme_override_font_sizes/bold_font_size = 26
+theme_override_font_sizes/normal_font_size = 16
+theme_override_font_sizes/bold_font_size = 16
 bbcode_enabled = true
 text = "[color=#ffd966]Trigger:[/color] Any Match
 Deals: [color=#ff7b7b]6 x 2[/color] DMG
