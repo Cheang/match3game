@@ -148,6 +148,8 @@ func is_color_compatible(mod: Equipment) -> bool:
 func equip_ultimate(mod: Equipment) -> bool:
 	if mod == null or not mod.is_ultimate:
 		return false
+	if mod in equipped_modifiers or mod == ultimate_skill:
+		return false
 	if not is_color_compatible(mod):
 		return false
 	ultimate_skill = mod
@@ -164,6 +166,8 @@ func unequip_ultimate() -> Equipment:
 
 func equip_modifier(mod: Equipment, insert_index: int = -1) -> bool:
 	if mod == null or mod.is_ultimate:
+		return false
+	if mod in equipped_modifiers or mod == ultimate_skill:
 		return false
 	if not can_equip(mod):
 		return false

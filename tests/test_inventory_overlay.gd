@@ -316,8 +316,8 @@ func _ready() -> void:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible or empty track (%d) must use disabled sprite" % row.track_color)
 			assert(row.diamond_slots[0].modulate.a < 0.9, "Incompatible/empty track slots must be grayed out")
 
-	# Verify drag initiation from floating shard item
-	var drag_data: Variant = overlay.floating_shard_dock.shard_item._get_drag_data(Vector2(20, 20))
+	# Verify drag data helper from floating shard dock (without triggering native Godot drag)
+	var drag_data: Variant = overlay.floating_shard_dock.get_floating_drag_data(Vector2(20, 20))
 	assert(drag_data != null and drag_data is Dictionary, "Floating shard item must provide valid drag data on drag")
 	assert(drag_data.get("modifier") == red_shard, "Drag data must hold the red shard")
 	assert(drag_data.get("source_is_floating") == true, "Drag data must mark source_is_floating")
@@ -379,6 +379,97 @@ func _ready() -> void:
 		if row.track_color > 0:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Active tracks must restore normal sprite after drag ends")
 	print("Track disabling during normal inventory drag verified!")
+
+	# Test description panel readability styling and high-contrast BBCode remapping
+	assert(overlay.description_label.get_theme_font("normal_font") == overlay.BODY_FONT, "DescriptionLabel must use pixel BODY_FONT")
+	assert(overlay.description_label.get_theme_constant("outline_size") == 3, "DescriptionLabel must have crisp outline_size 3")
+	var rare_dagger := Equipment.new()
+	rare_dagger.piece_name = "Tusk Dagger"
+	rare_dagger.rarity = Equipment.Rarity.RARE
+	rare_dagger.base_damage = 6.0
+	rare_dagger.hit_count = 2
+	var rare_bonus := EquipmentRolledBonus.new()
+	rare_bonus.type = EquipmentBonus.BonusType.CRIT_CHANCE
+	rare_bonus.base_val = 4.0
+	rare_bonus.effective_val = 4.0
+	rare_dagger.rolled_bonuses.append(rare_bonus)
+	var bb: String = overlay._format_ability_bbcode(rare_dagger, 100, false)
+	assert(bb.contains("#7eb8ff"), "Rare title and bonus on dark purple panel must use bright sky blue #7eb8ff")
+	assert(bb.contains("#ff7b7b"), "Damage text on dark purple panel must remap dark red to bright coral #ff7b7b")
+	assert(not bb.contains("Passive Stats:"), "Passive Stats footer must not duplicate bulleted rarity bonuses")
+	print("Description panel readability styling verified!")
+
+	# Test anti-duplication and edge-case fixes in normal & reward slotting modes
+	# 1. Native Godot drag must NOT be enabled on OverlaySlotUI or FloatingShardItem (prevents dual-drag double-drop)
+	assert(not overlay.track_rows[0].diamond_slots[0].has_method("_get_drag_data"), "OverlaySlotUI must not implement _get_drag_data alongside custom drag")
+	assert(not overlay.floating_shard_dock.shard_item.has_method("_get_drag_data"), "FloatingShardItem must not implement _get_drag_data alongside custom drag")
+
+	# 2. ColorLoadoutTrack must reject equipping an already-equipped modifier/ultimate
+	var dupe_test_item := Equipment.new()
+	dupe_test_item.piece_name = "Dupe Guard Blade"
+	dupe_test_item.allowed_colors = [100]
+	dupe_test_item.slot_cost = 1
+	red_track.equipped_modifiers.clear()
+	red_track.ultimate_skill = null
+	assert(red_track.equip_modifier(dupe_test_item), "First equip must succeed")
+	assert(not red_track.equip_modifier(dupe_test_item), "Equipping same modifier twice on track must be rejected")
+	assert(red_track.equipped_modifiers.size() == 1, "Track must still have only 1 copy")
+
+	# 3. Dropping an already-equipped item as a floating shard must be rejected (no dupe!)
+	overlay.start_slotting_mode([dupe_test_item])
+	var dupe_drop_ok: bool = overlay._handle_floating_shard_drop(dupe_test_item, red_track, false, 1)
+	assert(not dupe_drop_ok, "Floating drop of already-equipped shard must be rejected")
+	assert(red_track.equipped_modifiers.size() == 1, "Already-equipped item must not be duplicated")
+	overlay._on_done_btn_pressed()
+
+	# 4. Multi-slot replacement in slotting mode must queue extra displaced items instead of deleting them
+	var s1 := Equipment.new(); s1.piece_name = "S1"; s1.allowed_colors = [100]; s1.slot_cost = 1
+	var s2 := Equipment.new(); s2.piece_name = "S2"; s2.allowed_colors = [100]; s2.slot_cost = 1
+	var s3 := Equipment.new(); s3.piece_name = "S3"; s3.allowed_colors = [100]; s3.slot_cost = 1
+	var s4 := Equipment.new(); s4.piece_name = "S4"; s4.allowed_colors = [100]; s4.slot_cost = 1
+	var s5 := Equipment.new(); s5.piece_name = "S5"; s5.allowed_colors = [100]; s5.slot_cost = 1
+	var big2 := Equipment.new(); big2.piece_name = "Big2"; big2.allowed_colors = [100]; big2.slot_cost = 2
+	red_track.equipped_modifiers.clear()
+	red_track.equip_modifier(s1)
+	red_track.equip_modifier(s2)
+	red_track.equip_modifier(s3)
+	red_track.equip_modifier(s4)
+	red_track.equip_modifier(s5)
+	overlay.start_slotting_mode([big2])
+	var multi_ok: bool = overlay._handle_floating_shard_drop(big2, red_track, false, 0)
+	assert(multi_ok, "2-slot floating shard replacement on full track must succeed")
+	assert(red_track.equipped_modifiers.has(big2), "Big2 must be equipped")
+	assert(overlay._cached_floating_equipment == s1, "First displaced shard S1 must be in floating dock")
+	assert(overlay.pending_slotting_queue.has(s5), "Extra displaced shard S5 must be queued, not deleted")
+	overlay._on_done_btn_pressed()
+
+	# 5. Incompatible ultimate swap in normal mode must refuse without deleting target ultimate
+	var red_ult := Equipment.new(); red_ult.piece_name = "Red Ult"; red_ult.allowed_colors = [100]; red_ult.is_ultimate = true
+	var blue_ult := Equipment.new(); blue_ult.piece_name = "Blue Ult"; blue_ult.allowed_colors = [200]; blue_ult.is_ultimate = true
+	var any_ult := Equipment.new(); any_ult.piece_name = "Wild Ult"; any_ult.allowed_colors = []; any_ult.is_ultimate = true
+	red_track.ultimate_skill = red_ult
+	blue_track.ultimate_skill = any_ult
+	var ult_swap_ok: bool = overlay._on_equipment_dropped({
+		"type": "equipment_drag",
+		"modifier": any_ult,
+		"source_track": blue_track,
+		"source_is_ult": true,
+		"source_slot_idx": -1
+	}, red_track, true, -1)
+	assert(not ult_swap_ok, "Incompatible ultimate swap must be rejected")
+	assert(red_track.ultimate_skill == red_ult, "Target ultimate must not be deleted on rejected swap")
+	assert(blue_track.ultimate_skill == any_ult, "Source ultimate must remain intact on rejected swap")
+
+	# 6. toggle() is blocked during slotting mode, and close() cleanly finishes slotting mode
+	var slotting_done_count := [0]
+	overlay.slotting_completed.connect(func(): slotting_done_count[0] += 1)
+	overlay.start_slotting_mode([blue_ult])
+	overlay.toggle()
+	assert(overlay.visible and overlay.is_slotting_mode, "toggle() must not close overlay while in slotting mode")
+	overlay.close()
+	assert(not overlay.visible and not overlay.is_slotting_mode, "close() must clean up slotting mode")
+	assert(slotting_done_count[0] == 1, "close() during slotting mode must emit slotting_completed")
+	print("Anti-duplication and edge-case regression tests verified!")
 
 	overlay.close()
 	overlay.queue_free()

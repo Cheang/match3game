@@ -383,20 +383,3 @@ func _on_child_slot_drag_requested(mod: Equipment, track: ColorLoadoutTrack, is_
 
 func _on_child_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> void:
 	equipment_dropped.emit(drag_data, target_track, target_is_ult, target_slot_idx)
-
-# Fallback drag-and-drop directly onto row background:
-func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	if track_ref == null or track_color <= 0:
-		return false
-	if typeof(data) != TYPE_DICTIONARY or data.get("type", "") != "equipment_drag":
-		return false
-	var dragged_mod: Equipment = data.get("modifier", null)
-	if dragged_mod == null:
-		return false
-	return track_ref.is_color_compatible(dragged_mod)
-
-func _drop_data(_at_position: Vector2, data: Variant) -> void:
-	if typeof(data) == TYPE_DICTIONARY and data.get("type", "") == "equipment_drag":
-		var dragged_mod: Equipment = data.get("modifier", null)
-		var is_ult: bool = dragged_mod != null and dragged_mod.is_ultimate
-		equipment_dropped.emit(data, track_ref, is_ult, -1)

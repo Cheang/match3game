@@ -234,12 +234,6 @@ func can_drop_on_dock(_at_position: Vector2, data: Variant) -> bool:
 func drop_on_dock(_at_position: Vector2, data: Variant) -> void:
 	shard_dropped_on_dock.emit(data)
 
-func _can_drop_data(at_pos: Vector2, data: Variant) -> bool:
-	return can_drop_on_dock(at_pos, data)
-
-func _drop_data(at_pos: Vector2, data: Variant) -> void:
-	drop_on_dock(at_pos, data)
-
 
 ## Direct interactive control for the floating shard diamond.
 class FloatingShardItem extends Control:
@@ -256,16 +250,6 @@ class FloatingShardItem extends Control:
 			if dock_ref != null and dock_ref.current_equipment != null:
 				dock_ref.drag_requested.emit(dock_ref.current_equipment, event.global_position)
 				accept_event()
-
-	func _get_drag_data(at_position: Vector2) -> Variant:
-		if dock_ref != null:
-			return dock_ref.get_floating_drag_data(at_position)
-		return null
-
-	func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-		if dock_ref != null:
-			return dock_ref.can_drop_on_dock(at_position, data)
-		return false
 
 	func _drop_data(at_position: Vector2, data: Variant) -> void:
 		if dock_ref != null:

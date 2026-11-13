@@ -24,6 +24,7 @@ const TEX_GENERAL_BTN = preload("res://assets/sprites/ui/general_button_unpresse
 const TRACK_ROW_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_track_row.tscn")
 const PASSIVES_RING_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
+const BODY_FONT = preload("res://assets/theme/plain.ttf")
 
 @export var description_panel_height: float = 160.0:
 	set(val):
@@ -243,11 +244,28 @@ func open() -> void:
 
 func close() -> void:
 	_cleanup_custom_drag()
+	if is_slotting_mode:
+		_cached_floating_equipment = null
+		pending_slotting_queue.clear()
+		if floating_shard_dock != null:
+			floating_shard_dock.set_equipment(null)
+		for row in track_rows:
+			if row != null:
+				row.set_compatibility_state(null)
+		is_slotting_mode = false
+		_update_slotting_mode_ui(false)
+		visible = false
+		Global.game_is_played = _saved_game_is_played
+		overlay_closed.emit()
+		slotting_completed.emit()
+		return
 	visible = false
 	Global.game_is_played = _saved_game_is_played
 	overlay_closed.emit()
 
 func toggle() -> void:
+	if is_slotting_mode:
+		return
 	if visible:
 		close()
 	else:
@@ -261,12 +279,14 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			if event.global_position.distance_to(_drag_start_mouse_pos) > 3.0:
 				_start_custom_drag(event.global_position)
+				get_viewport().set_input_as_handled()
 		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			_drag_pending = false
 			if _drag_source_is_floating:
 				_on_floating_shard_selected(_drag_candidate_item)
 			else:
 				_on_slot_clicked(_drag_candidate_item, _drag_source_track, _drag_source_is_ult, _drag_source_slot_idx)
+			get_viewport().set_input_as_handled()
 
 	elif is_custom_dragging:
 		if event is InputEventMouseMotion:
@@ -337,11 +357,7 @@ func _finish_custom_drop(pos: Vector2) -> void:
 	match target.get("type", "none"):
 		"dock":
 			if not src_floating:
-				if drag_avatar != null:
-					drag_avatar.end_drag()
-				if floating_shard_dock != null:
-					floating_shard_dock.set_shard_hidden(false)
-				_on_shard_dropped_to_dock({
+				var dock_ok: bool = _on_shard_dropped_to_dock({
 					"type": "equipment_drag",
 					"modifier": dropped_item,
 					"source_track": src_track,
@@ -349,6 +365,13 @@ func _finish_custom_drop(pos: Vector2) -> void:
 					"source_slot_idx": src_slot_idx,
 					"source_is_floating": false
 				})
+				if dock_ok:
+					if drag_avatar != null:
+						drag_avatar.end_drag()
+					if floating_shard_dock != null:
+						floating_shard_dock.set_shard_hidden(false)
+				else:
+					_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 			else:
 				_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 		"slot":
@@ -357,14 +380,11 @@ func _finish_custom_drop(pos: Vector2) -> void:
 			var target_slot_idx: int = target.get("slot_idx", -1)
 
 			if target_track != null and target_track.is_color_compatible(dropped_item) and target_is_ult == dropped_item.is_ultimate:
-				if drag_avatar != null:
-					drag_avatar.end_drag()
-				if floating_shard_dock != null:
-					floating_shard_dock.set_shard_hidden(false)
+				var drop_ok: bool = false
 				if src_floating:
-					_handle_floating_shard_drop(dropped_item, target_track, target_is_ult, target_slot_idx)
+					drop_ok = _handle_floating_shard_drop(dropped_item, target_track, target_is_ult, target_slot_idx)
 				else:
-					_on_equipment_dropped({
+					drop_ok = _on_equipment_dropped({
 						"type": "equipment_drag",
 						"modifier": dropped_item,
 						"source_track": src_track,
@@ -372,6 +392,13 @@ func _finish_custom_drop(pos: Vector2) -> void:
 						"source_slot_idx": src_slot_idx,
 						"source_is_floating": false
 					}, target_track, target_is_ult, target_slot_idx)
+				if drop_ok:
+					if drag_avatar != null:
+						drag_avatar.end_drag()
+					if floating_shard_dock != null:
+						floating_shard_dock.set_shard_hidden(false)
+				else:
+					_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 			else:
 				_cancel_custom_drag(dropped_item, src_floating, src_track, src_is_ult, src_slot_idx)
 		_:
@@ -696,6 +723,7 @@ func _build_ui_if_needed() -> void:
 		description_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		description_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		scroll.add_child(description_label)
+	_style_description_label()
 
 	# Floating Shard Dock (Slotting Mode only, on top of DescriptionPanel on the right side)
 	floating_shard_dock = vbox.find_child("FloatingShardDock", true, false) as FloatingShardDock
@@ -1024,47 +1052,65 @@ func _on_slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ult: bool, sl
 	else:
 		_show_slot_empty_description(track, is_ult)
 
+func _is_equipment_equipped_anywhere(eq: Equipment) -> bool:
+	if eq == null:
+		return false
+	if Global.cur_char != null:
+		for c_id in Global.cur_char.active_color_pool:
+			var tr: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
+			if tr != null and (tr.ultimate_skill == eq or eq in tr.equipped_modifiers):
+				return true
+	for row in track_rows:
+		if row != null and row.track_ref != null:
+			var tr: ColorLoadoutTrack = row.track_ref
+			if tr.ultimate_skill == eq or eq in tr.equipped_modifiers:
+				return true
+	return false
+
 ## Handles moving, swapping, and reordering equipment via drag-and-drop.
-func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> void:
+func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> bool:
 	if Global.cur_char == null or target_track == null:
-		return
+		return false
 
 	var source_mod: Equipment = drag_data.get("modifier") as Equipment
 	var source_is_floating: bool = drag_data.get("source_is_floating", false)
 
 	if source_is_floating:
-		_handle_floating_shard_drop(source_mod, target_track, target_is_ult, target_slot_idx)
-		return
+		return _handle_floating_shard_drop(source_mod, target_track, target_is_ult, target_slot_idx)
 
 	var source_track: ColorLoadoutTrack = drag_data.get("source_track") as ColorLoadoutTrack
 	var source_is_ult: bool = drag_data.get("source_is_ult", false)
 
 	if source_mod == null or source_track == null:
-		return
+		return false
 
 	# Type mismatch check: ultimate must match ultimate slot
 	if source_is_ult != target_is_ult:
-		return
+		return false
 
 	# Color compatibility check
 	if not target_track.is_color_compatible(source_mod):
-		return
+		return false
 
+	var changed: bool = false
 	if target_is_ult:
 		# Ultimate Drag-and-Drop:
 		if source_track == target_track:
-			return
+			return false
 		var existing_target_ult: Equipment = target_track.ultimate_skill
 		if existing_target_ult != null:
 			if source_track.is_color_compatible(existing_target_ult):
-				source_track.ultimate_skill = existing_target_ult
-				target_track.ultimate_skill = source_mod
-			else:
 				source_track.unequip_ultimate()
+				target_track.unequip_ultimate()
+				source_track.equip_ultimate(existing_target_ult)
 				target_track.equip_ultimate(source_mod)
+				changed = true
+			else:
+				return false
 		else:
 			source_track.unequip_ultimate()
 			target_track.equip_ultimate(source_mod)
+			changed = true
 	else:
 		# Basic Ability Drag-and-Drop:
 		if source_track == target_track:
@@ -1077,9 +1123,11 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 					if t_idx != -1:
 						target_track.equipped_modifiers[s_idx] = target_mod
 						target_track.equipped_modifiers[t_idx] = source_mod
+						changed = true
 				elif target_mod == null:
 					source_track.equipped_modifiers.remove_at(s_idx)
 					source_track.equipped_modifiers.append(source_mod)
+					changed = true
 		else:
 			# Moving or swapping BETWEEN DIFFERENT tracks
 			var target_mod: Equipment = target_track.get_modifier_at_slot_index(target_slot_idx) if target_slot_idx >= 0 else null
@@ -1089,18 +1137,26 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 					var s_idx: int = source_track.equipped_modifiers.find(source_mod)
 					var t_idx: int = target_track.equipped_modifiers.find(target_mod)
 					if s_idx != -1 and t_idx != -1:
-						var free_in_target: int = target_track.get_free_slots() + target_mod.slot_cost
-						var free_in_source: int = source_track.get_free_slots() + source_mod.slot_cost
-						if free_in_target >= source_mod.slot_cost and free_in_source >= target_mod.slot_cost:
+						var s_cost: int = clampi(source_mod.slot_cost, 1, target_track.max_slots)
+						var t_cost: int = clampi(target_mod.slot_cost, 1, source_track.max_slots)
+						var free_in_target: int = target_track.get_free_slots() + t_cost
+						var free_in_source: int = source_track.get_free_slots() + s_cost
+						if free_in_target >= s_cost and free_in_source >= t_cost:
 							source_track.equipped_modifiers.remove_at(s_idx)
 							target_track.equipped_modifiers.remove_at(t_idx)
 							source_track.equip_modifier(target_mod, s_idx)
 							target_track.equip_modifier(source_mod, t_idx)
+							changed = true
 			else:
 				# Moving into empty space on target track
-				if target_track.get_free_slots() >= source_mod.slot_cost:
+				var s_cost: int = clampi(source_mod.slot_cost, 1, target_track.max_slots)
+				if target_track.get_free_slots() >= s_cost and not (source_mod in target_track.equipped_modifiers):
 					source_track.unequip_modifier(source_mod)
 					target_track.equip_modifier(source_mod)
+					changed = true
+
+	if not changed:
+		return false
 
 	source_track.clamp_cursor()
 	target_track.clamp_cursor()
@@ -1108,27 +1164,39 @@ func _on_equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrac
 	target_track.check_ultimate_ready_at_cycle_start()
 
 	if Global.cur_char != null:
+		Global.cur_char.recalculate_equipment_passives()
 		Global.cur_char.loadoutChanged.emit()
 
 	refresh_overlay_data()
 	_on_slot_clicked(source_mod, target_track, target_is_ult, target_slot_idx)
+	return true
 
-func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> void:
+func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int) -> bool:
 	if target_track == null or source_mod == null:
-		return
+		return false
 	if not target_track.is_color_compatible(source_mod):
-		return
+		return false
+	if _is_equipment_equipped_anywhere(source_mod):
+		push_warning("InventoryOverlay: Prevented duplicating already-equipped shard '%s'." % source_mod.piece_name)
+		return false
 
 	var displaced_item: Equipment = null
 
 	if target_is_ult:
 		if not source_mod.is_ultimate:
-			return
+			return false
 		displaced_item = target_track.ultimate_skill
-		target_track.equip_ultimate(source_mod)
+		target_track.unequip_ultimate()
+		if not target_track.equip_ultimate(source_mod):
+			if displaced_item != null:
+				target_track.equip_ultimate(displaced_item)
+			return false
 	else:
 		if source_mod.is_ultimate:
-			return
+			return false
+		var needed_slots: int = clampi(source_mod.slot_cost, 1, target_track.max_slots)
+		if needed_slots > target_track.max_slots:
+			return false
 		var target_mod: Equipment = target_track.get_modifier_at_slot_index(target_slot_idx) if target_slot_idx >= 0 else null
 		if target_mod != null:
 			# Replacing an occupied slot
@@ -1136,20 +1204,28 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 			if t_idx != -1:
 				displaced_item = target_mod
 				target_track.equipped_modifiers.remove_at(t_idx)
-				while target_track.get_free_slots() < source_mod.slot_cost and not target_track.equipped_modifiers.is_empty():
-					displaced_item = target_track.equipped_modifiers.pop_back()
-				target_track.equip_modifier(source_mod, t_idx)
+				while target_track.get_free_slots() < needed_slots and not target_track.equipped_modifiers.is_empty():
+					var extra_displaced: Equipment = target_track.equipped_modifiers.pop_back()
+					if extra_displaced != null:
+						pending_slotting_queue.push_front(extra_displaced)
+				if not target_track.equip_modifier(source_mod, t_idx):
+					return false
 		else:
 			# Dropping onto empty slot or row
 			if target_track.can_equip(source_mod):
-				target_track.equip_modifier(source_mod, target_slot_idx)
+				if not target_track.equip_modifier(source_mod, target_slot_idx):
+					return false
 			else:
-				# Track full or not enough slots: displace from end
-				if not target_track.equipped_modifiers.is_empty():
-					displaced_item = target_track.equipped_modifiers.pop_back()
+				# Track full or not enough slots: displace from end without losing extra items
 				while not target_track.can_equip(source_mod) and not target_track.equipped_modifiers.is_empty():
-					displaced_item = target_track.equipped_modifiers.pop_back()
-				target_track.equip_modifier(source_mod)
+					var popped: Equipment = target_track.equipped_modifiers.pop_back()
+					if popped != null:
+						if displaced_item == null:
+							displaced_item = popped
+						else:
+							pending_slotting_queue.push_front(popped)
+				if not target_track.equip_modifier(source_mod):
+					return false
 
 	# Displaced item becomes the new floating shard so the player can keep moving shards
 	if displaced_item != null:
@@ -1168,37 +1244,49 @@ func _handle_floating_shard_drop(source_mod: Equipment, target_track: ColorLoado
 
 	refresh_overlay_data()
 	_on_slot_clicked(source_mod, target_track, target_is_ult, target_slot_idx)
+	return true
 
-func _on_shard_dropped_to_dock(drag_data: Dictionary) -> void:
+func _on_shard_dropped_to_dock(drag_data: Dictionary) -> bool:
 	if not is_slotting_mode:
-		return
+		return false
 	var source_mod: Equipment = drag_data.get("modifier") as Equipment
 	var source_track: ColorLoadoutTrack = drag_data.get("source_track") as ColorLoadoutTrack
 	var source_is_ult: bool = drag_data.get("source_is_ult", false)
 	if source_mod == null or source_track == null:
-		return
+		return false
 
+	var changed: bool = false
 	var old_floating: Equipment = _cached_floating_equipment
 	if old_floating == null:
 		if source_is_ult:
 			source_track.unequip_ultimate()
+			changed = true
 		else:
-			source_track.unequip_modifier(source_mod)
-		set_floating_equipment(source_mod)
+			changed = source_track.unequip_modifier(source_mod)
+		if changed:
+			set_floating_equipment(source_mod)
 	else:
 		if source_track.is_color_compatible(old_floating) and source_is_ult == old_floating.is_ultimate:
 			if source_is_ult:
-				source_track.equip_ultimate(old_floating)
-				set_floating_equipment(source_mod)
+				source_track.unequip_ultimate()
+				if source_track.equip_ultimate(old_floating):
+					set_floating_equipment(source_mod)
+					changed = true
+				else:
+					source_track.equip_ultimate(source_mod)
 			else:
 				var s_idx: int = source_track.equipped_modifiers.find(source_mod)
 				if s_idx != -1:
 					source_track.equipped_modifiers.remove_at(s_idx)
-					if source_track.get_free_slots() >= old_floating.slot_cost:
+					if source_track.get_free_slots() >= clampi(old_floating.slot_cost, 1, source_track.max_slots):
 						source_track.equip_modifier(old_floating, s_idx)
 						set_floating_equipment(source_mod)
+						changed = true
 					else:
 						source_track.equip_modifier(source_mod, s_idx)
+
+	if not changed:
+		return false
 
 	source_track.clamp_cursor()
 	source_track.check_ultimate_ready_at_cycle_start()
@@ -1206,6 +1294,7 @@ func _on_shard_dropped_to_dock(drag_data: Dictionary) -> void:
 		Global.cur_char.recalculate_equipment_passives()
 		Global.cur_char.loadoutChanged.emit()
 	refresh_overlay_data()
+	return true
 
 func _on_floating_shard_selected(eq: Equipment) -> void:
 	if eq == null:
@@ -1287,22 +1376,54 @@ func _display_passive_description(p_res: Resource) -> void:
 		return
 	description_label.text = _format_passive_bbcode(p_res)
 
+func _style_description_label() -> void:
+	if description_label == null:
+		return
+	description_label.add_theme_font_override("normal_font", BODY_FONT)
+	description_label.add_theme_font_override("bold_font", TITLE_FONT)
+	description_label.add_theme_color_override("default_color", Color("#f4f1f8"))
+	description_label.add_theme_color_override("font_outline_color", Color("#1e1824"))
+	description_label.add_theme_constant_override("outline_size", 3)
+	description_label.add_theme_color_override("font_shadow_color", Color(0.08, 0.05, 0.12, 0.75))
+	description_label.add_theme_constant_override("shadow_offset_x", 1)
+	description_label.add_theme_constant_override("shadow_offset_y", 1)
+	description_label.add_theme_constant_override("line_separation", 2)
+
+static func _get_dark_panel_rarity_hex(r: int) -> String:
+	match r:
+		Equipment.Rarity.COMMON: return "#e6e2ec"
+		Equipment.Rarity.UNCOMMON: return "#72e89d"
+		Equipment.Rarity.RARE: return "#7eb8ff"
+		Equipment.Rarity.EPIC: return "#e394ff"
+		Equipment.Rarity.LEGENDARY: return "#ffd966"
+		Equipment.Rarity.GODLY: return "#7bf0ff"
+	return "#e6e2ec"
+
+static func _remap_colors_for_dark_panel(bbcode_str: String) -> String:
+	return bbcode_str \
+		.replace("#ae2334", "#ff7b7b") \
+		.replace("#7a3045", "#ffb86c") \
+		.replace("#3ca370", "#72e89d") \
+		.replace("#4d65b4", "#7eb8ff") \
+		.replace("#a854a8", "#e394ff") \
+		.replace("#b0b0b0", "#e6e2ec")
+
 func _show_empty_description() -> void:
 	if description_label == null:
 		return
-	description_label.text = "[center][color=#9babb2]\nSelect an ability or passive to view its details.[/color][/center]"
+	description_label.text = "[center][color=#d6d0e0]\nSelect an ability or passive to view its details.[/color][/center]"
 
 func _show_slot_empty_description(track: ColorLoadoutTrack, is_ult: bool) -> void:
 	if description_label == null:
 		return
 	var c_name := ColorLoadoutTrack.get_color_name(track.color) if track != null else "Passive"
 	var type_str := "Ultimate Slot" if is_ult else "Slot"
-	description_label.text = "[center][color=#9babb2]\nEmpty %s %s\nEquip abilities by acquiring them during your run.[/color][/center]" % [c_name, type_str]
+	description_label.text = "[center][color=#d6d0e0]\nEmpty %s %s\nEquip abilities by acquiring them during your run.[/color][/center]" % [c_name, type_str]
 
 func _show_passive_empty_description() -> void:
 	if description_label == null:
 		return
-	description_label.text = "[center][color=#9babb2]\nEmpty Passive Slot\nAcquire passives during your run to fill this slot.[/color][/center]"
+	description_label.text = "[center][color=#d6d0e0]\nEmpty Passive Slot\nAcquire passives during your run to fill this slot.[/color][/center]"
 
 func _format_passive_bbcode(p_res: Resource) -> String:
 	if p_res == null:
@@ -1311,35 +1432,35 @@ func _format_passive_bbcode(p_res: Resource) -> String:
 	var text := ""
 	if p_res is Reward:
 		var rew := p_res as Reward
-		var r_color := Equipment.get_rarity_hex(int(rew.rarity))
+		var r_color := _get_dark_panel_rarity_hex(int(rew.rarity))
 		var r_name := Equipment.get_rarity_name(int(rew.rarity))
-		text += "[font_size=20][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, rew.name]
-		text += "[font_size=12][color=#c7dcd0]%s  •  Passive Card[/color][/font_size]\n\n" % r_name
-		var eff := rew.get_effect_description()
+		text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, rew.name]
+		text += "[font_size=12][color=#d6d0e0]%s  •  Passive Card[/color][/font_size]\n" % r_name
+		var eff := _remap_colors_for_dark_panel(rew.get_effect_description())
 		if not eff.is_empty():
 			text += "[font_size=14]%s[/font_size]\n" % eff
 	elif p_res is Equipment:
 		var eq := p_res as Equipment
-		var r_color := Equipment.get_rarity_hex(eq.rarity)
+		var r_color := _get_dark_panel_rarity_hex(eq.rarity)
 		var r_name := Equipment.get_rarity_name(eq.rarity)
-		text += "[font_size=20][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, eq.piece_name]
-		text += "[font_size=12][color=#c7dcd0]%s  •  Passive Equipment[/color][/font_size]\n\n" % r_name
-		var eff := eq.get_effect_description()
+		text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, eq.piece_name]
+		text += "[font_size=12][color=#d6d0e0]%s  •  Passive Equipment[/color][/font_size]\n" % r_name
+		var eff := _remap_colors_for_dark_panel(eq.get_effect_description())
 		if not eff.is_empty():
 			text += "[font_size=14]%s[/font_size]\n" % eff
 		var boosts := eq.get_stat_boosts()
-		if not boosts.is_empty():
+		if not boosts.is_empty() and not eff.contains("• "):
 			var stat_parts: Array[String] = []
 			for stat_name in boosts:
 				var val: float = boosts[stat_name]
 				var sign_str := "+" if val > 0 else ""
 				stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 			if not stat_parts.is_empty():
-				text += "\n[font_size=12][color=#91db69]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+				text += "[font_size=12][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 	else:
 		var p_name: String = p_res.get("piece_name") if p_res.get("piece_name") != null else (p_res.get("name") if p_res.get("name") != null else "Passive")
-		text += "[font_size=20][b][color=#ffffff]%s[/color][/b][/font_size]\n" % p_name
-		text += "[font_size=12][color=#c7dcd0]Passive[/color][/font_size]\n\n"
+		text += "[font_size=18][b][color=#ffffff]%s[/color][/b][/font_size]\n" % p_name
+		text += "[font_size=12][color=#d6d0e0]Passive[/color][/font_size]\n"
 		var desc: String = p_res.get("description") if p_res.get("description") != null else ""
 		if not desc.is_empty():
 			text += "[font_size=14]%s[/font_size]\n" % desc
@@ -1349,39 +1470,39 @@ func _format_ability_bbcode(mod: Equipment, color_id: int, is_ult: bool) -> Stri
 	if mod == null:
 		return ""
 
-	var r_color := Equipment.get_rarity_hex(mod.rarity)
+	var r_color := _get_dark_panel_rarity_hex(mod.rarity)
 	var r_name := Equipment.get_rarity_name(mod.rarity)
 	var c_name := ColorLoadoutTrack.get_color_name(color_id) if color_id > 0 else "Wild"
 
 	var text := ""
 	# Title
-	text += "[font_size=20][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, mod.piece_name]
+	text += "[font_size=18][b][color=%s]%s[/color][/b][/font_size]\n" % [r_color, mod.piece_name]
 
 	# Subtitle
 	var type_str := "Ultimate" if (is_ult or mod.is_ultimate) else ("%d Slot%s" % [mod.slot_cost, "" if mod.slot_cost == 1 else "s"])
 	var color_tag := "%s Track" % c_name if color_id > 0 else "Wild / Any Track"
-	text += "[font_size=12][color=#c7dcd0]%s  •  %s  •  %s[/color][/font_size]\n\n" % [r_name, type_str, color_tag]
+	text += "[font_size=12][color=#d6d0e0]%s  •  %s  •  %s[/color][/font_size]\n" % [r_name, type_str, color_tag]
 
 	# Trigger condition (if basic ability)
 	if not is_ult and not mod.is_ultimate:
 		var trig_desc := _get_trigger_description(mod.trigger_condition)
-		text += "[font_size=13][color=#f9c22b]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
+		text += "[font_size=13][color=#ffd966]Trigger:[/color] [color=#ffffff]%s[/color][/font_size]\n" % trig_desc
 
-	# Effect text
-	var eff := mod.get_effect_description()
+	# Effect text (remapped for high contrast on dark purple panel)
+	var eff := _remap_colors_for_dark_panel(mod.get_effect_description())
 	if not eff.is_empty():
 		text += "[font_size=14]%s[/font_size]\n" % eff
 
-	# Passive stats (if any)
+	# Passive stats fallback (only if not already included in eff)
 	var boosts := mod.get_stat_boosts()
-	if not boosts.is_empty():
+	if not boosts.is_empty() and not eff.contains("• "):
 		var stat_parts: Array[String] = []
 		for stat_name in boosts:
 			var val: float = boosts[stat_name]
 			var sign_str := "+" if val > 0 else ""
 			stat_parts.append("%s%s %s" % [sign_str, str(int(roundf(val))), stat_name.capitalize()])
 		if not stat_parts.is_empty():
-			text += "\n[font_size=12][color=#91db69]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
+			text += "[font_size=12][color=#8ff0a4]Passive Stats: %s[/color][/font_size]" % ", ".join(stat_parts)
 
 	return text
 
