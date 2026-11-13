@@ -234,6 +234,7 @@ func set_floating_equipment(eq: Equipment, origin_track: ColorLoadoutTrack = nul
 		_display_ability_description(eq, _get_equipment_color(eq), eq.is_ultimate)
 	else:
 		_show_empty_description()
+	_update_desc_preview_visibility()
 
 func _update_slotting_mode_ui(slotting_active: bool) -> void:
 	_build_ui_if_needed()
@@ -244,6 +245,7 @@ func _update_slotting_mode_ui(slotting_active: bool) -> void:
 		floating_shard_dock.visible = slotting_active
 	if normal_preview_root != null:
 		normal_preview_root.visible = (not slotting_active) and (selected_ability != null or selected_passive != null)
+	_update_desc_preview_visibility()
 	if description_panel != null:
 		description_panel.custom_minimum_size.y = description_panel_height
 	if done_btn != null:
@@ -1701,11 +1703,20 @@ func _animate_shards_group_to_dock(eq: Equipment, start_positions: Array[Vector2
 				ghost.queue_free()
 		)
 
+func _update_desc_preview_visibility() -> void:
+	if desc_preview_frame == null:
+		return
+	if is_slotting_mode:
+		desc_preview_frame.visible = (_cached_floating_equipment != null)
+	else:
+		desc_preview_frame.visible = (normal_preview_root != null and normal_preview_root.visible)
+
 func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
 	if normal_preview_root == null:
 		return
 	if is_slotting_mode or mod == null:
 		normal_preview_root.visible = false
+		_update_desc_preview_visibility()
 		return
 	normal_preview_root.visible = true
 	var stack_count: int = 1 if mod.is_ultimate else clampi(mod.slot_cost, 1, 5)
@@ -1728,12 +1739,14 @@ func _update_normal_preview_ability(mod: Equipment, color_id: int) -> void:
 	if normal_preview_icon_rect != null:
 		normal_preview_icon_rect.texture = mod.icon
 		normal_preview_icon_rect.visible = (mod.icon != null)
+	_update_desc_preview_visibility()
 
 func _update_normal_preview_passive(p_res: Resource) -> void:
 	if normal_preview_root == null:
 		return
 	if is_slotting_mode or p_res == null:
 		normal_preview_root.visible = false
+		_update_desc_preview_visibility()
 		return
 	normal_preview_root.visible = true
 	for i in range(normal_preview_stack_frames.size()):
@@ -1752,6 +1765,7 @@ func _update_normal_preview_passive(p_res: Resource) -> void:
 			ico = p_res.get("icon") as Texture2D
 		normal_preview_icon_rect.texture = ico
 		normal_preview_icon_rect.visible = (ico != null)
+	_update_desc_preview_visibility()
 
 func _display_ability_description(mod: Equipment, color_id: int, is_ult: bool) -> void:
 	if description_label == null:
@@ -1859,6 +1873,7 @@ func _clear_desc_header_and_preview() -> void:
 		desc_title_label.visible = false
 	if normal_preview_root != null:
 		normal_preview_root.visible = false
+	_update_desc_preview_visibility()
 
 func _show_empty_description() -> void:
 	if description_label == null:
