@@ -17,41 +17,6 @@ texture_margin_top = 4.0
 texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-texture = ExtResource("3_btn")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-texture = ExtResource("3_btn")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
-modulate_color = Color(0.85, 0.85, 0.85, 1)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-texture = ExtResource("3_btn")
-texture_margin_left = 4.0
-texture_margin_top = 4.0
-texture_margin_right = 4.0
-texture_margin_bottom = 4.0
-modulate_color = Color(1.12, 1.12, 1.12, 1)
-
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
 content_margin_left = 10.0
 content_margin_top = 6.0
@@ -207,30 +172,3 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 disabled = true
 text = "Graphics"
-
-[node name="MainMenuBtn" type="Button" parent="SettingsVBox"]
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
-theme_override_fonts/font = ExtResource("4_title_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
-text = "Main Menu"
-
-[node name="BackBtn" type="Button" parent="SettingsVBox"]
-visible = false
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
-theme_override_fonts/font = ExtResource("4_title_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
-text = "Apply"

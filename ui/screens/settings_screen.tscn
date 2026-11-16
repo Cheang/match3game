@@ -4,6 +4,42 @@
 [ext_resource type="Texture2D" uid="uid://crqwdln8iiptw" path="res://assets/sprites/ui/combat/inventory_btn_unpressed.png" id="2_panel_bg"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="3_title_font"]
 [ext_resource type="PackedScene" path="res://ui/common/settings_panel.tscn" id="4_settings_panel"]
+[ext_resource type="Texture2D" uid="uid://b4u1op0e762r" path="res://assets/sprites/ui/general_button_unpressed.png" id="5_btn"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(0.85, 0.85, 0.85, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+texture = ExtResource("5_btn")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+modulate_color = Color(1.12, 1.12, 1.12, 1)
 
 [node name="settings" type="Control"]
 layout_mode = 3
@@ -45,7 +81,7 @@ theme_override_constants/margin_bottom = 24
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/MainPanel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/MainPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -55,8 +91,23 @@ theme_override_font_sizes/font_size = 32
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="SettingsPanel" parent="CenterContainer/MainPanel/MarginContainer/VBoxContainer" instance=ExtResource("4_settings_panel")]
+[node name="SettingsCenter" type="CenterContainer" parent="CenterContainer/MainPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-show_main_menu_button = false
-show_back_button = true
+
+[node name="SettingsPanel" parent="CenterContainer/MainPanel/MarginContainer/VBoxContainer/SettingsCenter" instance=ExtResource("4_settings_panel")]
+layout_mode = 2
+
+[node name="BackBtn" type="Button" parent="CenterContainer/MainPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
+theme_override_fonts/font = ExtResource("3_title_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+text = "Back"

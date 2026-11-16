@@ -928,34 +928,45 @@ func _build_ui_if_needed() -> void:
 		stats_view.visible = false
 		vbox.add_child(stats_view)
 
-	# 4. Settings View (Shared SettingsPanel element)
+	# 4. Settings View (Shared SettingsPanel + bottom Main Menu button)
 	settings_view = vbox.find_child("SettingsView", true, false) as Control
 	if settings_view == null:
-		settings_view = CenterContainer.new()
+		settings_view = VBoxContainer.new()
 		settings_view.name = "SettingsView"
 		settings_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		(settings_view as VBoxContainer).add_theme_constant_override("separation", 10)
 		settings_view.visible = false
 		vbox.add_child(settings_view)
 
 	settings_panel = settings_view.find_child("SettingsPanel", true, false) as Control
 	if settings_panel == null:
+		var settings_center := settings_view.find_child("SettingsCenter", true, false) as CenterContainer
+		if settings_center == null:
+			settings_center = CenterContainer.new()
+			settings_center.name = "SettingsCenter"
+			settings_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			settings_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			settings_view.add_child(settings_center)
 		if SETTINGS_PANEL_SCENE != null:
 			settings_panel = SETTINGS_PANEL_SCENE.instantiate() as Control
 		if settings_panel == null:
 			settings_panel = SettingsPanelClass.new()
 		settings_panel.name = "SettingsPanel"
-		settings_view.add_child(settings_panel)
-
-	settings_panel.show_main_menu_button = true
-	settings_panel.show_back_button = false
-	if not settings_panel.main_menu_requested.is_connected(_on_main_menu_pressed):
-		settings_panel.main_menu_requested.connect(_on_main_menu_pressed)
+		settings_center.add_child(settings_panel)
 
 	settings_vbox = settings_panel.find_child("SettingsVBox", true, false) as VBoxContainer
 	almanac_btn = settings_panel.almanac_btn
 	sound_btn = settings_panel.sound_btn
 	graphics_btn = settings_panel.graphics_btn
-	main_menu_btn = settings_panel.main_menu_btn
+
+	main_menu_btn = settings_view.find_child("MainMenuBtn", true, false) as Button
+	if main_menu_btn == null:
+		main_menu_btn = _create_nav_button("Main Menu", false)
+		main_menu_btn.name = "MainMenuBtn"
+		main_menu_btn.custom_minimum_size = Vector2(520, 44)
+		settings_view.add_child(main_menu_btn)
+	if not main_menu_btn.pressed.is_connected(_on_main_menu_pressed):
+		main_menu_btn.pressed.connect(_on_main_menu_pressed)
 
 	# 5. Bottom Navigation Row (Loadout, Stats, Settings)
 	bottom_nav_box = vbox.find_child("BottomNavBox", true, false) as HBoxContainer

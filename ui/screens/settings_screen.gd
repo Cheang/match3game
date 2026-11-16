@@ -1,6 +1,7 @@
 extends Control
 
 @onready var settings_panel: Control = find_child("SettingsPanel", true, false) as Control
+@onready var back_btn: Button = find_child("BackBtn", true, false) as Button
 
 var master_slider: HSlider:
 	get: return settings_panel.master_slider if settings_panel != null else null
@@ -19,11 +20,10 @@ var sfx_mute: CheckBox:
 func _ready() -> void:
 	if settings_panel == null:
 		settings_panel = find_child("SettingsPanel", true, false) as Control
-	if settings_panel != null:
-		settings_panel.show_main_menu_button = false
-		settings_panel.show_back_button = true
-		if not settings_panel.back_requested.is_connected(_on_back_pressed):
-			settings_panel.back_requested.connect(_on_back_pressed)
+	if back_btn == null:
+		back_btn = find_child("BackBtn", true, false) as Button
+	if back_btn != null and not back_btn.pressed.is_connected(_on_back_pressed):
+		back_btn.pressed.connect(_on_back_pressed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -33,6 +33,5 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_back_pressed() -> void:
-	Global.save()
 	await get_tree().create_timer(0.1).timeout
 	SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color("#484a77") })

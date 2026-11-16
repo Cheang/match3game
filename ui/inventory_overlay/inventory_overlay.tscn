@@ -240,15 +240,33 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SettingsView" type="CenterContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=1987928695]
+[node name="SettingsView" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=1987928695]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="SettingsPanel" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView" instance=ExtResource("12_settings_panel")]
+[node name="SettingsCenter" type="CenterContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView"]
 layout_mode = 2
-show_main_menu_button = true
-show_back_button = false
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SettingsPanel" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsCenter" instance=ExtResource("12_settings_panel")]
+layout_mode = 2
+
+[node name="MainMenuBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView" unique_id=2098008964]
+custom_minimum_size = Vector2(520, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+text = "Main Menu"
 
 [node name="BottomNavBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=576035909]
 custom_minimum_size = Vector2(520, 44)
