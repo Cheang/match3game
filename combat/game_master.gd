@@ -313,8 +313,9 @@ func _on_enemy_enemy_attacked() -> void:
 	if trun_changer != null and trun_changer.has_method("change_turn"):
 		trun_changer.change_turn(0)
 	await get_tree().create_timer(0.8).timeout
-	grd.state = grd.move
 	if grd != null:
+		await grd.ensure_valid_moves_or_shuffle(true)
+		grd.state = grd.move
 		grd.update_enemy_target_preview()
 	_is_finishing_player_turn = false
 

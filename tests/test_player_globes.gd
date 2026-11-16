@@ -3,6 +3,10 @@ extends Node
 const PlayerGlobesScene := preload("res://ui/hud/player_globes.tscn")
 
 func _ready() -> void:
+	get_tree().create_timer(8.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_player_globes took longer than 8.0s")
+		get_tree().quit(1)
+	)
 	print("==================================================")
 	print("RUNNING PLAYER GLOBES TESTS")
 	print("==================================================")

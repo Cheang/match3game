@@ -1,6 +1,10 @@
 extends Node
 
 func _ready() -> void:
+	get_tree().create_timer(8.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_equipment_rarity took longer than 8.0s")
+		get_tree().quit(1)
+	)
 	print("\n=======================================================")
 	print(" RUNNING EQUIPMENT BONUS TABLE & RARITY SCALING SUITE")
 	print("=======================================================\n")

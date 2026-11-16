@@ -1,6 +1,8 @@
 class_name MonsterTrackDiamond
 extends Control
 
+signal diamond_tapped(track_color: int, active_mod: Equipment, all_mods: Array[Equipment])
+
 @export var default_color: int = 100:
 	set(val):
 		default_color = val
@@ -23,11 +25,22 @@ var modifiers_queue: Array[Equipment] = []
 var active_mod_index: int = 0
 
 func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	for child in get_children():
+		if child is Control:
+			(child as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if cycle_timer != null and not cycle_timer.timeout.is_connected(_on_cycle_timer_timeout):
 		cycle_timer.timeout.connect(_on_cycle_timer_timeout)
 	_apply_palette(default_color)
 	if preview_number != "" and quantity_label != null:
 		quantity_label.text = preview_number
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var active_mod: Equipment = modifiers_queue[active_mod_index] if (active_mod_index >= 0 and active_mod_index < modifiers_queue.size()) else null
+		diamond_tapped.emit(current_track_color, active_mod, modifiers_queue)
+		accept_event()
 
 func setup_track(track_color: int, mods: Array[Equipment]) -> void:
 	current_track_color = track_color

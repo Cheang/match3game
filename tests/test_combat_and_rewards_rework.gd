@@ -4,6 +4,10 @@ var tests_passed: int = 0
 var tests_failed: int = 0
 
 func _ready() -> void:
+	get_tree().create_timer(15.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_combat_and_rewards_rework took longer than 15.0s")
+		get_tree().quit(1)
+	)
 	print("==================================================")
 	print("RUNNING LORETILES COMBAT & REWARDS REWORK TESTS")
 	print("==================================================")
@@ -47,7 +51,7 @@ func _run_all_tests() -> void:
 	_test_five_passive_slots_and_inventory_removal()
 	_test_unified_four_reward_types_and_build_affinity()
 	_test_save_load_persistence()
-	_test_core_pillars_and_derived_stat_scaling()
+	await _test_core_pillars_and_derived_stat_scaling()
 
 # ------------------------------------------------------------------------------
 # 1. Shared Entity Foundation
@@ -507,12 +511,12 @@ func _test_enemy_target_preview_and_cascade_suppression() -> void:
 		_assert(p != null and p.is_enemy_target_highlighted, "Targeted cell (%d, %d) has active highlight" % [c.x, c.y])
 	_assert(grd.enemy_attack_overlay != null and grd.enemy_attack_overlay._indicators.size() == beast_cells.size(), "EnemyAttackOverlay displays all active target borders")
 
-	# 3. Test Smart Target Preview
+	# 3. Test Smart Target Preview (SMART enemies should NOT highlight board target cells)
 	Global.cur_enemy.hybrid_next_is_beast = false
 	grd.update_enemy_target_preview()
 	var smart_cells: Array[Vector2i] = grd.current_enemy_target_cells
-	_assert(smart_cells.size() == 2 or not smart_cells.is_empty(), "Smart upcoming action highlights target swap cells")
-	_assert(grd.enemy_attack_overlay._indicators.size() == smart_cells.size(), "EnemyAttackOverlay updates to smart target swap cells")
+	_assert(smart_cells.is_empty(), "Smart upcoming action must not highlight board swap cells")
+	_assert(grd.enemy_attack_overlay._indicators.is_empty(), "EnemyAttackOverlay clears indicators for Smart upcoming action")
 
 	# 4. Clear Preview
 	grd.clear_enemy_target_preview()
@@ -1255,3 +1259,89 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	myst_attack.cooldown_turns = 4
 	myst_attack.on_triggered(plr)
 	_assert(myst_attack.current_cooldown == 3, "Mystical attack automatically uses Spirit CDR: 4 - 1 = 3 turns")
+
+	# 8. Test PassiveReplaceModal pixel-art restyle, Board Deadlock Auto-Shuffle, Bomb Fixes & Enemy Mobile Inspect
+	Global.cur_char = plr
+	plr.flg_can_spawn_row_bombs = true
+	plr.flg_can_spawn_col_bombs = true
+	plr.flg_can_spawn_adj_bombs = true
+
+	var modal := PassiveReplaceModal.new()
+	add_child(modal)
+	var sample_p := Reward.new()
+	sample_p.name = "Test Passive"
+	sample_p.reward_type = Reward.RewardType.PASSIVE
+	modal.prompt_passive(sample_p)
+	_assert(modal.passive_cards.size() == PlayerResource.MAX_PASSIVE_SLOTS, "PassiveReplaceModal renders 5 pixel-art passive slots")
+	modal.queue_free()
+
+	var combat_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var combat = combat_scene.instantiate()
+	add_child(combat)
+	await get_tree().create_timer(0.55).timeout
+	var grd2 = combat.get_node("grd")
+	grd2.clear_board()
+	grd2.all_pieces = Global.make_2d_array(grd2.grd_width, grd2.grd_height)
+	var tile_sc: PackedScene = preload("res://combat/tiles/tile.tscn")
+	var colors := [100, 200, 300, 400, 500]
+	for x in range(grd2.grd_width):
+		for y in range(grd2.grd_height):
+			var p: PieceClass = tile_sc.instantiate()
+			var c_id: int = colors[(x * 2 + y) % 5]
+			p.color_id = c_id
+			grd2.add_child(p)
+			p.setup_chromatic(c_id)
+			p.position = Global.grd_to_pixel(x, y)
+			grd2.all_pieces[x][y] = p
+	_assert(grd2.find_all_valid_swaps().is_empty(), "Deadlock checkerboard has 0 valid swaps before auto-shuffle")
+	await grd2.ensure_valid_moves_or_shuffle(false)
+	_assert(not grd2.find_all_valid_swaps().is_empty(), "ensure_valid_moves_or_shuffle resolves deadlocked board")
+
+	# Same-color manual swap 4-match -> exactly 1 row bomb
+	var p0: PieceClass = grd2.all_pieces[0][0]
+	var p1: PieceClass = grd2.all_pieces[1][0]
+	var p2: PieceClass = grd2.all_pieces[2][0]
+	var p3: PieceClass = grd2.all_pieces[3][0]
+	for hp in [p0, p1, p2, p3]:
+		hp.setup_chromatic(100); hp.is_row_bomb = false; hp.is_col_bomb = false; hp.is_adj_bomb = false; hp.mark(false)
+	grd2.piece_one = p0
+	grd2.piece_two = p1
+	var ctx_h := MatchContext.new()
+	ctx_h.base_color = 100
+	ctx_h.shape_type = "LINE_4"
+	ctx_h.matched_positions.assign([Vector2(0, 0), Vector2(1, 0), Vector2(2, 0), Vector2(3, 0)])
+	grd2.pending_match_contexts.clear()
+	grd2.pending_match_contexts.append(ctx_h)
+	grd2.find_bombs()
+	var row_bombs := int(p0.is_row_bomb) + int(p1.is_row_bomb) + int(p2.is_row_bomb) + int(p3.is_row_bomb)
+	_assert(row_bombs == 1, "Same-color 4-match manual swap spawns 1 row bomb instead of 2")
+
+	# Cascade vertical 4-match -> 1 column bomb
+	var v0: PieceClass = grd2.all_pieces[5][1]
+	var v1: PieceClass = grd2.all_pieces[5][2]
+	var v2: PieceClass = grd2.all_pieces[5][3]
+	var v3: PieceClass = grd2.all_pieces[5][4]
+	for vp in [v0, v1, v2, v3]:
+		vp.setup_chromatic(200); vp.is_row_bomb = false; vp.is_col_bomb = false; vp.is_adj_bomb = false; vp.mark(false)
+	var ctx_v := MatchContext.new()
+	ctx_v.base_color = 200
+	ctx_v.shape_type = "LINE_4"
+	ctx_v.matched_positions.assign([Vector2(5, 1), Vector2(5, 2), Vector2(5, 3), Vector2(5, 4)])
+	grd2.pending_match_contexts.clear()
+	grd2.pending_match_contexts.append(ctx_v)
+	grd2.find_bombs()
+	var col_bombs := int(v0.is_col_bomb) + int(v1.is_col_bomb) + int(v2.is_col_bomb) + int(v3.is_col_bomb)
+	_assert(col_bombs == 1, "Vertical cascade LINE_4 spawns 1 column bomb")
+
+	# Enemy mobile tap-to-inspect popup
+	var enemy_node: Enemy = combat.get_node("enemy")
+	var d_slots: Array[MonsterTrackDiamond] = enemy_node.attack_dock.get_diamond_slots()
+	enemy_node._on_attack_dock_diamond_tapped(100, d_slots[0].modifiers_queue[0] if not d_slots[0].modifiers_queue.is_empty() else null, d_slots[0].modifiers_queue)
+	_assert(enemy_node._inspect_popup != null and enemy_node._inspect_popup.visible, "Tapping enemy attack diamond shows mobile inspect popup")
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = true
+	enemy_node._on_enemy_info_gui_input(ev)
+	_assert(enemy_node._inspect_popup.visible and enemy_node._inspect_label.text.contains("Next Action:"), "Tapping enemy healthBar/name_box shows enemy intent popup")
+	combat.queue_free()
+	await get_tree().process_frame

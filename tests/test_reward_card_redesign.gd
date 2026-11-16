@@ -18,6 +18,10 @@ func _assert(cond: bool, msg: String) -> void:
 		tests_failed += 1
 
 func _ready() -> void:
+	get_tree().create_timer(8.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_reward_card_redesign took longer than 8.0s")
+		get_tree().quit(1)
+	)
 	_log_file = FileAccess.open("res://scratch/reward_card_test_log.txt", FileAccess.WRITE)
 	_log("==================================================")
 	_log("TESTING REWARD CARD REDESIGN")

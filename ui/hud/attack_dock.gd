@@ -1,7 +1,10 @@
 class_name AttackDock
 extends Control
 
+signal track_diamond_tapped(track_color: int, active_mod: Equipment, all_mods: Array[Equipment])
+
 func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	if Global.cur_enemy != null:
 		refresh_tracks(Global.cur_enemy)
 
@@ -46,6 +49,8 @@ func refresh_tracks(enemy_res: EnemyResource) -> void:
 	# Populate pre-positioned slots from the editor
 	for i in range(slots.size()):
 		var slot: MonsterTrackDiamond = slots[i]
+		if not slot.diamond_tapped.is_connected(_on_slot_diamond_tapped):
+			slot.diamond_tapped.connect(_on_slot_diamond_tapped)
 		if i < active_tracks.size():
 			slot.visible = true
 			var data: Dictionary = active_tracks[i]
@@ -53,3 +58,6 @@ func refresh_tracks(enemy_res: EnemyResource) -> void:
 		else:
 			# Hide unassigned slots during gameplay
 			slot.visible = false
+
+func _on_slot_diamond_tapped(track_color: int, active_mod: Equipment, all_mods: Array[Equipment]) -> void:
+	track_diamond_tapped.emit(track_color, active_mod, all_mods)

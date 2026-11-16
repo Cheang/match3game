@@ -110,6 +110,7 @@ func on_startup() -> void:
 	spawn_obstacles(freeze_spaces, "make_freeze")
 	spawn_obstacles(rock_spaces, "make_rock")
 	spawn_obstacles(flesh_spaces, "make_flesh")
+	await ensure_valid_moves_or_shuffle(false)
 	state = move
 	update_enemy_target_preview()
 
@@ -766,20 +767,50 @@ func find_bombs():
 	var acting_entity: EntityResource = current_actor if current_actor != null else Global.cur_char
 	if acting_entity != null and not (acting_entity is PlayerResource):
 		return
+	if Global.cur_char == null:
+		return
 	for ctx in pending_match_contexts:
+		if ctx == null:
+			continue
 		var color_str: String = Global.get_color_name(ctx.base_color).to_lower()
-		if ctx.shape_type == "LINE_5":
-			return
-		elif ctx.shape_type in ["L_SHAPE", "T_SHAPE"] and Global.cur_char != null and Global.cur_char.flg_can_spawn_adj_bombs:
-			make_bomb(0, color_str)
-			return
-		elif ctx.shape_type == "LINE_4" and Global.cur_char != null:
-			if Global.cur_char.flg_can_spawn_row_bombs:
-				make_bomb(1, color_str)
-				return
-			elif Global.cur_char.flg_can_spawn_col_bombs:
-				make_bomb(2, color_str)
-				return
+		if ctx.shape_type in ["L_SHAPE", "T_SHAPE"]:
+			if Global.cur_char.flg_can_spawn_adj_bombs:
+				make_bomb(0, color_str, ctx.matched_positions)
+		elif ctx.shape_type == "LINE_5":
+			if Global.cur_char.flg_can_spawn_adj_bombs:
+				make_bomb(0, color_str, ctx.matched_positions)
+			else:
+				var line_bomb_5: int = _choose_line_bomb_type(ctx.matched_positions)
+				if line_bomb_5 >= 0:
+					make_bomb(line_bomb_5, color_str, ctx.matched_positions)
+		elif ctx.shape_type == "LINE_4":
+			var line_bomb_4: int = _choose_line_bomb_type(ctx.matched_positions)
+			if line_bomb_4 >= 0:
+				make_bomb(line_bomb_4, color_str, ctx.matched_positions)
+
+func _choose_line_bomb_type(positions: Array[Vector2]) -> int:
+	if Global.cur_char == null:
+		return -1
+	var can_row: bool = Global.cur_char.flg_can_spawn_row_bombs
+	var can_col: bool = Global.cur_char.flg_can_spawn_col_bombs
+	if not can_row and not can_col:
+		return -1
+	if can_row and not can_col:
+		return 1
+	if can_col and not can_row:
+		return 2
+	if positions.is_empty():
+		return 1
+	var min_x: float = positions[0].x
+	var max_x: float = positions[0].x
+	var min_y: float = positions[0].y
+	var max_y: float = positions[0].y
+	for pos in positions:
+		min_x = minf(min_x, pos.x)
+		max_x = maxf(max_x, pos.x)
+		min_y = minf(min_y, pos.y)
+		max_y = maxf(max_y, pos.y)
+	return 1 if (max_x - min_x) >= (max_y - min_y) else 2
 
 func destroy_matched(should_collapse: bool = true):
 	find_bombs()
@@ -895,6 +926,7 @@ func after_refill():
 	elif not Global.game_is_played:
 		state = wait
 	else:
+		await ensure_valid_moves_or_shuffle(true)
 		state = move
 		update_enemy_target_preview()
 	action_cycle_finished.emit()
@@ -1045,20 +1077,14 @@ func get_or_choose_beast_target_center(shape_offsets: Array[Vector2i]) -> Vector
 	return planned_enemy_target_center
 
 ## Returns grid coordinates of tiles targeted by the enemy's upcoming action.
+## Only AOE (BEAST) attacks highlight board target cells; SMART swaps do not leak intent on the grid.
 func get_planned_enemy_target_cells() -> Array[Vector2i]:
 	if Global.cur_enemy == null or not Global.game_is_played:
 		return []
 	var mode: EnemyResource.BehaviorCategory = Global.cur_enemy.get_current_action_behavior()
-	var cells: Array[Vector2i] = []
 	if mode == EnemyResource.BehaviorCategory.SMART:
-		var chosen_swap: Dictionary = choose_smart_monster_swap(Global.cur_enemy)
-		if not chosen_swap.is_empty():
-			var orig: Vector2 = chosen_swap["origin"]
-			var dir: Vector2 = chosen_swap["direction"]
-			cells.append(Vector2i(int(orig.x), int(orig.y)))
-			cells.append(Vector2i(int(orig.x + dir.x), int(orig.y + dir.y)))
-			return cells
-	# BEAST or fallback
+		return []
+	var cells: Array[Vector2i] = []
 	var offsets: Array[Vector2i] = Global.cur_enemy.get_beast_destruction_shape()
 	var center: Vector2i = get_or_choose_beast_target_center(offsets)
 	for ofs in offsets:
@@ -1264,16 +1290,132 @@ func add_to_array(value, array_to_add):
 	if not array_to_add.has(value):
 		array_to_add.append(value)
 
-func make_bomb(bomb_type, color):
-	for c_match in cur_matches:
-		var cur_col = c_match.x
-		var cur_row = c_match.y
-		if all_pieces[cur_col][cur_row] == piece_one and piece_one.color == color:
-			piece_one.unmark()
-			change_bomb(bomb_type, piece_one)
-		if all_pieces[cur_col][cur_row] == piece_two and piece_two.color == color:
-			piece_two.unmark()
-			change_bomb(bomb_type, piece_two)
+func _has_immediate_match_on_board() -> bool:
+	for i in range(grd_width):
+		for j in range(grd_height):
+			var p: PieceClass = all_pieces[i][j]
+			if p != null and match_at_color_id(i, j, p.color_id, false):
+				return true
+	return false
+
+## Checks for any legal player swap; if the board is deadlocked, shuffles non-frozen pieces
+## until at least one valid move exists without creating immediate matches.
+func ensure_valid_moves_or_shuffle(show_toast: bool = true) -> void:
+	if not find_all_valid_swaps().is_empty():
+		return
+
+	var movable_cells: Array[Vector2i] = []
+	var movable_pieces: Array[PieceClass] = []
+	for col in range(grd_width):
+		for row in range(grd_height):
+			var cell := Vector2(col, row)
+			if not restricted_fill(cell) and not restricted_move(cell) and all_pieces[col][row] != null:
+				movable_cells.append(Vector2i(col, row))
+				movable_pieces.append(all_pieces[col][row])
+
+	if movable_cells.size() < 2:
+		return
+
+	var found_valid: bool = false
+	for _attempt in range(40):
+		movable_pieces.shuffle()
+		for i in range(movable_cells.size()):
+			var c := movable_cells[i]
+			all_pieces[c.x][c.y] = movable_pieces[i]
+		if not _has_immediate_match_on_board() and not find_all_valid_swaps().is_empty():
+			found_valid = true
+			break
+
+	if not found_valid:
+		var pool: Array[int] = get_active_color_pool()
+		if not pool.is_empty():
+			for _reroll in range(20):
+				for i in range(movable_cells.size()):
+					var c := movable_cells[i]
+					all_pieces[c.x][c.y] = null
+				for i in range(movable_cells.size()):
+					var c := movable_cells[i]
+					var p: PieceClass = movable_pieces[i]
+					var valid_colors: Array[int] = []
+					for c_id in pool:
+						if not match_at_color_id(c.x, c.y, c_id, false):
+							valid_colors.append(c_id)
+					var chosen_color: int = valid_colors.pick_random() if not valid_colors.is_empty() else pool.pick_random()
+					p.setup_chromatic(chosen_color)
+					all_pieces[c.x][c.y] = p
+				if not _has_immediate_match_on_board() and not find_all_valid_swaps().is_empty():
+					found_valid = true
+					break
+
+	for i in range(movable_cells.size()):
+		var c := movable_cells[i]
+		var p: PieceClass = movable_pieces[i]
+		all_pieces[c.x][c.y] = p
+		p.fall_distance = 0
+		p.move(Global.grd_to_pixel(c.x, c.y), 0.25)
+
+	if show_toast and is_inside_tree():
+		_spawn_shuffle_toast()
+		await get_tree().create_timer(0.28).timeout
+
+func _spawn_shuffle_toast() -> void:
+	if not is_inside_tree():
+		return
+	var lbl := Label.new()
+	lbl.text = "No Moves — Shuffling!"
+	lbl.top_level = true
+	lbl.z_index = 1800
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl.add_theme_font_size_override("font_size", 22)
+	lbl.add_theme_color_override("font_color", Color("#ffd966"))
+	lbl.add_theme_color_override("font_outline_color", Color(0.10, 0.06, 0.14, 0.98))
+	lbl.add_theme_constant_override("outline_size", 4)
+	var center_pos := Global.grd_to_pixel(grd_width * 0.5, grd_height * 0.5) - Vector2(140.0, 20.0)
+	lbl.custom_minimum_size = Vector2(280.0, 40.0)
+	lbl.global_position = center_pos
+	add_child(lbl)
+	var tw := lbl.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(lbl, "global_position:y", center_pos.y - 32.0, 0.85).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(lbl, "modulate:a", 0.0, 0.85).set_delay(0.35)
+	tw.chain().tween_callback(lbl.queue_free)
+
+func make_bomb(bomb_type: int, color: String, target_positions: Array[Vector2] = []):
+	var search_positions: Array[Vector2] = target_positions if not target_positions.is_empty() else cur_matches
+	var try_convert := func(p) -> bool:
+		if p == null or not is_instance_valid(p):
+			return false
+		if p.is_row_bomb or p.is_col_bomb or p.is_adj_bomb:
+			return false
+		var p_color_name: String = Global.get_color_name(get_base_family(p.color_id)).to_lower()
+		if p_color_name != color and p.color != color:
+			return false
+		p.unmark()
+		change_bomb(bomb_type, p)
+		return true
+
+	for c_match in search_positions:
+		var cur_col := int(c_match.x)
+		var cur_row := int(c_match.y)
+		if is_in_grd(c_match) and piece_one != null and all_pieces[cur_col][cur_row] == piece_one:
+			if try_convert.call(piece_one):
+				return
+
+	for c_match in search_positions:
+		var cur_col := int(c_match.x)
+		var cur_row := int(c_match.y)
+		if is_in_grd(c_match) and piece_two != null and all_pieces[cur_col][cur_row] == piece_two:
+			if try_convert.call(piece_two):
+				return
+
+	for c_match in search_positions:
+		var cur_col := int(c_match.x)
+		var cur_row := int(c_match.y)
+		if is_in_grd(c_match):
+			var p = all_pieces[cur_col][cur_row]
+			if try_convert.call(p):
+				return
 
 func change_bomb(bomb_type, piece):
 	match bomb_type:

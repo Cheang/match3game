@@ -17,6 +17,9 @@ var _is_initialized: bool = false
 var _last_hp: float = 0.0
 var _popup_seq: int = 0
 var _cached_track_tooltip: String = ""
+var _inspect_popup: PanelContainer = null
+var _inspect_label: RichTextLabel = null
+var _inspect_tween: Tween = null
 
 signal enemy_attacked
 
@@ -30,6 +33,24 @@ func _ready() -> void:
 	_cache_track_tooltip()
 	if attack_dock != null:
 		attack_dock.refresh_tracks(Global.cur_enemy)
+		if not attack_dock.track_diamond_tapped.is_connected(_on_attack_dock_diamond_tapped):
+			attack_dock.track_diamond_tapped.connect(_on_attack_dock_diamond_tapped)
+	if healthBar != null:
+		healthBar.mouse_filter = Control.MOUSE_FILTER_STOP
+		healthBar.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		for c in healthBar.get_children():
+			if c is Control:
+				(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if not healthBar.gui_input.is_connected(_on_enemy_info_gui_input):
+			healthBar.gui_input.connect(_on_enemy_info_gui_input)
+	if name_box != null:
+		name_box.mouse_filter = Control.MOUSE_FILTER_STOP
+		name_box.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		for c in name_box.get_children():
+			if c is Control:
+				(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if not name_box.gui_input.is_connected(_on_enemy_info_gui_input):
+			name_box.gui_input.connect(_on_enemy_info_gui_input)
 	if buff_container != null:
 		buff_container.bind_entity(Global.cur_enemy)
 	if Global.cur_enemy.sprite != null:
@@ -148,6 +169,102 @@ func _build_enemy_tooltip() -> String:
 		mode_desc,
 		_cached_track_tooltip
 	]
+
+func _on_enemy_info_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if Global.cur_enemy == null:
+			return
+		var e: EnemyResource = Global.cur_enemy
+		var mode: EnemyResource.BehaviorCategory = e.get_current_action_behavior()
+		var mode_desc: String = "Smart Swap (matches tiles)" if mode == EnemyResource.BehaviorCategory.SMART else "Area Crush (destroys highlighted tiles)"
+		var lines := "[color=#ffd966][b]%s[/b][/color] [color=#b2b8a3](HP: %d/%d • Agi: %d • Might: %d)[/color]\nNext Action: [color=#ff7b7b]%s[/color]" % [
+			e.name,
+			int(roundf(e.cur_health)),
+			int(roundf(e.max_health)),
+			max(1, e.agility),
+			int(roundf(e.might)),
+			mode_desc
+		]
+		if _cached_track_tooltip != "":
+			lines += _cached_track_tooltip
+		_show_inspect_popup(lines)
+		get_viewport().set_input_as_handled()
+
+func _on_attack_dock_diamond_tapped(track_color: int, _active_mod: Equipment, all_mods: Array[Equipment]) -> void:
+	if Global.cur_enemy == null:
+		return
+	var track_name: String = "Wild" if track_color == 0 else ColorLoadoutTrack.get_color_name(track_color)
+	var track_hex: String = "#e6e2ec" if track_color == 0 else ("#" + Global.get_color_ui_tint(track_color).lightened(0.25).to_html(false))
+	if all_mods.is_empty():
+		_show_inspect_popup("[color=%s][b]%s Track[/b][/color]\nEmpty" % [track_hex, track_name])
+		return
+	var parts: Array[String] = []
+	for i in range(all_mods.size()):
+		var mod: Equipment = all_mods[i]
+		if mod == null:
+			continue
+		var r_hex: String = InventoryOverlay._get_dark_panel_rarity_hex(mod.rarity)
+		var eff: String = InventoryOverlay._remap_colors_for_dark_panel(mod.get_effect_description(Global.cur_enemy))
+		if eff == "" and mod.description != "":
+			eff = mod.description
+		parts.append("[color=%s][b]%s[/b][/color]: %s" % [r_hex, mod.piece_name, eff])
+	var header := "[color=%s][b]%s (%s Track)[/b][/color]\n" % [track_hex, Global.cur_enemy.name, track_name]
+	_show_inspect_popup(header + "\n".join(parts))
+
+func _show_inspect_popup(bbcode_text: String) -> void:
+	if not is_inside_tree():
+		return
+	if _inspect_popup == null or not is_instance_valid(_inspect_popup):
+		_inspect_popup = PanelContainer.new()
+		_inspect_popup.top_level = true
+		_inspect_popup.z_index = 2000
+		_inspect_popup.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var p_sb := StyleBoxFlat.new()
+		p_sb.bg_color = Color(0.11, 0.08, 0.14, 0.96)
+		p_sb.border_width_left = 2
+		p_sb.border_width_top = 2
+		p_sb.border_width_right = 2
+		p_sb.border_width_bottom = 2
+		p_sb.border_color = Color(0.88, 0.78, 0.42, 0.95)
+		p_sb.corner_radius_top_left = 5
+		p_sb.corner_radius_top_right = 5
+		p_sb.corner_radius_bottom_left = 5
+		p_sb.corner_radius_bottom_right = 5
+		p_sb.content_margin_left = 10
+		p_sb.content_margin_right = 10
+		p_sb.content_margin_top = 8
+		p_sb.content_margin_bottom = 8
+		_inspect_popup.add_theme_stylebox_override("panel", p_sb)
+
+		_inspect_label = RichTextLabel.new()
+		_inspect_label.bbcode_enabled = true
+		_inspect_label.fit_content = true
+		_inspect_label.scroll_active = false
+		_inspect_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_inspect_label.custom_minimum_size = Vector2(500, 0)
+		_inspect_label.add_theme_font_override("normal_font", preload("res://assets/theme/font_153.ttf"))
+		_inspect_label.add_theme_font_override("bold_font", preload("res://assets/theme/title.ttf"))
+		_inspect_label.add_theme_font_size_override("normal_font_size", 16)
+		_inspect_label.add_theme_font_size_override("bold_font_size", 16)
+		_inspect_label.add_theme_color_override("default_color", Color("#f4f1f8"))
+		_inspect_popup.add_child(_inspect_label)
+		add_child(_inspect_popup)
+
+	_inspect_label.text = bbcode_text
+	_inspect_popup.visible = true
+	_inspect_popup.modulate = Color.WHITE
+	var anchor_y: float = (healthBar.global_position.y + healthBar.size.y + 6.0) if healthBar != null else 238.0
+	_inspect_popup.global_position = Vector2(28.0, anchor_y)
+
+	if _inspect_tween != null and _inspect_tween.is_valid():
+		_inspect_tween.kill()
+	_inspect_tween = create_tween()
+	_inspect_tween.tween_interval(3.0)
+	_inspect_tween.tween_property(_inspect_popup, "modulate:a", 0.0, 0.35)
+	_inspect_tween.tween_callback(func():
+		if is_instance_valid(_inspect_popup):
+			_inspect_popup.visible = false
+	)
 
 func update_health():
 	if Global.cur_enemy == null:

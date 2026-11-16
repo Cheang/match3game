@@ -12,6 +12,10 @@ func _assert(cond: bool, msg: String) -> void:
 		tests_failed += 1
 
 func _ready() -> void:
+	get_tree().create_timer(8.0).timeout.connect(func():
+		printerr("TEST TIMEOUT: test_bottom_bar took longer than 8.0s")
+		get_tree().quit(1)
+	)
 	print("==================================================")
 	print("RUNNING BOTTOM BAR STANDALONE TESTS")
 	print("==================================================")
