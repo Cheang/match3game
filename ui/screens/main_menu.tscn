@@ -40,7 +40,7 @@ script = ExtResource("1_m0wtd")
 song = SubResource("Resource_12eda")
 def_area = ExtResource("6_h344n")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=2012815701]
+[node name="Background" type="TextureRect" parent="." unique_id=2012815701]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,32 +51,32 @@ texture = ExtResource("3_3j6ne")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1354293868]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -172.0
-offset_top = -444.0
-offset_right = 172.0
-offset_bottom = 444.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 2
 
-[node name="Control2" type="Control" parent="VBoxContainer" unique_id=310290370]
-custom_minimum_size = Vector2(400, 180)
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer"]
 layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer" unique_id=1976566993]
-custom_minimum_size = Vector2(0, 150)
+[node name="ContentVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer" unique_id=1354293868]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="LogoRect" type="TextureRect" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=1976566993]
+custom_minimum_size = Vector2(400, 150)
 layout_mode = 2
 texture = ExtResource("3_jb5a2")
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/TextureRect" unique_id=1662326693]
+[node name="LogoUnder" type="TextureRect" parent="CenterContainer/MarginContainer/ContentVBox/LogoRect" unique_id=1662326693]
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 8
@@ -93,16 +93,12 @@ grow_vertical = 2
 texture = ExtResource("9_qvpqg")
 stretch_mode = 3
 
-[node name="Control" type="Control" parent="VBoxContainer" unique_id=866454943]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=1415307309]
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=1415307309]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
-[node name="start" parent="VBoxContainer/VBoxContainer" unique_id=163436496 instance=ExtResource("4_ah0x7")]
+[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -118,7 +114,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "New Story"
 
-[node name="load" parent="VBoxContainer/VBoxContainer" unique_id=14626523 instance=ExtResource("4_ah0x7")]
+[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -134,7 +130,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Continue a Story"
 
-[node name="settings" parent="VBoxContainer/VBoxContainer" unique_id=348716662 instance=ExtResource("4_ah0x7")]
+[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -150,7 +146,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Settings"
 
-[node name="test" parent="VBoxContainer/VBoxContainer" unique_id=712498213 instance=ExtResource("4_ah0x7")]
+[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -166,7 +162,7 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Test"
 
-[node name="quit" parent="VBoxContainer/VBoxContainer" unique_id=669840106 instance=ExtResource("4_ah0x7")]
+[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
@@ -182,16 +178,8 @@ theme_override_styles/hover_pressed = ExtResource("11_dux4l")
 theme_override_styles/disabled = ExtResource("10_qd8a3")
 text = "Retire"
 
-[node name="Control3" type="Control" parent="VBoxContainer" unique_id=915208213]
-custom_minimum_size = Vector2(0, 65)
-layout_mode = 2
-
-[node name="Control4" type="Control" parent="VBoxContainer" unique_id=1867560635]
-layout_mode = 2
-size_flags_vertical = 3
-
-[connection signal="pressed" from="VBoxContainer/VBoxContainer/start" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="VBoxContainer/VBoxContainer/load" to="." method="_on_load_pressed"]
-[connection signal="pressed" from="VBoxContainer/VBoxContainer/settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="VBoxContainer/VBoxContainer/test" to="." method="_on_test_pressed"]
-[connection signal="pressed" from="VBoxContainer/VBoxContainer/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/test" to="." method="_on_test_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/quit" to="." method="_on_quit_pressed"]

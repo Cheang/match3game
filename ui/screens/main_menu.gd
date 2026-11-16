@@ -6,7 +6,7 @@ extends Control
 var area_to_load: LocationLoader
 var choise_made: bool = false
 
-@onready var load_btn: Button = $VBoxContainer/VBoxContainer/load
+@onready var load_btn: Button = find_child("load", true, false) as Button
 
 
 func _ready() -> void:
