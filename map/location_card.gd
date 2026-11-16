@@ -37,7 +37,7 @@ func _on_btn_mouse_exited() -> void:
 
 
 func _on_selection_btn_pressed() -> void:
-	if loc_res == null or loc_res.next_scene == null:
+	if selected or not Global.game_is_played or loc_res == null or loc_res.next_scene == null:
 		return
 	var destination_scene: String = loc_res.next_scene
 	if loc_res.enemy_encounter:
@@ -45,7 +45,6 @@ func _on_selection_btn_pressed() -> void:
 		if not loc_res.which_enemy.is_empty():
 			enemy_chosen = loc_res.which_enemy.pick_random()
 		Global.set_up_enemy(enemy_chosen)
-		Global.minions_killed += 1
 		destination_scene = "res://combat/combat_screen.tscn"
 	elif loc_res.event_encounter and loc_res.event_resource:
 		Global.area_cur_event = loc_res.event_resource
@@ -58,6 +57,6 @@ func _on_selection_btn_pressed() -> void:
 
 
 func _on_tree_exiting() -> void:
-	if selected:
+	if selected and index >= 0 and index < Global.area_locations.size():
 		Global.area_locations.pop_at(index)
 

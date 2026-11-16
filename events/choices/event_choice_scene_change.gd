@@ -8,5 +8,6 @@ var type: int = 1
 
 func activate() -> void:
 	Global.game_is_played = false
+	Global.area_cur_event = null
 	SceneManager.change_scene(next_scene, { "pattern": "diagonal", "color": Color("#2e222f") })
 

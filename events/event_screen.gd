@@ -4,7 +4,6 @@ const CHOISE_BTN: PackedScene = preload("res://events/choices/choice_btn_n.tscn"
 
 var resource: Event
 
-@onready var pause: Control = $pause
 @onready var event_bg: TextureRect = $event_bg
 @onready var event_text: VBoxContainer = $MarginContainer/VBoxContainer/event_text
 @onready var choises_holder: VBoxContainer = $MarginContainer/VBoxContainer/choises_holder
@@ -14,14 +13,29 @@ var resource: Event
 func _ready() -> void:
 	if Global.area_cur_event != null:
 		display_event(Global.area_cur_event, false)
-		Global.area_cur_event = null
-	Global.game_is_played = true
+	else:
+		Global.game_is_played = true
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I:
+			InventoryOverlay.toggle_overlay()
+			get_viewport().set_input_as_handled()
 
 
 func display_event(event_res: Event, animate_transition: bool = false) -> void:
 	if event_res == null:
 		return
 	resource = event_res
+	Global.area_cur_event = event_res
+	Global.cur_scene = "res://events/event_screen.tscn"
+	Global.save()
+
+	if reward != null:
+		reward.visible = false
 
 	if animate_transition:
 		var tween: Tween = create_tween()
@@ -30,8 +44,10 @@ func display_event(event_res: Event, animate_transition: bool = false) -> void:
 		_populate_event_data()
 		var tween_in: Tween = create_tween()
 		tween_in.tween_property($MarginContainer, "modulate:a", 1.0, 0.15)
+		await tween_in.finished
 	else:
 		_populate_event_data()
+	Global.game_is_played = true
 
 
 func get_reward(texture: Texture2D, text: String, icon: Texture2D, description: String = "") -> void:
@@ -85,7 +101,6 @@ func _populate_event_data() -> void:
 	var title_label: Label = event_text.get_child(0).get_child(0).get_child(0) as Label
 	var description_label: RichTextLabel = event_text.get_child(1).get_child(0).get_child(0) as RichTextLabel
 
-	pause.set_title(resource.categorie if resource.categorie else "Event")
 	title_label.text = resource.title
 	description_label.text = resource.description
 

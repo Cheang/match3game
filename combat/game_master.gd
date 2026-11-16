@@ -398,6 +398,8 @@ func enemy_died():
 				Global.game_is_over = true
 				SceneManager.change_scene("res://ui/screens/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 				return
+		else:
+			Global.minions_killed += 1
 		SceneManager.change_scene("res://rewards/reward_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 
 func destroy_tile(space_to_destroy: Array[Vector2]):

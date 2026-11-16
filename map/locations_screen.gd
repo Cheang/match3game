@@ -17,8 +17,18 @@ func initialize_scene() -> void:
 	Locations.add_boss_to_locations(Global.area_locations, Global.minions_needed)
 	shuffle_areas()
 	_set_locations()
+	Global.cur_scene = "res://map/locations_screen.tscn"
 	Global.save()
 	Global.game_is_played = true
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I:
+			InventoryOverlay.toggle_overlay()
+			get_viewport().set_input_as_handled()
 
 
 func shuffle_areas() -> void:

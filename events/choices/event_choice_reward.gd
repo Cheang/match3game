@@ -18,6 +18,7 @@ func activate() -> void:
 		RewardGrantHandler.grant_reward(reward, not equipment_already_prompted)
 	equipment_already_prompted = false
 	if fight_overwrite and not enemy.is_empty():
+		Global.area_cur_event = null
 		Global.post_combat_event = next_event
 		Global.set_up_enemy(enemy.pick_random())
 		SceneManager.change_scene("res://combat/combat_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
@@ -29,5 +30,6 @@ func activate() -> void:
 		Global.area_cur_event = next_event
 		SceneManager.change_scene("res://events/event_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f"), "skip_fade_out": true, "skip_fade_in": true })
 		return
+	Global.area_cur_event = null
 	SceneManager.change_scene(next_scene if next_scene != "" else "res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
 

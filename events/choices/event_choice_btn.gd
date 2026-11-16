@@ -7,6 +7,7 @@ const CHOISE_BTN_D: StyleBox = preload("res://events/choices/choice_btn_d.tres")
 const CHOISE_BTN_N: StyleBox = preload("res://events/choices/choice_btn_n.tres")
 
 var resource: EventChoise
+var _is_activating: bool = false
 
 @onready var btn: Button = $btn
 @onready var sound: AudioStreamPlayer = $sound
@@ -102,72 +103,108 @@ func _remove_matching_modifiers(filter_str: String, blacklist_str: String, max_t
 	return removed_count
 
 func _on_btn_pressed() -> void:
-	if Global.game_is_played == true:
-		modulate = Color.WHITE
-		if resource.gold_cost > 0:
-			Global.cur_char.modify_stat("gold", -resource.gold_cost)
-		if resource.req_piece_remove:
-			Global.event_pieces_removed = _remove_matching_modifiers(
-				resource.req_piece_name,
-				resource.req_piece_remove_blacklist,
-				resource.req_piece_numb
-			)
-		if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
-			var stat_to_check = Global.cur_char.get(resource.req_stat)
-			if stat_to_check < resource.req_value:
-				var new_resource: EventChoise = resource.fail_state
-				resource = new_resource
-		match resource.type:
-			1:
-				pass
-			2:
-				pass
-			3:
-				_show_reward(
-					RewardGrantHandler.get_base_texture(resource.reward),
-					RewardGrantHandler.get_display_name(resource.reward),
-					RewardGrantHandler.get_icon(resource.reward),
-					RewardGrantHandler.get_description(resource.reward)
-				)
-				var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(resource.reward)
-				if not mods.is_empty():
-					if resource is EvtChoiseReward:
-						(resource as EvtChoiseReward).equipment_already_prompted = true
-					RewardGrantHandler.grant_reward(resource.reward, false)
+	if not Global.game_is_played or _is_activating or resource == null:
+		return
+	_is_activating = true
+	Global.game_is_played = false
+	modulate = Color.WHITE
+	if resource.gold_cost > 0:
+		Global.cur_char.modify_stat("gold", -resource.gold_cost)
+	if resource.req_piece_remove:
+		Global.event_pieces_removed = _remove_matching_modifiers(
+			resource.req_piece_name,
+			resource.req_piece_remove_blacklist,
+			resource.req_piece_numb
+		)
+	if resource.failable and resource.req_stat != "None" and resource.fail_state and resource.req_value > 0:
+		var stat_to_check = Global.cur_char.get(resource.req_stat)
+		if stat_to_check < resource.req_value:
+			var new_resource: EventChoise = resource.fail_state
+			resource = new_resource
+	match resource.type:
+		1:
+			pass
+		2:
+			pass
+		3:
+			var rew_res: Resource = resource.reward
+			if rew_res != null:
+				var is_passive: bool = RewardGrantHandler.get_reward_type(rew_res) == Reward.RewardType.PASSIVE
+				var mods: Array[Equipment] = RewardGrantHandler.get_resolved_modifiers(rew_res)
+				if is_passive and Global.cur_char != null:
+					if not Global.cur_char.can_equip_passive():
+						var p_modal := PassiveReplaceModal.new()
+						get_tree().current_scene.add_child(p_modal)
+						p_modal.prompt_passive(rew_res)
+						await p_modal.modal_closed
+						RewardGrantHandler.grant_reward(rew_res, false)
+						_proceed_after_event_reward()
+						return
+					else:
+						Global.cur_char.equip_passive(rew_res)
+						RewardGrantHandler.grant_reward(rew_res, false)
+						_show_reward(
+							RewardGrantHandler.get_base_texture(rew_res),
+							RewardGrantHandler.get_display_name(rew_res),
+							RewardGrantHandler.get_icon(rew_res),
+							RewardGrantHandler.get_description(rew_res)
+						)
+						await get_tree().create_timer(1.5).timeout
+						_proceed_after_event_reward()
+						return
+				elif not mods.is_empty():
+					RewardGrantHandler.grant_reward(rew_res, false)
 					var overlay := InventoryOverlay.get_or_create(get_tree().root)
 					await overlay.prompt_slotting(mods)
-					if resource is EvtChoiseReward:
-						var evt_rew: EvtChoiseReward = resource as EvtChoiseReward
-						evt_rew.equipment_already_prompted = false
-						if evt_rew.fight_overwrite and not evt_rew.enemy.is_empty():
-							Global.post_combat_event = evt_rew.next_event
-							Global.set_up_enemy(evt_rew.enemy.pick_random())
-							SceneManager.change_scene("res://combat/combat_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-							return
-						if evt_rew.next_event != null:
-							var screen = find_parent("event_screen")
-							if screen and screen.has_method("display_event"):
-								screen.display_event(evt_rew.next_event, true)
-								return
-						SceneManager.change_scene(evt_rew.next_scene if evt_rew.next_scene != "" else "res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-						return
-				await get_tree().create_timer(1.5).timeout
-				if resource is EvtChoiseReward and resource.next_event != null:
-					resource.handled_in_place = true
-					next_event_requested.emit(resource.next_event)
-					var screen = find_parent("event_screen")
-					if screen and screen.has_method("display_event"):
-						screen.display_event(resource.next_event, true)
-						return
-			4:
-				if resource is EvtChoiseEvent and resource.next_event != null:
-					resource.handled_in_place = true
-					next_event_requested.emit(resource.next_event)
-					var screen = find_parent("event_screen")
-					if screen and screen.has_method("display_event"):
-						screen.display_event(resource.next_event, true)
-						return
-		resource.activate()
+					_proceed_after_event_reward()
+					return
+				else:
+					_show_reward(
+						RewardGrantHandler.get_base_texture(rew_res),
+						RewardGrantHandler.get_display_name(rew_res),
+						RewardGrantHandler.get_icon(rew_res),
+						RewardGrantHandler.get_description(rew_res)
+					)
+					RewardGrantHandler.grant_reward(rew_res, true)
+					await get_tree().create_timer(1.5).timeout
+					_proceed_after_event_reward()
+					return
+			_proceed_after_event_reward()
+			return
+		4:
+			if resource is EvtChoiseEvent and resource.next_event != null:
+				resource.handled_in_place = true
+				next_event_requested.emit(resource.next_event)
+				var screen = find_parent("event_screen")
+				if screen and screen.has_method("display_event"):
+					screen.display_event(resource.next_event, true)
+					return
+	resource.activate()
+
+func _proceed_after_event_reward() -> void:
+	if not (resource is EvtChoiseReward):
+		Global.area_cur_event = null
+		SceneManager.change_scene("res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		return
+	var evt_rew: EvtChoiseReward = resource as EvtChoiseReward
+	if evt_rew.fight_overwrite and not evt_rew.enemy.is_empty():
+		Global.area_cur_event = null
+		Global.post_combat_event = evt_rew.next_event
+		Global.set_up_enemy(evt_rew.enemy.pick_random())
+		SceneManager.change_scene("res://combat/combat_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		return
+	if evt_rew.next_event != null:
+		evt_rew.handled_in_place = true
+		next_event_requested.emit(evt_rew.next_event)
+		var screen = find_parent("event_screen")
+		if screen and screen.has_method("display_event"):
+			screen.display_event(evt_rew.next_event, true)
+			return
+		Global.area_cur_event = evt_rew.next_event
+		SceneManager.change_scene("res://events/event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true, "skip_fade_in": true })
+		return
+	Global.area_cur_event = null
+	SceneManager.change_scene(evt_rew.next_scene if evt_rew.next_scene != "" else "res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 
 func _show_reward(texture: Texture2D, text: String, icon: Texture2D, desc: String) -> void:
 	reward_requested.emit(texture, text, icon, desc)

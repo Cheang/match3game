@@ -9,6 +9,7 @@ var type: int = 2
 
 func activate() -> void:
 	Global.game_is_played = false
+	Global.area_cur_event = null
 	Global.post_combat_event = next_event
 	if not enemy.is_empty():
 		Global.set_up_enemy(enemy.pick_random())

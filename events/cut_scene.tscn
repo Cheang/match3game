@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://gyx6asv6mijb" path="res://assets/sprites/events/cutscent_npc_empty.png" id="4_k8dlh"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/font_153.ttf" id="4_motxn"]
 [ext_resource type="Texture2D" uid="uid://bngb10eshcyu4" path="res://assets/sprites/ui/legacy/btn/btn_disabled.png" id="6_aq4i2"]
-[ext_resource type="PackedScene" uid="uid://b0elnudfkd65c" path="res://ui/common/pause.tscn" id="8_pj72e"]
 
 [sub_resource type="Animation" id="Animation_2663v"]
 length = 0.001
@@ -204,11 +203,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 flat = true
-
-[node name="pause" parent="." instance=ExtResource("8_pj72e")]
-layout_mode = 1
-player_stats_btn = false
-title_container = false
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
