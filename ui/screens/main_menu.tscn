@@ -3,17 +3,18 @@
 [ext_resource type="Script" uid="uid://ct6wwrp2oytjw" path="res://ui/screens/main_menu.gd" id="1_m0wtd"]
 [ext_resource type="Script" uid="uid://dwl0c4xoyd7ha" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/sprites/ui/legacy/main_menu_n_bg.png" id="3_3j6ne"]
-[ext_resource type="Texture2D" uid="uid://bahgdocqkjnq6" path="res://assets/sprites/ui/legacy/logo.png" id="3_jb5a2"]
 [ext_resource type="AudioStream" uid="uid://cbyp8x25usevd" path="res://assets/audio/music/daichovo_horo/daichovo1.wav" id="3_m2mcr"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="4_ah0x7"]
 [ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://assets/audio/music/daichovo_horo/daichovo2.wav" id="4_s20nw"]
 [ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://assets/audio/music/daichovo_horo/daichovo3.wav" id="5_hglwg"]
 [ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://map/areas/area_1.tres" id="6_h344n"]
-[ext_resource type="Texture2D" uid="uid://ba7g4uk3q3qcl" path="res://assets/sprites/ui/legacy/logo_under.png" id="9_qvpqg"]
-[ext_resource type="StyleBox" uid="uid://bovr1j1wiyher" path="res://assets/sprites/ui/legacy/btn/mm_btn.tres" id="10_joudq"]
-[ext_resource type="StyleBox" uid="uid://chaulfts06r4f" path="res://assets/sprites/ui/legacy/btn/mm_btn_hover.tres" id="10_o0vf0"]
-[ext_resource type="StyleBox" uid="uid://x6s2efs4240q" path="res://assets/sprites/ui/legacy/btn/mm_btn_disabled.tres" id="10_qd8a3"]
-[ext_resource type="StyleBox" uid="uid://cr7av6l58fdea" path="res://assets/sprites/ui/legacy/btn/mm_btn_pressed.tres" id="11_dux4l"]
+[ext_resource type="Texture2D" uid="uid://bhjlgpk4qeegw" path="res://assets/sprites/ui/main_menu/folktiles_logo.png" id="7_logo"]
+[ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/main_menu/buttons_background.png" id="8_cloth_bg"]
+[ext_resource type="Texture2D" uid="uid://dcloks6jxmooy" path="res://assets/sprites/ui/main_menu/button_unselected.png" id="9_btn_norm"]
+[ext_resource type="Texture2D" uid="uid://kgacc1j1rn0h" path="res://assets/sprites/ui/main_menu/button_selected.png" id="10_btn_sel"]
+[ext_resource type="Texture2D" uid="uid://d3cawoeht7j1c" path="res://assets/sprites/ui/main_menu/button_pressed.png" id="11_btn_press"]
+[ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/main_menu/button_disabled.png" id="12_btn_dis"]
+[ext_resource type="Material" path="res://assets/shaders/cloth_banner_sway.tres" id="13_cloth_mat"]
 
 [sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
 fade_time = 0.0
@@ -26,6 +27,34 @@ stream_2 = ExtResource("5_hglwg")
 script = ExtResource("2_5u2am")
 name = "MM"
 track = SubResource("AudioStreamPlaylist_gqk43")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_normal"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("9_btn_norm")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("10_btn_sel")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("11_btn_press")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("12_btn_dis")
 
 [node name="main_menu" type="Control" unique_id=2036192885]
 layout_mode = 3
@@ -51,7 +80,7 @@ texture = ExtResource("3_3j6ne")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1871444100]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -59,7 +88,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer" unique_id=1982093065]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 60
@@ -68,118 +97,155 @@ theme_override_constants/margin_bottom = 24
 
 [node name="ContentVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer" unique_id=1354293868]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 0
 
 [node name="LogoRect" type="TextureRect" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=1976566993]
-custom_minimum_size = Vector2(400, 150)
-layout_mode = 2
-texture = ExtResource("3_jb5a2")
-stretch_mode = 5
-
-[node name="LogoUnder" type="TextureRect" parent="CenterContainer/MarginContainer/ContentVBox/LogoRect" unique_id=1662326693]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -75.0
-offset_right = 200.0
-offset_bottom = 75.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("9_qvpqg")
-stretch_mode = 3
-
-[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=1415307309]
+z_index = 1
+custom_minimum_size = Vector2(372, 125)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 20
+texture = ExtResource("7_logo")
+stretch_mode = 3
 
-[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(0, 55)
+[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/MarginContainer/ContentVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
-theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+size_flags_horizontal = 4
+theme_override_constants/margin_top = -4
+
+[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin"]
+custom_minimum_size = Vector2(320, 264)
+layout_mode = 2
+
+[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot"]
+material = ExtResource("13_cloth_mat")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_cloth_bg")
+patch_margin_left = 16
+patch_margin_top = 0
+patch_margin_right = 16
+patch_margin_bottom = 0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 1
+
+[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter" unique_id=1415307309]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(118, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
-theme_override_styles/normal = ExtResource("10_joudq")
-theme_override_styles/pressed = ExtResource("11_dux4l")
-theme_override_styles/hover = ExtResource("10_o0vf0")
-theme_override_styles/hover_pressed = ExtResource("11_dux4l")
-theme_override_styles/disabled = ExtResource("10_qd8a3")
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "New Story"
 
-[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(0, 55)
+[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(118, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
-theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
-theme_override_styles/normal = ExtResource("10_joudq")
-theme_override_styles/pressed = ExtResource("11_dux4l")
-theme_override_styles/hover = ExtResource("10_o0vf0")
-theme_override_styles/hover_pressed = ExtResource("11_dux4l")
-theme_override_styles/disabled = ExtResource("10_qd8a3")
-text = "Continue a Story"
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "Continue"
 
-[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(0, 55)
+[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(118, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
-theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
-theme_override_styles/normal = ExtResource("10_joudq")
-theme_override_styles/pressed = ExtResource("11_dux4l")
-theme_override_styles/hover = ExtResource("10_o0vf0")
-theme_override_styles/hover_pressed = ExtResource("11_dux4l")
-theme_override_styles/disabled = ExtResource("10_qd8a3")
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Settings"
 
-[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(0, 55)
+[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(118, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
-theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
-theme_override_styles/normal = ExtResource("10_joudq")
-theme_override_styles/pressed = ExtResource("11_dux4l")
-theme_override_styles/hover = ExtResource("10_o0vf0")
-theme_override_styles/hover_pressed = ExtResource("11_dux4l")
-theme_override_styles/disabled = ExtResource("10_qd8a3")
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Test"
 
-[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(0, 55)
+[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(118, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.690196, 1)
-theme_override_colors/font_focus_color = Color(0.992157, 0.796078, 0.690196, 1)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.780392, 0.862745, 0.815686, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(0.478431, 0.188235, 0.270588, 1)
-theme_override_styles/normal = ExtResource("10_joudq")
-theme_override_styles/pressed = ExtResource("11_dux4l")
-theme_override_styles/hover = ExtResource("10_o0vf0")
-theme_override_styles/hover_pressed = ExtResource("11_dux4l")
-theme_override_styles/disabled = ExtResource("10_qd8a3")
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Retire"
 
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/start" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/load" to="." method="_on_load_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/test" to="." method="_on_test_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/ButtonsVBox/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/test" to="." method="_on_test_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/quit" to="." method="_on_quit_pressed"]

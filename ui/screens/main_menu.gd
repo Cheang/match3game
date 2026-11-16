@@ -5,12 +5,36 @@ extends Control
 
 var area_to_load: LocationLoader
 var choise_made: bool = false
+var _sway_time: float = 0.0
 
 @onready var load_btn: Button = find_child("load", true, false) as Button
+@onready var cloth_banner: NinePatchRect = find_child("ClothBanner", true, false) as NinePatchRect
+@onready var buttons_vbox: VBoxContainer = find_child("ButtonsVBox", true, false) as VBoxContainer
 
 
 func _ready() -> void:
 	call_deferred("_initialize_scene")
+
+
+func _process(delta: float) -> void:
+	_sway_time += delta * 1.8
+	_apply_button_sway()
+
+
+func _apply_button_sway() -> void:
+	if cloth_banner == null or buttons_vbox == null or cloth_banner.size.y <= 0.0:
+		return
+	for child in buttons_vbox.get_children():
+		var btn: Button = child as Button
+		if btn == null or not btn.visible:
+			continue
+		var rel_y: float = (btn.global_position.y + btn.size.y * 0.5) - cloth_banner.global_position.y
+		var y_norm: float = clampf(rel_y / maxf(cloth_banner.size.y, 1.0), 0.0, 1.0)
+		var pin_factor: float = pow(y_norm, 1.35)
+		var phase: float = y_norm * 2.6 * PI
+		var wave: float = sin(phase - _sway_time) * 0.72 + sin(phase * 1.9 - _sway_time * 1.35 + 0.7) * 0.28
+		var dx: float = floor(wave * 3.5 * pin_factor + 0.5)
+		btn.position.x = (buttons_vbox.size.x - btn.size.x) * 0.5 + dx
 
 
 func _initialize_scene() -> void:
