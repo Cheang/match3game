@@ -250,7 +250,22 @@ func _ready() -> void:
 	assert(overlay.graphics_btn.disabled == true, "Graphics button must be disabled")
 	assert(overlay.main_menu_btn != null, "Main Menu button must exist")
 	assert(overlay.main_menu_btn.disabled == false, "Main Menu button must be enabled")
-	print("Settings tab and buttons verified!")
+	assert(overlay.settings_panel != null, "InventoryOverlay must embed shared SettingsPanel")
+	assert(overlay.settings_panel.show_main_menu_button == true and overlay.main_menu_btn.visible == true, "SettingsPanel in overlay shows MainMenuBtn")
+	assert(overlay.settings_panel.back_btn != null and overlay.settings_panel.back_btn.visible == false, "SettingsPanel in overlay hides BackBtn")
+	var orig_master: float = Global.setting_res.set_audio_audio_lvl
+	overlay.settings_panel.master_slider.value = 0.65
+	assert(is_equal_approx(Global.setting_res.set_audio_audio_lvl, 0.65), "Overlay SettingsPanel slider must update Global.setting_res")
+	overlay.settings_panel.master_slider.value = orig_master
+
+	var settings_menu_scene: PackedScene = load("res://ui/screens/settings_screen.tscn")
+	var settings_menu_inst := settings_menu_scene.instantiate()
+	add_child(settings_menu_inst)
+	assert(settings_menu_inst.settings_panel != null, "settings_screen.tscn must also embed shared SettingsPanel")
+	assert(settings_menu_inst.settings_panel.show_back_button == true and settings_menu_inst.settings_panel.back_btn.visible == true, "SettingsPanel in settings_screen shows BackBtn")
+	assert(settings_menu_inst.settings_panel.show_main_menu_button == false and settings_menu_inst.settings_panel.main_menu_btn.visible == false, "SettingsPanel in settings_screen hides MainMenuBtn")
+	settings_menu_inst.queue_free()
+	print("Settings tab and shared SettingsPanel verified!")
 
 	# Test Nav Button Order: 0 = Loadout (Left), 1 = Stats (Middle), 2 = Settings (Right)
 	assert(overlay.bottom_nav_box.get_child(0) == overlay.loadout_nav_btn, "Child 0 must be Loadout nav button")

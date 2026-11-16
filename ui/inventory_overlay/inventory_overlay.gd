@@ -32,6 +32,8 @@ const DescColorBadgeClass = preload("res://ui/inventory_overlay/desc_color_badge
 const DescSlotBadgeClass = preload("res://ui/inventory_overlay/desc_slot_badge.gd")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
 const BODY_FONT = preload("res://assets/theme/font_153.ttf")
+const SettingsPanelClass = preload("res://ui/common/settings_panel.gd")
+const SETTINGS_PANEL_SCENE = preload("res://ui/common/settings_panel.tscn")
 
 @export var description_panel_height: float = 200.0:
 	set(val):
@@ -83,6 +85,7 @@ var description_label: RichTextLabel
 var stats_view: Control
 
 var settings_view: Control
+var settings_panel: Control = null
 var settings_vbox: VBoxContainer
 var almanac_btn: Button
 var sound_btn: Button
@@ -925,7 +928,7 @@ func _build_ui_if_needed() -> void:
 		stats_view.visible = false
 		vbox.add_child(stats_view)
 
-	# 4. Settings View (CenterContainer with 4 buttons)
+	# 4. Settings View (Shared SettingsPanel element)
 	settings_view = vbox.find_child("SettingsView", true, false) as Control
 	if settings_view == null:
 		settings_view = CenterContainer.new()
@@ -934,44 +937,25 @@ func _build_ui_if_needed() -> void:
 		settings_view.visible = false
 		vbox.add_child(settings_view)
 
-	settings_vbox = settings_view.find_child("SettingsVBox", true, false) as VBoxContainer
-	if settings_vbox == null:
-		settings_vbox = VBoxContainer.new()
-		settings_vbox.name = "SettingsVBox"
-		settings_vbox.custom_minimum_size = Vector2(280, 0)
-		settings_vbox.add_theme_constant_override("separation", 14)
-		settings_view.add_child(settings_vbox)
+	settings_panel = settings_view.find_child("SettingsPanel", true, false) as Control
+	if settings_panel == null:
+		if SETTINGS_PANEL_SCENE != null:
+			settings_panel = SETTINGS_PANEL_SCENE.instantiate() as Control
+		if settings_panel == null:
+			settings_panel = SettingsPanelClass.new()
+		settings_panel.name = "SettingsPanel"
+		settings_view.add_child(settings_panel)
 
-	almanac_btn = settings_vbox.find_child("AlmanacBtn", true, false) as Button
-	if almanac_btn == null:
-		almanac_btn = _create_nav_button("Almanac", true)
-		almanac_btn.name = "AlmanacBtn"
-		almanac_btn.custom_minimum_size = Vector2(280, 48)
-		settings_vbox.add_child(almanac_btn)
+	settings_panel.show_main_menu_button = true
+	settings_panel.show_back_button = false
+	if not settings_panel.main_menu_requested.is_connected(_on_main_menu_pressed):
+		settings_panel.main_menu_requested.connect(_on_main_menu_pressed)
 
-	sound_btn = settings_vbox.find_child("SoundBtn", true, false) as Button
-	if sound_btn == null:
-		sound_btn = _create_nav_button("Sound", true)
-		sound_btn.name = "SoundBtn"
-		sound_btn.custom_minimum_size = Vector2(280, 48)
-		settings_vbox.add_child(sound_btn)
-
-	graphics_btn = settings_vbox.find_child("GraphicsBtn", true, false) as Button
-	if graphics_btn == null:
-		graphics_btn = _create_nav_button("Graphics", true)
-		graphics_btn.name = "GraphicsBtn"
-		graphics_btn.custom_minimum_size = Vector2(280, 48)
-		settings_vbox.add_child(graphics_btn)
-
-	main_menu_btn = settings_vbox.find_child("MainMenuBtn", true, false) as Button
-	if main_menu_btn == null:
-		main_menu_btn = _create_nav_button("Main Menu", false)
-		main_menu_btn.name = "MainMenuBtn"
-		main_menu_btn.custom_minimum_size = Vector2(280, 48)
-		settings_vbox.add_child(main_menu_btn)
-
-	if not main_menu_btn.pressed.is_connected(_on_main_menu_pressed):
-		main_menu_btn.pressed.connect(_on_main_menu_pressed)
+	settings_vbox = settings_panel.find_child("SettingsVBox", true, false) as VBoxContainer
+	almanac_btn = settings_panel.almanac_btn
+	sound_btn = settings_panel.sound_btn
+	graphics_btn = settings_panel.graphics_btn
+	main_menu_btn = settings_panel.main_menu_btn
 
 	# 5. Bottom Navigation Row (Loadout, Stats, Settings)
 	bottom_nav_box = vbox.find_child("BottomNavBox", true, false) as HBoxContainer
@@ -1104,6 +1088,8 @@ func switch_tab(tab: Tab) -> void:
 		Tab.SETTINGS:
 			if header_label != null:
 				header_label.text = "Settings"
+			if settings_panel != null:
+				settings_panel.sync_from_settings()
 			_update_nav_button_highlights(settings_nav_btn)
 
 func _update_nav_button_highlights(active_btn: Button) -> void:
@@ -1134,6 +1120,7 @@ func _on_settings_nav_pressed() -> void:
 	switch_tab(Tab.SETTINGS)
 
 func _on_main_menu_pressed() -> void:
+	Global.save()
 	close()
 	Global.game_is_played = true
 	var tree := Engine.get_main_loop() as SceneTree

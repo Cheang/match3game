@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://cs5g3dc5ygn8b" path="res://ui/inventory_overlay/desc_preview_frame.gd" id="9_preview_frame"]
 [ext_resource type="Script" uid="uid://dvypw4hydlvy2" path="res://ui/inventory_overlay/desc_color_badge.gd" id="10_color_badge"]
 [ext_resource type="Script" uid="uid://58ivk1opy8lb" path="res://ui/inventory_overlay/desc_slot_badge.gd" id="11_slot_badge"]
+[ext_resource type="PackedScene" path="res://ui/common/settings_panel.tscn" id="12_settings_panel"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
 content_margin_left = 10.0
@@ -244,53 +245,10 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SettingsVBox" type="VBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView" unique_id=1560401009]
-custom_minimum_size = Vector2(280, 0)
+[node name="SettingsPanel" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView" instance=ExtResource("12_settings_panel")]
 layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="AlmanacBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=504298805]
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
-theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
-disabled = true
-text = "Almanac"
-
-[node name="SoundBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=1588936572]
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
-theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
-disabled = true
-text = "Sound"
-
-[node name="GraphicsBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=1324135877]
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_disabled_color = Color(0.44, 0.38, 0.46, 0.8)
-theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
-disabled = true
-text = "Graphics"
-
-[node name="MainMenuBtn" type="Button" parent="Center/MainPanel/MarginContainer/ContentVBox/SettingsView/SettingsVBox" unique_id=2098008964]
-custom_minimum_size = Vector2(280, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.180392, 0.14902, 0.2, 1)
-theme_override_colors/font_pressed_color = Color(0.06, 0.05, 0.08, 1)
-theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.11, 1)
-theme_override_fonts/font = ExtResource("5_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
-text = "Main Menu"
+show_main_menu_button = true
+show_back_button = false
 
 [node name="BottomNavBox" type="HBoxContainer" parent="Center/MainPanel/MarginContainer/ContentVBox" unique_id=576035909]
 custom_minimum_size = Vector2(520, 44)
