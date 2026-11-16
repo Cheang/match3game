@@ -59,16 +59,6 @@ func _on_load_pressed() -> void:
 		SceneManager.change_scene(Global.cur_scene, { "pattern": "diagonal", "color": Color("#2e222f") })
 
 
-func _on_char_select_pressed() -> void:
-	if not choise_made:
-		const HERO_SELECT_SCENE := "res://ui/screens/hero_select_screen.tscn"
-		if ResourceLoader.exists(HERO_SELECT_SCENE):
-			choise_made = true
-			SceneManager.change_scene(HERO_SELECT_SCENE, { "pattern": "diagonal", "color": Color("#484a77") })
-		else:
-			print("[LoreTiles] Character select screen is under development.")
-
-
 func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
