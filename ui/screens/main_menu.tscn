@@ -145,7 +145,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(118, 38)
+custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -155,7 +155,7 @@ theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
@@ -165,7 +165,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "New Story"
 
 [node name="load" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(118, 38)
+custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -175,7 +175,7 @@ theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
@@ -185,7 +185,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Continue"
 
 [node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(118, 38)
+custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -195,7 +195,7 @@ theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
@@ -205,7 +205,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Settings"
 
 [node name="test" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(118, 38)
+custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -215,7 +215,7 @@ theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
@@ -225,7 +225,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Test"
 
 [node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
-custom_minimum_size = Vector2(118, 38)
+custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -235,7 +235,7 @@ theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
