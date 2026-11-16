@@ -316,10 +316,10 @@ func _ready() -> void:
 		if row.track_color == 100:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY, "Red track must use normal empty sprite")
 			assert(row.diamond_slots[0].modulate == Color.WHITE, "Red track diamond slots must not be dimmed")
-			assert(row.ult_slot.modulate.a < 0.9, "Ultimate slot must be dimmed for non-ultimate shard")
+			assert(row.ult_slot.modulate == Color.WHITE, "Ultimate slot must stay visually unchanged")
 		else:
 			assert(row.bg_rect.texture == row.TEX_TRACK_EMPTY_DISABLED, "Incompatible or empty track (%d) must use disabled sprite" % row.track_color)
-			assert(row.diamond_slots[0].modulate.a < 0.9, "Incompatible/empty track slots must be grayed out")
+			assert(row.diamond_slots[0].modulate == Color.WHITE, "Incompatible/empty track slot icons/frames must stay unchanged")
 
 	# Verify drag data helper from floating shard dock (without triggering native Godot drag)
 	var drag_data: Variant = overlay.floating_shard_dock.get_floating_drag_data(Vector2(20, 20))

@@ -349,16 +349,14 @@ func set_compatibility_state(candidate: Equipment, required_track: ColorLoadoutT
 	else:
 		_set_row_visual_state(false, false, true)
 
-func _set_row_visual_state(disabled_bg: bool, ult_enabled: bool, basics_enabled: bool) -> void:
-	const DIMMED_COLOR := Color(0.35, 0.35, 0.4, 0.5)
+func _set_row_visual_state(disabled_bg: bool, _ult_enabled: bool = true, _basics_enabled: bool = true) -> void:
 	if bg_rect != null:
 		bg_rect.texture = TEX_TRACK_EMPTY_DISABLED if disabled_bg else TEX_TRACK_EMPTY
 	if ult_slot != null:
-		ult_slot.modulate = Color.WHITE if ult_enabled else DIMMED_COLOR
-	var basic_col := Color.WHITE if basics_enabled else DIMMED_COLOR
+		ult_slot.modulate = Color.WHITE
 	for s in diamond_slots:
 		if s != null:
-			s.modulate = basic_col
+			s.modulate = Color.WHITE
 
 func _apply_palette(s_mat: ShaderMaterial, c_id: int) -> void:
 	OverlaySlotUI.apply_palette(s_mat, c_id)
