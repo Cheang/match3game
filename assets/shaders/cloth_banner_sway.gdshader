@@ -1,19 +1,17 @@
 shader_type canvas_item;
 
 uniform float banner_height = 264.0;
-uniform float y_offset = 0.0;
 uniform float wave_amplitude : hint_range(0.0, 12.0) = 4.5;
 uniform float wave_frequency : hint_range(0.5, 10.0) = 2.6;
 uniform float wave_speed : hint_range(0.2, 10.0) = 2.0;
 uniform float fold_shading : hint_range(0.0, 0.25) = 0.05;
 uniform bool pixel_art_snap = true;
 
-varying float v_norm_y;
-varying float v_fold;
-
-void vertex() {
-	float banner_y = y_offset + VERTEX.y;
-	float y_norm = clamp(banner_y / max(banner_height, 1.0), 0.0, 1.0);
+void fragment() {
+	float y_norm = clamp(UV.y, 0.0, 1.0);
+	if (pixel_art_snap && banner_height > 0.0) {
+		y_norm = floor(y_norm * banner_height) / banner_height;
+	}
 	float pin_factor = smoothstep(0.0, 0.16, y_norm) * (0.45 + 0.55 * y_norm);
 
 	float t = TIME * wave_speed;
@@ -23,14 +21,18 @@ void vertex() {
 	if (pixel_art_snap) {
 		dx = floor(dx + 0.5);
 	}
-	VERTEX.x += dx;
 
-	v_norm_y = y_norm;
-	v_fold = cos(phase - t) * pin_factor;
-}
+	vec2 sample_uv = vec2(UV.x - dx * TEXTURE_PIXEL_SIZE.x, UV.y);
+	if (sample_uv.x < 0.0 || sample_uv.x > 1.0) {
+		discard;
+	}
 
-void fragment() {
-	vec4 col = texture(TEXTURE, UV);
-	col.rgb += vec3(v_fold * fold_shading) * col.a;
+	vec4 col = texture(TEXTURE, sample_uv);
+	if (col.a <= 0.001) {
+		discard;
+	}
+
+	float fold = cos(phase - t) * pin_factor;
+	col.rgb += vec3(fold * fold_shading) * col.a;
 	COLOR = col;
 }

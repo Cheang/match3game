@@ -5,7 +5,6 @@
 [resource]
 shader = ExtResource("1_cloth_sway")
 shader_parameter/banner_height = 264.0
-shader_parameter/y_offset = 0.0
 shader_parameter/wave_amplitude = 4.5
 shader_parameter/wave_frequency = 2.6
 shader_parameter/wave_speed = 2.0

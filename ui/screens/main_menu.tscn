@@ -112,16 +112,34 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/margin_top = -4
 
-[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin"]
-custom_minimum_size = Vector2(320, 264)
+[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin"]
+material = ExtResource("13_cloth_mat")
+custom_minimum_size = Vector2(340, 264)
 layout_mode = 2
 
-[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot"]
-material = ExtResource("13_cloth_mat")
+[node name="BannerViewport" type="SubViewport" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(340, 264)
+render_target_update_mode = 4
+
+[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport"]
+custom_minimum_size = Vector2(340, 264)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("8_cloth_bg")
@@ -132,7 +150,7 @@ patch_margin_bottom = 0
 axis_stretch_horizontal = 0
 axis_stretch_vertical = 1
 
-[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot"]
+[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -140,11 +158,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter" unique_id=1415307309]
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter" unique_id=1415307309]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
+[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -164,7 +182,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "New Story"
 
-[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
+[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -184,7 +202,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Continue"
 
-[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
+[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -204,7 +222,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Settings"
 
-[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
+[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -224,7 +242,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Test"
 
-[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
+[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -244,8 +262,8 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Retire"
 
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/start" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/load" to="." method="_on_load_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/test" to="." method="_on_test_pressed"]
-[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerRoot/ButtonsCenter/ButtonsVBox/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/test" to="." method="_on_test_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/quit" to="." method="_on_quit_pressed"]
