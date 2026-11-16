@@ -34,13 +34,12 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 texture = ExtResource("9_btn_norm")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-texture = ExtResource("10_btn_sel")
+texture_margin_left = 14.0
+texture_margin_top = 8.0
+texture_margin_right = 14.0
+texture_margin_bottom = 8.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 1
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
 content_margin_left = 0.0
@@ -48,6 +47,25 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 texture = ExtResource("11_btn_press")
+texture_margin_left = 14.0
+texture_margin_top = 8.0
+texture_margin_right = 14.0
+texture_margin_bottom = 8.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 1
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("10_btn_sel")
+texture_margin_left = 14.0
+texture_margin_top = 8.0
+texture_margin_right = 14.0
+texture_margin_bottom = 8.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 1
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
 content_margin_left = 0.0
@@ -55,6 +73,12 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 texture = ExtResource("12_btn_dis")
+texture_margin_left = 14.0
+texture_margin_top = 8.0
+texture_margin_right = 14.0
+texture_margin_bottom = 8.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 1
 
 [node name="main_menu" type="Control" unique_id=2036192885]
 layout_mode = 3
@@ -107,25 +131,25 @@ size_flags_horizontal = 4
 texture = ExtResource("7_logo")
 stretch_mode = 3
 
-[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/MarginContainer/ContentVBox"]
+[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=96738909]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/margin_top = -4
 
-[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin"]
+[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin" unique_id=871669298]
 material = ExtResource("13_cloth_mat")
-custom_minimum_size = Vector2(340, 264)
+custom_minimum_size = Vector2(340, 336)
 layout_mode = 2
 
-[node name="BannerViewport" type="SubViewport" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer"]
+[node name="BannerViewport" type="SubViewport" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer" unique_id=1512291880]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
-size = Vector2i(340, 264)
+size = Vector2i(340, 336)
 render_target_update_mode = 4
 
-[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport"]
-custom_minimum_size = Vector2(340, 264)
+[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport" unique_id=958315664]
+custom_minimum_size = Vector2(340, 336)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -133,7 +157,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=1972187977]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,13 +168,10 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("8_cloth_bg")
 patch_margin_left = 16
-patch_margin_top = 0
 patch_margin_right = 16
-patch_margin_bottom = 0
-axis_stretch_horizontal = 0
 axis_stretch_vertical = 1
 
-[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=196373978]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -160,7 +181,7 @@ grow_vertical = 2
 
 [node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter" unique_id=1415307309]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 16
 
 [node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
 custom_minimum_size = Vector2(206, 38)
