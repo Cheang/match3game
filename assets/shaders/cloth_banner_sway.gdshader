@@ -1,6 +1,6 @@
 shader_type canvas_item;
 
-uniform float banner_height = 336.0;
+uniform float banner_height = 448.0;
 uniform float wave_amplitude : hint_range(0.0, 12.0) = 4.5;
 uniform float wave_frequency : hint_range(0.5, 10.0) = 2.6;
 uniform float wave_speed : hint_range(0.2, 10.0) = 2.0;
