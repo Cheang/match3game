@@ -3,13 +3,21 @@ extends Control
 @export var song: MusicTrack
 @export var def_area: LocationLoader
 
+static var returning_from_settings: bool = false
+
 var area_to_load: LocationLoader
 var choise_made: bool = false
 
 @onready var load_btn: Button = find_child("load", true, false) as Button
+@onready var content_vbox: Control = find_child("ContentVBox", true, false) as Control
 
 
 func _ready() -> void:
+	if returning_from_settings:
+		returning_from_settings = false
+		if content_vbox != null:
+			content_vbox.modulate.a = 0.0
+			create_tween().tween_property(content_vbox, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	call_deferred("_initialize_scene")
 
 
@@ -62,7 +70,15 @@ func _on_load_pressed() -> void:
 func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
-		SceneManager.change_scene("res://ui/screens/settings_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
+		if content_vbox != null:
+			var tw := create_tween()
+			tw.tween_property(content_vbox, "modulate:a", 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			await tw.finished
+		SceneManager.change_scene("res://ui/screens/settings_screen.tscn", {
+			"skip_fade_out": true,
+			"skip_fade_in": true,
+			"wait_time": 0.0,
+		})
 
 
 func _on_test_pressed() -> void:

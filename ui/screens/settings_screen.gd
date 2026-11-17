@@ -1,7 +1,13 @@
 extends Control
 
+const MainMenuScript := preload("res://ui/screens/main_menu.gd")
+
 @onready var settings_panel: Control = find_child("SettingsPanel", true, false) as Control
 @onready var back_btn: Button = find_child("BackBtn", true, false) as Button
+@onready var banner_viewport_container: SubViewportContainer = find_child("BannerViewportContainer", true, false) as SubViewportContainer
+@onready var banner_viewport: SubViewport = find_child("BannerViewport", true, false) as SubViewport
+
+var _is_leaving: bool = false
 
 var master_slider: HSlider:
 	get: return settings_panel.master_slider if settings_panel != null else null
@@ -25,6 +31,26 @@ func _ready() -> void:
 	if back_btn != null and not back_btn.pressed.is_connected(_on_back_pressed):
 		back_btn.pressed.connect(_on_back_pressed)
 
+	if banner_viewport_container != null:
+		if not banner_viewport_container.resized.is_connected(_sync_banner_shader_height):
+			banner_viewport_container.resized.connect(_sync_banner_shader_height)
+		_sync_banner_shader_height()
+		var drop_h: float = maxf(get_viewport_rect().size.y, 1024.0)
+		banner_viewport_container.position.y = -drop_h
+		var tw := create_tween()
+		tw.tween_property(banner_viewport_container, "position:y", 0.0, 0.42).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
+
+func _sync_banner_shader_height() -> void:
+	if banner_viewport_container == null:
+		return
+	var mat := banner_viewport_container.material as ShaderMaterial
+	if mat == null:
+		return
+	var h: float = float(banner_viewport.size.y) if banner_viewport != null and banner_viewport.size.y > 0 else banner_viewport_container.size.y
+	if h > 0.0:
+		mat.set_shader_parameter("banner_height", h)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -33,5 +59,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_back_pressed() -> void:
-	await get_tree().create_timer(0.1).timeout
-	SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color("#484a77") })
+	if _is_leaving:
+		return
+	_is_leaving = true
+	MainMenuScript.returning_from_settings = true
+	if banner_viewport_container != null and is_inside_tree():
+		var retract_h: float = maxf(banner_viewport_container.size.y, 1024.0)
+		var tw := create_tween()
+		tw.tween_property(banner_viewport_container, "position:y", -retract_h, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await tw.finished
+	SceneManager.change_scene("res://ui/screens/main_menu.tscn", {
+		"skip_fade_out": true,
+		"skip_fade_in": true,
+		"wait_time": 0.0,
+	})
