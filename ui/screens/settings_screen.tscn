@@ -12,6 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/main_menu/button_disabled.png" id="10_btn_dis"]
 [ext_resource type="Shader" uid="uid://d13gs3so60pu8" path="res://assets/shaders/cloth_banner_sway.gdshader" id="11_cloth_shader"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="12_btn_gen"]
+[ext_resource type="Texture2D" uid="uid://bvhgxtdy7q5a5" path="res://assets/sprites/ui/general_ui/mute_button/button_mute_checked.png" id="13_mute_checked"]
+[ext_resource type="Texture2D" uid="uid://bqcjw0h4n83fo" path="res://assets/sprites/ui/general_ui/mute_button/button_mute_unchecked.png" id="14_mute_unchecked"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_settings_cloth"]
 shader = ExtResource("11_cloth_shader")
@@ -198,7 +200,7 @@ theme_override_font_sizes/font_size = 16
 text = "Master"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master" unique_id=813739610]
-custom_minimum_size = Vector2(245, 24)
+custom_minimum_size = Vector2(245, 36)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -206,6 +208,8 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme_override_icons/checked = ExtResource("13_mute_checked")
+theme_override_icons/unchecked = ExtResource("14_mute_unchecked")
 
 [node name="MasterSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master/HBoxContainer" unique_id=1790884366]
 layout_mode = 2
@@ -228,7 +232,7 @@ theme_override_font_sizes/font_size = 16
 text = "Music"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music" unique_id=924558814]
-custom_minimum_size = Vector2(245, 24)
+custom_minimum_size = Vector2(245, 36)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -236,6 +240,8 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme_override_icons/checked = ExtResource("13_mute_checked")
+theme_override_icons/unchecked = ExtResource("14_mute_unchecked")
 
 [node name="MusicSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music/HBoxContainer" unique_id=2123115193]
 layout_mode = 2
@@ -258,7 +264,7 @@ theme_override_font_sizes/font_size = 16
 text = "SFX"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx" unique_id=2034789793]
-custom_minimum_size = Vector2(245, 24)
+custom_minimum_size = Vector2(245, 36)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -266,6 +272,8 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme_override_icons/checked = ExtResource("13_mute_checked")
+theme_override_icons/unchecked = ExtResource("14_mute_unchecked")
 
 [node name="SFXSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx/HBoxContainer" unique_id=219481114]
 layout_mode = 2
