@@ -275,53 +275,17 @@ max_value = 1.0
 step = 0.05
 scrollable = false
 
-[node name="SettingsVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel" unique_id=405272068]
+[node name="GraphicsVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel"]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
-[node name="SoundBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" unique_id=571412569 instance=ExtResource("12_btn_gen")]
-visible = false
-custom_minimum_size = Vector2(245, 60)
+[node name="GraphicsHeader" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/GraphicsVBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_fonts/font = ExtResource("3_title_font")
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
-theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
-theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
-disabled = true
-text = "Sound"
-
-[node name="GraphicsBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" unique_id=725282671 instance=ExtResource("12_btn_gen")]
-custom_minimum_size = Vector2(245, 60)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
-theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
-theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
-theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
-disabled = true
 text = "Graphics"
+horizontal_alignment = 1
 
 [node name="BackBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox" unique_id=1364496359 instance=ExtResource("12_btn_gen")]
 custom_minimum_size = Vector2(245, 60)
