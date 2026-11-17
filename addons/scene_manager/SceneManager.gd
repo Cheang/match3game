@@ -113,12 +113,15 @@ func change_scene(path: Variant, setted_options: Dictionary = {}) -> void:
 		await fade_out(setted_options)
 	if not options["skip_scene_change"]:
 		if path == null:
-			_reload_scene()
+			await _reload_scene()
 		else:
-			_replace_scene(path, options)
-	await _tree.create_timer(options["wait_time"]).timeout
+			await _replace_scene(path, options)
+	if options["wait_time"] > 0.0:
+		await _tree.create_timer(options["wait_time"]).timeout
 	if not options["skip_fade_in"]:
 		await fade_in(setted_options)
+	else:
+		is_transitioning = false
 
 func reload_scene(setted_options: Dictionary = {}) -> void:
 	await change_scene(null, setted_options)
@@ -133,12 +136,25 @@ func fade_in_place(setted_options: Dictionary = {}) -> void:
 	await change_scene(null, setted_options)
 
 func _replace_scene(path: Variant, options: Dictionary) -> void:
-	_current_scene.queue_free()
-	scene_unloaded.emit()
+	var old_scene: Node = _current_scene
 	var following_scene: PackedScene = _load_scene_resource(path)
-	_current_scene = following_scene.instantiate()
-	_current_scene.tree_entered.connect(options["on_tree_enter"].bind(_current_scene))
-	_current_scene.ready.connect(options["on_ready"].bind(_current_scene))
+	var new_scene: Node = following_scene.instantiate()
+	new_scene.tree_entered.connect(options["on_tree_enter"].bind(new_scene))
+	new_scene.ready.connect(options["on_ready"].bind(new_scene))
+	if options.get("skip_fade_out", false):
+		_current_scene = new_scene
+		_root.add_child(new_scene)
+		_tree.set_current_scene(new_scene)
+		if is_instance_valid(old_scene):
+			old_scene.queue_free()
+			scene_unloaded.emit()
+		_set_singleton_entities()
+		_previous_scene = new_scene
+		return
+	if is_instance_valid(old_scene):
+		old_scene.queue_free()
+		scene_unloaded.emit()
+	_current_scene = new_scene
 	await _tree.create_timer(0.0).timeout
 	_root.add_child(_current_scene)
 	_tree.set_current_scene(_current_scene)

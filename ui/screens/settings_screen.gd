@@ -4,6 +4,7 @@ const MainMenuScript := preload("res://ui/screens/main_menu.gd")
 
 @onready var settings_panel: Control = find_child("SettingsPanel", true, false) as Control
 @onready var back_btn: Button = find_child("BackBtn", true, false) as Button
+@onready var cloth_drop_anchor: Control = find_child("ClothDropAnchor", true, false) as Control
 @onready var banner_viewport_container: SubViewportContainer = find_child("BannerViewportContainer", true, false) as SubViewportContainer
 @onready var banner_viewport: SubViewport = find_child("BannerViewport", true, false) as SubViewport
 
@@ -35,10 +36,18 @@ func _ready() -> void:
 		if not banner_viewport_container.resized.is_connected(_sync_banner_shader_height):
 			banner_viewport_container.resized.connect(_sync_banner_shader_height)
 		_sync_banner_shader_height()
+	if cloth_drop_anchor != null:
 		var drop_h: float = maxf(get_viewport_rect().size.y, 1024.0)
-		banner_viewport_container.position.y = -drop_h
+		_set_cloth_slide_y(-drop_h)
 		var tw := create_tween()
-		tw.tween_property(banner_viewport_container, "position:y", 0.0, 0.42).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+		tw.tween_method(_set_cloth_slide_y, -drop_h, 0.0, 0.42).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
+
+func _set_cloth_slide_y(y: float) -> void:
+	if cloth_drop_anchor == null:
+		return
+	cloth_drop_anchor.offset_top = y
+	cloth_drop_anchor.offset_bottom = y
 
 
 func _sync_banner_shader_height() -> void:
@@ -63,10 +72,10 @@ func _on_back_pressed() -> void:
 		return
 	_is_leaving = true
 	MainMenuScript.returning_from_settings = true
-	if banner_viewport_container != null and is_inside_tree():
-		var retract_h: float = maxf(banner_viewport_container.size.y, 1024.0)
+	if cloth_drop_anchor != null and is_inside_tree():
+		var retract_h: float = maxf(get_viewport_rect().size.y, 1024.0)
 		var tw := create_tween()
-		tw.tween_property(banner_viewport_container, "position:y", -retract_h, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.tween_method(_set_cloth_slide_y, cloth_drop_anchor.offset_top, -retract_h, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		await tw.finished
 	SceneManager.change_scene("res://ui/screens/main_menu.tscn", {
 		"skip_fade_out": true,

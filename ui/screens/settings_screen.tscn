@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/sprites/ui/legacy/main_menu_n_bg.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="3_title_font"]
 [ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/font_153.ttf" id="4_body_font"]
-[ext_resource type="Script" path="res://ui/common/settings_panel.gd" id="5_panel_script"]
+[ext_resource type="Script" uid="uid://cip1wgib32jq7" path="res://ui/common/settings_panel.gd" id="5_panel_script"]
 [ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/main_menu/buttons_background.png" id="6_cloth_bg"]
 [ext_resource type="Texture2D" uid="uid://dcloks6jxmooy" path="res://assets/sprites/ui/main_menu/button_unselected.png" id="7_btn_norm"]
 [ext_resource type="Texture2D" uid="uid://kgacc1j1rn0h" path="res://assets/sprites/ui/main_menu/button_selected.png" id="8_btn_sel"]
@@ -16,11 +16,12 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_settings_cloth"]
 shader = ExtResource("11_cloth_shader")
 shader_parameter/banner_height = 1024.0
-shader_parameter/wave_amplitude = 2.0
-shader_parameter/wave_frequency = 2.775
-shader_parameter/wave_speed = 1.5
-shader_parameter/fold_shading = 0.037
+shader_parameter/wave_amplitude = 3.0000001425
+shader_parameter/wave_frequency = 1.3600000408500001
+shader_parameter/wave_speed = 2.59300011664773
+shader_parameter/fold_shading = 0.030000001425
 shader_parameter/pixel_art_snap = false
+shader_parameter/fade_alpha = 1.0
 shader_parameter/top_shadow_dark_height = 0.0
 shader_parameter/top_shadow_mid_height = 0.0
 shader_parameter/top_shadow_dark_color = Color(0.478431, 0.188235, 0.270588, 1)
@@ -37,23 +38,23 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-texture = ExtResource("8_btn_sel")
-texture_margin_left = 58.0
-texture_margin_top = 18.0
-texture_margin_right = 58.0
-texture_margin_bottom = 18.0
-
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
 content_margin_left = 0.0
 content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 texture = ExtResource("9_btn_press")
+texture_margin_left = 58.0
+texture_margin_top = 18.0
+texture_margin_right = 58.0
+texture_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("8_btn_sel")
 texture_margin_left = 58.0
 texture_margin_top = 18.0
 texture_margin_right = 58.0
@@ -70,7 +71,7 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
-[node name="settings" type="Control"]
+[node name="settings" type="Control" unique_id=1767336336]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +80,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_dig66")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1760761075]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -90,7 +91,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="ClothDropAnchor" type="Control" parent="."]
+[node name="ClothDropAnchor" type="Control" parent="." unique_id=1828450417]
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
@@ -101,7 +102,7 @@ offset_right = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BannerViewportContainer" type="SubViewportContainer" parent="ClothDropAnchor"]
+[node name="BannerViewportContainer" type="SubViewportContainer" parent="ClothDropAnchor" unique_id=306715442]
 material = SubResource("ShaderMaterial_settings_cloth")
 custom_minimum_size = Vector2(340, 1024)
 layout_mode = 1
@@ -112,14 +113,14 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="BannerViewport" type="SubViewport" parent="ClothDropAnchor/BannerViewportContainer"]
+[node name="BannerViewport" type="SubViewport" parent="ClothDropAnchor/BannerViewportContainer" unique_id=1204615530]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(340, 1024)
 render_target_update_mode = 4
 
-[node name="BannerRoot" type="Control" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport"]
+[node name="BannerRoot" type="Control" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport" unique_id=45441524]
 custom_minimum_size = Vector2(340, 1024)
 layout_mode = 3
 anchors_preset = 15
@@ -128,7 +129,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ClothBanner" type="NinePatchRect" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ClothBanner" type="NinePatchRect" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=627284120]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -142,7 +143,7 @@ patch_margin_left = 16
 patch_margin_right = 16
 axis_stretch_vertical = 1
 
-[node name="ContentMargin" type="MarginContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ContentMargin" type="MarginContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=2072607282]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -154,12 +155,12 @@ theme_override_constants/margin_top = 48
 theme_override_constants/margin_right = 36
 theme_override_constants/margin_bottom = 48
 
-[node name="MainVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin"]
+[node name="MainVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin" unique_id=915200949]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 24
+alignment = 1
 
-[node name="TitleLabel" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox"]
+[node name="TitleLabel" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox" unique_id=1542938750]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_title_font")
@@ -167,16 +168,16 @@ theme_override_font_sizes/font_size = 36
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="SettingsPanel" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox"]
+[node name="SettingsPanel" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox" unique_id=1893082611]
 layout_mode = 2
 theme_override_constants/separation = 20
 script = ExtResource("5_panel_script")
 
-[node name="AudioVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel"]
+[node name="AudioVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel" unique_id=61869335]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="AudioHeader" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox"]
+[node name="AudioHeader" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox" unique_id=55176083]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_title_font")
@@ -184,29 +185,29 @@ theme_override_font_sizes/font_size = 24
 text = "Audio"
 horizontal_alignment = 1
 
-[node name="audio_master" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox"]
+[node name="audio_master" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox" unique_id=969411728]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master"]
+[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master" unique_id=1194882767]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_body_font")
 theme_override_font_sizes/font_size = 16
 text = "Master"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master" unique_id=813739610]
 custom_minimum_size = Vector2(245, 24)
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="MasterMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master/HBoxContainer"]
+[node name="MasterMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master/HBoxContainer" unique_id=1028670411]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MasterSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master/HBoxContainer"]
+[node name="MasterSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_master/HBoxContainer" unique_id=1790884366]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -214,29 +215,29 @@ max_value = 1.0
 step = 0.05
 scrollable = false
 
-[node name="audio_music" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox"]
+[node name="audio_music" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox" unique_id=1391894800]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music"]
+[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music" unique_id=1955326843]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_body_font")
 theme_override_font_sizes/font_size = 16
 text = "Music"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music" unique_id=924558814]
 custom_minimum_size = Vector2(245, 24)
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="MusicMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music/HBoxContainer"]
+[node name="MusicMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music/HBoxContainer" unique_id=248055753]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MusicSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music/HBoxContainer"]
+[node name="MusicSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_music/HBoxContainer" unique_id=2123115193]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -244,29 +245,29 @@ max_value = 1.0
 step = 0.05
 scrollable = false
 
-[node name="audio_sfx" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox"]
+[node name="audio_sfx" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox" unique_id=1470447536]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx"]
+[node name="Label" type="Label" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx" unique_id=527195644]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_body_font")
 theme_override_font_sizes/font_size = 16
 text = "SFX"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx" unique_id=2034789793]
 custom_minimum_size = Vector2(245, 24)
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SFXMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx/HBoxContainer"]
+[node name="SFXMute" type="CheckBox" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx/HBoxContainer" unique_id=599006109]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="SFXSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx/HBoxContainer"]
+[node name="SFXSlider" type="HSlider" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/AudioVBox/audio_sfx/HBoxContainer" unique_id=219481114]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -274,12 +275,12 @@ max_value = 1.0
 step = 0.05
 scrollable = false
 
-[node name="SettingsVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel"]
+[node name="SettingsVBox" type="VBoxContainer" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel" unique_id=405272068]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 16
 
-[node name="AlmanacBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" instance=ExtResource("12_btn_gen")]
+[node name="AlmanacBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" unique_id=836577726 instance=ExtResource("12_btn_gen")]
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -300,7 +301,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 disabled = true
 text = "Almanac"
 
-[node name="SoundBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" instance=ExtResource("12_btn_gen")]
+[node name="SoundBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" unique_id=571412569 instance=ExtResource("12_btn_gen")]
 visible = false
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
@@ -322,7 +323,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 disabled = true
 text = "Sound"
 
-[node name="GraphicsBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" instance=ExtResource("12_btn_gen")]
+[node name="GraphicsBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox/SettingsPanel/SettingsVBox" unique_id=725282671 instance=ExtResource("12_btn_gen")]
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -343,7 +344,7 @@ theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 disabled = true
 text = "Graphics"
 
-[node name="BackBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox" instance=ExtResource("12_btn_gen")]
+[node name="BackBtn" parent="ClothDropAnchor/BannerViewportContainer/BannerViewport/BannerRoot/ContentMargin/MainVBox" unique_id=1364496359 instance=ExtResource("12_btn_gen")]
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
 size_flags_horizontal = 4

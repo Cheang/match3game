@@ -6,6 +6,7 @@ uniform float wave_frequency : hint_range(0.5, 10.0) = 2.775;
 uniform float wave_speed : hint_range(0.2, 10.0) = 1.5;
 uniform float fold_shading : hint_range(0.0, 0.25) = 0.037;
 uniform bool pixel_art_snap = false;
+uniform float fade_alpha : hint_range(0.0, 1.0) = 1.0;
 
 uniform float top_shadow_dark_height : hint_range(0.0, 48.0) = 8.0;
 uniform float top_shadow_mid_height : hint_range(0.0, 48.0) = 14.0;
@@ -48,5 +49,5 @@ void fragment() {
 		col.rgb = (raw_col.r < 0.78) ? top_shadow_dark_color.rgb : top_shadow_mid_color.rgb;
 	}
 
-	COLOR = col;
+	COLOR = vec4(col.rgb, col.a * fade_alpha);
 }

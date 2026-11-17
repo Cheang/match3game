@@ -9,16 +9,27 @@ var area_to_load: LocationLoader
 var choise_made: bool = false
 
 @onready var load_btn: Button = find_child("load", true, false) as Button
-@onready var content_vbox: Control = find_child("ContentVBox", true, false) as Control
+@onready var logo_rect: Control = find_child("LogoRect", true, false) as Control
+@onready var banner_viewport_container: SubViewportContainer = find_child("BannerViewportContainer", true, false) as SubViewportContainer
 
 
 func _ready() -> void:
 	if returning_from_settings:
 		returning_from_settings = false
-		if content_vbox != null:
-			content_vbox.modulate.a = 0.0
-			create_tween().tween_property(content_vbox, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_set_menu_fade(0.0)
+		create_tween().tween_method(_set_menu_fade, 0.0, 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	else:
+		_set_menu_fade(1.0)
 	call_deferred("_initialize_scene")
+
+
+func _set_menu_fade(alpha: float) -> void:
+	if logo_rect != null:
+		logo_rect.modulate.a = alpha
+	if banner_viewport_container != null:
+		var mat := banner_viewport_container.material as ShaderMaterial
+		if mat != null:
+			mat.set_shader_parameter("fade_alpha", alpha)
 
 
 func _initialize_scene() -> void:
@@ -70,10 +81,9 @@ func _on_load_pressed() -> void:
 func _on_settings_pressed() -> void:
 	if not choise_made:
 		choise_made = true
-		if content_vbox != null:
-			var tw := create_tween()
-			tw.tween_property(content_vbox, "modulate:a", 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-			await tw.finished
+		var tw := create_tween()
+		tw.tween_method(_set_menu_fade, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		await tw.finished
 		SceneManager.change_scene("res://ui/screens/settings_screen.tscn", {
 			"skip_fade_out": true,
 			"skip_fade_in": true,
