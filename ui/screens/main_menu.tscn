@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://d3cawoeht7j1c" path="res://assets/sprites/ui/general_ui/button/button_pressed.png" id="11_btn_press"]
 [ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/general_ui/button/button_disabled.png" id="12_btn_dis"]
 [ext_resource type="Material" uid="uid://chrxnn2p27bp2" path="res://assets/shaders/cloth_banner_sway.tres" id="13_cloth_mat"]
+[ext_resource type="Texture2D" uid="uid://d2jpruaxdfn8s" path="res://assets/sprites/ui/main_menu/main_menu_border.png" id="14_border"]
 
 [sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
 fade_time = 0.0
@@ -95,6 +96,23 @@ grow_vertical = 2
 texture = ExtResource("3_3j6ne")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="Border" type="NinePatchRect" parent="."]
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_border")
+draw_center = false
+patch_margin_left = 130
+patch_margin_top = 130
+patch_margin_right = 130
+patch_margin_bottom = 130
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1871444100]
 layout_mode = 1

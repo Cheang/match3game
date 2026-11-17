@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://bvhgxtdy7q5a5" path="res://assets/sprites/ui/general_ui/mute_button/button_mute_checked.png" id="13_mute_checked"]
 [ext_resource type="Texture2D" uid="uid://bqcjw0h4n83fo" path="res://assets/sprites/ui/general_ui/mute_button/button_mute_unchecked.png" id="14_mute_unchecked"]
 [ext_resource type="Texture2D" uid="uid://pi5s7d0u6htn" path="res://assets/sprites/ui/general_ui/progress_bar/progressbar_fill.png" id="15_pb_fill"]
+[ext_resource type="Texture2D" uid="uid://d2jpruaxdfn8s" path="res://assets/sprites/ui/main_menu/main_menu_border.png" id="16_border"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_settings_cloth"]
 shader = ExtResource("11_cloth_shader")
@@ -115,6 +116,23 @@ grow_vertical = 2
 texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="Border" type="NinePatchRect" parent="."]
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("16_border")
+draw_center = false
+patch_margin_left = 130
+patch_margin_top = 130
+patch_margin_right = 130
+patch_margin_bottom = 130
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
 
 [node name="ClothDropAnchor" type="Control" parent="." unique_id=1828450417]
 layout_mode = 1
