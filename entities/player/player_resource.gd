@@ -8,6 +8,8 @@ extends EntityResource
 @export_category("Character Identity")
 ## Display name of the character class shown in the UI and checked by class-specific event choices.
 @export var player_class: String = "Warrior"
+## Large class artwork displayed on the character select screen.
+@export var portrait_art: Texture2D
 
 @export_category("Combat Stats")
 @export_group("Economy & Utility")

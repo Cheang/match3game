@@ -3,6 +3,7 @@ extends Control
 
 var bg_decoration: TextureRect
 var rows_box: HBoxContainer
+var preview_character: PlayerResource = null
 var _track_rows: Array[ColorTrackRow] = []
 var row_map: Dictionary = {} # base_color (int) -> ColorTrackRow
 var _inspect_popup: PanelContainer = null
@@ -45,17 +46,25 @@ func get_track_rows() -> Array[ColorTrackRow]:
 				_track_rows.append(child)
 	return _track_rows
 
+func set_preview_character(p_char: PlayerResource) -> void:
+	preview_character = p_char
+	refresh_dock(true)
+
+func _get_target_character() -> PlayerResource:
+	return preview_character if preview_character != null else Global.cur_char
+
 func refresh_dock(force_rebuild: bool = false) -> void:
 	_ensure_structure()
-	if Global.cur_char == null:
+	var target_char := _get_target_character()
+	if target_char == null:
 		return
-	Global.cur_char.ensure_loadout_tracks()
+	target_char.ensure_loadout_tracks()
 
 	var rows := get_track_rows()
 	if rows.is_empty():
 		return
 
-	var current_pool: Array[int] = Global.cur_char.active_color_pool
+	var current_pool: Array[int] = target_char.active_color_pool
 	if not force_rebuild and not row_map.is_empty():
 		var pool_matches: bool = true
 		for slot_idx in range(rows.size()):
@@ -75,7 +84,7 @@ func refresh_dock(force_rebuild: bool = false) -> void:
 		var row: ColorTrackRow = rows[slot_idx]
 		if slot_idx < current_pool.size():
 			var c_id: int = current_pool[slot_idx]
-			var track: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
+			var track: ColorLoadoutTrack = target_char.get_track_for_color(c_id)
 			row.setup_row(c_id, track, false, false)
 			row_map[ColorLoadoutTrack.get_base_family(c_id)] = row
 		else:
@@ -137,7 +146,7 @@ func _show_inspect_popup(mod: Equipment, track: ColorLoadoutTrack, mod_index: in
 	elif mod.current_cooldown > 0:
 		state_str = " • [color=#f29d4c]CD: %dT[/color]" % mod.current_cooldown
 
-	var char_res: Resource = Global.cur_char
+	var char_res: Resource = _get_target_character()
 	_inspect_label.text = "[color=%s][b]%s[/b][/color] [color=#b2b8a3](%s • %d-Slot • %s%s%s)[/color]%s\n%s" % [
 		r_hex,
 		mod.piece_name,

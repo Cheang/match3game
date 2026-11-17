@@ -95,20 +95,14 @@ func _initialize_scene() -> void:
 func _on_start_pressed() -> void:
 	if not choise_made:
 		choise_made = true
-		Global.game_seed = int(Time.get_unix_time_from_system() * (2.0 * Time.get_unix_time_from_system()))
-		seed(Global.game_seed)
-		Global.set_up_player()
-		if not area_to_load:
-			area_to_load = def_area
-		Locations.load_locations_from_directory(area_to_load)
-		Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
-		if Global.area_cur_boss != null and Global.area_cur_boss.cut_scene:
-			Global.cur_cutscene = Global.area_cur_boss.cut_scene
-			Global.cur_scene = "res://events/cut_scene.tscn"
-			SceneManager.change_scene("res://events/cut_scene.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
-		else:
-			Global.cur_scene = "res://map/locations_screen.tscn"
-			SceneManager.change_scene("res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
+		var tw := create_tween()
+		tw.tween_method(_set_menu_fade, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		await tw.finished
+		SceneManager.change_scene("res://ui/screens/hero_select_screen.tscn", {
+			"skip_fade_out": true,
+			"skip_fade_in": true,
+			"wait_time": 0.0,
+		})
 
 
 func _on_load_pressed() -> void:

@@ -25,7 +25,6 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="Border" type="NinePatchRect" parent="."]
-z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
