@@ -5,15 +5,27 @@ extends Control
 
 static var returning_from_settings: bool = false
 
+const CLOTH_VERTICAL_PADDING: float = 84.0 # 42px top + 42px bottom padding
+const CLOTH_TILE_HEIGHT: float = 8.0
+
 var area_to_load: LocationLoader
 var choise_made: bool = false
 
 @onready var load_btn: Button = find_child("load", true, false) as Button
 @onready var logo_rect: Control = find_child("LogoRect", true, false) as Control
 @onready var banner_viewport_container: SubViewportContainer = find_child("BannerViewportContainer", true, false) as SubViewportContainer
+@onready var banner_viewport: SubViewport = find_child("BannerViewport", true, false) as SubViewport
+@onready var banner_root: Control = find_child("BannerRoot", true, false) as Control
+@onready var buttons_vbox: VBoxContainer = find_child("ButtonsVBox", true, false) as VBoxContainer
 
 
 func _ready() -> void:
+	if buttons_vbox != null:
+		for child in buttons_vbox.get_children():
+			var ctrl := child as Control
+			if ctrl != null and not ctrl.visibility_changed.is_connected(_update_cloth_banner_size):
+				ctrl.visibility_changed.connect(_update_cloth_banner_size)
+	_update_cloth_banner_size()
 	if returning_from_settings:
 		returning_from_settings = false
 		_set_menu_fade(0.0)
@@ -21,6 +33,35 @@ func _ready() -> void:
 	else:
 		_set_menu_fade(1.0)
 	call_deferred("_initialize_scene")
+
+
+func _update_cloth_banner_size() -> void:
+	if buttons_vbox == null or banner_viewport_container == null:
+		return
+	var separation: float = float(buttons_vbox.get_theme_constant("separation"))
+	var visible_count: int = 0
+	var total_btn_height: float = 0.0
+	for child in buttons_vbox.get_children():
+		var ctrl := child as Control
+		if ctrl != null and ctrl.visible:
+			visible_count += 1
+			var btn_h: float = maxf(ctrl.custom_minimum_size.y, ctrl.get_combined_minimum_size().y)
+			total_btn_height += btn_h
+	if visible_count > 1:
+		total_btn_height += float(visible_count - 1) * separation
+	var raw_height: float = total_btn_height + CLOTH_VERTICAL_PADDING
+	var snapped_height: float = ceilf(raw_height / CLOTH_TILE_HEIGHT) * CLOTH_TILE_HEIGHT
+	snapped_height = maxf(snapped_height, 64.0)
+
+	banner_viewport_container.custom_minimum_size = Vector2(340.0, snapped_height)
+	banner_viewport_container.size = Vector2(340.0, snapped_height)
+	if banner_viewport != null:
+		banner_viewport.size = Vector2i(340, int(snapped_height))
+	if banner_root != null:
+		banner_root.custom_minimum_size = Vector2(340.0, snapped_height)
+	var mat := banner_viewport_container.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("banner_height", snapped_height)
 
 
 func _set_menu_fade(alpha: float) -> void:
@@ -48,6 +89,7 @@ func _initialize_scene() -> void:
 	else:
 		load_btn.disabled = true
 		load_btn.visible = false
+	_update_cloth_banner_size()
 
 
 func _on_start_pressed() -> void:
