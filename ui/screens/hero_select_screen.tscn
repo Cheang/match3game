@@ -13,7 +13,6 @@
 [ext_resource type="Texture2D" uid="uid://kgacc1j1rn0h" path="res://assets/sprites/ui/general_ui/button/button_selected.png" id="13_btn_sel"]
 [ext_resource type="Texture2D" uid="uid://d3cawoeht7j1c" path="res://assets/sprites/ui/general_ui/button/button_pressed.png" id="14_btn_press"]
 [ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/general_ui/button/button_disabled.png" id="15_btn_dis"]
-[ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://map/areas/area_1.tres" id="16_area1"]
 [ext_resource type="Texture2D" uid="uid://br7prqg8k1cjp" path="res://assets/sprites/ui/character_select/portrait_background.png" id="17_portrait_bg"]
 [ext_resource type="Texture2D" uid="uid://drdq1jnu56483" path="res://assets/sprites/ui/character_select/portrait_border.png" id="18_portrait_border"]
 
@@ -26,8 +25,8 @@ border_width_bottom = 3
 border_color = Color(0.678431, 0.72549, 0.764706, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_normal"]
 bg_color = Color(0.588235, 0.654902, 0.690196, 1)
@@ -38,20 +37,8 @@ border_width_bottom = 3
 border_color = Color(0.215686, 0.192157, 0.258824, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_hover"]
-bg_color = Color(0.717647, 0.784314, 0.819608, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.878431, 0.780392, 0.419608, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
 corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_pressed"]
 bg_color = Color(0.45098, 0.509804, 0.545098, 1)
@@ -62,8 +49,20 @@ border_width_bottom = 3
 border_color = Color(0.145098, 0.117647, 0.168627, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_hover"]
+bg_color = Color(0.717647, 0.784314, 0.819608, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.878431, 0.780392, 0.419608, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_disabled"]
 bg_color = Color(0.392157, 0.427451, 0.454902, 1)
@@ -74,8 +73,8 @@ border_width_bottom = 3
 border_color = Color(0.215686, 0.192157, 0.258824, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_might"]
 shader = ExtResource("7_palette_shader")
@@ -167,7 +166,7 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
-[node name="HeroSelectScreen" type="Control"]
+[node name="HeroSelectScreen" type="Control" unique_id=701372513]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -175,9 +174,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
-def_area = ExtResource("16_area1")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=227786146]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -188,7 +186,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=74894883]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -196,33 +194,31 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TopMargin" type="MarginContainer" parent="CenterContainer"]
+[node name="TopMargin" type="MarginContainer" parent="CenterContainer" unique_id=995439632]
 layout_mode = 2
 theme_override_constants/margin_top = 110
 
-[node name="MainVBox" type="VBoxContainer" parent="CenterContainer/TopMargin"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="ShowcaseArea" type="Control" parent="CenterContainer/TopMargin/MainVBox"]
-custom_minimum_size = Vector2(576, 512)
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer/TopMargin" unique_id=874117374]
 layout_mode = 2
 
-[node name="PortraitFrame" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea"]
-layout_mode = 0
+[node name="ShowcaseArea" type="Control" parent="CenterContainer/TopMargin/MainVBox" unique_id=1389338973]
+custom_minimum_size = Vector2(576, 480)
+layout_mode = 2
+
+[node name="PortraitFrame" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1756370276]
+anchors_preset = 0
 offset_left = 88.0
 offset_top = 22.0
 offset_right = 488.0
 offset_bottom = 490.0
 
-[node name="PortraitBackground" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame"]
+[node name="PortraitBackground" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame" unique_id=2057249048]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 texture = ExtResource("17_portrait_bg")
 patch_margin_left = 98
 patch_margin_top = 98
@@ -231,7 +227,7 @@ patch_margin_bottom = 98
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[node name="PortraitArt" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame"]
+[node name="PortraitArt" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame" unique_id=1363714973]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -247,7 +243,7 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlaceholderOverlay" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame"]
+[node name="PlaceholderOverlay" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame" unique_id=1466686025]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -256,7 +252,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PlaceholderLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame/PlaceholderOverlay"]
+[node name="PlaceholderLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame/PlaceholderOverlay" unique_id=970521769]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.45, 0.41, 0.49, 0.65)
 theme_override_fonts/font = ExtResource("4_font")
@@ -265,14 +261,13 @@ text = "?"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PortraitBorder" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame"]
+[node name="PortraitBorder" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PortraitFrame" unique_id=1244132609]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 texture = ExtResource("18_portrait_border")
 draw_center = false
 patch_margin_left = 98
@@ -282,14 +277,14 @@ patch_margin_bottom = 98
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[node name="NameplatePanel" type="PanelContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea"]
+[node name="NameplatePanel" type="PanelContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1372186736]
 layout_mode = 0
 offset_left = 118.0
 offset_right = 458.0
 offset_bottom = 44.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_nameplate")
 
-[node name="NameLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/NameplatePanel"]
+[node name="NameLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/NameplatePanel" unique_id=1768790114]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -300,7 +295,7 @@ text = "Warrior"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PrevHeroBtn" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" instance=ExtResource("5_btn")]
+[node name="PrevHeroBtn" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1986676114 instance=ExtResource("5_btn")]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_left = 54.0
@@ -322,7 +317,7 @@ theme_override_styles/disabled = SubResource("StyleBoxFlat_arrow_disabled")
 theme_override_styles/focus = SubResource("StyleBoxFlat_arrow_hover")
 text = "<"
 
-[node name="NextHeroBtn" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" instance=ExtResource("5_btn")]
+[node name="NextHeroBtn" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1011160800 instance=ExtResource("5_btn")]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_left = 450.0
@@ -344,22 +339,22 @@ theme_override_styles/disabled = SubResource("StyleBoxFlat_arrow_disabled")
 theme_override_styles/focus = SubResource("StyleBoxFlat_arrow_hover")
 text = ">"
 
-[node name="GlobesHBox" type="HBoxContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea"]
+[node name="GlobesHBox" type="HBoxContainer" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=289274395]
 layout_mode = 0
 offset_left = 151.0
-offset_top = 446.0
+offset_top = 418.0
 offset_right = 425.0
-offset_bottom = 510.0
+offset_bottom = 482.0
 mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="MightGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox"]
+[node name="MightGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox" unique_id=489816983]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 tooltip_text = "Might"
 mouse_filter = 1
 
-[node name="MightGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
+[node name="MightGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe" unique_id=2038103245]
 material = SubResource("ShaderMaterial_might")
 layout_mode = 1
 anchors_preset = 15
@@ -370,7 +365,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("6_stat_globe")
 
-[node name="MightValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
+[node name="MightValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe" unique_id=998997274]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -386,13 +381,13 @@ text = "20"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GritGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox"]
+[node name="GritGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox" unique_id=1005322488]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 tooltip_text = "Grit"
 mouse_filter = 1
 
-[node name="GritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
+[node name="GritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe" unique_id=473645975]
 material = SubResource("ShaderMaterial_grit")
 layout_mode = 1
 anchors_preset = 15
@@ -403,7 +398,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("6_stat_globe")
 
-[node name="GritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
+[node name="GritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe" unique_id=1879990010]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -419,13 +414,13 @@ text = "3"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AgilityGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox"]
+[node name="AgilityGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox" unique_id=1184714179]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 tooltip_text = "Agility"
 mouse_filter = 1
 
-[node name="AgilityGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
+[node name="AgilityGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe" unique_id=1148635400]
 material = SubResource("ShaderMaterial_agility")
 layout_mode = 1
 anchors_preset = 15
@@ -436,7 +431,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("6_stat_globe")
 
-[node name="AgilityValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
+[node name="AgilityValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe" unique_id=1678054025]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -452,13 +447,13 @@ text = "2"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SpiritGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox"]
+[node name="SpiritGlobe" type="Control" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox" unique_id=403479392]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 tooltip_text = "Spirit"
 mouse_filter = 1
 
-[node name="SpiritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
+[node name="SpiritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe" unique_id=81152993]
 material = SubResource("ShaderMaterial_spirit")
 layout_mode = 1
 anchors_preset = 15
@@ -469,7 +464,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("6_stat_globe")
 
-[node name="SpiritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
+[node name="SpiritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe" unique_id=1369116386]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -485,35 +480,35 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LoadoutCenter" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox"]
+[node name="LoadoutCenter" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox" unique_id=401358678]
 z_index = 1
 custom_minimum_size = Vector2(576, 38)
 layout_mode = 2
 
-[node name="LoadoutDock" parent="CenterContainer/TopMargin/MainVBox/LoadoutCenter" instance=ExtResource("9_loadout")]
+[node name="LoadoutDock" parent="CenterContainer/TopMargin/MainVBox/LoadoutCenter" unique_id=1514668852 instance=ExtResource("9_loadout")]
 layout_mode = 2
 
 [node name="BgDecoration" parent="CenterContainer/TopMargin/MainVBox/LoadoutCenter/LoadoutDock" index="0"]
 visible = false
 
-[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/TopMargin/MainVBox"]
+[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/TopMargin/MainVBox" unique_id=525809562]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/margin_top = -4
 
-[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin"]
+[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin" unique_id=30415140]
 material = SubResource("ShaderMaterial_hero_cloth")
 custom_minimum_size = Vector2(340, 200)
 layout_mode = 2
 
-[node name="BannerViewport" type="SubViewport" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer"]
+[node name="BannerViewport" type="SubViewport" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer" unique_id=1785261999]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(340, 200)
 render_target_update_mode = 4
 
-[node name="BannerRoot" type="Control" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport"]
+[node name="BannerRoot" type="Control" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport" unique_id=9287661]
 custom_minimum_size = Vector2(340, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -522,7 +517,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=405865425]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -536,7 +531,7 @@ patch_margin_left = 16
 patch_margin_right = 16
 axis_stretch_vertical = 1
 
-[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot"]
+[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=1056609601]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -544,11 +539,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter"]
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter" unique_id=455515818]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="SelectBtn" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" instance=ExtResource("5_btn")]
+[node name="SelectBtn" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=204254474 instance=ExtResource("5_btn")]
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -568,7 +563,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
 text = "Select"
 
-[node name="BackBtn" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" instance=ExtResource("5_btn")]
+[node name="BackBtn" parent="CenterContainer/TopMargin/MainVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=958019208 instance=ExtResource("5_btn")]
 custom_minimum_size = Vector2(245, 60)
 layout_mode = 2
 size_flags_horizontal = 4
