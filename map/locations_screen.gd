@@ -42,4 +42,3 @@ func _set_locations() -> void:
 	for i in loc_cards.size():
 		loc_cards[i].loc_res = Global.area_locations[i] if i < Global.area_locations.size() else LOC_DEADEND
 		loc_cards[i].load_btn()
-

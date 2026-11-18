@@ -58,7 +58,7 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 
-[node name="cut_scene" type="Control"]
+[node name="cut_scene" type="Control" unique_id=700915196]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,12 +68,10 @@ grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_6c3w6")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_evr1a")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1184563023]
+libraries/ = SubResource("AnimationLibrary_evr1a")
 
-[node name="background" type="TextureRect" parent="."]
+[node name="background" type="TextureRect" parent="." unique_id=1966053850]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -88,7 +86,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_lpdc2")
 
-[node name="npc" type="TextureRect" parent="."]
+[node name="npc" type="TextureRect" parent="." unique_id=1737247036]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -103,7 +101,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_k8dlh")
 
-[node name="foreground" type="TextureRect" parent="."]
+[node name="foreground" type="TextureRect" parent="." unique_id=1684266209]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -117,7 +115,7 @@ offset_bottom = 512.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="shadow" type="TextureRect" parent="."]
+[node name="shadow" type="TextureRect" parent="." unique_id=520826625]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -132,7 +130,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_o1tve")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1031651549]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -143,26 +141,26 @@ theme_override_constants/margin_left = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 75
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=532546462]
 layout_mode = 2
 size_flags_horizontal = 4
 alignment = 2
 
-[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="spacer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1416428121]
 custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 
-[node name="title" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="title" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=96571655]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gkynj")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/title"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/title" unique_id=944558090]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 
-[node name="label" type="Label" parent="MarginContainer/VBoxContainer/title/MarginContainer"]
+[node name="label" type="Label" parent="MarginContainer/VBoxContainer/title/MarginContainer" unique_id=497426722]
 visible = false
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
@@ -171,18 +169,18 @@ label_settings = SubResource("LabelSettings_bvol0")
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="description" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="description" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=982622069]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_mrf80")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/description"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/description" unique_id=1203343216]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="label" type="RichTextLabel" parent="MarginContainer/VBoxContainer/description/MarginContainer"]
+[node name="label" type="RichTextLabel" parent="MarginContainer/VBoxContainer/description/MarginContainer" unique_id=993348184]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
@@ -195,7 +193,7 @@ fit_content = true
 scroll_active = false
 shortcut_keys_enabled = false
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1837429349]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

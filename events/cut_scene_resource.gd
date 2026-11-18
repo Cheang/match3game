@@ -7,4 +7,3 @@ extends Resource
 @export var background: Texture2D
 @export var foreground: Texture2D
 @export var next_location: String = ""
-

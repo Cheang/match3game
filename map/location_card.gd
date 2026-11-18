@@ -59,4 +59,3 @@ func _on_selection_btn_pressed() -> void:
 func _on_tree_exiting() -> void:
 	if selected and index >= 0 and index < Global.area_locations.size():
 		Global.area_locations.pop_at(index)
-

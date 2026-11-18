@@ -29,8 +29,8 @@
 [ext_resource type="Resource" uid="uid://bmk2xjwav8p24" path="res://rewards/cards/body/body3_strong_body_5.tres" id="48_body5"]
 [ext_resource type="Resource" uid="uid://duw7nlh5pgakp" path="res://rewards/cards/utility/general_rush_smoke_screen.tres" id="49_smoke"]
 [ext_resource type="Resource" uid="uid://cvtwyslh18515" path="res://rewards/cards/sword/sword0_small_sword.tres" id="50_msword"]
-[ext_resource type="Resource" path="res://rewards/cards/utility/iron_wall.tres" id="51_iwall"]
-[ext_resource type="Resource" path="res://rewards/cards/utility/shields_up.tres" id="52_shieldup"]
+[ext_resource type="Resource" uid="uid://dymryh6gnvc7d" path="res://rewards/cards/utility/iron_wall.tres" id="51_iwall"]
+[ext_resource type="Resource" uid="uid://ch0qdl1c3ayts" path="res://rewards/cards/utility/shields_up.tres" id="52_shieldup"]
 
 [resource]
 script = ExtResource("10_ljvcx")
