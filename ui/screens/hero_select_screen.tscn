@@ -4,9 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/sprites/ui/legacy/main_menu_n_bg.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="4_font"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="5_btn"]
-[ext_resource type="Texture2D" uid="uid://c2ho2tvbfti1" path="res://assets/sprites/ui/combat/plr_hp_energy_bottom.png" id="6_globe_bot"]
-[ext_resource type="Shader" uid="uid://cpxn6rcb7w1xt" path="res://assets/shaders/pixel_liquid_globe.gdshader" id="7_globe_shader"]
-[ext_resource type="Texture2D" uid="uid://5588hc6rmyws" path="res://assets/sprites/ui/combat/plr_hp_energy_top.png" id="8_globe_top"]
+[ext_resource type="Texture2D" uid="uid://bobaog8vp3xjq" path="res://assets/sprites/ui/character_select/stat_globe.png" id="6_stat_globe"]
+[ext_resource type="Shader" uid="uid://b316fpha4o5pp" path="res://assets/shaders/palette_swap_5.gdshader" id="7_palette_shader"]
 [ext_resource type="PackedScene" uid="uid://df7w0q8a1k2e" path="res://ui/hud/loadout_dock.tscn" id="9_loadout"]
 [ext_resource type="Shader" uid="uid://d13gs3so60pu8" path="res://assets/shaders/cloth_banner_sway.gdshader" id="10_cloth_shader"]
 [ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/main_menu/buttons_background.png" id="11_cloth_bg"]
@@ -78,77 +77,37 @@ corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_globe_bot"]
-atlas = ExtResource("6_globe_bot")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_globe_top"]
-atlas = ExtResource("8_globe_top")
-region = Rect2(0, 0, 64, 64)
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_might"]
-shader = ExtResource("7_globe_shader")
-shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.9764706, 0.7607843, 0.16862746, 1)
-shader_parameter/col_base = Color(0.9098039, 0.23137255, 0.23137255, 1)
-shader_parameter/col_shadow = Color(0.47843137, 0.1882353, 0.27058825, 1)
-shader_parameter/wave_amplitude = 0.0
-shader_parameter/wave_frequency = 13.0
-shader_parameter/wave_speed = 0.0
-shader_parameter/time_offset = 0.0
-shader_parameter/pixel_grid_size = 64.0
-shader_parameter/radius = 0.4765
-shader_parameter/enable_specks = false
-shader_parameter/speck_rise_speed = 0.0
-shader_parameter/col_speck = Color(0, 0, 0, 0)
+shader = ExtResource("7_palette_shader")
+shader_parameter/target_color_1 = Color(0.976471, 0.760784, 0.168627, 1)
+shader_parameter/target_color_2 = Color(0.984314, 0.419608, 0.113725, 1)
+shader_parameter/target_color_3 = Color(0.909804, 0.231373, 0.231373, 1)
+shader_parameter/target_color_4 = Color(0.682353, 0.137255, 0.203922, 1)
+shader_parameter/target_color_5 = Color(0.478431, 0.188235, 0.270588, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grit"]
-shader = ExtResource("7_globe_shader")
-shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.5607843, 0.8784314, 1, 1)
-shader_parameter/col_base = Color(0.2392157, 0.5607843, 0.8901961, 1)
-shader_parameter/col_shadow = Color(0.1411765, 0.2705882, 0.5294118, 1)
-shader_parameter/wave_amplitude = 0.0
-shader_parameter/wave_frequency = 13.0
-shader_parameter/wave_speed = 0.0
-shader_parameter/time_offset = 0.0
-shader_parameter/pixel_grid_size = 64.0
-shader_parameter/radius = 0.4765
-shader_parameter/enable_specks = false
-shader_parameter/speck_rise_speed = 0.0
-shader_parameter/col_speck = Color(0, 0, 0, 0)
+shader = ExtResource("7_palette_shader")
+shader_parameter/target_color_1 = Color(1, 1, 1, 1)
+shader_parameter/target_color_2 = Color(0.560784, 0.827451, 1, 1)
+shader_parameter/target_color_3 = Color(0.301961, 0.607843, 0.901961, 1)
+shader_parameter/target_color_4 = Color(0.301961, 0.396078, 0.705882, 1)
+shader_parameter/target_color_5 = Color(0.282353, 0.290196, 0.466667, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_agility"]
-shader = ExtResource("7_globe_shader")
-shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.9843137, 1, 0.5254902, 1)
-shader_parameter/col_base = Color(0.11764706, 0.7372549, 0.4509804, 1)
-shader_parameter/col_shadow = Color(0.08627451, 0.3529412, 0.29803923, 1)
-shader_parameter/wave_amplitude = 0.0
-shader_parameter/wave_frequency = 13.0
-shader_parameter/wave_speed = 0.0
-shader_parameter/time_offset = 0.0
-shader_parameter/pixel_grid_size = 64.0
-shader_parameter/radius = 0.4765
-shader_parameter/enable_specks = false
-shader_parameter/speck_rise_speed = 0.0
-shader_parameter/col_speck = Color(0, 0, 0, 0)
+shader = ExtResource("7_palette_shader")
+shader_parameter/target_color_1 = Color(0.984314, 1, 0.52549, 1)
+shader_parameter/target_color_2 = Color(0.568627, 0.858824, 0.411765, 1)
+shader_parameter/target_color_3 = Color(0.117647, 0.737255, 0.45098, 1)
+shader_parameter/target_color_4 = Color(0.137255, 0.564706, 0.388235, 1)
+shader_parameter/target_color_5 = Color(0.0862745, 0.352941, 0.298039, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_spirit"]
-shader = ExtResource("7_globe_shader")
-shader_parameter/fill_amount = 1.0
-shader_parameter/col_highlight = Color(0.8784314, 0.6784314, 1, 1)
-shader_parameter/col_base = Color(0.6196078, 0.3215686, 0.8509804, 1)
-shader_parameter/col_shadow = Color(0.3215686, 0.1490196, 0.4784314, 1)
-shader_parameter/wave_amplitude = 0.0
-shader_parameter/wave_frequency = 13.0
-shader_parameter/wave_speed = 0.0
-shader_parameter/time_offset = 0.0
-shader_parameter/pixel_grid_size = 64.0
-shader_parameter/radius = 0.4765
-shader_parameter/enable_specks = false
-shader_parameter/speck_rise_speed = 0.0
-shader_parameter/col_speck = Color(0, 0, 0, 0)
+shader = ExtResource("7_palette_shader")
+shader_parameter/target_color_1 = Color(1, 1, 1, 1)
+shader_parameter/target_color_2 = Color(0.917647, 0.678431, 0.929412, 1)
+shader_parameter/target_color_3 = Color(0.658824, 0.517647, 0.952941, 1)
+shader_parameter/target_color_4 = Color(0.564706, 0.368627, 0.662745, 1)
+shader_parameter/target_color_5 = Color(0.419608, 0.243137, 0.458824, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hero_cloth"]
 shader = ExtResource("10_cloth_shader")
@@ -400,17 +359,7 @@ layout_mode = 2
 tooltip_text = "Might"
 mouse_filter = 1
 
-[node name="BottomFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_bot")
-
-[node name="MightLiquid" type="ColorRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
+[node name="MightGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
 material = SubResource("ShaderMaterial_might")
 layout_mode = 1
 anchors_preset = 15
@@ -419,16 +368,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="TopFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_top")
+texture = ExtResource("6_stat_globe")
 
 [node name="MightValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/MightGlobe"]
 layout_mode = 1
@@ -452,17 +392,7 @@ layout_mode = 2
 tooltip_text = "Grit"
 mouse_filter = 1
 
-[node name="BottomFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_bot")
-
-[node name="GritLiquid" type="ColorRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
+[node name="GritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
 material = SubResource("ShaderMaterial_grit")
 layout_mode = 1
 anchors_preset = 15
@@ -471,16 +401,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="TopFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_top")
+texture = ExtResource("6_stat_globe")
 
 [node name="GritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/GritGlobe"]
 layout_mode = 1
@@ -504,17 +425,7 @@ layout_mode = 2
 tooltip_text = "Agility"
 mouse_filter = 1
 
-[node name="BottomFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_bot")
-
-[node name="AgilityLiquid" type="ColorRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
+[node name="AgilityGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
 material = SubResource("ShaderMaterial_agility")
 layout_mode = 1
 anchors_preset = 15
@@ -523,16 +434,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="TopFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_top")
+texture = ExtResource("6_stat_globe")
 
 [node name="AgilityValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/AgilityGlobe"]
 layout_mode = 1
@@ -556,17 +458,7 @@ layout_mode = 2
 tooltip_text = "Spirit"
 mouse_filter = 1
 
-[node name="BottomFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_bot")
-
-[node name="SpiritLiquid" type="ColorRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
+[node name="SpiritGlobeRect" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
 material = SubResource("ShaderMaterial_spirit")
 layout_mode = 1
 anchors_preset = 15
@@ -575,16 +467,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="TopFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("AtlasTexture_globe_top")
+texture = ExtResource("6_stat_globe")
 
 [node name="SpiritValueLabel" type="Label" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/GlobesHBox/SpiritGlobe"]
 layout_mode = 1

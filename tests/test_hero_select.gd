@@ -132,13 +132,20 @@ func _ready() -> void:
 		_assert_true(red_track != null and not red_track.equipped_modifiers.is_empty(), "LoadoutDock preview shows equipped starting modifiers")
 	_assert_true(Global.cur_char == null, "Global.cur_char stays null during preview")
 
-	# Verify globes shader is non-animated
-	var might_rect := screen.find_child("MightLiquid", true, false) as ColorRect
-	_assert_true(might_rect != null, "MightLiquid exists")
-	if might_rect != null and might_rect.material is ShaderMaterial:
-		var mat := might_rect.material as ShaderMaterial
-		_assert_true(is_zero_approx(float(mat.get_shader_parameter("wave_amplitude"))), "Globe wave_amplitude == 0")
-		_assert_true(not bool(mat.get_shader_parameter("enable_specks")), "Globe enable_specks == false")
+	# Verify all 4 stat globes use stat_globe.png + palette_swap_5.gdshader
+	for globe_rect_name in ["MightGlobeRect", "GritGlobeRect", "AgilityGlobeRect", "SpiritGlobeRect"]:
+		var g_rect := screen.find_child(globe_rect_name, true, false) as TextureRect
+		_assert_true(g_rect != null, globe_rect_name + " TextureRect exists")
+		if g_rect != null:
+			_assert_true(
+				g_rect.texture != null and g_rect.texture.resource_path.ends_with("stat_globe.png"),
+				globe_rect_name + " uses stat_globe.png"
+			)
+			var g_mat := g_rect.material as ShaderMaterial
+			_assert_true(
+				g_mat != null and g_mat.shader != null and g_mat.shader.resource_path.ends_with("palette_swap_5.gdshader"),
+				globe_rect_name + " uses palette_swap_5.gdshader"
+			)
 
 	# 3. Verify 2-hero cycling with portrait_art set
 	var custom_hero := WARRIOR_RES.duplicate(true) as PlayerResource
