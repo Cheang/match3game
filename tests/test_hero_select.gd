@@ -104,6 +104,10 @@ func _ready() -> void:
 			portrait_border.get_index() > screen.portrait_art.get_index() and screen.portrait_art.get_index() > portrait_bg.get_index(),
 			"Draw order: PortraitBackground < PortraitArt < PortraitBorder"
 		)
+		_assert_true(
+			screen.portrait_art.offset_left >= 8.0 and screen.portrait_art.offset_top >= 8.0 and screen.portrait_art.offset_right <= -8.0 and screen.portrait_art.offset_bottom <= -8.0,
+			"PortraitArt is inset inside PortraitBorder by at least 8px on all sides"
+		)
 	_assert_true(screen.loadout_dock != null, "LoadoutDock exists")
 	if screen.loadout_dock != null:
 		var deco := screen.loadout_dock.get_node_or_null("BgDecoration") as CanvasItem
