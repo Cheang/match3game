@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://ciqk14ri22cs2" path="res://ui/screens/hero_select_screen.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/sprites/ui/legacy/main_menu_n_bg.png" id="2_bg"]
-[ext_resource type="Texture2D" uid="uid://d2jpruaxdfn8s" path="res://assets/sprites/ui/main_menu/main_menu_border.png" id="3_border"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="4_font"]
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="5_btn"]
 [ext_resource type="Texture2D" uid="uid://c2ho2tvbfti1" path="res://assets/sprites/ui/combat/plr_hp_energy_bottom.png" id="6_globe_bot"]
@@ -229,22 +228,6 @@ grow_vertical = 2
 texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
-
-[node name="Border" type="NinePatchRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("3_border")
-draw_center = false
-patch_margin_left = 130
-patch_margin_top = 130
-patch_margin_right = 130
-patch_margin_bottom = 130
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1

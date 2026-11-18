@@ -18,12 +18,11 @@ func _assert_true(cond: bool, label: String) -> void:
 func _ready() -> void:
 	await get_tree().process_frame
 
-	# 1. Verify Border z-order across all updated menus (directly above Background/event_bg, z_index == 0)
+	# 1. Verify Border z-order on Main Menu, Settings, and Thank You (and absence on Hero Select)
 	for p in [
 		"res://ui/screens/main_menu.tscn",
 		"res://ui/screens/settings_screen.tscn",
 		"res://ui/screens/thank_you_screen.tscn",
-		"res://ui/screens/hero_select_screen.tscn",
 	]:
 		var ps: PackedScene = load(p)
 		var inst := ps.instantiate()
@@ -36,8 +35,23 @@ func _ready() -> void:
 		if bg != null and border != null:
 			_assert_true(border.z_index == 0, p + " Border z_index == 0")
 			_assert_true(border.get_index() == bg.get_index() + 1, p + " Border immediately above Background")
+		if p == "res://ui/screens/main_menu.tscn":
+			await get_tree().process_frame
+			inst._set_menu_fade_with_border(0.0)
+			_assert_true(is_zero_approx(inst.border_rect.modulate.a), "MainMenu._set_menu_fade_with_border(0.0) hides Border")
+			_assert_true(is_zero_approx(inst.logo_rect.modulate.a), "MainMenu._set_menu_fade_with_border(0.0) hides LogoRect")
+			inst._set_menu_fade_with_border(1.0)
+			_assert_true(is_equal_approx(inst.border_rect.modulate.a, 1.0), "MainMenu._set_menu_fade_with_border(1.0) restores Border")
 		inst.queue_free()
 		await get_tree().process_frame
+
+	var hs_ps: PackedScene = load("res://ui/screens/hero_select_screen.tscn")
+	var hs_inst := hs_ps.instantiate()
+	add_child(hs_inst)
+	_assert_true(hs_inst.get_node_or_null("Background") != null, "hero_select_screen.tscn has Background")
+	_assert_true(hs_inst.get_node_or_null("Border") == null, "hero_select_screen.tscn does not have wooden Border")
+	hs_inst.queue_free()
+	await get_tree().process_frame
 
 	# 2. Verify HeroSelectScreen default Warrior state
 	Global.cur_char = null

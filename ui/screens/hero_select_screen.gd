@@ -253,7 +253,7 @@ func _on_back_pressed() -> void:
 	if _choice_made:
 		return
 	_choice_made = true
-	MAIN_MENU_SCRIPT.returning_from_settings = true
+	MAIN_MENU_SCRIPT.returning_from_hero_select = true
 	var tw := create_tween()
 	tw.tween_method(_set_screen_fade, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func():

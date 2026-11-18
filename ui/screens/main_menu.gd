@@ -4,6 +4,7 @@ extends Control
 @export var def_area: LocationLoader
 
 static var returning_from_settings: bool = false
+static var returning_from_hero_select: bool = false
 
 const CLOTH_VERTICAL_PADDING: float = 84.0 # 42px top + 42px bottom padding
 const CLOTH_TILE_HEIGHT: float = 8.0
@@ -12,6 +13,7 @@ var area_to_load: LocationLoader
 var choise_made: bool = false
 
 @onready var load_btn: Button = find_child("load", true, false) as Button
+@onready var border_rect: Control = find_child("Border", true, false) as Control
 @onready var logo_rect: Control = find_child("LogoRect", true, false) as Control
 @onready var banner_viewport_container: SubViewportContainer = find_child("BannerViewportContainer", true, false) as SubViewportContainer
 @onready var banner_viewport: SubViewport = find_child("BannerViewport", true, false) as SubViewport
@@ -26,12 +28,18 @@ func _ready() -> void:
 			if ctrl != null and not ctrl.visibility_changed.is_connected(_update_cloth_banner_size):
 				ctrl.visibility_changed.connect(_update_cloth_banner_size)
 	_update_cloth_banner_size()
-	if returning_from_settings:
+	if returning_from_hero_select:
+		returning_from_hero_select = false
+		_set_menu_fade_with_border(0.0)
+		create_tween().tween_method(_set_menu_fade_with_border, 0.0, 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	elif returning_from_settings:
 		returning_from_settings = false
+		if border_rect != null:
+			border_rect.modulate.a = 1.0
 		_set_menu_fade(0.0)
 		create_tween().tween_method(_set_menu_fade, 0.0, 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
-		_set_menu_fade(1.0)
+		_set_menu_fade_with_border(1.0)
 	call_deferred("_initialize_scene")
 
 
@@ -62,6 +70,12 @@ func _update_cloth_banner_size() -> void:
 	var mat := banner_viewport_container.material as ShaderMaterial
 	if mat != null:
 		mat.set_shader_parameter("banner_height", snapped_height)
+
+
+func _set_menu_fade_with_border(alpha: float) -> void:
+	_set_menu_fade(alpha)
+	if border_rect != null:
+		border_rect.modulate.a = alpha
 
 
 func _set_menu_fade(alpha: float) -> void:
@@ -96,7 +110,7 @@ func _on_start_pressed() -> void:
 	if not choise_made:
 		choise_made = true
 		var tw := create_tween()
-		tw.tween_method(_set_menu_fade, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_method(_set_menu_fade_with_border, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		await tw.finished
 		SceneManager.change_scene("res://ui/screens/hero_select_screen.tscn", {
 			"skip_fade_out": true,
