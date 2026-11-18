@@ -66,6 +66,11 @@ func _ready() -> void:
 	var cur_hero: PlayerResource = screen.get_current_hero()
 	_assert_true(cur_hero != null and cur_hero.player_class == "Warrior", "Default hero is Warrior")
 	_assert_true(screen.nameplate_label.text == "Warrior", "Nameplate displays Warrior")
+	var nameplate := screen.find_child("NameplatePanel", true, false) as TextureRect
+	_assert_true(
+		nameplate != null and nameplate.size == Vector2(368, 48) and nameplate.texture != null and nameplate.texture.resource_path.ends_with("class_name_bg.png"),
+		"NameplatePanel is a 368x48 TextureRect using class_name_bg.png"
+	)
 	_assert_true(screen.might_label.text == "2", "Might globe shows 2")
 	_assert_true(screen.grit_label.text == "3", "Grit globe shows 3")
 	_assert_true(screen.agility_label.text == "2", "Agility globe shows 2")
