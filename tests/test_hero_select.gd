@@ -42,14 +42,36 @@ func _ready() -> void:
 			_assert_true(is_zero_approx(inst.logo_rect.modulate.a), "MainMenu._set_menu_fade_with_border(0.0) hides LogoRect")
 			inst._set_menu_fade_with_border(1.0)
 			_assert_true(is_equal_approx(inst.border_rect.modulate.a, 1.0), "MainMenu._set_menu_fade_with_border(1.0) restores Border")
+			var mm_bg := bg as TextureRect
+			var mm_mat := mm_bg.material as ShaderMaterial if mm_bg != null else null
+			_assert_true(
+				mm_mat != null and mm_mat.shader != null and mm_mat.shader.resource_path.ends_with("day_night_bg.gdshader"),
+				"MainMenu Background uses day_night_bg.gdshader"
+			)
+			if mm_mat != null:
+				var nt := mm_mat.get_shader_parameter("night_texture") as Texture2D
+				_assert_true(nt != null and nt.resource_path.ends_with("main_menu_night_bg.png"), "MainMenu day_night_bg uses main_menu_night_bg.png")
+				_assert_true(is_zero_approx(float(mm_mat.get_shader_parameter("night_progress"))), "MainMenu initial night_progress == 0.0")
+				inst._set_night_progress(0.5)
+				_assert_true(is_equal_approx(float(mm_mat.get_shader_parameter("night_progress")), 0.5), "MainMenu._set_night_progress(0.5) updates shader")
 		inst.queue_free()
 		await get_tree().process_frame
 
 	var hs_ps: PackedScene = load("res://ui/screens/hero_select_screen.tscn")
 	var hs_inst := hs_ps.instantiate()
 	add_child(hs_inst)
-	_assert_true(hs_inst.get_node_or_null("Background") != null, "hero_select_screen.tscn has Background")
+	var hs_bg := hs_inst.get_node_or_null("Background") as TextureRect
+	_assert_true(hs_bg != null, "hero_select_screen.tscn has Background")
 	_assert_true(hs_inst.get_node_or_null("Border") == null, "hero_select_screen.tscn does not have wooden Border")
+	var hs_mat := hs_bg.material as ShaderMaterial if hs_bg != null else null
+	_assert_true(
+		hs_mat != null and hs_mat.shader != null and hs_mat.shader.resource_path.ends_with("day_night_bg.gdshader"),
+		"HeroSelectScreen Background uses day_night_bg.gdshader"
+	)
+	if hs_mat != null:
+		var hnt := hs_mat.get_shader_parameter("night_texture") as Texture2D
+		_assert_true(hnt != null and hnt.resource_path.ends_with("main_menu_night_bg.png"), "HeroSelectScreen day_night_bg uses main_menu_night_bg.png")
+		_assert_true(is_equal_approx(float(hs_mat.get_shader_parameter("night_progress")), 1.0), "HeroSelectScreen initial night_progress == 1.0")
 	hs_inst.queue_free()
 	await get_tree().process_frame
 

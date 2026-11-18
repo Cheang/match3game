@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/general_ui/button/button_disabled.png" id="12_btn_dis"]
 [ext_resource type="Material" uid="uid://chrxnn2p27bp2" path="res://assets/shaders/cloth_banner_sway.tres" id="13_cloth_mat"]
 [ext_resource type="Texture2D" uid="uid://d2jpruaxdfn8s" path="res://assets/sprites/ui/main_menu/main_menu_border.png" id="14_border"]
+[ext_resource type="Texture2D" uid="uid://1yjero5r5ccv" path="res://assets/sprites/ui/character_select/main_menu_night_bg.png" id="15_night_bg"]
+[ext_resource type="Shader" uid="uid://cv71uxlx4bk12" path="res://assets/shaders/day_night_bg.gdshader" id="16_day_night_shader"]
 
 [sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
 fade_time = 0.0
@@ -73,6 +75,12 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_night_bg"]
+shader = ExtResource("16_day_night_shader")
+shader_parameter/night_texture = ExtResource("15_night_bg")
+shader_parameter/night_progress = 0.0
+shader_parameter/sweep_softness = 0.25
+
 [node name="main_menu" type="Control" unique_id=2036192885]
 layout_mode = 3
 anchors_preset = 15
@@ -87,6 +95,7 @@ song = SubResource("Resource_12eda")
 def_area = ExtResource("6_h344n")
 
 [node name="Background" type="TextureRect" parent="." unique_id=2012815701]
+material = SubResource("ShaderMaterial_day_night_bg")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

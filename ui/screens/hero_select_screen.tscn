@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" uid="uid://lpxy6yrpx3q8" path="res://assets/sprites/ui/character_select/arrow_button_bg.png" id="21_arrow_bg"]
 [ext_resource type="Texture2D" uid="uid://dcciuwnt4mxvg" path="res://assets/sprites/ui/character_select/arrow_left.png" id="22_arrow_left"]
 [ext_resource type="Texture2D" uid="uid://cqonhanhauovd" path="res://assets/sprites/ui/character_select/arrow_right.png" id="23_arrow_right"]
+[ext_resource type="Texture2D" uid="uid://1yjero5r5ccv" path="res://assets/sprites/ui/character_select/main_menu_night_bg.png" id="24_night_bg"]
+[ext_resource type="Shader" uid="uid://cv71uxlx4bk12" path="res://assets/shaders/day_night_bg.gdshader" id="25_day_night_shader"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_arrow_normal"]
 content_margin_left = 0.0
@@ -158,6 +160,12 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_night_bg"]
+shader = ExtResource("25_day_night_shader")
+shader_parameter/night_texture = ExtResource("24_night_bg")
+shader_parameter/night_progress = 1.0
+shader_parameter/sweep_softness = 0.25
+
 [node name="HeroSelectScreen" type="Control" unique_id=701372513]
 layout_mode = 3
 anchors_preset = 15
@@ -168,6 +176,7 @@ grow_vertical = 2
 script = ExtResource("1_script")
 
 [node name="Background" type="TextureRect" parent="." unique_id=227786146]
+material = SubResource("ShaderMaterial_day_night_bg")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -273,8 +282,9 @@ axis_stretch_vertical = 1
 [node name="NameplatePanel" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1372186736]
 layout_mode = 0
 offset_left = 104.0
+offset_top = -9.0
 offset_right = 472.0
-offset_bottom = 48.0
+offset_bottom = 39.0
 texture = ExtResource("19_nameplate")
 stretch_mode = 2
 
@@ -295,7 +305,7 @@ text = "Warrior"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PrevHeroFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea"]
+[node name="PrevHeroFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1972336226]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 214.0
@@ -320,7 +330,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_arrow_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_arrow_hover")
 text = ""
 
-[node name="ArrowIcon" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PrevHeroFrame/PrevHeroBtn"]
+[node name="ArrowIcon" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/PrevHeroFrame/PrevHeroBtn" unique_id=1846268157]
 layout_mode = 0
 offset_left = -10.0
 offset_top = -10.0
@@ -330,7 +340,7 @@ mouse_filter = 2
 texture = ExtResource("22_arrow_left")
 stretch_mode = 2
 
-[node name="NextHeroFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea"]
+[node name="NextHeroFrame" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1111675157]
 layout_mode = 0
 offset_left = 444.0
 offset_top = 214.0
@@ -355,7 +365,7 @@ theme_override_styles/disabled = SubResource("StyleBoxTexture_arrow_disabled")
 theme_override_styles/focus = SubResource("StyleBoxTexture_arrow_hover")
 text = ""
 
-[node name="ArrowIcon" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/NextHeroFrame/NextHeroBtn"]
+[node name="ArrowIcon" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/NextHeroFrame/NextHeroBtn" unique_id=226645129]
 layout_mode = 0
 offset_left = -10.0
 offset_top = -10.0

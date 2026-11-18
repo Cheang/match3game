@@ -18,6 +18,7 @@ var _roster: Array[PlayerResource] = []
 var _current_index: int = 0
 var _choice_made: bool = false
 
+@onready var background_rect: TextureRect = find_child("Background", true, false) as TextureRect
 @onready var showcase_area: Control = find_child("ShowcaseArea", true, false) as Control
 @onready var nameplate_label: Label = find_child("NameLabel", true, false) as Label
 @onready var portrait_art: TextureRect = find_child("PortraitArt", true, false) as TextureRect
@@ -47,6 +48,7 @@ func _ready() -> void:
 	_update_cloth_banner_size()
 	_refresh_hero_display()
 
+	_set_night_progress(1.0)
 	_set_screen_fade(0.0)
 	create_tween().tween_method(_set_screen_fade, 0.0, 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
@@ -198,6 +200,13 @@ func _update_cloth_banner_size() -> void:
 		mat.set_shader_parameter("banner_height", snapped_height)
 
 
+func _set_night_progress(val: float) -> void:
+	if background_rect != null:
+		var mat := background_rect.material as ShaderMaterial
+		if mat != null:
+			mat.set_shader_parameter("night_progress", val)
+
+
 func _set_screen_fade(alpha: float) -> void:
 	if showcase_area != null:
 		showcase_area.modulate.a = alpha
@@ -254,12 +263,12 @@ func _on_back_pressed() -> void:
 		return
 	_choice_made = true
 	MAIN_MENU_SCRIPT.returning_from_hero_select = true
-	var tw := create_tween()
-	tw.tween_method(_set_screen_fade, 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	tw.tween_callback(func():
-		SceneManager.change_scene("res://ui/screens/main_menu.tscn", {
-			"skip_fade_out": true,
-			"skip_fade_in": true,
-			"wait_time": 0.0,
-		})
-	)
+	var tw := create_tween().set_parallel(true)
+	tw.tween_method(_set_screen_fade, 1.0, 0.0, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_method(_set_night_progress, 1.0, 0.0, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+	SceneManager.change_scene("res://ui/screens/main_menu.tscn", {
+		"skip_fade_out": true,
+		"skip_fade_in": true,
+		"wait_time": 0.0,
+	})
