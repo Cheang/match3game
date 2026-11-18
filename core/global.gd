@@ -31,16 +31,78 @@ const EQUIPMENT_FAMILY_COLORS: Dictionary = {
 func get_family_default_color(family_name: String) -> int:
 	return EQUIPMENT_FAMILY_COLORS.get(family_name.to_lower(), 0)
 
+const CLASSES_DIR: String = "res://entities/player/classes"
+const DEFAULT_WARRIOR_PATH: String = "res://entities/player/classes/warrior/warrior.tres"
+
 var def_char: PlayerResource = null
+var playable_classes: Array[PlayerResource] = []
 var def_enemy: EnemyResource = null
 
 func _ready():
-	if ResourceLoader.exists("res://entities/player/warrior/warrior.tres"):
-		def_char = load("res://entities/player/warrior/warrior.tres")
+	if ResourceLoader.exists(DEFAULT_WARRIOR_PATH):
+		def_char = load(DEFAULT_WARRIOR_PATH)
+	load_playable_classes()
+	if def_char == null and not playable_classes.is_empty():
+		def_char = playable_classes[0]
 	if ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
 		def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
 	if setting_res == null:
 		setting_res = SettingsResource.new()
+
+func get_playable_classes(force_reload: bool = false) -> Array[PlayerResource]:
+	if force_reload or playable_classes.is_empty():
+		return load_playable_classes()
+	return playable_classes
+
+func load_playable_classes(dir_path: String = CLASSES_DIR) -> Array[PlayerResource]:
+	var found: Array[PlayerResource] = []
+	var seen_paths: Dictionary = {}
+	_scan_classes_directory(dir_path, found, seen_paths)
+
+	# Keep default class (Warrior) first, then sort other discovered classes alphabetically
+	found.sort_custom(func(a: PlayerResource, b: PlayerResource) -> bool:
+		var a_is_def := (def_char != null and (a == def_char or (a.resource_path != "" and a.resource_path == def_char.resource_path))) or a.player_class.to_lower() == "warrior"
+		var b_is_def := (def_char != null and (b == def_char or (b.resource_path != "" and b.resource_path == def_char.resource_path))) or b.player_class.to_lower() == "warrior"
+		if a_is_def != b_is_def:
+			return a_is_def
+		return a.player_class.to_lower() < b.player_class.to_lower()
+	)
+
+	if dir_path == CLASSES_DIR:
+		playable_classes = found
+	return found
+
+func _scan_classes_directory(dir_path: String, results: Array[PlayerResource], seen_paths: Dictionary) -> void:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	var subdirs: Array[String] = []
+	var tres_files: Array[String] = []
+	while entry != "":
+		if not entry.begins_with("."):
+			if dir.current_is_dir():
+				subdirs.append(dir_path.path_join(entry))
+			else:
+				var clean_name := entry.trim_suffix(".remap")
+				if clean_name.ends_with(".tres"):
+					tres_files.append(dir_path.path_join(clean_name))
+		entry = dir.get_next()
+	dir.list_dir_end()
+
+	tres_files.sort()
+	for file_path in tres_files:
+		if seen_paths.has(file_path):
+			continue
+		var res := ResourceLoader.load(file_path)
+		if res is PlayerResource:
+			seen_paths[file_path] = true
+			results.append(res as PlayerResource)
+
+	subdirs.sort()
+	for subdir in subdirs:
+		_scan_classes_directory(subdir, results, seen_paths)
 
 var cur_char: PlayerResource
 var selected_char: PlayerResource
@@ -168,8 +230,8 @@ func color_string_to_id(color_str: String) -> int:
 
 #Player_functions --------------------------------------------------------------
 func set_up_player():
-	if def_char == null and ResourceLoader.exists("res://entities/player/warrior/warrior.tres"):
-		def_char = load("res://entities/player/warrior/warrior.tres")
+	if def_char == null and ResourceLoader.exists(DEFAULT_WARRIOR_PATH):
+		def_char = load(DEFAULT_WARRIOR_PATH)
 	if selected_char == null:
 		selected_char = def_char
 	if selected_char != null:
@@ -438,8 +500,8 @@ func load_data():
 			game_seed = save_file.game_seed
 	else:
 		setting_res = SettingsResource.new()
-		if def_char == null and ResourceLoader.exists("res://entities/player/warrior/warrior.tres"):
-			def_char = load("res://entities/player/warrior/warrior.tres")
+		if def_char == null and ResourceLoader.exists(DEFAULT_WARRIOR_PATH):
+			def_char = load(DEFAULT_WARRIOR_PATH)
 		selected_char = def_char
 		if def_enemy == null and ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
 			def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")

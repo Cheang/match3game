@@ -401,7 +401,7 @@ func _test_monster_tracks_and_colorless_fallback() -> void:
 # ------------------------------------------------------------------------------
 func _test_board_smart_beast_hybrid_and_bombs() -> void:
 	print("\n--- 5. Board AI (Smart, Beast, Hybrid) & Bomb Majority Color ---")
-	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
 	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
@@ -473,7 +473,7 @@ func _test_board_smart_beast_hybrid_and_bombs() -> void:
 # ------------------------------------------------------------------------------
 func _test_enemy_target_preview_and_cascade_suppression() -> void:
 	print("\n--- 5b. Enemy Target Visualization & AOE Cascade Exclusion ---")
-	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
 	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
@@ -551,7 +551,7 @@ func _test_enemy_target_preview_and_cascade_suppression() -> void:
 # ------------------------------------------------------------------------------
 func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	print("\n--- 6. Direct-Resource Rewards & 3-Source Draft ---")
-	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
 	var boar: EnemyResource = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
 	Global.cur_char = player
@@ -694,7 +694,7 @@ func _test_save_load_persistence() -> void:
 	var prev_save_path: String = Global.save_path
 	Global.save_path = test_save_path
 
-	var player: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
 	var base_might: float = player.might
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
@@ -964,7 +964,7 @@ func _test_five_passive_slots_and_inventory_removal() -> void:
 # ------------------------------------------------------------------------------
 func _test_unified_four_reward_types_and_build_affinity() -> void:
 	print("\n--- 11. Unified 4 Reward Types & Build-Affinity Class Pool ---")
-	var plr: PlayerResource = load("res://entities/player/warrior/warrior.tres").duplicate(true)
+	var plr: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
 	plr.reset_stats_at_beginning_of_game()
 
 	# 1. Verify all 4 RewardType enum values exist and work on unified Reward

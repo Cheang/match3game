@@ -1,7 +1,7 @@
 extends Control
 
 const MAIN_MENU_SCRIPT := preload("res://ui/screens/main_menu.gd")
-const DEFAULT_HERO := preload("res://entities/player/warrior/warrior.tres")
+const DEFAULT_HERO := preload("res://entities/player/classes/warrior/warrior.tres")
 const DEFAULT_AREA: LocationLoader = preload("res://map/areas/area_1.tres")
 
 const CLOTH_VERTICAL_PADDING: float = 64.0
@@ -10,7 +10,7 @@ const CLOTH_TILE_HEIGHT: float = 8.0
 ## Explicit ordered roster for character select. When left empty, all PlayerResource assets under characters_dir are loaded automatically.
 @export var available_characters: Array[PlayerResource] = []
 ## Directory scanned for PlayerResource .tres files when available_characters is empty.
-@export_dir var characters_dir: String = "res://entities/player"
+@export_dir var characters_dir: String = "res://entities/player/classes"
 ## Starting area used when launching a new story run.
 @export var def_area: LocationLoader = DEFAULT_AREA
 
@@ -88,8 +88,8 @@ func _build_roster() -> void:
 				_roster.append(hero)
 
 	if _roster.is_empty():
-		if characters_dir != "":
-			_scan_directory_for_heroes(characters_dir, seen_paths)
+		var target_dir := characters_dir if characters_dir != "" else Global.CLASSES_DIR
+		_roster = Global.load_playable_classes(target_dir)
 		if _roster.is_empty():
 			var fallback: PlayerResource = DEFAULT_HERO
 			if fallback == null:
@@ -104,39 +104,6 @@ func _build_roster() -> void:
 			if _roster[i] == active_target or (_roster[i].resource_path != "" and _roster[i].resource_path == active_target.resource_path):
 				_current_index = i
 				break
-
-
-func _scan_directory_for_heroes(dir_path: String, seen_paths: Dictionary) -> void:
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
-		return
-	dir.list_dir_begin()
-	var entry := dir.get_next()
-	var subdirs: Array[String] = []
-	var tres_files: Array[String] = []
-	while entry != "":
-		if not entry.begins_with("."):
-			if dir.current_is_dir():
-				subdirs.append(dir_path.path_join(entry))
-			else:
-				var clean_name := entry.trim_suffix(".remap")
-				if clean_name.ends_with(".tres"):
-					tres_files.append(dir_path.path_join(clean_name))
-		entry = dir.get_next()
-	dir.list_dir_end()
-
-	tres_files.sort()
-	for file_path in tres_files:
-		if seen_paths.has(file_path):
-			continue
-		var res := ResourceLoader.load(file_path)
-		if res is PlayerResource:
-			seen_paths[file_path] = true
-			_roster.append(res as PlayerResource)
-
-	subdirs.sort()
-	for subdir in subdirs:
-		_scan_directory_for_heroes(subdir, seen_paths)
 
 
 func _hide_loadout_decoration() -> void:

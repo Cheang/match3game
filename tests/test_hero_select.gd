@@ -1,7 +1,7 @@
 extends Node
 
 const HERO_SELECT_SCENE := preload("res://ui/screens/hero_select_screen.tscn")
-const WARRIOR_RES := preload("res://entities/player/warrior/warrior.tres")
+const WARRIOR_RES := preload("res://entities/player/classes/warrior/warrior.tres")
 const SAMPLE_PORTRAIT := preload("res://assets/sprites/ui/main_menu/folktiles_logo.png")
 
 var _failures: int = 0
@@ -46,15 +46,58 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
+	var discovered: Array[PlayerResource] = Global.get_playable_classes(true)
+	_assert_true(discovered.size() >= 2, "Global discovers at least Warrior and Debug classes from classes folder")
+
 	var cur_hero: PlayerResource = screen.get_current_hero()
 	_assert_true(cur_hero != null and cur_hero.player_class == "Warrior", "Default hero is Warrior")
 	_assert_true(screen.nameplate_label.text == "Warrior", "Nameplate displays Warrior")
-	_assert_true(screen.might_label.text == "20", "Might globe shows 20")
+	_assert_true(screen.might_label.text == "2", "Might globe shows 2")
 	_assert_true(screen.grit_label.text == "3", "Grit globe shows 3")
 	_assert_true(screen.agility_label.text == "2", "Agility globe shows 2")
 	_assert_true(screen.spirit_label.text == "0", "Spirit globe shows 0")
+
+	_assert_true(not screen.prev_hero_btn.disabled and not screen.next_hero_btn.disabled, "Arrow buttons enabled for discovered playable classes")
+	screen._on_next_hero_pressed()
+	await get_tree().process_frame
+	_assert_true(screen.nameplate_label.text == "Debug", "Next arrow cycles to discovered Debug class")
+	_assert_true(
+		screen.might_label.text == "20" and screen.grit_label.text == "20" and screen.agility_label.text == "20" and screen.spirit_label.text == "20",
+		"Debug class sets all four stats to 20"
+	)
+	screen._on_prev_hero_pressed()
+	await get_tree().process_frame
+	_assert_true(screen.nameplate_label.text == "Warrior", "Prev arrow returns to Warrior")
 	_assert_true(screen.placeholder_overlay.visible, "Placeholder visible when portrait_art is null")
 	_assert_true(not screen.portrait_art.visible, "PortraitArt hidden when portrait_art is null")
+
+	# Verify PortraitBackground & PortraitBorder NinePatchRect configuration and draw order
+	var portrait_frame := screen.find_child("PortraitFrame", true, false)
+	var portrait_bg := portrait_frame.get_node_or_null("PortraitBackground") as NinePatchRect if portrait_frame != null else null
+	var portrait_border := portrait_frame.get_node_or_null("PortraitBorder") as NinePatchRect if portrait_frame != null else null
+	_assert_true(portrait_bg != null and portrait_border != null, "PortraitBackground and PortraitBorder NinePatchRect nodes exist")
+	if portrait_bg != null and portrait_border != null:
+		_assert_true(
+			portrait_bg.patch_margin_left == 98 and portrait_bg.patch_margin_top == 98 and portrait_bg.patch_margin_right == 98 and portrait_bg.patch_margin_bottom == 98,
+			"PortraitBackground patch_margins all equal 98"
+		)
+		_assert_true(
+			portrait_bg.axis_stretch_horizontal == NinePatchRect.AXIS_STRETCH_MODE_TILE and portrait_bg.axis_stretch_vertical == NinePatchRect.AXIS_STRETCH_MODE_TILE,
+			"PortraitBackground uses TILE (repeating) axis stretch"
+		)
+		_assert_true(
+			portrait_border.patch_margin_left == 98 and portrait_border.patch_margin_top == 98 and portrait_border.patch_margin_right == 98 and portrait_border.patch_margin_bottom == 98,
+			"PortraitBorder patch_margins all equal 98"
+		)
+		_assert_true(
+			portrait_border.axis_stretch_horizontal == NinePatchRect.AXIS_STRETCH_MODE_TILE and portrait_border.axis_stretch_vertical == NinePatchRect.AXIS_STRETCH_MODE_TILE,
+			"PortraitBorder uses TILE (repeating) axis stretch"
+		)
+		_assert_true(not portrait_border.draw_center, "PortraitBorder has draw_center disabled")
+		_assert_true(
+			portrait_border.get_index() > screen.portrait_art.get_index() and screen.portrait_art.get_index() > portrait_bg.get_index(),
+			"Draw order: PortraitBackground < PortraitArt < PortraitBorder"
+		)
 	_assert_true(screen.loadout_dock != null, "LoadoutDock exists")
 	if screen.loadout_dock != null:
 		var deco := screen.loadout_dock.get_node_or_null("BgDecoration") as CanvasItem

@@ -358,7 +358,7 @@ func _unhandled_input(event: InputEvent) -> void:
 # ==============================================================================
 func _init_standalone_mode() -> void:
 	# Load Warrior player resource as active test character
-	var warrior_template: PlayerResource = load("res://entities/player/warrior/warrior.tres")
+	var warrior_template: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres")
 	if warrior_template != null:
 		Global.cur_char = warrior_template.duplicate(true)
 	else:
