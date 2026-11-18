@@ -81,6 +81,27 @@ func _ready() -> void:
 	_assert_true(not screen.placeholder_overlay.visible, "Placeholder hidden when Warrior has portrait_art")
 
 	_assert_true(not screen.prev_hero_btn.disabled and not screen.next_hero_btn.disabled, "Arrow buttons enabled for discovered playable classes")
+	var prev_frame := screen.find_child("PrevHeroFrame", true, false) as TextureRect
+	var next_frame := screen.find_child("NextHeroFrame", true, false) as TextureRect
+	_assert_true(
+		prev_frame != null and prev_frame.texture != null and prev_frame.texture.resource_path.ends_with("arrow_button_bg.png")
+		and next_frame != null and next_frame.texture != null and next_frame.texture.resource_path.ends_with("arrow_button_bg.png"),
+		"PrevHeroFrame and NextHeroFrame use 84x84 arrow_button_bg.png"
+	)
+	var prev_style := screen.prev_hero_btn.get_theme_stylebox("normal") as StyleBoxTexture
+	var next_style := screen.next_hero_btn.get_theme_stylebox("normal") as StyleBoxTexture
+	_assert_true(
+		prev_style != null and prev_style.texture != null and prev_style.texture.resource_path.ends_with("general_button_unpressed.png")
+		and next_style != null and next_style.texture != null and next_style.texture.resource_path.ends_with("general_button_unpressed.png"),
+		"PrevHeroBtn and NextHeroBtn use general_button_unpressed.png"
+	)
+	var prev_icon := screen.prev_hero_btn.get_node_or_null("ArrowIcon") as TextureRect
+	var next_icon := screen.next_hero_btn.get_node_or_null("ArrowIcon") as TextureRect
+	_assert_true(
+		prev_icon != null and prev_icon.texture != null and prev_icon.texture.resource_path.ends_with("arrow_left.png")
+		and next_icon != null and next_icon.texture != null and next_icon.texture.resource_path.ends_with("arrow_right.png"),
+		"ArrowIcon children use arrow_left.png and arrow_right.png"
+	)
 	screen._on_next_hero_pressed()
 	await get_tree().process_frame
 	_assert_true(screen.nameplate_label.text == "Debug", "Next arrow cycles to discovered Debug class")
@@ -157,16 +178,14 @@ func _ready() -> void:
 			)
 
 	var stat_labels: Array[Label] = [screen.might_label, screen.grit_label, screen.agility_label, screen.spirit_label]
-	var seen_font_colors: Dictionary = {}
 	var seen_outline_colors: Dictionary = {}
 	for lbl in stat_labels:
 		_assert_true(
 			lbl.get_theme_constant("outline_size") == 4 and lbl.get_theme_constant("shadow_outline_size") == 3,
 			lbl.name + " uses outline_size=4 and shadow_outline_size=3"
 		)
-		seen_font_colors[lbl.get_theme_color("font_color").to_html()] = true
+		_assert_true(lbl.get_theme_color("font_color").is_equal_approx(Color.WHITE), lbl.name + " uses white font_color")
 		seen_outline_colors[lbl.get_theme_color("font_outline_color").to_html()] = true
-	_assert_true(seen_font_colors.size() == 4, "Each stat globe label has its own font_color")
 	_assert_true(seen_outline_colors.size() == 4, "Each stat globe label has its own font_outline_color")
 
 	# 3. Verify 2-hero cycling with portrait_art set
