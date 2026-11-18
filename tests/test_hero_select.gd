@@ -57,6 +57,10 @@ func _ready() -> void:
 	_assert_true(screen.agility_label.text == "2", "Agility globe shows 2")
 	_assert_true(screen.spirit_label.text == "0", "Spirit globe shows 0")
 
+	_assert_true(cur_hero.portrait_art != null, "Warrior resource has portrait_art assigned")
+	_assert_true(screen.portrait_art.visible and screen.portrait_art.texture == cur_hero.portrait_art, "PortraitArt visible with Warrior portrait")
+	_assert_true(not screen.placeholder_overlay.visible, "Placeholder hidden when Warrior has portrait_art")
+
 	_assert_true(not screen.prev_hero_btn.disabled and not screen.next_hero_btn.disabled, "Arrow buttons enabled for discovered playable classes")
 	screen._on_next_hero_pressed()
 	await get_tree().process_frame
@@ -65,11 +69,13 @@ func _ready() -> void:
 		screen.might_label.text == "20" and screen.grit_label.text == "20" and screen.agility_label.text == "20" and screen.spirit_label.text == "20",
 		"Debug class sets all four stats to 20"
 	)
+	_assert_true(screen.placeholder_overlay.visible, "Placeholder visible when Debug portrait_art is null")
+	_assert_true(not screen.portrait_art.visible, "PortraitArt hidden when Debug portrait_art is null")
 	screen._on_prev_hero_pressed()
 	await get_tree().process_frame
 	_assert_true(screen.nameplate_label.text == "Warrior", "Prev arrow returns to Warrior")
-	_assert_true(screen.placeholder_overlay.visible, "Placeholder visible when portrait_art is null")
-	_assert_true(not screen.portrait_art.visible, "PortraitArt hidden when portrait_art is null")
+	_assert_true(screen.portrait_art.visible and screen.portrait_art.texture == cur_hero.portrait_art, "Warrior portrait restored after cycling back")
+	_assert_true(not screen.placeholder_overlay.visible, "Placeholder hidden after cycling back to Warrior")
 
 	# Verify PortraitBackground & PortraitBorder NinePatchRect configuration and draw order
 	var portrait_frame := screen.find_child("PortraitFrame", true, false)
