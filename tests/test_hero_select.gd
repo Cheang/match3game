@@ -156,6 +156,19 @@ func _ready() -> void:
 				globe_rect_name + " uses palette_swap_5.gdshader"
 			)
 
+	var stat_labels: Array[Label] = [screen.might_label, screen.grit_label, screen.agility_label, screen.spirit_label]
+	var seen_font_colors: Dictionary = {}
+	var seen_outline_colors: Dictionary = {}
+	for lbl in stat_labels:
+		_assert_true(
+			lbl.get_theme_constant("outline_size") == 4 and lbl.get_theme_constant("shadow_outline_size") == 3,
+			lbl.name + " uses outline_size=4 and shadow_outline_size=3"
+		)
+		seen_font_colors[lbl.get_theme_color("font_color").to_html()] = true
+		seen_outline_colors[lbl.get_theme_color("font_outline_color").to_html()] = true
+	_assert_true(seen_font_colors.size() == 4, "Each stat globe label has its own font_color")
+	_assert_true(seen_outline_colors.size() == 4, "Each stat globe label has its own font_outline_color")
+
 	# 3. Verify 2-hero cycling with portrait_art set
 	var custom_hero := WARRIOR_RES.duplicate(true) as PlayerResource
 	custom_hero.player_class = "Ranger"
