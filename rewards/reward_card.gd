@@ -184,8 +184,15 @@ func _proceed_after_reward() -> void:
 	if cur_sc != null and cur_sc.has_method("handle_reward_proceed"):
 		cur_sc.handle_reward_proceed(self)
 		return
-	if Global.boss_beaten:
-		SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+	if Global.boss_beaten or bool(Global.pending_reward_context.get("is_boss", false)):
+		Global.boss_beaten = false
+		Global.pending_reward_context.clear()
+		if Global.advance_to_next_stage():
+			Global.cur_scene = "res://ui/screens/boss_select_screen.tscn"
+			SceneManager.change_scene("res://ui/screens/boss_select_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		else:
+			Global.game_is_over = true
+			SceneManager.change_scene("res://ui/screens/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
 	elif Global.post_combat_event != null:
 		Global.area_cur_event = Global.post_combat_event
 		Global.post_combat_event = null

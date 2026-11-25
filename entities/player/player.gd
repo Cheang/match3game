@@ -27,6 +27,8 @@ func _ready() -> void:
 	Global.cur_char.reset_stats_at_beginning_of_fight()
 	if Global.cur_char.sprite != null and art != null:
 		var player_sprite = Global.cur_char.sprite.instantiate()
+		if player_sprite is Node2D:
+			(player_sprite as Node2D).position = Vector2.ZERO
 		art.add_child(player_sprite)
 	if buff_container != null:
 		buff_container.bind_entity(Global.cur_char)

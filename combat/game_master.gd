@@ -145,6 +145,13 @@ func _spawn_action_toast(mod: Equipment, ctx: MatchContext, is_player: bool, is_
 	tw.tween_property(pill, "modulate:a", 0.0, 0.65).set_delay(0.22)
 	tw.chain().tween_callback(pill.queue_free)
 
+func _is_attack_equipment(mod: Equipment) -> bool:
+	return mod != null and (
+		mod.get_effective_base_damage() > 0.0
+		or mod.get_effective_bonus_damage() > 0.0
+		or mod.get_effective_damage_combo_multiplier() > 0.0
+	)
+
 func _execute_match_context(ctx: MatchContext) -> void:
 	if ctx == null or ctx.ignore_equipment_triggers:
 		return
@@ -217,18 +224,31 @@ func _execute_match_context(ctx: MatchContext) -> void:
 					fists_triggered = true
 				var did_crit: bool = actor.roll_crit()
 				mod.criting = did_crit
-				mod.activate({
-					"attacker": actor,
-					"target": target,
-					"ctx": ctx,
-					"is_crit": did_crit
-				})
-				mod.on_triggered(actor)
-				_spawn_action_toast(mod, ctx, actor is PlayerResource, did_crit)
-				if actor is PlayerResource and loadout_dock != null:
-					loadout_dock.pulse_slot(ctx.base_color, mod)
-				if is_inside_tree():
-					await get_tree().create_timer(0.1).timeout
+				if actor is EnemyResource and _is_attack_equipment(mod) and enemy != null:
+					_spawn_action_toast(mod, ctx, false, did_crit)
+					await enemy.play_attack_animation("", null, -1.0, func():
+						if Global.game_is_played and actor.cur_health > 0 and target.cur_health > 0:
+							mod.activate({
+								"attacker": actor,
+								"target": target,
+								"ctx": ctx,
+								"is_crit": did_crit
+							})
+							mod.on_triggered(actor)
+					)
+				else:
+					mod.activate({
+						"attacker": actor,
+						"target": target,
+						"ctx": ctx,
+						"is_crit": did_crit
+					})
+					mod.on_triggered(actor)
+					_spawn_action_toast(mod, ctx, actor is PlayerResource, did_crit)
+					if actor is PlayerResource and loadout_dock != null:
+						loadout_dock.pulse_slot(ctx.base_color, mod)
+					if is_inside_tree():
+						await get_tree().create_timer(0.1).timeout
 			else:
 				# Blocked equipment consumes 1 trigger and cursor has already advanced to the next entry.
 				remaining_budget -= 1
@@ -251,7 +271,13 @@ func _execute_match_context(ctx: MatchContext) -> void:
 		elif actor is EnemyResource:
 			var enemy_actor := actor as EnemyResource
 			var dmg: float = max(1.0, roundf(max(1.0, enemy_actor.damage) * trigger_budget * crit_factor))
-			target.take_damage(dmg, false, 0, actor)
+			if enemy != null:
+				await enemy.play_attack_animation("", null, -1.0, func():
+					if Global.game_is_played and actor.cur_health > 0 and target.cur_health > 0:
+						target.take_damage(dmg, false, 0, actor)
+				)
+			else:
+				target.take_damage(dmg, false, 0, actor)
 
 	# 3. Interactive Hazard Follow-up: Fists-family modifiers hurl cleared grd_rock
 	if fists_triggered and ctx.hazards_cleared.has("rock") and target.cur_health > 0:
@@ -395,7 +421,7 @@ func enemy_died():
 		if Global.cur_enemy.type == 1:
 			Global.boss_beaten = true
 			Global.bosses_killed += 1
-			if Global.bosses_killed >= Global.bosses_killed_needed:
+			if not Global.has_more_stages():
 				Global.game_is_over = true
 				SceneManager.change_scene("res://ui/screens/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f'), "skip_fade_out": true })
 				return

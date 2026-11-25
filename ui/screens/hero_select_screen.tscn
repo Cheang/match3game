@@ -6,8 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="5_btn"]
 [ext_resource type="Texture2D" uid="uid://bobaog8vp3xjq" path="res://assets/sprites/ui/character_select/stat_globe.png" id="6_stat_globe"]
 [ext_resource type="Shader" uid="uid://b316fpha4o5pp" path="res://assets/shaders/palette_swap_5.gdshader" id="7_palette_shader"]
+[ext_resource type="Script" uid="uid://b5vetgeu06rgi" path="res://ui/common/pixel_wind_cloth.gd" id="8_sc0ef"]
+[ext_resource type="Texture2D" uid="uid://c5om20ds4ixb1" path="res://assets/sprites/ui/character_select/portrait_border_cloth1.png" id="8_yk0am"]
 [ext_resource type="PackedScene" uid="uid://df7w0q8a1k2e" path="res://ui/hud/loadout_dock.tscn" id="9_loadout"]
 [ext_resource type="Shader" uid="uid://d13gs3so60pu8" path="res://assets/shaders/cloth_banner_sway.gdshader" id="10_cloth_shader"]
+[ext_resource type="Texture2D" uid="uid://dw3bj6u11vn2l" path="res://assets/sprites/ui/character_select/portrait_border_cloth.png" id="10_p8hrb"]
 [ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/main_menu/buttons_background.png" id="11_cloth_bg"]
 [ext_resource type="Texture2D" uid="uid://dcloks6jxmooy" path="res://assets/sprites/ui/general_ui/button/button_unselected.png" id="12_btn_norm"]
 [ext_resource type="Texture2D" uid="uid://kgacc1j1rn0h" path="res://assets/sprites/ui/general_ui/button/button_selected.png" id="13_btn_sel"]
@@ -22,6 +25,12 @@
 [ext_resource type="Texture2D" uid="uid://cqonhanhauovd" path="res://assets/sprites/ui/character_select/arrow_right.png" id="23_arrow_right"]
 [ext_resource type="Texture2D" uid="uid://1yjero5r5ccv" path="res://assets/sprites/ui/character_select/main_menu_night_bg.png" id="24_night_bg"]
 [ext_resource type="Shader" uid="uid://cv71uxlx4bk12" path="res://assets/shaders/day_night_bg.gdshader" id="25_day_night_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_night_bg"]
+shader = ExtResource("25_day_night_shader")
+shader_parameter/night_texture = ExtResource("24_night_bg")
+shader_parameter/night_progress = 1.0
+shader_parameter/sweep_softness = 0.25
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_arrow_normal"]
 content_margin_left = 0.0
@@ -160,12 +169,6 @@ texture_margin_top = 18.0
 texture_margin_right = 58.0
 texture_margin_bottom = 18.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_night_bg"]
-shader = ExtResource("25_day_night_shader")
-shader_parameter/night_texture = ExtResource("24_night_bg")
-shader_parameter/night_progress = 1.0
-shader_parameter/sweep_softness = 0.25
-
 [node name="HeroSelectScreen" type="Control" unique_id=701372513]
 layout_mode = 3
 anchors_preset = 15
@@ -278,6 +281,60 @@ patch_margin_right = 98
 patch_margin_bottom = 98
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
+
+[node name="ClothPieces" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=202069615]
+
+[node name="ClothTopLeft" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1569418107]
+texture_filter = 1
+position = Vector2(93, 114)
+script = ExtResource("8_sc0ef")
+length_px = 56.0
+base_width_px = 12.5
+tip_width_px = 7.5
+
+[node name="ClothTopLeft2" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=882185826]
+texture_filter = 1
+position = Vector2(94, 331)
+script = ExtResource("8_sc0ef")
+length_px = 56.0
+base_width_px = 12.5
+tip_width_px = 7.5
+
+[node name="ClothBottomLeft" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1913159469]
+texture_filter = 1
+position = Vector2(96, 332)
+script = ExtResource("8_sc0ef")
+length_px = 68.0
+base_width_px = 15.0
+tip_width_px = 9.0
+tip_style = 2
+
+[node name="ClothBottomRight" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1123556757]
+texture_filter = 1
+position = Vector2(478, 419)
+script = ExtResource("8_sc0ef")
+length_px = 46.0
+base_width_px = 10.5
+tip_width_px = 6.5
+tip_style = 1
+
+[node name="ClothTopRight" type="Node2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1787442378]
+texture_filter = 1
+position = Vector2(482, 422)
+script = ExtResource("8_sc0ef")
+base_width_px = 13.5
+
+[node name="PortraitBorderCloth1" type="Sprite2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=2093063627]
+position = Vector2(99, 323)
+texture = ExtResource("8_yk0am")
+
+[node name="PortraitBorderCloth" type="Sprite2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1828643325]
+position = Vector2(96, 109)
+texture = ExtResource("10_p8hrb")
+
+[node name="PortraitBorderCloth2" type="Sprite2D" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea/ClothPieces" unique_id=1445222199]
+position = Vector2(480, 414)
+texture = ExtResource("10_p8hrb")
 
 [node name="NameplatePanel" type="TextureRect" parent="CenterContainer/TopMargin/MainVBox/ShowcaseArea" unique_id=1372186736]
 layout_mode = 0

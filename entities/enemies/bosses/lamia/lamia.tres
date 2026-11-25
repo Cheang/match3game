@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://55ybcdssir3b" path="res://rewards/reward.gd" id="19_rew_scr"]
 [ext_resource type="Resource" uid="uid://brjtyx8s2586c" path="res://rewards/cards/utility/faith_weak.tres" id="20_rew_faith"]
 [ext_resource type="Resource" uid="uid://cuos01tmjw73" path="res://rewards/cards/fists/fists1_crushing_fist.tres" id="21_rew_upper"]
+[ext_resource type="Texture2D" uid="uid://b2txcc3ydaoyn" path="res://assets/sprites/enemies/lamia/lamia_wanted_art.png" id="22_cqnce"]
 [ext_resource type="Resource" uid="uid://duw7nlh5pgakp" path="res://rewards/cards/utility/general_rush_smoke_screen.tres" id="22_rew_smoke"]
 
 [resource]
@@ -36,6 +37,7 @@ loot_table = Array[ExtResource("19_rew_scr")]([ExtResource("20_rew_faith"), ExtR
 damage = 2.0
 attacks = Array[ExtResource("1_j17yo")]([ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("3_6p5om"), ExtResource("4_tfsx7"), ExtResource("2_1p6sj"), ExtResource("2_1p6sj"), ExtResource("5_6ib0x")])
 health_bar = ExtResource("6_vvsti")
+wanted_poster_art = ExtResource("22_cqnce")
 empty_spaces = Array[Vector2]([Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(6, 7), Vector2(7, 7), Vector2(0, 1), Vector2(1, 1), Vector2(2, 1), Vector2(3, 1), Vector2(4, 1)])
 sprite = ExtResource("8_c4omb")
 max_health = 65.0

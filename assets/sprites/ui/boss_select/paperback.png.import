@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ds5bedqwtiono"
-path="res://.godot/imported/loc_lamia_boss.png-756653cb559ce78029288adb817eb386.ctex"
+uid="uid://cd34yu7u7v2d1"
+path="res://.godot/imported/paperback.png-d7930756a92f44d09ade81247d6087be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/locations/loc_lamia_boss.png"
-dest_files=["res://.godot/imported/loc_lamia_boss.png-756653cb559ce78029288adb817eb386.ctex"]
+source_file="res://assets/sprites/ui/boss_select/paperback.png"
+dest_files=["res://.godot/imported/paperback.png-d7930756a92f44d09ade81247d6087be.ctex"]
 
 [params]
 

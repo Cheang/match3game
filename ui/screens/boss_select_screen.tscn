@@ -1,0 +1,337 @@
+[gd_scene format=3 uid="uid://bq6vb8n4qk5nk"]
+
+[ext_resource type="Script" uid="uid://dguulnwielwj8" path="res://ui/screens/boss_select_screen.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://6h1486nvlvqs" path="res://assets/shaders/table_candle_light.gdshader" id="2_table_shader"]
+[ext_resource type="Texture2D" uid="uid://blu8ofmstgjvr" path="res://assets/sprites/ui/boss_select/table.png" id="3_table_tex"]
+[ext_resource type="Texture2D" uid="uid://itrtvvyxslou" path="res://assets/sprites/ui/boss_select/candle.png" id="4_candle_tex"]
+[ext_resource type="Script" uid="uid://spankbvnoqpj" path="res://ui/screens/candle_flame.gd" id="5_flame_script"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="6_btn"]
+[ext_resource type="FontFile" uid="uid://eltjnugppbef" path="res://assets/theme/font_153.ttf" id="10_xyxol"]
+[ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="11_title_font"]
+[ext_resource type="Shader" uid="uid://cd5nlo61x7j1a" path="res://assets/shaders/candle_pixel_glow.gdshader" id="12_glow_shader"]
+[ext_resource type="Texture2D" uid="uid://cd34yu7u7v2d1" path="res://assets/sprites/ui/boss_select/paperback.png" id="13_paperback"]
+[ext_resource type="Texture2D" uid="uid://cw76fkqs1k0mf" path="res://assets/sprites/ui/boss_select/table-sides.png" id="14_table_sides_tex"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_table_light"]
+shader = ExtResource("2_table_shader")
+shader_parameter/light_pos_uv = Vector2(0.177, 0.049)
+shader_parameter/light_strength = 1.0
+shader_parameter/light_contrast = 1.0
+shader_parameter/flicker = 1.0
+shader_parameter/pixel_snap = 2.0
+shader_parameter/ring_inner_radius = 152.0
+shader_parameter/ring_mid_radius = 392.0
+shader_parameter/ring_outer_radius = 650.0
+shader_parameter/inner_flicker_px = 40.0
+shader_parameter/mid_flicker_px = 75.0
+shader_parameter/outer_flicker_px = 90.0
+shader_parameter/allow_hot_highlight = false
+shader_parameter/palette_deep = Color(0.270588, 0.160784, 0.247059, 1)
+shader_parameter/palette_dark = Color(0.431373, 0.152941, 0.152941, 1)
+shader_parameter/palette_mid = Color(0.619608, 0.270588, 0.223529, 1)
+shader_parameter/palette_bright = Color(0.803922, 0.407843, 0.239216, 1)
+shader_parameter/palette_hot = Color(0.901961, 0.564706, 0.305882, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_table_sides_light"]
+shader = ExtResource("2_table_shader")
+shader_parameter/light_pos_uv = Vector2(0.277, 0.049)
+shader_parameter/light_strength = 1.0
+shader_parameter/light_contrast = 1.0
+shader_parameter/flicker = 1.0
+shader_parameter/pixel_snap = 2.0
+shader_parameter/ring_inner_radius = 152.0
+shader_parameter/ring_mid_radius = 392.0
+shader_parameter/ring_outer_radius = 650.0
+shader_parameter/inner_flicker_px = 40.0
+shader_parameter/mid_flicker_px = 75.0
+shader_parameter/outer_flicker_px = 90.0
+shader_parameter/allow_hot_highlight = false
+shader_parameter/palette_deep = Color(0.270588, 0.160784, 0.247059, 1)
+shader_parameter/palette_dark = Color(0.431373, 0.152941, 0.152941, 1)
+shader_parameter/palette_mid = Color(0.619608, 0.270588, 0.223529, 1)
+shader_parameter/palette_bright = Color(0.803922, 0.407843, 0.239216, 1)
+shader_parameter/palette_hot = Color(0.901961, 0.564706, 0.305882, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_candle_glow"]
+shader = ExtResource("12_glow_shader")
+shader_parameter/light_strength = 1.0
+shader_parameter/flicker = 1.0
+shader_parameter/pixel_snap = 2.0
+shader_parameter/rect_size = Vector2(520, 520)
+shader_parameter/inner_radius = 32.0
+shader_parameter/mid_radius = 58.0
+shader_parameter/outer_radius = 86.0
+shader_parameter/inner_color = Color(0.984314, 1, 0.52549, 0.34)
+shader_parameter/mid_color = Color(0.976471, 0.760784, 0.168627, 0.22)
+shader_parameter/outer_color = Color(0.984314, 0.419608, 0.113725, 0.09)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2ombv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper_btn_normal"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.57254905, 0.6627451, 0.5176471, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.30980393, 0.41568628, 0.34901962, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper_btn_pressed"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.282353, 0.376471, 0.313725, 0.85)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.180392, 0.133333, 0.184314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper_btn_hover"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.572549, 0.662745, 0.517647, 0.52)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.180392, 0.133333, 0.184314, 1)
+
+[node name="BossSelectScreen" type="Control" unique_id=803399958]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+light_strength = 1.85
+
+[node name="RoomBackdrop" type="ColorRect" parent="." unique_id=2145383436]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.180392, 0.133333, 0.184314, 1)
+
+[node name="StageCenter" type="CenterContainer" parent="." unique_id=852337507]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TableStage" type="Control" parent="StageCenter" unique_id=624059572]
+custom_minimum_size = Vector2(576, 1024)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TableSprite" type="TextureRect" parent="StageCenter/TableStage" unique_id=46661758]
+texture_filter = 1
+material = SubResource("ShaderMaterial_table_light")
+layout_mode = 0
+offset_top = 148.0
+offset_right = 576.0
+offset_bottom = 1288.0
+mouse_filter = 2
+texture = ExtResource("3_table_tex")
+stretch_mode = 2
+
+[node name="TableSidesSprite" type="TextureRect" parent="StageCenter/TableStage" unique_id=841209311]
+texture_filter = 1
+material = SubResource("ShaderMaterial_table_sides_light")
+layout_mode = 0
+offset_left = -129.0
+offset_top = 148.0
+offset_right = 705.0
+offset_bottom = 1288.0
+mouse_filter = 2
+texture = ExtResource("14_table_sides_tex")
+stretch_mode = 2
+
+[node name="CandleSprite" type="TextureRect" parent="StageCenter/TableStage" unique_id=186208453]
+texture_filter = 1
+layout_mode = 0
+offset_left = 8.0
+offset_top = 76.0
+offset_right = 195.0
+offset_bottom = 262.0
+mouse_filter = 2
+texture = ExtResource("4_candle_tex")
+stretch_mode = 2
+
+[node name="CandleFlame" type="Node2D" parent="StageCenter/TableStage/CandleSprite" unique_id=351294389]
+z_index = 1
+position = Vector2(94, 4)
+script = ExtResource("5_flame_script")
+
+[node name="CandleGlow" type="ColorRect" parent="StageCenter/TableStage" unique_id=884191698]
+visible = false
+texture_filter = 1
+material = SubResource("ShaderMaterial_candle_glow")
+layout_mode = 0
+offset_left = -158.0
+offset_top = -186.0
+offset_right = 362.0
+offset_bottom = 334.0
+mouse_filter = 2
+
+[node name="PosterLayer" type="Control" parent="StageCenter/TableStage" unique_id=1346534469]
+z_index = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InspectOverlay" type="Control" parent="." unique_id=332103719]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DimBackdrop" type="ColorRect" parent="InspectOverlay" unique_id=1134540341]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0627451, 0.0352941, 0.0784314, 0.78)
+
+[node name="BountyInfoPanel" type="Control" parent="InspectOverlay" unique_id=1783169423]
+z_index = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -378.0
+offset_right = 240.0
+offset_bottom = 378.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(240, 378)
+
+[node name="PaperBackground" type="TextureRect" parent="InspectOverlay/BountyInfoPanel" unique_id=484221300]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("13_paperback")
+expand_mode = 1
+
+[node name="ContentMargin" type="MarginContainer" parent="InspectOverlay/BountyInfoPanel" unique_id=1671296537]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 34
+
+[node name="InfoVBox" type="VBoxContainer" parent="InspectOverlay/BountyInfoPanel/ContentMargin" unique_id=1729407478]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="InspectTitleLabel" type="Label" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox" unique_id=1664292430]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_fonts/font = ExtResource("11_title_font")
+theme_override_font_sizes/font_size = 48
+text = "Wanted Boss"
+autowrap_mode = 2
+
+[node name="InspectArtFrame" type="PanelContainer" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox" unique_id=338121649]
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_2ombv")
+
+[node name="InspectArtRect" type="TextureRect" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox/InspectArtFrame" unique_id=2117556179]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InspectDescLabel" type="Label" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox" unique_id=501720408]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_fonts/font = ExtResource("10_xyxol")
+theme_override_font_sizes/font_size = 19
+text = "Description of the bounty goes here."
+autowrap_mode = 2
+
+[node name="InspectButtonsHBox" type="HBoxContainer" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox" unique_id=563374811]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="PutBackBtn" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox/InspectButtonsHBox" unique_id=2035543153 instance=ExtResource("6_btn")]
+z_index = 0
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_focus_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_pressed_color = Color(0.57254905, 0.6627451, 0.5176471, 1)
+theme_override_colors/font_hover_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.57254905, 0.6627451, 0.5176471, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_paper_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_paper_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_paper_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_paper_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_paper_btn_normal")
+theme_override_styles/focus = SubResource("StyleBoxFlat_paper_btn_hover")
+text = "Back"
+
+[node name="SelectPosterBtn" parent="InspectOverlay/BountyInfoPanel/ContentMargin/InfoVBox/InspectButtonsHBox" unique_id=1861785080 instance=ExtResource("6_btn")]
+z_index = 0
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_focus_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_pressed_color = Color(0.57254905, 0.6627451, 0.5176471, 1)
+theme_override_colors/font_hover_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.57254905, 0.6627451, 0.5176471, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_paper_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_paper_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_paper_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_paper_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_paper_btn_normal")
+theme_override_styles/focus = SubResource("StyleBoxFlat_paper_btn_hover")
+text = "Select"

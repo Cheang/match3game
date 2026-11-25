@@ -20,7 +20,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(363, 9)]
+"values": [Vector2(-50, -247)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -56,7 +56,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(268, 88)]
+"values": [Vector2(-145, -168)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -92,7 +92,7 @@ tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(304, 91)]
+"values": [Vector2(-109, -165)]
 }
 
 [sub_resource type="Animation" id="Animation_o403m"]
@@ -132,7 +132,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0.0666667, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(268, 88), Vector2(270, 99)]
+"values": [Vector2(-145, -168), Vector2(-143, -157)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -168,7 +168,7 @@ tracks/5/keys = {
 "times": PackedFloat32Array(0.233333, 0.4, 0.433333),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(304, 91), Vector2(304, 91), Vector2(304, 140)]
+"values": [Vector2(-109, -165), Vector2(-109, -165), Vector2(-109, -116)]
 }
 
 [sub_resource type="Animation" id="Animation_tfvwl"]
@@ -185,7 +185,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.8, 1.6),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(363, 9), Vector2(363, 7), Vector2(363, 9)]
+"values": [Vector2(-50, -247), Vector2(-50, -249), Vector2(-50, -247)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rnh8k"]
@@ -206,27 +206,27 @@ libraries = {
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(264, 73)
+position = Vector2(-149, -183)
 texture = ExtResource("2_gopgf")
 centered = false
 
 [node name="Sprite2D3" type="Sprite2D" parent="."]
 visible = false
 use_parent_material = true
-position = Vector2(268, 88)
+position = Vector2(-145, -168)
 texture = ExtResource("3_7vg55")
 centered = false
 
 [node name="Sprite2D4" type="Sprite2D" parent="."]
 visible = false
 use_parent_material = true
-position = Vector2(304, 91)
+position = Vector2(-109, -165)
 texture = ExtResource("4_4jxj1")
 centered = false
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(363, 9)
+position = Vector2(-50, -247)
 texture = ExtResource("7_l4bud")
 centered = false
 script = ExtResource("6_gbe4j")

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="4_ah0x7"]
 [ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://assets/audio/music/daichovo_horo/daichovo2.wav" id="4_s20nw"]
 [ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://assets/audio/music/daichovo_horo/daichovo3.wav" id="5_hglwg"]
-[ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://map/areas/area_1.tres" id="6_h344n"]
+[ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://map/areas/level1/area_1.tres" id="6_h344n"]
 [ext_resource type="Texture2D" uid="uid://bhjlgpk4qeegw" path="res://assets/sprites/ui/main_menu/folktiles_logo.png" id="7_logo"]
 [ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/main_menu/buttons_background.png" id="8_cloth_bg"]
 [ext_resource type="Texture2D" uid="uid://dcloks6jxmooy" path="res://assets/sprites/ui/general_ui/button/button_unselected.png" id="9_btn_norm"]

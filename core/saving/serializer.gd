@@ -12,6 +12,10 @@ extends Resource
 @export var cur_cutscene: CutScene
 @export var current_wave: int = 0
 @export var current_level: int = 0
+@export var run_stage_queue: Array[String] = []
+@export var current_stage_index: int = 0
+@export var current_area_path: String = ""
+@export var visited_area_paths: Array[String] = []
 
 @export var area_locations: Array[Location] = []
 @export var area_cur_boss: Location
@@ -40,6 +44,13 @@ extends Resource
 @export var saved_enemy_hybrid_next_is_beast: bool = false
 @export var saved_enemy_track_cursors: Dictionary = {}
 
+const LEGACY_RESOURCE_PATH_REMAP: Dictionary = {
+	"res://assets/sprites/locations/loc_lamia_boss.png": "res://assets/sprites/enemies/lamia/lamia_loc.png",
+	"res://assets/sprites/enemies/lamia_head.png": "res://assets/sprites/enemies/lamia/lamia_head.png",
+	"res://assets/sprites/enemies/lamia_body.png": "res://assets/sprites/enemies/lamia/lamia_body.png",
+	"res://map/areas/area_1.tres": "res://map/areas/level1/area_1.tres",
+}
+
 var save_path: String = "user://save1.tres"
 
 
@@ -52,12 +63,54 @@ func save_data() -> void:
 		print_debug("Error saving game: ", error)
 
 
+func _prepare_save_file_for_load() -> bool:
+	var text: String = FileAccess.get_file_as_string(save_path)
+	if text.is_empty():
+		return false
+
+	var regex := RegEx.new()
+	if regex.compile('\\[ext_resource[^\\]]*path="(res://[^"]+)"') != OK:
+		return true
+
+	var checked: Dictionary = {}
+	var missing_paths: Array[String] = []
+	var modified: bool = false
+	for m in regex.search_all(text):
+		var res_path: String = m.get_string(1)
+		if checked.has(res_path):
+			continue
+		checked[res_path] = true
+		if LEGACY_RESOURCE_PATH_REMAP.has(res_path):
+			var new_path: String = LEGACY_RESOURCE_PATH_REMAP[res_path]
+			if ResourceLoader.exists(new_path):
+				text = text.replace('path="%s"' % res_path, 'path="%s"' % new_path)
+				modified = true
+			else:
+				missing_paths.append(res_path)
+		elif not ResourceLoader.exists(res_path):
+			missing_paths.append(res_path)
+
+	if not missing_paths.is_empty():
+		print_debug("Skipping incompatible save file (", save_path, ") missing resources: ", missing_paths)
+		return false
+
+	if modified:
+		var f := FileAccess.open(save_path, FileAccess.WRITE)
+		if f != null:
+			f.store_string(text)
+			f.close()
+
+	return true
+
+
 func load_data() -> void:
 	if not FileAccess.file_exists(save_path):
 		print_debug("Save file not found: ", save_path)
 		return  # Prevents loading from a non-existent file
-	
-	var data: Serializer = ResourceLoader.load(save_path, "") as Serializer
+	if not _prepare_save_file_for_load():
+		return
+
+	var data: Serializer = ResourceLoader.load(save_path, "", ResourceLoader.CACHE_MODE_IGNORE) as Serializer
 	if not data:
 		print_debug("Failed to load save data.")
 		return
@@ -73,6 +126,16 @@ func load_data() -> void:
 	cur_cutscene = data.cur_cutscene
 	current_wave = data.current_wave
 	current_level = data.current_level
+	run_stage_queue.clear()
+	if data.run_stage_queue != null:
+		for s in data.run_stage_queue:
+			run_stage_queue.append(str(s))
+	current_stage_index = data.current_stage_index
+	current_area_path = data.current_area_path if data.current_area_path != null else ""
+	visited_area_paths.clear()
+	if data.visited_area_paths != null:
+		for p in data.visited_area_paths:
+			visited_area_paths.append(str(p))
 	
 	area_locations.clear()
 	if data.area_locations != null:

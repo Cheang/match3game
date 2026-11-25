@@ -160,7 +160,7 @@ autoplay = "idle"
 
 [node name="VilaBody" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(425, 126)
+position = Vector2(0, -124)
 texture = ExtResource("1_p5epb")
 
 [node name="VilaBow" type="Sprite2D" parent="VilaBody"]

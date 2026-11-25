@@ -83,7 +83,8 @@ script = ExtResource("8_jpie2")
 z_index = 700
 script = ExtResource("5_7ysvn")
 
-[node name="art" type="Node2D" parent="enemy" unique_id=1692013210]
+[node name="art" type="Marker2D" parent="enemy" unique_id=294689119]
+position = Vector2(405, 209)
 
 [node name="healthBar" type="TextureProgressBar" parent="enemy" unique_id=1282832201]
 z_index = 200
@@ -120,10 +121,11 @@ texture = ExtResource("15_mujdl")
 
 [node name="name_box" type="NinePatchRect" parent="enemy" unique_id=1282832204]
 z_index = 210
-offset_left = 288.0
-offset_top = 158.0
-offset_right = 528.0
-offset_bottom = 188.0
+offset_left = 168.0
+offset_top = 221.0
+offset_right = 408.0
+offset_bottom = 251.0
+size_flags_horizontal = 4
 texture = ExtResource("31_btn_new")
 region_rect = Rect2(0, 0, 124, 36)
 patch_margin_left = 12
@@ -187,7 +189,8 @@ offset_top = 992.0
 offset_right = 355.0
 offset_bottom = 1074.0
 
-[node name="art" type="Node2D" parent="player" unique_id=1247743326]
+[node name="art" type="Marker2D" parent="player" unique_id=127259567]
+position = Vector2(129, 1100)
 
 [node name="foreground" type="Node2D" parent="." unique_id=1973101239]
 z_index = 800
@@ -204,9 +207,26 @@ centered = false
 offset = Vector2(-284, -1181)
 
 [node name="bottom-row" type="Sprite2D" parent="foreground" unique_id=1365409383]
-position = Vector2(0, 1226)
+position = Vector2(0, 1254)
 texture = ExtResource("23_mx1ac")
 centered = false
+
+[node name="left-row" type="Sprite2D" parent="foreground" unique_id=1103727160]
+texture_repeat = 2
+rotation = 1.5707964
+texture = ExtResource("23_mx1ac")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 1610, 384)
+
+[node name="right-row" type="Sprite2D" parent="foreground" unique_id=1650517863]
+texture_repeat = 2
+position = Vector2(576, 1610)
+rotation = -1.5707964
+texture = ExtResource("23_mx1ac")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 1610, 384)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1082063967]
 layer = 2

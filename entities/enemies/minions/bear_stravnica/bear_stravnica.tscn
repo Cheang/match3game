@@ -54,7 +54,7 @@ autoplay = "idle"
 
 [node name="BearStravnicaBody" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(390, 142)
+position = Vector2(0, -114)
 texture = ExtResource("1_1umo8")
 
 [node name="BearStravnicaHead" type="Sprite2D" parent="BearStravnicaBody"]

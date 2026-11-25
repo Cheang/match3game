@@ -55,6 +55,8 @@ func _ready() -> void:
 		buff_container.bind_entity(Global.cur_enemy)
 	if Global.cur_enemy.sprite != null:
 		var enemy_sprite = Global.cur_enemy.sprite.instantiate()
+		if enemy_sprite is Node2D:
+			(enemy_sprite as Node2D).position = Vector2.ZERO
 		art.add_child(enemy_sprite)
 	if Global.cur_enemy.shader != null:
 		art.set_material(Global.cur_enemy.shader)
@@ -90,35 +92,107 @@ func _on_game_window_enemy_attacking() -> void:
 	if Global.cur_enemy == null:
 		enemy_attacked.emit()
 		return
-	if Global.cur_enemy.next_attack != null:
-		if Global.cur_enemy.next_attack.animation != null and art.get_child_count() > 0:
-			var sprite_node = art.get_child(0)
-			if sprite_node.has_method("set_animp"):
-				sprite_node.set_animp(Global.cur_enemy.next_attack.animation)
-		if Global.cur_enemy.next_attack.sound != null:
-			enemy_audio.stream = Global.cur_enemy.next_attack.sound
-			enemy_audio.play()
-		await get_tree().create_timer(Global.cur_enemy.next_attack.animation_time).timeout
-	else:
-		await get_tree().create_timer(0.3).timeout
 
 	var parent_gm = get_parent()
 	if parent_gm != null and parent_gm.has_method("execute_enemy_turn"):
 		await parent_gm.execute_enemy_turn()
 	elif Global.cur_enemy != null and Global.cur_enemy.next_attack != null:
-		Global.cur_enemy.next_attack.attack()
+		await play_attack_animation(
+			Global.cur_enemy.next_attack.animation,
+			Global.cur_enemy.next_attack.sound,
+			Global.cur_enemy.next_attack.animation_time,
+			func():
+				if Global.cur_enemy != null and Global.cur_enemy.next_attack != null:
+					Global.cur_enemy.next_attack.attack()
+		)
 
 	if Global.cur_enemy != null:
 		Global.cur_enemy.reset_stats_at_end_of_turn()
 
-	if art.get_child_count() > 0:
-		var sprite_node = art.get_child(0)
-		if sprite_node.has_method("set_animp"):
-			sprite_node.set_animp("RESET")
-			sprite_node.set_animp("idle")
+	reset_to_idle()
 	if Global.cur_enemy != null:
 		Global.cur_enemy.pick_next_attack()
 	enemy_attacked.emit()
+
+
+func reset_to_idle() -> void:
+	if art != null and art.get_child_count() > 0:
+		var sprite_node: Node = art.get_child(0)
+		if sprite_node != null and sprite_node.has_method("set_animp"):
+			sprite_node.set_animp("RESET")
+			sprite_node.set_animp("idle")
+
+
+func _sprite_supports_anim(sprite_node: Node, candidate: String) -> bool:
+	return (
+		sprite_node != null
+		and candidate != ""
+		and sprite_node.has_method("has_animp")
+		and bool(sprite_node.has_animp(candidate))
+	)
+
+
+func _resolve_attack_sound(resolved_anim: String, override_sound: AudioStream) -> AudioStream:
+	if override_sound != null:
+		return override_sound
+	if Global.cur_enemy == null:
+		return null
+	if resolved_anim != "":
+		for atk in Global.cur_enemy.attacks:
+			if atk != null and atk.animation == resolved_anim and atk.sound != null:
+				return atk.sound
+	for atk in Global.cur_enemy.attacks:
+		if atk != null and atk is BasicAttack and atk.sound != null:
+			return atk.sound
+	if Global.cur_enemy.next_attack != null:
+		return Global.cur_enemy.next_attack.sound
+	return null
+
+
+func play_attack_animation(
+	anim_name: String = "",
+	sound_stream: AudioStream = null,
+	duration: float = -1.0,
+	on_impact: Callable = Callable()
+) -> void:
+	var sprite_node: Node = art.get_child(0) if (art != null and art.get_child_count() > 0) else null
+	var resolved_anim: String = ""
+	if _sprite_supports_anim(sprite_node, anim_name):
+		resolved_anim = anim_name
+	elif _sprite_supports_anim(sprite_node, "basic_attack"):
+		resolved_anim = "basic_attack"
+	elif Global.cur_enemy != null and Global.cur_enemy.next_attack != null:
+		var next_anim: String = str(Global.cur_enemy.next_attack.animation)
+		if _sprite_supports_anim(sprite_node, next_anim):
+			resolved_anim = next_anim
+
+	var resolved_sound: AudioStream = _resolve_attack_sound(resolved_anim, sound_stream)
+
+	if _sprite_supports_anim(sprite_node, resolved_anim):
+		sprite_node.set_animp(resolved_anim)
+		if resolved_sound != null and enemy_audio != null:
+			enemy_audio.stream = resolved_sound
+			enemy_audio.play()
+		var anim_len: float = duration if duration > 0.0 else float(sprite_node.get_animp_length(resolved_anim))
+		if anim_len <= 0.0:
+			anim_len = 0.8
+		var impact_time: float = clampf(anim_len * 0.45, 0.1, anim_len)
+		if is_inside_tree():
+			await get_tree().create_timer(impact_time).timeout
+		if on_impact.is_valid():
+			on_impact.call()
+		var remainder: float = maxf(0.0, anim_len - impact_time)
+		if remainder > 0.0 and is_inside_tree():
+			await get_tree().create_timer(remainder).timeout
+		reset_to_idle()
+	else:
+		if resolved_sound != null and enemy_audio != null:
+			enemy_audio.stream = resolved_sound
+			enemy_audio.play()
+		if on_impact.is_valid():
+			on_impact.call()
+		if is_inside_tree():
+			await get_tree().create_timer(0.15).timeout
 
 func _on_game_window_enemy_health_change() -> void:
 	update_health()

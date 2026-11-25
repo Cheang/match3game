@@ -300,7 +300,7 @@ func tick_all_track_cooldowns(amount: int = 1) -> void:
 
 ## Returns the clamped critical strike chance (0% to 100%) for this entity.
 func get_effective_crit_chance() -> int:
-	return clampi(crit_chance, 0, 100)
+	return clampi(int(roundf(crit_chance)), 0, 100)
 
 ## Rolls whether an individual action or attack from this entity critically strikes.
 func roll_crit() -> bool:

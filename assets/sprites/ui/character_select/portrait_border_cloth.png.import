@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sthdsxoo7cxw"
-path="res://.godot/imported/lamia_head.png-31941e7145f437dc6b38a9e328246955.ctex"
+uid="uid://dw3bj6u11vn2l"
+path="res://.godot/imported/portrait_border_cloth.png-a630b5fb89dbc0c42182fe1bbaefc6bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/lamia_head.png"
-dest_files=["res://.godot/imported/lamia_head.png-31941e7145f437dc6b38a9e328246955.ctex"]
+source_file="res://assets/sprites/ui/character_select/portrait_border_cloth.png"
+dest_files=["res://.godot/imported/portrait_border_cloth.png-a630b5fb89dbc0c42182fe1bbaefc6bb.ctex"]
 
 [params]
 

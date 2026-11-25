@@ -307,14 +307,7 @@ func handle_reward_proceed(card: RewardCard) -> void:
 		get_rewards()
 		update_reroll_btn()
 	else:
-		if Global.boss_beaten:
-			SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-		elif Global.post_combat_event != null:
-			Global.area_cur_event = Global.post_combat_event
-			Global.post_combat_event = null
-			SceneManager.change_scene("res://events/event_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
-		else:
-			SceneManager.change_scene("res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		_transition_after_reward()
 
 # ==============================================================================
 # BUTTON SIGNALS
@@ -323,8 +316,22 @@ func _on_skip_pressed() -> void:
 	if is_standalone:
 		get_rewards()
 		return
+	_transition_after_reward()
 
+
+func _transition_after_reward() -> void:
 	Global.game_is_played = false
+	if is_boss_draft or Global.boss_beaten:
+		Global.boss_beaten = false
+		Global.pending_reward_context.clear()
+		if Global.advance_to_next_stage():
+			Global.cur_scene = "res://ui/screens/boss_select_screen.tscn"
+			SceneManager.change_scene("res://ui/screens/boss_select_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		else:
+			Global.game_is_over = true
+			SceneManager.change_scene("res://ui/screens/thank_you_screen.tscn", { "pattern": "diagonal", "color": Color('#2e222f') })
+		return
+
 	if Global.post_combat_event != null:
 		Global.area_cur_event = Global.post_combat_event
 		Global.post_combat_event = null

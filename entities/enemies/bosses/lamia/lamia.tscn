@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://c48fmwq3lbdm2"]
+[gd_scene format=3 uid="uid://c48fmwq3lbdm2"]
 
 [ext_resource type="Script" uid="uid://c88g1vs6v3kdw" path="res://entities/enemies/enemy_anim.gd" id="1_3e0pv"]
-[ext_resource type="Texture2D" uid="uid://mbuvb6425dqb" path="res://assets/sprites/enemies/lamia_body.png" id="2_umo75"]
-[ext_resource type="Texture2D" uid="uid://sthdsxoo7cxw" path="res://assets/sprites/enemies/lamia_head.png" id="3_vckmf"]
+[ext_resource type="Texture2D" uid="uid://mbuvb6425dqb" path="res://assets/sprites/enemies/lamia/lamia_body.png" id="2_umo75"]
+[ext_resource type="Texture2D" uid="uid://sthdsxoo7cxw" path="res://assets/sprites/enemies/lamia/lamia_head.png" id="3_vckmf"]
 
 [sub_resource type="Animation" id="Animation_bjyua"]
 length = 0.001
@@ -16,7 +16,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(274, 8)]
+"values": [Vector2(-151, -246)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -64,7 +64,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(291, 0)]
+"values": [Vector2(-134, -254)]
 }
 
 [sub_resource type="Animation" id="Animation_b5spp"]
@@ -80,7 +80,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.3, 0.533333, 0.8),
 "transitions": PackedFloat32Array(1, 1, 0.34151, 1),
 "update": 0,
-"values": [Vector2(274, 8), Vector2(274, -1), Vector2(274, 28), Vector2(274, 8)]
+"values": [Vector2(-151, -246), Vector2(-151, -255), Vector2(-151, -226), Vector2(-151, -246)]
 }
 
 [sub_resource type="Animation" id="Animation_fxa6t"]
@@ -97,7 +97,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(274, 8), Vector2(274, 11), Vector2(274, 8), Vector2(274, 5), Vector2(274, 8)]
+"values": [Vector2(-151, -246), Vector2(-151, -243), Vector2(-151, -246), Vector2(-151, -249), Vector2(-151, -246)]
 }
 
 [sub_resource type="Animation" id="Animation_87mv1"]
@@ -112,7 +112,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.0333333, 0.133333, 0.2, 0.9, 0.966667),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(274, 8), Vector2(274, 37.75), Vector2(274, 127), Vector2(780, 452), Vector2(-25.5, 452), Vector2(274, 8)]
+"values": [Vector2(-151, -246), Vector2(-151, -216.25), Vector2(-151, -127), Vector2(355, 198), Vector2(-450.5, 198), Vector2(-151, -246)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -160,7 +160,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0, 0.133333, 0.966667),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(291, 0), Vector2(291, 70), Vector2(291, 0)]
+"values": [Vector2(-134, -254), Vector2(-134, -184), Vector2(-134, -254)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1mtk6"]
@@ -182,12 +182,12 @@ libraries = {
 
 [node name="body" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(291, 0)
+position = Vector2(-134, -254)
 texture = ExtResource("2_umo75")
 centered = false
 
 [node name="head" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(274, 8)
+position = Vector2(-151, -246)
 texture = ExtResource("3_vckmf")
 centered = false

@@ -2,7 +2,7 @@ extends Control
 
 const MAIN_MENU_SCRIPT := preload("res://ui/screens/main_menu.gd")
 const DEFAULT_HERO := preload("res://entities/player/classes/warrior/warrior.tres")
-const DEFAULT_AREA: LocationLoader = preload("res://map/areas/area_1.tres")
+const DEFAULT_AREA: LocationLoader = preload("res://map/areas/level1/area_1.tres")
 
 const CLOTH_VERTICAL_PADDING: float = 64.0
 const CLOTH_TILE_HEIGHT: float = 8.0
@@ -43,6 +43,7 @@ var _choice_made: bool = false
 
 
 func _ready() -> void:
+	PixelWindCloth.pick_new_scene_wind()
 	_build_roster()
 	_hide_loadout_decoration()
 	_update_cloth_banner_size()
@@ -244,18 +245,15 @@ func _on_select_pressed() -> void:
 	Global.game_seed = int(Time.get_unix_time_from_system() * (2.0 * Time.get_unix_time_from_system()))
 	seed(Global.game_seed)
 	Global.set_up_player()
+	Global.init_default_run_stages(Global.DEFAULT_RUN_LEVELS)
 
-	var area_to_load := def_area if def_area != null else DEFAULT_AREA
-	Locations.load_locations_from_directory(area_to_load)
-	Locations.pick_locations(Global.area_locations, area_to_load.enemy_loc_numb, area_to_load.event_loc_numb, area_to_load.services_loc_numb)
-
-	if Global.area_cur_boss != null and Global.area_cur_boss.cut_scene:
-		Global.cur_cutscene = Global.area_cur_boss.cut_scene
-		Global.cur_scene = "res://events/cut_scene.tscn"
-		SceneManager.change_scene("res://events/cut_scene.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
-	else:
-		Global.cur_scene = "res://map/locations_screen.tscn"
-		SceneManager.change_scene("res://map/locations_screen.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
+	Global.cur_scene = "res://ui/screens/boss_select_screen.tscn"
+	SceneManager.change_scene("res://ui/screens/boss_select_screen.tscn", {
+		"pattern": "fade",
+		"color": Color("#2e222f"),
+		"speed": 2.0,
+		"wait_time": 0.15,
+	})
 
 
 func _on_back_pressed() -> void:

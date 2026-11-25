@@ -280,9 +280,9 @@ func get_effective_spirit() -> float:
 	var t := get_active_tier()
 	return _get_scaled_float_stat(spirit, t.spirit if t != null else 0.0)
 
-func get_effective_agility() -> int:
+func get_effective_agility() -> float:
 	var t := get_active_tier()
-	return _get_scaled_int_stat(agility, t.agility if t != null else 0)
+	return _get_scaled_float_stat(agility, t.agility if t != null else 0.0)
 
 func get_effective_max_health() -> float:
 	var t := get_active_tier()
@@ -464,13 +464,13 @@ func get_stat_boosts() -> Dictionary:
 	var eff_might: float = get_effective_might()
 	var eff_grit: float = get_effective_grit()
 	var eff_spirit: float = get_effective_spirit()
-	var eff_agility: int = get_effective_agility()
+	var eff_agility: float = get_effective_agility()
 	var eff_max_hp: float = get_effective_max_health()
 	var eff_crit: int = get_effective_crit_chance()
 	if eff_might != 0.0: boosts["might"] = eff_might
 	if eff_grit != 0.0: boosts["grit"] = eff_grit
 	if eff_spirit != 0.0: boosts["spirit"] = eff_spirit
-	if eff_agility != 0: boosts["agility"] = eff_agility
+	if eff_agility != 0.0: boosts["agility"] = eff_agility
 	if eff_max_hp != 0.0: boosts["max_health"] = eff_max_hp
 	if eff_crit != 0: boosts["crit_chance"] = eff_crit
 	return boosts
@@ -573,7 +573,7 @@ func apply_to_player(player: Object, grant_equipment: bool = true) -> void:
 	var eff_might: float = get_effective_might()
 	var eff_grit: float = get_effective_grit()
 	var eff_spirit: float = get_effective_spirit()
-	var eff_agility: int = get_effective_agility()
+	var eff_agility: float = get_effective_agility()
 	var eff_max_hp: float = get_effective_max_health()
 	var eff_heal: float = get_effective_heal_hp()
 	var eff_gold: int = get_effective_gold()
@@ -583,7 +583,7 @@ func apply_to_player(player: Object, grant_equipment: bool = true) -> void:
 	if eff_might != 0.0: player.modify_stat("might", eff_might)
 	if eff_grit != 0.0: player.modify_stat("grit", eff_grit)
 	if eff_spirit != 0.0: player.modify_stat("spirit", eff_spirit)
-	if eff_agility != 0: player.modify_stat("agility", eff_agility)
+	if eff_agility != 0.0: player.modify_stat("agility", eff_agility)
 	if eff_max_hp != 0.0: player.modify_stat("max_health", eff_max_hp)
 	if eff_heal != 0.0: player.modify_stat("cur_health", eff_heal)
 	if eff_gold != 0: player.modify_stat("gold", eff_gold)
@@ -684,7 +684,7 @@ func get_effect_description() -> String:
 	var eff_might: float = get_effective_might()
 	var eff_grit: float = get_effective_grit()
 	var eff_spirit: float = get_effective_spirit()
-	var eff_agility: int = get_effective_agility()
+	var eff_agility: float = get_effective_agility()
 	var eff_max_hp: float = get_effective_max_health()
 	var eff_heal: float = get_effective_heal_hp()
 	var eff_gold: int = get_effective_gold()
@@ -694,7 +694,7 @@ func get_effect_description() -> String:
 	if eff_might != 0.0: lines.append("[color=#ae2334]Might +%s[/color]" % _fmt(eff_might))
 	if eff_grit != 0.0: lines.append("[color=#4d65b4]Grit +%s[/color]" % _fmt(eff_grit))
 	if eff_spirit != 0.0: lines.append("[color=#a854a8]Spirit +%s[/color]" % _fmt(eff_spirit))
-	if eff_agility != 0: lines.append("[color=#3ca370]Agility +%d[/color]" % eff_agility)
+	if eff_agility != 0.0: lines.append("[color=#3ca370]Agility +%s[/color]" % _fmt(eff_agility))
 	if eff_max_hp != 0.0: lines.append("[color=#e06f8b]Max Health +%s[/color]" % _fmt(eff_max_hp))
 	if eff_heal != 0.0: lines.append("[color=#5ac54f]Heal %s HP[/color]" % _fmt(eff_heal))
 	if eff_gold != 0: lines.append("[color=#f2c94c]+%d Gold[/color]" % eff_gold)

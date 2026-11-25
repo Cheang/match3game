@@ -33,6 +33,8 @@ func get_family_default_color(family_name: String) -> int:
 
 const CLASSES_DIR: String = "res://entities/player/classes"
 const DEFAULT_WARRIOR_PATH: String = "res://entities/player/classes/warrior/warrior.tres"
+const DEFAULT_RUN_LEVELS: int = 6
+const AREAS_ROOT_DIR: String = "res://map/areas"
 
 var def_char: PlayerResource = null
 var playable_classes: Array[PlayerResource] = []
@@ -128,6 +130,10 @@ var game_is_over: bool = false
 var cur_cutscene: CutScene
 var current_wave: int = 0
 var current_level: int = 0
+var run_stage_queue: Array[String] = []
+var current_stage_index: int = 0
+var current_area_path: String = ""
+var visited_area_paths: Array[String] = []
 
 #for locations
 var area_locations: Array[Location]
@@ -275,6 +281,94 @@ func prepare_post_combat_rewards(defeated_enemy: EnemyResource = null) -> void:
 	}
 
 #Game_functions ----------------------------------------------------------------
+func init_default_run_stages(level_count: int = DEFAULT_RUN_LEVELS) -> void:
+	var count := maxi(1, level_count)
+	run_stage_queue.clear()
+	for i in range(1, count + 1):
+		run_stage_queue.append("level%d" % i)
+	current_stage_index = 0
+	current_level = 1
+	current_wave = 0
+	bosses_killed = 0
+	bosses_killed_needed = run_stage_queue.size()
+	minions_killed = 0
+	boss_added = false
+	boss_beaten = false
+	area_cur_boss = null
+	area_locations.clear()
+	current_area_path = ""
+	visited_area_paths.clear()
+	post_combat_event = null
+	pending_reward_context.clear()
+
+func get_current_stage_id() -> String:
+	if current_stage_index >= 0 and current_stage_index < run_stage_queue.size():
+		return run_stage_queue[current_stage_index]
+	return "level1"
+
+func has_more_stages() -> bool:
+	if run_stage_queue.is_empty():
+		return bosses_killed < bosses_killed_needed
+	return current_stage_index + 1 < run_stage_queue.size()
+
+func advance_to_next_stage() -> bool:
+	current_stage_index += 1
+	current_level += 1
+	current_wave = 0
+	minions_killed = 0
+	boss_added = false
+	boss_beaten = false
+	area_cur_boss = null
+	area_locations.clear()
+	current_area_path = ""
+	post_combat_event = null
+	pending_reward_context.clear()
+	if run_stage_queue.is_empty():
+		return bosses_killed < bosses_killed_needed
+	return current_stage_index < run_stage_queue.size()
+
+func insert_next_stage(stage_id_or_area_path: String) -> void:
+	if stage_id_or_area_path == "":
+		return
+	if run_stage_queue.is_empty():
+		init_default_run_stages()
+	var insert_idx := mini(current_stage_index + 1, run_stage_queue.size())
+	run_stage_queue.insert(insert_idx, stage_id_or_area_path)
+	bosses_killed_needed = run_stage_queue.size()
+
+func append_stage(stage_id_or_area_path: String) -> void:
+	if stage_id_or_area_path == "":
+		return
+	if run_stage_queue.is_empty():
+		init_default_run_stages()
+	run_stage_queue.append(stage_id_or_area_path)
+	bosses_killed_needed = run_stage_queue.size()
+
+func jump_to_stage(stage_id_or_area_path: String) -> void:
+	if stage_id_or_area_path == "":
+		return
+	if run_stage_queue.is_empty():
+		init_default_run_stages()
+	var target_idx := run_stage_queue.find(stage_id_or_area_path)
+	if target_idx == -1:
+		target_idx = mini(current_stage_index + 1, run_stage_queue.size())
+		if target_idx < run_stage_queue.size():
+			run_stage_queue[target_idx] = stage_id_or_area_path
+		else:
+			run_stage_queue.append(stage_id_or_area_path)
+	current_stage_index = target_idx
+	current_level = target_idx + 1
+	bosses_killed_needed = run_stage_queue.size()
+	current_wave = 0
+	minions_killed = 0
+	boss_added = false
+	boss_beaten = false
+	area_cur_boss = null
+	area_locations.clear()
+	current_area_path = ""
+	post_combat_event = null
+	pending_reward_context.clear()
+
 func reset_variable():
 	current_wave = 0
 	minions_killed = 0
@@ -392,6 +486,14 @@ func save():
 	save_file.cur_cutscene = cur_cutscene
 	save_file.current_wave = current_wave
 	save_file.current_level = current_level
+	save_file.run_stage_queue.clear()
+	for s in run_stage_queue:
+		save_file.run_stage_queue.append(str(s))
+	save_file.current_stage_index = current_stage_index
+	save_file.current_area_path = current_area_path
+	save_file.visited_area_paths.clear()
+	for p in visited_area_paths:
+		save_file.visited_area_paths.append(str(p))
 	
 	save_file.area_locations.clear()
 	if area_locations != null:
@@ -479,6 +581,16 @@ func load_data():
 			cur_cutscene = save_file.cur_cutscene
 			current_wave = save_file.current_wave
 			current_level = save_file.current_level
+			run_stage_queue.clear()
+			if save_file.run_stage_queue != null:
+				for s in save_file.run_stage_queue:
+					run_stage_queue.append(str(s))
+			current_stage_index = save_file.current_stage_index
+			current_area_path = save_file.current_area_path if save_file.current_area_path != null else ""
+			visited_area_paths.clear()
+			if save_file.visited_area_paths != null:
+				for p in save_file.visited_area_paths:
+					visited_area_paths.append(str(p))
 			
 			area_locations.clear()
 			if save_file.area_locations != null:

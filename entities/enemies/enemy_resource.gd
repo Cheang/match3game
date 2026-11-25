@@ -54,6 +54,16 @@ enum BehaviorCategory {
 @export var health_bar: Texture2D = preload("res://assets/sprites/ui/legacy/enemy_health.png")
 @export var shader: ShaderMaterial
 
+@export_group("Wanted Poster")
+## Boss illustration displayed inside the wanted poster (both small table poster and inspected view).
+@export var wanted_poster_art: Texture2D
+## Headline shown on the wanted poster (defaults to enemy name when empty).
+@export var wanted_title: String = ""
+## Readable bounty description / lore shown when the poster is zoomed in.
+@export_multiline var wanted_description: String = ""
+## Optional threat/bounty footer text (e.g. reward hint or danger rating).
+@export var wanted_bounty_text: String = ""
+
 #------------------------------------------------------------------------------#
 @export_category("Obstacles")
 @export var empty_spaces: Array[Vector2] = []

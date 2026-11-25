@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Location" format=3 uid="uid://cqehju5d485x1"]
 
 [ext_resource type="Script" uid="uid://bshjyhpass6km" path="res://events/cut_scene_resource.gd" id="1_75siy"]
-[ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/sprites/locations/loc_lamia_boss.png" id="1_avet4"]
+[ext_resource type="Texture2D" uid="uid://ds5bedqwtiono" path="res://assets/sprites/enemies/lamia/lamia_loc.png" id="1_avet4"]
 [ext_resource type="Script" uid="uid://d3ckjevb61aa8" path="res://map/location_resource.gd" id="1_pkour"]
 [ext_resource type="Texture2D" uid="uid://xfoa4cjvults" path="res://assets/sprites/events/cutscene_bg_kruchma_outside.png" id="1_ykgu2"]
 [ext_resource type="Script" uid="uid://be7auno3sch4s" path="res://entities/enemies/enemy_resource.gd" id="2_kevmu"]
