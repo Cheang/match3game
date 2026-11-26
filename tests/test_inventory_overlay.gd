@@ -259,7 +259,7 @@ func _ready() -> void:
 	assert(is_equal_approx(Global.setting_res.set_audio_audio_lvl, 0.65), "Overlay SettingsPanel slider must auto-update Global.setting_res")
 	overlay.settings_panel.master_slider.value = orig_master
 
-	var settings_menu_scene: PackedScene = load("res://ui/screens/settings_screen.tscn")
+	var settings_menu_scene: PackedScene = load("res://scenes/settings/settings_screen.tscn")
 	var settings_menu_inst := settings_menu_scene.instantiate()
 	add_child(settings_menu_inst)
 	assert(settings_menu_inst.settings_panel != null, "settings_screen.tscn must also embed shared SettingsPanel")
@@ -282,23 +282,23 @@ func _ready() -> void:
 	print("Return to Loadout tab verified!")
 
 	# Test Clicking Active Tab Closes Overlay
-	assert(overlay.visible == true, "Overlay should be open")
+	assert(InventoryOverlayClass.is_overlay_open() == true, "Overlay should be open")
 	overlay._on_loadout_nav_pressed()
-	assert(overlay.visible == false, "Clicking active Loadout tab must close overlay")
+	assert(not InventoryOverlayClass.is_overlay_open() and overlay._is_closing, "Clicking active Loadout tab must close overlay")
 	print("Closing overlay via active Loadout tab verified!")
 
 	overlay.open()
 	overlay._on_stats_nav_pressed()
-	assert(overlay.visible == true and overlay.current_tab == overlay.Tab.STATS, "Switched to Stats tab")
+	assert(InventoryOverlayClass.is_overlay_open() == true and overlay.current_tab == overlay.Tab.STATS, "Switched to Stats tab")
 	overlay._on_stats_nav_pressed()
-	assert(overlay.visible == false, "Clicking active Stats tab must close overlay")
+	assert(not InventoryOverlayClass.is_overlay_open() and overlay._is_closing, "Clicking active Stats tab must close overlay")
 	print("Closing overlay via active Stats tab verified!")
 
 	overlay.open()
 	overlay._on_settings_nav_pressed()
-	assert(overlay.visible == true and overlay.current_tab == overlay.Tab.SETTINGS, "Switched to Settings tab")
+	assert(InventoryOverlayClass.is_overlay_open() == true and overlay.current_tab == overlay.Tab.SETTINGS, "Switched to Settings tab")
 	overlay._on_settings_nav_pressed()
-	assert(overlay.visible == false, "Clicking active Settings tab must close overlay")
+	assert(not InventoryOverlayClass.is_overlay_open() and overlay._is_closing, "Clicking active Settings tab must close overlay")
 	print("Closing overlay via active Settings tab verified!")
 
 	# F. Test Slotting Mode with Floating Shard, Fire Particles & Compatibility Highlights
@@ -376,7 +376,7 @@ func _ready() -> void:
 	# Test clicking Done button
 	overlay._on_done_btn_pressed()
 	assert(overlay.is_slotting_mode == false, "Slotting mode must be false after Done")
-	assert(overlay.visible == false, "Overlay must close after Done")
+	assert(not InventoryOverlayClass.is_overlay_open() and overlay._is_closing, "Overlay must begin closing after Done")
 	assert(overlay.done_btn.visible == false, "Done button must be hidden after Done")
 	assert(overlay.loadout_nav_btn.visible == true, "Nav buttons must restore after Done")
 	for row in overlay.track_rows:
@@ -498,7 +498,7 @@ func _ready() -> void:
 	overlay.toggle()
 	assert(overlay.visible and overlay.is_slotting_mode, "toggle() must not close overlay while in slotting mode")
 	overlay.close()
-	assert(not overlay.visible and not overlay.is_slotting_mode, "close() must clean up slotting mode")
+	assert(not InventoryOverlayClass.is_overlay_open() and overlay._is_closing and not overlay.is_slotting_mode, "close() must clean up slotting mode")
 	assert(slotting_done_count[0] == 1, "close() during slotting mode must emit slotting_completed")
 	print("Anti-duplication and edge-case regression tests verified!")
 
@@ -567,7 +567,52 @@ func _ready() -> void:
 	assert(overlay.desc_preview_frame.visible, "Dark preview container must show when an ability is selected")
 	print("Popped-out shard row-locking verified!")
 
+	# Test InventoryOverlay opening & closing animations
+	overlay.close(true)
+	overlay.open()
+	assert(overlay._open_tween != null and overlay._open_tween.is_running(), "Opening InventoryOverlay must start open tween")
+	assert(overlay.dimmer.modulate.a < 0.1, "Dimmer must start transparent at open animation start")
+	assert(overlay.main_panel.modulate.a < 0.1, "MainPanel must start transparent at open animation start")
+	assert(overlay.main_panel.scale.x < 1.0, "MainPanel must start scaled down at open animation start")
+	assert(overlay.center_container.position.y > 0.0, "CenterContainer must start shifted downward at open animation start")
+
+	await get_tree().create_timer(0.32).timeout
+	assert(is_equal_approx(overlay.dimmer.modulate.a, 1.0), "Dimmer must finish at full opacity after open animation")
+	assert(is_equal_approx(overlay.main_panel.modulate.a, 1.0), "MainPanel must finish at full opacity after open animation")
+	assert(overlay.main_panel.scale.is_equal_approx(Vector2.ONE), "MainPanel must finish at Vector2.ONE scale")
+	assert(overlay.center_container.position.is_equal_approx(Vector2.ZERO), "CenterContainer must settle back to Vector2.ZERO")
+
+	# Animated close
 	overlay.close()
+	assert(overlay._is_closing == true, "Close must mark overlay as closing")
+	assert(not InventoryOverlayClass.is_overlay_open(), "is_overlay_open() must return false while closing")
+	assert(overlay.visible == true, "Overlay must remain visible while closing animation plays")
+	assert(overlay._close_tween != null and overlay._close_tween.is_running(), "Closing InventoryOverlay must start close tween")
+
+	await get_tree().create_timer(0.28).timeout
+	assert(overlay.visible == false, "Overlay must hide once closing animation completes")
+	assert(overlay._is_closing == false, "_is_closing must clear once closing animation completes")
+	assert(overlay.main_panel.scale.is_equal_approx(Vector2.ONE), "MainPanel scale must reset to Vector2.ONE after closing")
+	assert(overlay.center_container.position.is_equal_approx(Vector2.ZERO), "CenterContainer position must reset to Vector2.ZERO after closing")
+	assert(is_equal_approx(overlay.dimmer.modulate.a, 1.0), "Dimmer alpha must reset to 1.0 after closing")
+
+	# Re-opening mid-close must cancel close tween cleanly
+	overlay.open()
+	overlay.close()
+	overlay.open()
+	assert(overlay._is_closing == false, "Re-opening mid-close must clear _is_closing")
+	assert(InventoryOverlayClass.is_overlay_open(), "Re-opening mid-close must report overlay open")
+	assert(overlay._open_tween != null and overlay._open_tween.is_running(), "Re-opening mid-close must start open tween")
+
+	# Immediate close hides synchronously and resets transforms
+	overlay.close(true)
+	assert(not overlay.visible and not overlay._is_closing, "close(true) must hide overlay synchronously")
+	assert(overlay.main_panel.scale.is_equal_approx(Vector2.ONE), "close(true) must reset MainPanel scale to Vector2.ONE")
+	assert(overlay.center_container.position.is_equal_approx(Vector2.ZERO), "close(true) must reset CenterContainer position to Vector2.ZERO")
+	assert(is_equal_approx(overlay.dimmer.modulate.a, 1.0), "close(true) must restore Dimmer alpha to 1.0")
+	print("Opening & closing animations verified!")
+
+	overlay.close(true)
 	overlay.queue_free()
 	print("--- ALL INVENTORY OVERLAY CORRECTIONS PASSED ---")
 	get_tree().quit(0)

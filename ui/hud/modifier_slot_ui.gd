@@ -5,12 +5,12 @@ signal modifier_dropped_on_slot(drag_data: Dictionary, target_track: ColorLoadou
 signal slot_clicked(mod: Equipment)
 signal slot_selected(mod: Equipment, track: ColorLoadoutTrack, mod_index: int)
 
-const TEX_CRISTAL_BRIGHT = preload("res://assets/sprites/ui/combat/plr_eq_cristal_bright.png")
-const TEX_CRISTAL_NORMAL = preload("res://assets/sprites/ui/combat/plr_eq_cristal_normal.png")
-const TEX_CRISTAL_DARK = preload("res://assets/sprites/ui/combat/plr_eq_cristal_dark.png")
-const TEX_ULT_ACTIVE = preload("res://assets/sprites/ui/combat/plr_eq_ult_active.png")
-const TEX_ULT_INACTIVE = preload("res://assets/sprites/ui/combat/plr_eq_ult_inactive.png")
-const TEX_ULT_NOULT = preload("res://assets/sprites/ui/combat/plr_eq_ult_noult.png")
+const TEX_CRISTAL_BRIGHT = preload("res://scenes/combat/assets/plr_eq_cristal_bright.png")
+const TEX_CRISTAL_NORMAL = preload("res://scenes/combat/assets/plr_eq_cristal_normal.png")
+const TEX_CRISTAL_DARK = preload("res://scenes/combat/assets/plr_eq_cristal_dark.png")
+const TEX_ULT_ACTIVE = preload("res://scenes/combat/assets/plr_eq_ult_active.png")
+const TEX_ULT_INACTIVE = preload("res://scenes/combat/assets/plr_eq_ult_inactive.png")
+const TEX_ULT_NOULT = preload("res://scenes/combat/assets/plr_eq_ult_noult.png")
 const SHADER_RES = preload("res://assets/shaders/palette_swap_5.gdshader")
 
 @export var is_ultimate_slot: bool = false

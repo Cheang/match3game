@@ -1,0 +1,329 @@
+[gd_scene format=3 uid="uid://857yjlwtnl4h"]
+
+[ext_resource type="Script" uid="uid://ct6wwrp2oytjw" path="res://scenes/main_menu/main_menu.gd" id="1_m0wtd"]
+[ext_resource type="Script" uid="uid://dwl0c4xoyd7ha" path="res://addons/MusicManager/music_track.gd" id="2_5u2am"]
+[ext_resource type="Texture2D" uid="uid://cbksot77p54r0" path="res://assets/sprites/ui/legacy/main_menu_n_bg.png" id="3_3j6ne"]
+[ext_resource type="AudioStream" uid="uid://cbyp8x25usevd" path="res://assets/audio/music/daichovo_horo/daichovo1.wav" id="3_m2mcr"]
+[ext_resource type="PackedScene" uid="uid://c7ut720c0esco" path="res://ui/common/btn_general.tscn" id="4_ah0x7"]
+[ext_resource type="AudioStream" uid="uid://2mj2g4oytymg" path="res://assets/audio/music/daichovo_horo/daichovo2.wav" id="4_s20nw"]
+[ext_resource type="AudioStream" uid="uid://b0yn7sfjvngp2" path="res://assets/audio/music/daichovo_horo/daichovo3.wav" id="5_hglwg"]
+[ext_resource type="Resource" uid="uid://beq8vfn2nxrdo" path="res://core/map/areas/level1/area_1.tres" id="6_h344n"]
+[ext_resource type="Texture2D" uid="uid://bhjlgpk4qeegw" path="res://scenes/main_menu/assets/folktiles_logo.png" id="7_logo"]
+[ext_resource type="Texture2D" uid="uid://57nlklo3x1c" path="res://assets/sprites/ui/general_ui/buttons_background.png" id="8_cloth_bg"]
+[ext_resource type="Texture2D" uid="uid://dcloks6jxmooy" path="res://assets/sprites/ui/general_ui/button/button_unselected.png" id="9_btn_norm"]
+[ext_resource type="Texture2D" uid="uid://kgacc1j1rn0h" path="res://assets/sprites/ui/general_ui/button/button_selected.png" id="10_btn_sel"]
+[ext_resource type="Texture2D" uid="uid://d3cawoeht7j1c" path="res://assets/sprites/ui/general_ui/button/button_pressed.png" id="11_btn_press"]
+[ext_resource type="Texture2D" uid="uid://uct78lknnxf4" path="res://assets/sprites/ui/general_ui/button/button_disabled.png" id="12_btn_dis"]
+[ext_resource type="Material" uid="uid://chrxnn2p27bp2" path="res://assets/shaders/cloth_banner_sway.tres" id="13_cloth_mat"]
+[ext_resource type="Texture2D" uid="uid://d2jpruaxdfn8s" path="res://scenes/main_menu/assets/main_menu_border.png" id="14_border"]
+[ext_resource type="Texture2D" uid="uid://1yjero5r5ccv" path="res://scenes/hero_select/assets/main_menu_night_bg.png" id="15_night_bg"]
+[ext_resource type="Shader" uid="uid://cv71uxlx4bk12" path="res://assets/shaders/day_night_bg.gdshader" id="16_day_night_shader"]
+
+[sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_gqk43"]
+fade_time = 0.0
+stream_count = 3
+stream_0 = ExtResource("3_m2mcr")
+stream_1 = ExtResource("4_s20nw")
+stream_2 = ExtResource("5_hglwg")
+
+[sub_resource type="Resource" id="Resource_12eda"]
+script = ExtResource("2_5u2am")
+name = "MM"
+track = SubResource("AudioStreamPlaylist_gqk43")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_night_bg"]
+shader = ExtResource("16_day_night_shader")
+shader_parameter/night_texture = ExtResource("15_night_bg")
+shader_parameter/night_progress = 0.0
+shader_parameter/sweep_softness = 0.25
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_normal"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("9_btn_norm")
+texture_margin_left = 58.0
+texture_margin_top = 18.0
+texture_margin_right = 58.0
+texture_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_pressed"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("11_btn_press")
+texture_margin_left = 58.0
+texture_margin_top = 18.0
+texture_margin_right = 58.0
+texture_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_hover"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("10_btn_sel")
+texture_margin_left = 58.0
+texture_margin_top = 18.0
+texture_margin_right = 58.0
+texture_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_disabled"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("12_btn_dis")
+texture_margin_left = 58.0
+texture_margin_top = 18.0
+texture_margin_right = 58.0
+texture_margin_bottom = 18.0
+
+[node name="main_menu" type="Control" unique_id=2036192885]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource("1_m0wtd")
+song = SubResource("Resource_12eda")
+def_area = ExtResource("6_h344n")
+
+[node name="Background" type="TextureRect" parent="." unique_id=2012815701]
+material = SubResource("ShaderMaterial_day_night_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_3j6ne")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Border" type="NinePatchRect" parent="." unique_id=48407726]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_border")
+draw_center = false
+patch_margin_left = 130
+patch_margin_top = 130
+patch_margin_right = 130
+patch_margin_bottom = 130
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1871444100]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer" unique_id=1982093065]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 230
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 0
+
+[node name="ContentVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer" unique_id=1354293868]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="LogoRect" type="TextureRect" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=1976566993]
+z_index = 1
+custom_minimum_size = Vector2(372, 125)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("7_logo")
+stretch_mode = 3
+
+[node name="BannerMargin" type="MarginContainer" parent="CenterContainer/MarginContainer/ContentVBox" unique_id=96738909]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_top = -4
+
+[node name="BannerViewportContainer" type="SubViewportContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin" unique_id=871669298]
+material = ExtResource("13_cloth_mat")
+custom_minimum_size = Vector2(340, 448)
+layout_mode = 2
+
+[node name="BannerViewport" type="SubViewport" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer" unique_id=1512291880]
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(340, 448)
+render_target_update_mode = 4
+
+[node name="BannerRoot" type="Control" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport" unique_id=958315664]
+custom_minimum_size = Vector2(340, 448)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ClothBanner" type="NinePatchRect" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=1972187977]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_cloth_bg")
+patch_margin_left = 16
+patch_margin_right = 16
+axis_stretch_vertical = 1
+
+[node name="ButtonsCenter" type="CenterContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot" unique_id=196373978]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter" unique_id=1415307309]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="start" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=163436496 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "New Story"
+
+[node name="load" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=14626523 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "Continue"
+
+[node name="test" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=712498213 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "Test"
+
+[node name="almanac" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=1428908240 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+disabled = true
+text = "Almanac"
+
+[node name="settings" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=348716662 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "Settings"
+
+[node name="quit" parent="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox" unique_id=669840106 instance=ExtResource("4_ah0x7")]
+custom_minimum_size = Vector2(245, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_btn_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_disabled")
+theme_override_styles/focus = SubResource("StyleBoxTexture_btn_hover")
+text = "Quit"
+
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/test" to="." method="_on_test_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/MarginContainer/ContentVBox/BannerMargin/BannerViewportContainer/BannerViewport/BannerRoot/ButtonsCenter/ButtonsVBox/quit" to="." method="_on_quit_pressed"]

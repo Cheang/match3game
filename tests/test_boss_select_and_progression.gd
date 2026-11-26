@@ -95,15 +95,15 @@ func _test_area_discovery_and_fallback() -> void:
 	print("\n--- 2. Area Discovery & Fallback ---")
 	Global.init_default_run_stages(6)
 	var level1_paths := Locations.get_area_paths_in_stage("level1")
-	_assert(level1_paths.has("res://map/areas/level1/area_1.tres"), "Discovers area_1.tres inside res://map/areas/level1")
+	_assert(level1_paths.has("res://core/map/areas/level1/area_1.tres"), "Discovers area_1.tres inside res://core/map/areas/level1")
 
 	var picked1 := Locations.pick_random_area_for_stage("level1", Global.visited_area_paths)
 	_assert(picked1 != null and picked1 is LocationLoader, "pick_random_area_for_stage('level1') loads LocationLoader")
-	_assert(Global.current_area_path == "res://map/areas/level1/area_1.tres", "Records Global.current_area_path")
+	_assert(Global.current_area_path == "res://core/map/areas/level1/area_1.tres", "Records Global.current_area_path")
 
 	# Level 2 is currently empty; should gracefully fall back to level1
 	var picked2 := Locations.pick_random_area_for_stage("level2", Global.visited_area_paths)
-	_assert(picked2 != null and Global.current_area_path == "res://map/areas/level1/area_1.tres", "Empty level2 falls back to populated lower level")
+	_assert(picked2 != null and Global.current_area_path == "res://core/map/areas/level1/area_1.tres", "Empty level2 falls back to populated lower level")
 
 
 func _test_boss_rolling_and_conditions() -> void:
@@ -154,7 +154,7 @@ func _test_boss_select_screen_interactions() -> void:
 	print("\n--- 4. BossSelectScreen UI, Lighting & State Machine ---")
 	Global.init_default_run_stages(6)
 	Global.set_up_player()
-	var screen_ps := load("res://ui/screens/boss_select_screen.tscn") as PackedScene
+	var screen_ps := load("res://scenes/boss_select/boss_select_screen.tscn") as PackedScene
 	_assert(screen_ps != null, "boss_select_screen.tscn loads cleanly")
 
 	var scr := screen_ps.instantiate()
@@ -164,11 +164,11 @@ func _test_boss_select_screen_interactions() -> void:
 
 	_assert(scr.table_sprite != null and scr.table_sprite.material is ShaderMaterial, "TableSprite has dynamic candlelight ShaderMaterial")
 	var table_mat := scr.table_sprite.material as ShaderMaterial
-	_assert(table_mat != null and table_mat.shader != null and table_mat.shader.resource_path == "res://assets/shaders/table_candle_light.gdshader", "TableSprite uses table_candle_light.gdshader")
+	_assert(table_mat != null and table_mat.shader != null and table_mat.shader.resource_path == "res://scenes/boss_select/assets/table_candle_light.gdshader", "TableSprite uses table_candle_light.gdshader")
 	_assert(
 		scr.table_sides_sprite != null
 		and scr.table_sides_sprite.texture != null
-		and scr.table_sides_sprite.texture.resource_path == "res://assets/sprites/ui/boss_select/table-sides.png"
+		and scr.table_sides_sprite.texture.resource_path == "res://scenes/boss_select/assets/table-sides.png"
 		and scr.table_sides_sprite.material is ShaderMaterial,
 		"TableSidesSprite uses table-sides.png with dynamic candlelight ShaderMaterial"
 	)
@@ -177,14 +177,14 @@ func _test_boss_select_screen_interactions() -> void:
 		table_sides_mat != null
 		and table_sides_mat != table_mat
 		and table_sides_mat.shader != null
-		and table_sides_mat.shader.resource_path == "res://assets/shaders/table_candle_light.gdshader",
+		and table_sides_mat.shader.resource_path == "res://scenes/boss_select/assets/table_candle_light.gdshader",
 		"TableSidesSprite uses its own table_candle_light.gdshader material"
 	)
 	_assert(float(table_mat.get_shader_parameter("ring_inner_radius")) > 0.0 and float(table_mat.get_shader_parameter("ring_mid_radius")) > float(table_mat.get_shader_parameter("ring_inner_radius")) and float(table_mat.get_shader_parameter("ring_outer_radius")) > float(table_mat.get_shader_parameter("ring_mid_radius")) and float(table_mat.get_shader_parameter("pixel_snap")) >= 1.0, "TableSprite has valid pixel-art ring and snap shader parameters")
 	var glow_mat: ShaderMaterial = null
 	if scr.candle_glow != null:
 		glow_mat = scr.candle_glow.material as ShaderMaterial
-	_assert(glow_mat != null and glow_mat.shader != null and glow_mat.shader.resource_path == "res://assets/shaders/candle_pixel_glow.gdshader", "CandleGlow uses crisp candle_pixel_glow.gdshader")
+	_assert(glow_mat != null and glow_mat.shader != null and glow_mat.shader.resource_path == "res://scenes/boss_select/assets/candle_pixel_glow.gdshader", "CandleGlow uses crisp candle_pixel_glow.gdshader")
 	_assert(scr.candle_flame != null and scr.candle_flame is CandleFlame, "CandleFlame node attached to CandleSprite")
 	_assert(scr.find_child("StageHeaderLabel", true, false) == null, "StageHeaderLabel removed from BossSelectScreen")
 	_assert(scr.candle_glow != null and scr.candle_glow.size.x >= 520.0 and scr.candle_glow.size.y >= 520.0, "CandleGlow area enlarged to >= 520x520")
@@ -243,7 +243,7 @@ func _test_boss_select_screen_interactions() -> void:
 	# Click / inspect poster 0
 	var target_poster: WantedPoster = scr.spawned_posters[0]
 	var small_paper_bg := target_poster.find_child("PaperBackground", true, false) as TextureRect
-	_assert(small_paper_bg != null and small_paper_bg.texture != null and small_paper_bg.texture.resource_path == "res://assets/sprites/ui/boss_select/paperback.png", "Small WantedPoster uses paperback.png backing texture")
+	_assert(small_paper_bg != null and small_paper_bg.texture != null and small_paper_bg.texture.resource_path == "res://scenes/boss_select/assets/paperback.png", "Small WantedPoster uses paperback.png backing texture")
 	_assert(target_poster.fallback_parchment != null and target_poster.fallback_parchment.visible and target_poster.find_child("CustomArtRect", true, false) == null, "Small WantedPoster always renders on FallbackParchment without CustomArtRect")
 	_assert(target_poster.boss_title_label != null and target_poster.boss_title_label.text == target_poster.get_poster_title(), "Small WantedPoster displays boss title at top")
 	_assert(target_poster.enemy_resource != null and target_poster.enemy_resource.wanted_poster_art != null, "Lamia EnemyResource has wanted_poster_art assigned")
@@ -358,7 +358,7 @@ func _test_boss_select_screen_interactions() -> void:
 	await get_tree().create_timer(0.32).timeout
 	_assert(scr.bounty_info_panel != null and scr.bounty_info_panel.scale.is_equal_approx(Vector2.ONE), "Unified parchment inspect sheet unfolds to full scale")
 	var paper_bg := scr.bounty_info_panel.find_child("PaperBackground", true, false) as TextureRect
-	_assert(paper_bg != null and paper_bg.texture != null and paper_bg.texture.resource_path == "res://assets/sprites/ui/boss_select/paperback.png", "Inspect sheet uses paperback.png parchment texture")
+	_assert(paper_bg != null and paper_bg.texture != null and paper_bg.texture.resource_path == "res://scenes/boss_select/assets/paperback.png", "Inspect sheet uses paperback.png parchment texture")
 	_assert(scr.inspect_art_rect != null and scr.inspect_art_rect.texture == target_poster.enemy_resource.wanted_poster_art, "Inspect poster displays boss wanted_poster_art")
 	_assert(scr.inspect_art_frame != null and scr.inspect_art_frame.visible and is_equal_approx(scr.inspect_art_frame.custom_minimum_size.y, 256.0), "InspectArtFrame visible and sized dynamically for 412x256 wanted_poster_art")
 	_assert(scr.find_child("InspectMetaLabel", true, false) == null and scr.find_child("InspectBountyLabel", true, false) == null, "Removed InspectMetaLabel and InspectBountyLabel handled cleanly")
@@ -382,16 +382,32 @@ func _test_boss_select_screen_interactions() -> void:
 	_assert(is_equal_approx(target_poster.modulate.a, 1.0) and target_poster.scale.is_equal_approx(Vector2.ONE), "Table poster restores full opacity and scale when put back")
 	_assert(target_poster.get_center_position().distance_to(desired_spot) < 2.0, "Putting poster back remembers its dragged resting position")
 
-	# Re-inspect and confirm selection -> shoves others & centers chosen poster
+	# Re-inspect and confirm selection -> burns other contracts & zooms directly from inspect sheet
+	var other_poster: WantedPoster = scr.WANTED_POSTER_SCENE.instantiate() as WantedPoster
+	scr.poster_layer.add_child(other_poster)
+	other_poster.setup(target_poster.boss_location)
+	other_poster.set_center_position(Vector2(170.0, 420.0))
+	other_poster.rotation = deg_to_rad(6.0)
+	scr.spawned_posters.append(other_poster)
+	await get_tree().process_frame
+
 	scr.auto_transition_on_select = false
 	scr.inspect_poster(0)
 	await get_tree().create_timer(0.10).timeout
 	scr.confirm_poster_selection()
-	await get_tree().create_timer(0.45).timeout
+	await get_tree().create_timer(0.95).timeout
 	_assert(scr.get_state() == scr.State.CONFIRMED, "Confirming selection transitions to CONFIRMED")
 	_assert(scr.selected_poster == target_poster, "selected_poster set to chosen poster")
-	_assert(is_equal_approx(target_poster.modulate.a, 1.0), "Selected poster is fully opaque on table after confirm")
-	_assert(target_poster.get_center_position().distance_to(scr.TABLE_CENTER_POS) < 2.0, "Selected poster centered on table")
+	_assert(scr.inspect_overlay.visible and not target_poster.visible, "Zooms directly from inspect sheet without returning contract to table")
+	_assert(scr.bounty_info_panel.scale.x >= 2.2 and scr.bounty_info_panel.scale.y >= 2.2, "Inspected contract zooms in strongly on selection")
+	_assert(
+		other_poster.material is ShaderMaterial
+		and (other_poster.material as ShaderMaterial).shader != null
+		and (other_poster.material as ShaderMaterial).shader.resource_path == "res://assets/shaders/card_burn.gdshader"
+		and is_equal_approx(other_poster.burn_progress, 1.0)
+		and not other_poster.visible,
+		"Other contracts burn completely in background and hide after confirmation"
+	)
 
 	# Verify pick_locations honors chosen boss without scene-changing away during test
 	Locations.load_locations_from_directory(scr.current_area)
@@ -411,9 +427,9 @@ func _test_save_load_stage_queue() -> void:
 	Global.init_default_run_stages(6)
 	Global.insert_next_stage("bonus_swamp")
 	Global.advance_to_next_stage()
-	Global.current_area_path = "res://map/areas/level1/area_1.tres"
-	Global.visited_area_paths = ["res://map/areas/level1/area_1.tres"] as Array[String]
-	Global.cur_scene = "res://ui/screens/boss_select_screen.tscn"
+	Global.current_area_path = "res://core/map/areas/level1/area_1.tres"
+	Global.visited_area_paths = ["res://core/map/areas/level1/area_1.tres"] as Array[String]
+	Global.cur_scene = "res://scenes/boss_select/boss_select_screen.tscn"
 	Global.save()
 
 	# Wipe and reload
@@ -426,8 +442,8 @@ func _test_save_load_stage_queue() -> void:
 	var expected_saved: Array[String] = ["level1", "bonus_swamp", "level2", "level3", "level4", "level5", "level6"]
 	_assert(Global.run_stage_queue == expected_saved, "Serializer restores run_stage_queue")
 	_assert(Global.current_stage_index == 1 and Global.get_current_stage_id() == "bonus_swamp", "Serializer restores current_stage_index == 1")
-	_assert(Global.current_area_path == "res://map/areas/level1/area_1.tres", "Serializer restores current_area_path")
-	_assert(Global.visited_area_paths.has("res://map/areas/level1/area_1.tres"), "Serializer restores visited_area_paths")
+	_assert(Global.current_area_path == "res://core/map/areas/level1/area_1.tres", "Serializer restores current_area_path")
+	_assert(Global.visited_area_paths.has("res://core/map/areas/level1/area_1.tres"), "Serializer restores visited_area_paths")
 
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(tmp_path))
 
@@ -441,7 +457,7 @@ func _test_save_load_stage_queue() -> void:
 	ser_migrate.load_data()
 	var migrated_txt := FileAccess.get_file_as_string(migrate_path)
 	_assert(ser_migrate.current_level == 3, "Serializer loads migrated legacy save cleanly")
-	_assert(migrated_txt.contains("res://assets/sprites/enemies/lamia/lamia_loc.png") and not migrated_txt.contains("loc_lamia_boss.png"), "Serializer rewrites legacy ext_resource paths on disk")
+	_assert(migrated_txt.contains("res://core/entities/enemies/bosses/lamia/assets/lamia_loc.png") and not migrated_txt.contains("loc_lamia_boss.png"), "Serializer rewrites legacy ext_resource paths on disk")
 
 	var bad_path := "user://test_bad_save_guard.tres"
 	var bad_txt := '[gd_resource type="Resource" script_class="Serializer" format=3]\n\n[ext_resource type="Texture2D" path="res://assets/sprites/nonexistent_missing_test_file.png" id="1_bad"]\n[ext_resource type="Script" path="res://core/saving/serializer.gd" id="2_ser"]\n\n[resource]\nscript = ExtResource("2_ser")\ncurrent_level = 5\n'

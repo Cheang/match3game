@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://ui/inventory_overlay/inventory_overlay_passives_ring.gd" id="1_ring"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/inventory_overlay/passive_deco_ring.png" id="2_deco"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/inventory_overlay/passive_slots.png" id="3_slots"]
+[ext_resource type="Texture2D" path="res://ui/inventory_overlay/assets/passive_deco_ring.png" id="2_deco"]
+[ext_resource type="Texture2D" path="res://ui/inventory_overlay/assets/passive_slots.png" id="3_slots"]
 [ext_resource type="Script" path="res://ui/inventory_overlay/overlay_passive_slot_ui.gd" id="4_slot"]
 
 [node name="InventoryOverlayPassivesRing" type="Control"]

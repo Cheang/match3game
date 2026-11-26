@@ -48,7 +48,7 @@ func _ready() -> void:
 		hp_liquid.material = _hp_mat
 	elif hp_liquid:
 		_hp_mat = ShaderMaterial.new()
-		_hp_mat.shader = preload("res://assets/shaders/pixel_liquid_globe.gdshader")
+		_hp_mat.shader = preload("res://ui/hud/assets/pixel_liquid_globe.gdshader")
 		hp_liquid.material = _hp_mat
 
 	if _hp_mat:

@@ -9,10 +9,11 @@ extends Control
 
 signal slot_clicked(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int)
 signal slot_drag_requested(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: bool, slot_idx: int, mouse_pos: Vector2)
+@warning_ignore("unused_signal")
 signal equipment_dropped(drag_data: Dictionary, target_track: ColorLoadoutTrack, target_is_ult: bool, target_slot_idx: int)
 
-const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
-const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
+const TEX_BASIC_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_ult_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 
 @export var is_ultimate: bool = false

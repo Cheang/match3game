@@ -31,10 +31,10 @@ const EQUIPMENT_FAMILY_COLORS: Dictionary = {
 func get_family_default_color(family_name: String) -> int:
 	return EQUIPMENT_FAMILY_COLORS.get(family_name.to_lower(), 0)
 
-const CLASSES_DIR: String = "res://entities/player/classes"
-const DEFAULT_WARRIOR_PATH: String = "res://entities/player/classes/warrior/warrior.tres"
+const CLASSES_DIR: String = "res://core/entities/player/classes"
+const DEFAULT_WARRIOR_PATH: String = "res://core/entities/player/classes/warrior/warrior.tres"
 const DEFAULT_RUN_LEVELS: int = 6
-const AREAS_ROOT_DIR: String = "res://map/areas"
+const AREAS_ROOT_DIR: String = "res://core/map/areas"
 
 var def_char: PlayerResource = null
 var playable_classes: Array[PlayerResource] = []
@@ -46,8 +46,8 @@ func _ready():
 	load_playable_classes()
 	if def_char == null and not playable_classes.is_empty():
 		def_char = playable_classes[0]
-	if ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
-		def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
+	if ResourceLoader.exists("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres"):
+		def_enemy = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres")
 	if setting_res == null:
 		setting_res = SettingsResource.new()
 
@@ -216,14 +216,14 @@ func get_color_ui_tint(color: int) -> Color:
 
 func get_color_base_texture(color: int) -> Texture2D:
 	if color == 0:
-		return preload("res://assets/sprites/tiles/white_0_sq.png")
+		return preload("res://scenes/combat/assets/tiles/white_0_sq.png")
 	match get_base_family(color):
-		TileColor.RED: return preload("res://assets/sprites/tiles/red_0_sq.png")
-		TileColor.BLUE: return preload("res://assets/sprites/tiles/blue_0_sq.png")
-		TileColor.GREEN: return preload("res://assets/sprites/tiles/green_0_sq.png")
-		TileColor.PURPLE: return preload("res://assets/sprites/tiles/purple_0_sq.png")
-		TileColor.WHITE: return preload("res://assets/sprites/tiles/white_0_sq.png")
-	return preload("res://assets/sprites/tiles/white_0_sq.png")
+		TileColor.RED: return preload("res://scenes/combat/assets/tiles/red_0_sq.png")
+		TileColor.BLUE: return preload("res://scenes/combat/assets/tiles/blue_0_sq.png")
+		TileColor.GREEN: return preload("res://scenes/combat/assets/tiles/green_0_sq.png")
+		TileColor.PURPLE: return preload("res://scenes/combat/assets/tiles/purple_0_sq.png")
+		TileColor.WHITE: return preload("res://scenes/combat/assets/tiles/white_0_sq.png")
+	return preload("res://scenes/combat/assets/tiles/white_0_sq.png")
 
 func color_string_to_id(color_str: String) -> int:
 	match color_str.to_lower():
@@ -254,8 +254,8 @@ func select_character(character: PlayerResource):
 func set_up_enemy(specific_enemy: EnemyResource = null):
 	var enemy_to_set: EnemyResource = specific_enemy
 	if enemy_to_set == null:
-		if def_enemy == null and ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
-			def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
+		if def_enemy == null and ResourceLoader.exists("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres")
 		enemy_to_set = def_enemy
 	if enemy_to_set != null:
 		cur_enemy = enemy_to_set.duplicate()
@@ -266,8 +266,8 @@ func set_up_enemy(specific_enemy: EnemyResource = null):
 func prepare_post_combat_rewards(defeated_enemy: EnemyResource = null) -> void:
 	var enemy_res: EnemyResource = defeated_enemy if defeated_enemy != null else cur_enemy
 	if enemy_res == null:
-		if def_enemy == null and ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
-			def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
+		if def_enemy == null and ResourceLoader.exists("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres")
 		enemy_res = def_enemy
 	var monster_loot: Array[Reward] = []
 	if enemy_res != null and enemy_res.loot_table != null:
@@ -615,8 +615,8 @@ func load_data():
 		if def_char == null and ResourceLoader.exists(DEFAULT_WARRIOR_PATH):
 			def_char = load(DEFAULT_WARRIOR_PATH)
 		selected_char = def_char
-		if def_enemy == null and ResourceLoader.exists("res://entities/enemies/minions/wild_boar/wild_boar_1.tres"):
-			def_enemy = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres")
+		if def_enemy == null and ResourceLoader.exists("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres"):
+			def_enemy = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres")
 		if cur_enemy == null:
 			set_up_enemy()
 

@@ -33,7 +33,7 @@ func _ready() -> void:
 	Global.pending_reward_context.clear()
 	Global.boss_beaten = false
 
-	var reward_screen_scene: PackedScene = load("res://rewards/reward_screen.tscn")
+	var reward_screen_scene: PackedScene = load("res://scenes/rewards/reward_screen.tscn")
 	_assert(reward_screen_scene != null, "scenes/reward-screen.tscn loads successfully")
 
 	var rs = reward_screen_scene.instantiate()

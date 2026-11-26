@@ -64,7 +64,7 @@ func _ready() -> void:
 		hp_liquid.material = _hp_mat
 	elif hp_liquid:
 		_hp_mat = ShaderMaterial.new()
-		_hp_mat.shader = preload("res://assets/shaders/pixel_liquid_globe.gdshader")
+		_hp_mat.shader = preload("res://ui/hud/assets/pixel_liquid_globe.gdshader")
 		hp_liquid.material = _hp_mat
 
 	if energy_liquid and energy_liquid.material is ShaderMaterial:
@@ -72,7 +72,7 @@ func _ready() -> void:
 		energy_liquid.material = _energy_mat
 	elif energy_liquid:
 		_energy_mat = ShaderMaterial.new()
-		_energy_mat.shader = preload("res://assets/shaders/pixel_liquid_globe.gdshader")
+		_energy_mat.shader = preload("res://ui/hud/assets/pixel_liquid_globe.gdshader")
 		energy_liquid.material = _energy_mat
 
 	if armor_plate and armor_plate.material is ShaderMaterial:

@@ -511,10 +511,10 @@ func test_reward_draft_and_modal_consistency() -> bool:
 func test_existing_equipment_compatibility() -> bool:
 	print("-> Testing Backward Compatibility with Existing Equipment Resources...")
 	var test_files: Array[String] = [
-		"res://equipment/items/short_sword.tres",
-		"res://equipment/items/block.tres",
-		"res://equipment/items/punch.tres",
-		"res://equipment/items/bandage.tres"
+		"res://core/equipment/items/short_sword.tres",
+		"res://core/equipment/items/block.tres",
+		"res://core/equipment/items/punch.tres",
+		"res://core/equipment/items/bandage.tres"
 	]
 	for path in test_files:
 		var eq = load(path)

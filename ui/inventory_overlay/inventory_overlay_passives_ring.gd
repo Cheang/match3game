@@ -11,8 +11,8 @@ extends Control
 signal passive_clicked(slot_idx: int, passive_res: Resource)
 signal passive_dropped(source_idx: int, target_idx: int)
 
-const TEX_DECO_RING = preload("res://assets/sprites/ui/inventory_overlay/passive_deco_ring.png")
-const TEX_SLOTS_BG = preload("res://assets/sprites/ui/inventory_overlay/passive_slots.png")
+const TEX_DECO_RING = preload("res://ui/inventory_overlay/assets/passive_deco_ring.png")
+const TEX_SLOTS_BG = preload("res://ui/inventory_overlay/assets/passive_slots.png")
 
 const RING_POS = Vector2(18, 27)
 const RING_SIZE = Vector2(306, 306)

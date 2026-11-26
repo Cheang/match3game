@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dfj4ekq23na2w"]
 
 [ext_resource type="Script" path="res://ui/hud/color_track_row.gd" id="1_row"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/combat/plr_eq_bottom.png" id="2_bottom"]
+[ext_resource type="Texture2D" path="res://scenes/combat/assets/plr_eq_bottom.png" id="2_bottom"]
 [ext_resource type="Script" path="res://ui/hud/modifier_slot_ui.gd" id="3_slot"]
 
 [node name="ColorTrackRow" type="Control"]

@@ -45,13 +45,65 @@ extends Resource
 @export var saved_enemy_track_cursors: Dictionary = {}
 
 const LEGACY_RESOURCE_PATH_REMAP: Dictionary = {
-	"res://assets/sprites/locations/loc_lamia_boss.png": "res://assets/sprites/enemies/lamia/lamia_loc.png",
-	"res://assets/sprites/enemies/lamia_head.png": "res://assets/sprites/enemies/lamia/lamia_head.png",
-	"res://assets/sprites/enemies/lamia_body.png": "res://assets/sprites/enemies/lamia/lamia_body.png",
-	"res://map/areas/area_1.tres": "res://map/areas/level1/area_1.tres",
+	"res://assets/sprites/locations/loc_lamia_boss.png": "res://core/entities/enemies/bosses/lamia/assets/lamia_loc.png",
+	"res://assets/sprites/enemies/lamia_head.png": "res://core/entities/enemies/bosses/lamia/assets/lamia_head.png",
+	"res://assets/sprites/enemies/lamia_body.png": "res://core/entities/enemies/bosses/lamia/assets/lamia_body.png",
+	"res://map/areas/area_1.tres": "res://core/map/areas/level1/area_1.tres",
+	"res://map/locations_screen.tscn": "res://scenes/locations/locations_screen.tscn",
+	"res://map/location_card.tscn": "res://scenes/locations/location_card.tscn",
+	"res://ui/screens/main_menu.tscn": "res://scenes/main_menu/main_menu.tscn",
+	"res://ui/screens/hero_select_screen.tscn": "res://scenes/hero_select/hero_select_screen.tscn",
+	"res://ui/screens/boss_select_screen.tscn": "res://scenes/boss_select/boss_select_screen.tscn",
+	"res://ui/screens/settings_screen.tscn": "res://scenes/settings/settings_screen.tscn",
+	"res://ui/screens/thank_you_screen.tscn": "res://scenes/thank_you/thank_you_screen.tscn",
+	"res://assets/sprites/equipment/wild-tusk.png": "res://core/entities/enemies/minions/wild_boar/assets/wild-tusk.png",
+	"res://assets/shaders/rarity_palette_swap.gdshader": "res://scenes/rewards/assets/rarity_palette_swap.gdshader",
+	"res://assets/shaders/rarity_palette_swap.tres": "res://scenes/rewards/assets/rarity_palette_swap.tres",
 }
 
+const LEGACY_RESOURCE_PREFIX_REMAP: Array = [
+	["res://assets/sprites/rewards/icons/wild_boar/", "res://core/entities/enemies/minions/wild_boar/assets/"],
+	["res://assets/sprites/enemies/lamia/", "res://core/entities/enemies/bosses/lamia/assets/"],
+	["res://assets/sprites/enemies/corupted_pitka/", "res://core/entities/enemies/bosses/corrupted_pitka/assets/"],
+	["res://assets/sprites/enemies/bear_stravnica/", "res://core/entities/enemies/minions/bear_stravnica/assets/"],
+	["res://assets/sprites/enemies/karjaliia/", "res://core/entities/enemies/minions/karjaliia_cap/assets/"],
+	["res://assets/sprites/enemies/pesent/", "res://core/entities/enemies/minions/peasant/assets/"],
+	["res://assets/sprites/enemies/vila/", "res://core/entities/enemies/minions/vila/assets/"],
+	["res://assets/sprites/enemies/wild_boar/", "res://core/entities/enemies/minions/wild_boar/assets/"],
+	["res://assets/sprites/ui/character_select/", "res://scenes/hero_select/assets/"],
+	["res://assets/sprites/ui/boss_select/", "res://scenes/boss_select/assets/"],
+	["res://assets/sprites/ui/locations/", "res://scenes/locations/assets/"],
+	["res://assets/sprites/ui/bottom_bar/", "res://ui/hud/assets/"],
+	["res://assets/sprites/ui/inventory_overlay/", "res://ui/inventory_overlay/assets/"],
+	["res://assets/sprites/ui/combat/", "res://scenes/combat/assets/"],
+	["res://assets/sprites/locations/", "res://scenes/locations/assets/"],
+	["res://assets/sprites/rewards/", "res://scenes/rewards/assets/"],
+	["res://assets/sprites/events/", "res://scenes/events/assets/"],
+	["res://assets/sprites/player/", "res://core/entities/player/classes/warrior/assets/"],
+	["res://assets/sprites/tiles/", "res://scenes/combat/assets/tiles/"],
+	["res://assets/sprites/obstacles/", "res://scenes/combat/assets/obstacles/"],
+	["res://events/", "res://scenes/events/"],
+	["res://scenes/rewards/enemy_loot/wild_boar/", "res://core/entities/enemies/minions/wild_boar/rewards/"],
+	["res://rewards/enemy_loot/wild_boar/", "res://core/entities/enemies/minions/wild_boar/rewards/"],
+	["res://rewards/", "res://scenes/rewards/"],
+	["res://combat/", "res://scenes/combat/"],
+	["res://map/", "res://core/map/"],
+	["res://equipment/", "res://core/equipment/"],
+	["res://entities/", "res://core/entities/"],
+]
+
 var save_path: String = "user://save1.tres"
+
+
+func _remap_legacy_resource_path(res_path: String) -> String:
+	if LEGACY_RESOURCE_PATH_REMAP.has(res_path):
+		return LEGACY_RESOURCE_PATH_REMAP[res_path]
+	for pair in LEGACY_RESOURCE_PREFIX_REMAP:
+		var old_prefix: String = pair[0]
+		if res_path.begins_with(old_prefix):
+			var new_prefix: String = pair[1]
+			return new_prefix + res_path.substr(old_prefix.length())
+	return ""
 
 
 func save_data() -> void:
@@ -80,10 +132,10 @@ func _prepare_save_file_for_load() -> bool:
 		if checked.has(res_path):
 			continue
 		checked[res_path] = true
-		if LEGACY_RESOURCE_PATH_REMAP.has(res_path):
-			var new_path: String = LEGACY_RESOURCE_PATH_REMAP[res_path]
-			if ResourceLoader.exists(new_path):
-				text = text.replace('path="%s"' % res_path, 'path="%s"' % new_path)
+		var mapped_path: String = _remap_legacy_resource_path(res_path)
+		if mapped_path != "":
+			if ResourceLoader.exists(mapped_path):
+				text = text.replace('path="%s"' % res_path, 'path="%s"' % mapped_path)
 				modified = true
 			else:
 				missing_paths.append(res_path)
@@ -119,7 +171,9 @@ func load_data() -> void:
 	cur_char_deck = data.cur_char_deck if data.cur_char_deck else []
 	selected_char = data.selected_char if data.selected_char else null
 	settings = data.settings if data.settings else null
-	cur_scene = data.cur_scene 
+	var loaded_scene: String = data.cur_scene if data.cur_scene != null else ""
+	var mapped_scene: String = _remap_legacy_resource_path(loaded_scene)
+	cur_scene = mapped_scene if (mapped_scene != "" and ResourceLoader.exists(mapped_scene)) else loaded_scene
 	cur_enemy = data.cur_enemy if data.cur_enemy else null
 	
 	game_is_over = data.game_is_over
@@ -131,11 +185,15 @@ func load_data() -> void:
 		for s in data.run_stage_queue:
 			run_stage_queue.append(str(s))
 	current_stage_index = data.current_stage_index
-	current_area_path = data.current_area_path if data.current_area_path != null else ""
+	var loaded_area_path: String = data.current_area_path if data.current_area_path != null else ""
+	var mapped_area_path: String = _remap_legacy_resource_path(loaded_area_path)
+	current_area_path = mapped_area_path if (mapped_area_path != "" and ResourceLoader.exists(mapped_area_path)) else loaded_area_path
 	visited_area_paths.clear()
 	if data.visited_area_paths != null:
 		for p in data.visited_area_paths:
-			visited_area_paths.append(str(p))
+			var raw_p := str(p)
+			var mapped_p: String = _remap_legacy_resource_path(raw_p)
+			visited_area_paths.append(mapped_p if (mapped_p != "" and ResourceLoader.exists(mapped_p)) else raw_p)
 	
 	area_locations.clear()
 	if data.area_locations != null:

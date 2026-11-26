@@ -7,8 +7,8 @@ extends Control
 ## Shows live preview buffs in the editor so you can see how it looks at design time.
 
 const FONT_TITLE := preload("res://assets/theme/title.ttf")
-const ICON_DODGE := preload("res://assets/sprites/ui/combat/buff_dodge.png")
-const ICON_COMBO := preload("res://assets/sprites/ui/combat/buff_combo.png")
+const ICON_DODGE := preload("res://scenes/combat/assets/buff_dodge.png")
+const ICON_COMBO := preload("res://scenes/combat/assets/buff_combo.png")
 
 const PREVIEW_DEFS: Array[Dictionary] = [
 	{"id": "dodge", "title": "Dodge", "icon": ICON_DODGE, "stacks": 1, "show_stacks": false, "desc": "Negates the next incoming physical attack."},

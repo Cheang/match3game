@@ -27,7 +27,7 @@ func _ready() -> void:
 	_log("TESTING REWARD CARD REDESIGN")
 	_log("==================================================")
 
-	var card_scene: PackedScene = load("res://rewards/reward_card.tscn")
+	var card_scene: PackedScene = load("res://scenes/rewards/reward_card.tscn")
 	_assert(card_scene != null, "reward_card.tscn loads successfully")
 
 	var card: RewardCard = card_scene.instantiate() as RewardCard

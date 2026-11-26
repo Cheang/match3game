@@ -4,14 +4,14 @@ extends Control
 
 ## Pixel-art slot-cost / type badge using the project's reward slot icons.
 
-const TEX_BACKPLATE: Texture2D = preload("res://assets/sprites/rewards/reward_slots_backplate.png")
+const TEX_BACKPLATE: Texture2D = preload("res://scenes/rewards/assets/reward_slots_backplate.png")
 const SLOT_ICONS: Dictionary = {
-	"I": preload("res://assets/sprites/rewards/reward_slots_1.png"),
-	"II": preload("res://assets/sprites/rewards/reward_slots_2.png"),
-	"III": preload("res://assets/sprites/rewards/reward_slots_3.png"),
-	"IV": preload("res://assets/sprites/rewards/reward_slots_4.png"),
-	"U": preload("res://assets/sprites/rewards/reward_slots_buff.png"),
-	"P": preload("res://assets/sprites/rewards/reward_slots_passive.png"),
+	"I": preload("res://scenes/rewards/assets/reward_slots_1.png"),
+	"II": preload("res://scenes/rewards/assets/reward_slots_2.png"),
+	"III": preload("res://scenes/rewards/assets/reward_slots_3.png"),
+	"IV": preload("res://scenes/rewards/assets/reward_slots_4.png"),
+	"U": preload("res://scenes/rewards/assets/reward_slots_buff.png"),
+	"P": preload("res://scenes/rewards/assets/reward_slots_passive.png"),
 }
 
 @export var badge_text: String = "I":

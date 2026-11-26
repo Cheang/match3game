@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c5m0f4aui0sgr" path="res://ui/hud/monster_track_diamond.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://b316fpha4o5pp" path="res://assets/shaders/palette_swap_5.gdshader" id="2_shader"]
-[ext_resource type="Texture2D" uid="uid://bhpmmx3gu8j2t" path="res://assets/sprites/ui/combat/enm_move_bottom.png" id="3_bottom"]
-[ext_resource type="Texture2D" uid="uid://dsgqc3268jfwm" path="res://assets/sprites/ui/combat/enm_move_middle.png" id="4_middle"]
-[ext_resource type="Texture2D" uid="uid://0v2b5qn0v73x" path="res://assets/sprites/ui/combat/enm_move_top.png" id="5_top"]
+[ext_resource type="Texture2D" uid="uid://bhpmmx3gu8j2t" path="res://scenes/combat/assets/enm_move_bottom.png" id="3_bottom"]
+[ext_resource type="Texture2D" uid="uid://dsgqc3268jfwm" path="res://scenes/combat/assets/enm_move_middle.png" id="4_middle"]
+[ext_resource type="Texture2D" uid="uid://0v2b5qn0v73x" path="res://scenes/combat/assets/enm_move_top.png" id="5_top"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bottom"]
 resource_local_to_scene = true

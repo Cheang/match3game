@@ -8,8 +8,8 @@ extends Control
 signal slot_clicked(slot_idx: int, passive_ref: Resource)
 signal passive_dropped(source_idx: int, target_idx: int)
 
-const TEX_PASSIVE_SELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_selected.png")
-const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_unselected.png")
+const TEX_PASSIVE_SELECTED = preload("res://ui/inventory_overlay/assets/passive_selected.png")
+const TEX_PASSIVE_UNSELECTED = preload("res://ui/inventory_overlay/assets/passive_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 
 @export var slot_index: int = 0

@@ -38,6 +38,15 @@ func _ready() -> void:
 	_assert(bar.gold_icon != null, "GoldIcon is present")
 	_assert(bar.gold_label != null, "GoldLabel is present")
 
+	# Verify alignment against 626x126 backplate
+	_assert(bar.custom_minimum_size == Vector2(626, 126), "BottomBar custom_minimum_size matches 626x126 backplate")
+	_assert(bar.offset_left == -313.0 and bar.offset_right == 313.0, "BottomBar is centered with half-width 313")
+	_assert(bar.backplate.texture.get_size() == Vector2(626, 126), "Backplate texture is 626x126")
+	_assert(bar.backplate.size == Vector2(626, 126), "Backplate control size is 626x126")
+	_assert(bar.left_globe.position == Vector2(20, 1) and bar.left_globe.size == Vector2(130, 130), "LeftGlobe aligns to left backplate socket")
+	_assert(bar.inventory_button.position == Vector2(246, 6) and bar.inventory_button.size == Vector2(134, 82), "InventoryButton aligns to center backplate socket")
+	_assert(bar.right_globe.position == Vector2(476, 1) and bar.right_globe.size == Vector2(130, 130), "RightGlobe aligns to right backplate socket")
+
 	# Test initial HP and Gold
 	_assert(bar.hp_label.text == "20", "Default HP label is 20")
 	_assert(bar.gold_label.text == "0", "Default Gold label is 0")
@@ -72,6 +81,17 @@ func _ready() -> void:
 	mock_player.gold = 95
 	mock_player.updateUIPlayer.emit("gold")
 	_assert(bar.gold_label.text == "95", "Player updateUIPlayer signal updates Gold to 95")
+
+	# Test InventoryButton pressed darkening & icon shift
+	var inv_btn := bar.inventory_button
+	var orig_icon_y: float = inv_btn.icon.position.y
+	_assert(inv_btn.modulate.is_equal_approx(Color.WHITE), "InventoryButton starts with normal WHITE modulate")
+	inv_btn.button_down.emit()
+	_assert(inv_btn.modulate.is_equal_approx(InventoryButton.PRESSED_MODULATE), "InventoryButton darkens when pressed down")
+	_assert(is_equal_approx(inv_btn.icon.position.y, orig_icon_y + InventoryButton.PRESSED_ICON_OFFSET_Y), "InventoryButton icon shifts down on press")
+	inv_btn.button_up.emit()
+	_assert(inv_btn.modulate.is_equal_approx(Color.WHITE), "InventoryButton restores WHITE modulate on release")
+	_assert(is_equal_approx(inv_btn.icon.position.y, orig_icon_y), "InventoryButton icon restores position on release")
 
 	print("==================================================")
 	print("RESULTS: %d passed, %d failed" % [tests_passed, tests_failed])

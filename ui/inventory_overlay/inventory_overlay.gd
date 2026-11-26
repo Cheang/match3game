@@ -18,12 +18,12 @@ signal ability_selected(mod: Equipment, track: ColorLoadoutTrack, is_ultimate: b
 
 static var instance: InventoryOverlay = null
 
-const TEX_OVERLAY_BG = preload("res://assets/sprites/ui/combat/inventory_btn_unpressed.png")
-const TEX_DESC_PANEL = preload("res://assets/sprites/ui/inventory_overlay/ability_description_panel.png")
+const TEX_OVERLAY_BG = preload("res://scenes/combat/assets/inventory_btn_unpressed.png")
+const TEX_DESC_PANEL = preload("res://ui/inventory_overlay/assets/ability_description_panel.png")
 const TEX_GENERAL_BTN = preload("res://assets/sprites/ui/general_button_unpressed.png")
-const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
-const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
-const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_unselected.png")
+const TEX_BASIC_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_ult_unselected.png")
+const TEX_PASSIVE_UNSELECTED = preload("res://ui/inventory_overlay/assets/passive_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const TRACK_ROW_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_track_row.tscn")
 const PASSIVES_RING_SCENE = preload("res://ui/inventory_overlay/inventory_overlay_passives_ring.tscn")
@@ -55,8 +55,19 @@ const SETTINGS_PANEL_SCENE = preload("res://ui/common/settings_panel.tscn")
 enum Tab { LOADOUT, STATS, SETTINGS }
 var current_tab: Tab = Tab.LOADOUT
 
+const OPEN_ANIM_DURATION: float = 0.26
+const OPEN_FADE_DURATION: float = 0.18
+const CLOSE_ANIM_DURATION: float = 0.22
+const CLOSE_FADE_DURATION: float = 0.18
+const OPEN_SLIDE_OFFSET_Y: float = 48.0
+const OPEN_START_SCALE: Vector2 = Vector2(0.94, 0.94)
+
 var dimmer: ColorRect
+var center_container: CenterContainer = null
 var main_panel: NinePatchRect
+var _open_tween: Tween = null
+var _close_tween: Tween = null
+var _is_closing: bool = false
 var header_label: Label
 
 var loadout_view: VBoxContainer
@@ -169,7 +180,7 @@ static func _get_active_instance() -> InventoryOverlay:
 
 static func is_overlay_open() -> bool:
 	var active := _get_active_instance()
-	return active != null and active.visible
+	return active != null and active.visible and not active._is_closing
 
 static func toggle_overlay() -> void:
 	var active := _get_active_instance()
@@ -181,10 +192,10 @@ static func open_overlay() -> void:
 	if active != null:
 		active.open()
 
-static func close_overlay() -> void:
+static func close_overlay(immediate: bool = false) -> void:
 	var active := _get_active_instance()
 	if active != null:
-		active.close()
+		active.close(immediate)
 
 ## Finds active instance or instantiates inventory_overlay.tscn under parent/root.
 static func get_or_create(parent: Node = null) -> InventoryOverlay:
@@ -274,17 +285,104 @@ func _get_equipment_color(eq: Equipment) -> int:
 func open() -> void:
 	if Global.game_is_over:
 		return
-	_saved_game_is_played = Global.game_is_played
+	if not visible or _is_closing:
+		_saved_game_is_played = Global.game_is_played
 	Global.game_is_played = false
+	_is_closing = false
 
 	_build_ui_if_needed()
 	switch_tab(Tab.LOADOUT)
 	visible = true
+	_play_open_animation()
 	overlay_opened.emit()
 
-func close() -> void:
+func _reset_overlay_transforms() -> void:
+	if dimmer != null:
+		dimmer.modulate.a = 1.0
+		dimmer.mouse_filter = Control.MOUSE_FILTER_STOP
+	if main_panel != null:
+		main_panel.modulate.a = 1.0
+		main_panel.scale = Vector2.ONE
+	if center_container != null:
+		center_container.position = Vector2.ZERO
+
+func _finish_open_animation_immediately() -> void:
+	if _open_tween != null and _open_tween.is_valid():
+		_open_tween.kill()
+	_open_tween = null
+	if _close_tween != null and _close_tween.is_valid():
+		_close_tween.kill()
+	_close_tween = null
+	_is_closing = false
+	_reset_overlay_transforms()
+
+func _play_open_animation() -> void:
+	if _open_tween != null and _open_tween.is_valid():
+		_open_tween.kill()
+	_open_tween = null
+	if _close_tween != null and _close_tween.is_valid():
+		_close_tween.kill()
+	_close_tween = null
+	_is_closing = false
+	if main_panel == null or center_container == null or dimmer == null:
+		return
+	var panel_size := main_panel.size
+	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
+		panel_size = main_panel.custom_minimum_size
+	main_panel.pivot_offset = panel_size * 0.5
+	dimmer.mouse_filter = Control.MOUSE_FILTER_STOP
+	dimmer.modulate.a = 0.0
+	main_panel.modulate.a = 0.0
+	main_panel.scale = OPEN_START_SCALE
+	center_container.position = Vector2(0.0, OPEN_SLIDE_OFFSET_Y)
+
+	_open_tween = create_tween().set_parallel(true).set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_open_tween.tween_property(dimmer, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_open_tween.tween_property(main_panel, "modulate:a", 1.0, OPEN_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_open_tween.tween_property(main_panel, "scale", Vector2.ONE, OPEN_ANIM_DURATION).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_open_tween.tween_property(center_container, "position:y", 0.0, OPEN_ANIM_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_open_tween.finished.connect(func() -> void:
+		_open_tween = null
+		_reset_overlay_transforms()
+	)
+
+func _play_close_animation() -> void:
+	if _open_tween != null and _open_tween.is_valid():
+		_open_tween.kill()
+	_open_tween = null
+	if _close_tween != null and _close_tween.is_valid():
+		_close_tween.kill()
+	_close_tween = null
+	if main_panel == null or center_container == null or dimmer == null or not is_inside_tree():
+		_is_closing = false
+		visible = false
+		_reset_overlay_transforms()
+		return
+	var panel_size := main_panel.size
+	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
+		panel_size = main_panel.custom_minimum_size
+	main_panel.pivot_offset = panel_size * 0.5
+	_is_closing = true
+	dimmer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	_close_tween = create_tween().set_parallel(true).set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_close_tween.tween_property(dimmer, "modulate:a", 0.0, 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_close_tween.tween_property(main_panel, "modulate:a", 0.0, CLOSE_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_close_tween.tween_property(main_panel, "scale", OPEN_START_SCALE, CLOSE_ANIM_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_close_tween.tween_property(center_container, "position:y", OPEN_SLIDE_OFFSET_Y, CLOSE_ANIM_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_close_tween.finished.connect(func() -> void:
+		_close_tween = null
+		_is_closing = false
+		visible = false
+		_reset_overlay_transforms()
+	)
+
+func close(immediate: bool = false) -> void:
+	if not visible or (_is_closing and not immediate):
+		return
 	_cleanup_custom_drag()
-	if is_slotting_mode:
+	var was_slotting: bool = is_slotting_mode
+	if was_slotting:
 		_cached_floating_equipment = null
 		pending_slotting_queue.clear()
 		_popped_queue_origins.clear()
@@ -302,25 +400,26 @@ func close() -> void:
 				row.set_compatibility_state(null)
 		is_slotting_mode = false
 		_update_slotting_mode_ui(false)
-		visible = false
-		Global.game_is_played = _saved_game_is_played
-		overlay_closed.emit()
-		slotting_completed.emit()
-		return
-	visible = false
 	Global.game_is_played = _saved_game_is_played
+	if immediate:
+		_finish_open_animation_immediately()
+		visible = false
+	else:
+		_play_close_animation()
 	overlay_closed.emit()
+	if was_slotting:
+		slotting_completed.emit()
 
 func toggle() -> void:
 	if is_slotting_mode:
 		return
-	if visible:
+	if visible and not _is_closing:
 		close()
 	else:
 		open()
 
 func _input(event: InputEvent) -> void:
-	if not visible:
+	if not visible or _is_closing:
 		return
 
 	if _drag_pending and not is_custom_dragging:
@@ -371,6 +470,8 @@ func _start_custom_drag(mouse_pos: Vector2) -> void:
 	if _drag_candidate_item == null:
 		_drag_pending = false
 		return
+	if _open_tween != null and _open_tween.is_running():
+		_finish_open_animation_immediately()
 	_clear_fly_ghosts()
 	is_custom_dragging = true
 	_drag_pending = false
@@ -562,7 +663,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 	if event.is_action_pressed("ui_cancel"):
-		if visible:
+		if visible and not _is_closing:
 			close()
 			get_viewport().set_input_as_handled()
 		elif not Global.game_is_over:
@@ -570,7 +671,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_I:
-			if visible:
+			if visible and not _is_closing:
 				close()
 				get_viewport().set_input_as_handled()
 			elif not Global.game_is_over:
@@ -591,15 +692,15 @@ func _build_ui_if_needed() -> void:
 	if not dimmer.gui_input.is_connected(_on_dimmer_gui_input):
 		dimmer.gui_input.connect(_on_dimmer_gui_input)
 
-	var center := get_node_or_null("Center") as CenterContainer
-	if center == null:
-		center = CenterContainer.new()
-		center.name = "Center"
-		center.set_anchors_preset(Control.PRESET_FULL_RECT)
-		center.mouse_filter = Control.MOUSE_FILTER_PASS
-		add_child(center)
+	center_container = get_node_or_null("Center") as CenterContainer
+	if center_container == null:
+		center_container = CenterContainer.new()
+		center_container.name = "Center"
+		center_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+		center_container.mouse_filter = Control.MOUSE_FILTER_PASS
+		add_child(center_container)
 
-	main_panel = center.get_node_or_null("MainPanel") as NinePatchRect
+	main_panel = center_container.get_node_or_null("MainPanel") as NinePatchRect
 	if main_panel == null:
 		main_panel = NinePatchRect.new()
 		main_panel.name = "MainPanel"
@@ -610,7 +711,7 @@ func _build_ui_if_needed() -> void:
 		main_panel.patch_margin_bottom = 6
 		main_panel.custom_minimum_size = Vector2(548, 970)
 		main_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-		center.add_child(main_panel)
+		center_container.add_child(main_panel)
 
 	var margin := main_panel.get_node_or_null("MarginContainer") as MarginContainer
 	if margin == null:
@@ -1113,18 +1214,24 @@ func _update_nav_button_highlights(active_btn: Button) -> void:
 			btn.modulate = Color(0.72, 0.72, 0.78, 0.85)
 
 func _on_loadout_nav_pressed() -> void:
+	if _is_closing:
+		return
 	if current_tab == Tab.LOADOUT and visible:
 		close()
 		return
 	switch_tab(Tab.LOADOUT)
 
 func _on_stats_nav_pressed() -> void:
+	if _is_closing:
+		return
 	if current_tab == Tab.STATS and visible:
 		close()
 		return
 	switch_tab(Tab.STATS)
 
 func _on_settings_nav_pressed() -> void:
+	if _is_closing:
+		return
 	if current_tab == Tab.SETTINGS and visible:
 		close()
 		return
@@ -1132,7 +1239,7 @@ func _on_settings_nav_pressed() -> void:
 
 func _on_main_menu_pressed() -> void:
 	Global.save()
-	close()
+	close(true)
 	Global.game_is_played = true
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null:
@@ -1140,9 +1247,9 @@ func _on_main_menu_pressed() -> void:
 	if tree != null:
 		var sm = tree.root.get_node_or_null("SceneManager")
 		if sm != null and sm.has_method("change_scene"):
-			sm.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
+			sm.change_scene("res://scenes/main_menu/main_menu.tscn", { "pattern": "diagonal", "color": Color('#484a77') })
 		else:
-			tree.change_scene_to_file("res://ui/screens/main_menu.tscn")
+			tree.change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
 
 ## Refreshes all 5 loadout tracks, passives, and description from Global.cur_char.
 func refresh_overlay_data() -> void:
@@ -1217,13 +1324,13 @@ func _is_equipment_equipped_anywhere(eq: Equipment) -> bool:
 		return false
 	if Global.cur_char != null:
 		for c_id in Global.cur_char.active_color_pool:
-			var tr: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
-			if tr != null and (tr.ultimate_skill == eq or eq in tr.equipped_modifiers):
+			var track: ColorLoadoutTrack = Global.cur_char.get_track_for_color(c_id)
+			if track != null and (track.ultimate_skill == eq or eq in track.equipped_modifiers):
 				return true
 	for row in track_rows:
 		if row != null and row.track_ref != null:
-			var tr: ColorLoadoutTrack = row.track_ref
-			if tr.ultimate_skill == eq or eq in tr.equipped_modifiers:
+			var track: ColorLoadoutTrack = row.track_ref
+			if track.ultimate_skill == eq or eq in track.equipped_modifiers:
 				return true
 	return false
 

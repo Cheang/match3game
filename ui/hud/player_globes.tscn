@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://cx6g3k7x5l14m"]
 
 [ext_resource type="Script" uid="uid://ctm0h20jskwad" path="res://ui/hud/player_globes.gd" id="1_globes"]
-[ext_resource type="Texture2D" uid="uid://c2ho2tvbfti1" path="res://assets/sprites/ui/combat/plr_hp_energy_bottom.png" id="2_bottom"]
-[ext_resource type="Shader" uid="uid://cpxn6rcb7w1xt" path="res://assets/shaders/pixel_liquid_globe.gdshader" id="3_shader"]
-[ext_resource type="Texture2D" uid="uid://5588hc6rmyws" path="res://assets/sprites/ui/combat/plr_hp_energy_top.png" id="4_top"]
+[ext_resource type="Texture2D" uid="uid://c2ho2tvbfti1" path="res://scenes/combat/assets/plr_hp_energy_bottom.png" id="2_bottom"]
+[ext_resource type="Shader" uid="uid://cpxn6rcb7w1xt" path="res://ui/hud/assets/pixel_liquid_globe.gdshader" id="3_shader"]
+[ext_resource type="Texture2D" uid="uid://5588hc6rmyws" path="res://scenes/combat/assets/plr_hp_energy_top.png" id="4_top"]
 [ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="5_font"]
-[ext_resource type="Shader" uid="uid://0sfeav4u3ig0" path="res://assets/shaders/physical_armor_plate.gdshader" id="6_armor_shader"]
-[ext_resource type="Texture2D" uid="uid://qq6m2gvsi03v" path="res://assets/sprites/ui/combat/plr_hp_energy_armor.png" id="7_armor_tex"]
-[ext_resource type="Shader" uid="uid://doldvbuxgcrdb" path="res://assets/shaders/magic_armor_shield.gdshader" id="8_magic_shader"]
-[ext_resource type="Texture2D" uid="uid://cwgkuvafd0is6" path="res://assets/sprites/ui/combat/plr_hp_energy_magicarmor.png" id="9_magic_tex"]
-[ext_resource type="Texture2D" uid="uid://rj4jji480q4w" path="res://assets/sprites/ui/combat/plr_stat_tracker.png" id="10_tracker_tex"]
+[ext_resource type="Shader" uid="uid://0sfeav4u3ig0" path="res://ui/hud/assets/physical_armor_plate.gdshader" id="6_armor_shader"]
+[ext_resource type="Texture2D" uid="uid://qq6m2gvsi03v" path="res://scenes/combat/assets/plr_hp_energy_armor.png" id="7_armor_tex"]
+[ext_resource type="Shader" uid="uid://doldvbuxgcrdb" path="res://ui/hud/assets/magic_armor_shield.gdshader" id="8_magic_shader"]
+[ext_resource type="Texture2D" uid="uid://cwgkuvafd0is6" path="res://scenes/combat/assets/plr_hp_energy_magicarmor.png" id="9_magic_tex"]
+[ext_resource type="Texture2D" uid="uid://rj4jji480q4w" path="res://scenes/combat/assets/plr_stat_tracker.png" id="10_tracker_tex"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_x5xvm"]
 shader = ExtResource("3_shader")

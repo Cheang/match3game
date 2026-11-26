@@ -1,0 +1,151 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/boss_select/wanted_poster.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://brju3ghi6817x" path="res://assets/theme/title.ttf" id="2_title_font"]
+[ext_resource type="Texture2D" path="res://scenes/boss_select/assets/paperback.png" id="3_paperback"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_btn"]
+
+[node name="WantedPoster" type="Control"]
+custom_minimum_size = Vector2(226, 0)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 226.0
+offset_bottom = 280.0
+pivot_offset = Vector2(113, 140)
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="DropShadow" type="TextureRect" parent="."]
+texture_filter = 1
+modulate = Color(0.05, 0.03, 0.07, 0.56)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 7.0
+offset_top = 9.0
+offset_right = 7.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_paperback")
+expand_mode = 1
+
+[node name="PosterBody" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FallbackParchment" type="Control" parent="PosterBody"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PaperBackground" type="TextureRect" parent="PosterBody/FallbackParchment"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_paperback")
+expand_mode = 1
+
+[node name="ContentMargin" type="MarginContainer" parent="PosterBody/FallbackParchment"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 20
+
+[node name="ParchmentVBox" type="VBoxContainer" parent="PosterBody/FallbackParchment/ContentMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="BossTitleLabel" type="Label" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.21568628, 0.30588236, 0.2901961, 1)
+theme_override_fonts/font = ExtResource("2_title_font")
+theme_override_font_sizes/font_size = 22
+text = "Boss Name"
+autowrap_mode = 2
+
+[node name="PortraitBox" type="TextureRect" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox"]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FauxTextLines" type="VBoxContainer" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="TextSpacer" type="Control" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox/FauxTextLines"]
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Line1" type="ColorRect" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox/FauxTextLines"]
+custom_minimum_size = Vector2(182, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+color = Color(0.21568628, 0.30588236, 0.2901961, 0.45)
+
+[node name="Line2" type="ColorRect" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox/FauxTextLines"]
+custom_minimum_size = Vector2(162, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+color = Color(0.21568628, 0.30588236, 0.2901961, 0.45)
+
+[node name="Line3" type="ColorRect" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox/FauxTextLines"]
+custom_minimum_size = Vector2(175, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+color = Color(0.21568628, 0.30588236, 0.2901961, 0.45)
+
+[node name="Line4" type="ColorRect" parent="PosterBody/FallbackParchment/ContentMargin/ParchmentVBox/FauxTextLines"]
+custom_minimum_size = Vector2(115, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+color = Color(0.21568628, 0.30588236, 0.2901961, 0.45)
+
+[node name="ClickArea" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_btn")
+flat = true

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dpovgqkn85a1v"]
 
-[ext_resource type="Texture2D" uid="uid://crqwdln8iiptw" path="res://assets/sprites/ui/combat/inventory_btn_unpressed.png" id="1_btn"]
-[ext_resource type="Texture2D" uid="uid://ct4epdg401147" path="res://assets/sprites/ui/combat/inventory_btn_icon.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://crqwdln8iiptw" path="res://scenes/combat/assets/inventory_btn_unpressed.png" id="1_btn"]
+[ext_resource type="Texture2D" uid="uid://ct4epdg401147" path="res://scenes/combat/assets/inventory_btn_icon.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://db8wwdeie22x4" path="res://ui/hud/inventory_button.gd" id="3_script"]
 
 [node name="InventoryButton" type="TextureButton" unique_id=185012345]

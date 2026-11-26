@@ -3,11 +3,11 @@ extends CanvasLayer
 
 signal modal_closed
 
-const TEX_PANEL_BG = preload("res://assets/sprites/ui/combat/inventory_btn_unpressed.png")
-const TEX_INNER_PANEL = preload("res://assets/sprites/ui/inventory_overlay/ability_description_panel.png")
+const TEX_PANEL_BG = preload("res://scenes/combat/assets/inventory_btn_unpressed.png")
+const TEX_INNER_PANEL = preload("res://ui/inventory_overlay/assets/ability_description_panel.png")
 const TEX_GENERAL_BTN = preload("res://assets/sprites/ui/general_button_unpressed.png")
-const TEX_PASSIVE_SELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_selected.png")
-const TEX_PASSIVE_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/passive_unselected.png")
+const TEX_PASSIVE_SELECTED = preload("res://ui/inventory_overlay/assets/passive_selected.png")
+const TEX_PASSIVE_UNSELECTED = preload("res://ui/inventory_overlay/assets/passive_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const TITLE_FONT = preload("res://assets/theme/title.ttf")
 const BODY_FONT = preload("res://assets/theme/font_153.ttf")

@@ -101,7 +101,7 @@ func change_scene(path: Variant, setted_options: Dictionary = {}) -> void:
 	assert(path == null or path is String or path is PackedScene, 'Path must be a string or a PackedScene')
 	if path is String and not ResourceLoader.exists(path):
 		var file_only: String = str(path).get_file().replace("-", "_")
-		for folder in ["res://combat/", "res://rewards/", "res://events/", "res://map/", "res://ui/screens/", "res://core/"]:
+		for folder in ["res://scenes/combat/", "res://scenes/rewards/", "res://scenes/events/", "res://scenes/locations/", "res://scenes/main_menu/", "res://scenes/hero_select/", "res://scenes/boss_select/", "res://scenes/settings/", "res://scenes/thank_you/", "res://core/map/", "res://core/"]:
 			var candidate: String = folder + file_only
 			if ResourceLoader.exists(candidate):
 				path = candidate

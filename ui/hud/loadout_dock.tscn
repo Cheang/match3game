@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://df7w0q8a1k2e"]
 
 [ext_resource type="Script" path="res://ui/hud/loadout_dock.gd" id="1_dock"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/combat/plr_eq_decoration.png" id="2_deco"]
+[ext_resource type="Texture2D" path="res://scenes/combat/assets/plr_eq_decoration.png" id="2_deco"]
 [ext_resource type="PackedScene" path="res://ui/hud/color_track_row.tscn" id="3_row"]
 
 [node name="loadout_dock" type="Control"]

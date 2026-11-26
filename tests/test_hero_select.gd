@@ -1,8 +1,8 @@
 extends Node
 
-const HERO_SELECT_SCENE := preload("res://ui/screens/hero_select_screen.tscn")
-const WARRIOR_RES := preload("res://entities/player/classes/warrior/warrior.tres")
-const SAMPLE_PORTRAIT := preload("res://assets/sprites/ui/main_menu/folktiles_logo.png")
+const HERO_SELECT_SCENE := preload("res://scenes/hero_select/hero_select_screen.tscn")
+const WARRIOR_RES := preload("res://core/entities/player/classes/warrior/warrior.tres")
+const SAMPLE_PORTRAIT := preload("res://scenes/main_menu/assets/folktiles_logo.png")
 
 var _failures: int = 0
 
@@ -20,9 +20,9 @@ func _ready() -> void:
 
 	# 1. Verify Border z-order on Main Menu, Settings, and Thank You (and absence on Hero Select)
 	for p in [
-		"res://ui/screens/main_menu.tscn",
-		"res://ui/screens/settings_screen.tscn",
-		"res://ui/screens/thank_you_screen.tscn",
+		"res://scenes/main_menu/main_menu.tscn",
+		"res://scenes/settings/settings_screen.tscn",
+		"res://scenes/thank_you/thank_you_screen.tscn",
 	]:
 		var ps: PackedScene = load(p)
 		var inst := ps.instantiate()
@@ -35,7 +35,7 @@ func _ready() -> void:
 		if bg != null and border != null:
 			_assert_true(border.z_index == 0, p + " Border z_index == 0")
 			_assert_true(border.get_index() == bg.get_index() + 1, p + " Border immediately above Background")
-		if p == "res://ui/screens/main_menu.tscn":
+		if p == "res://scenes/main_menu/main_menu.tscn":
 			await get_tree().process_frame
 			inst._set_menu_fade_with_border(0.0)
 			_assert_true(is_zero_approx(inst.border_rect.modulate.a), "MainMenu._set_menu_fade_with_border(0.0) hides Border")
@@ -57,7 +57,7 @@ func _ready() -> void:
 		inst.queue_free()
 		await get_tree().process_frame
 
-	var hs_ps: PackedScene = load("res://ui/screens/hero_select_screen.tscn")
+	var hs_ps: PackedScene = load("res://scenes/hero_select/hero_select_screen.tscn")
 	var hs_inst := hs_ps.instantiate()
 	add_child(hs_inst)
 	var hs_bg := hs_inst.get_node_or_null("Background") as TextureRect

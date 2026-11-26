@@ -6,3 +6,4 @@
 *.bak
 *.tmp
 scratch/
+addons/.godot_ai_update/

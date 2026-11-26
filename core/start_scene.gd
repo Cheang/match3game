@@ -5,7 +5,7 @@ func _ready() -> void:
 	set_display_dimentions()
 	Global.load_data()
 	load_settings()
-	SceneManager.change_scene("res://ui/screens/main_menu.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
+	SceneManager.change_scene("res://scenes/main_menu/main_menu.tscn", { "pattern": "diagonal", "color": Color("#2e222f") })
 
 
 func load_settings() -> void:

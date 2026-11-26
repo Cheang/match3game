@@ -4,8 +4,8 @@ extends Control
 
 ## Pixel-art color badge using the project's reward color icons.
 
-const ICON_MULTICOLOR: Texture2D = preload("res://assets/sprites/rewards/reward_color_multicolor.png")
-const ICON_SINGLECOLOR: Texture2D = preload("res://assets/sprites/rewards/reward_color_singlecolor.png")
+const ICON_MULTICOLOR: Texture2D = preload("res://scenes/rewards/assets/reward_color_multicolor.png")
+const ICON_SINGLECOLOR: Texture2D = preload("res://scenes/rewards/assets/reward_color_singlecolor.png")
 const PALETTE_SHADER: Shader = preload("res://assets/shaders/palette_swap_5.gdshader")
 
 const FALLBACK_PALETTES: Dictionary = {
@@ -60,7 +60,7 @@ func _sync_visuals() -> void:
 		_icon_rect.material = _build_palette_material(color_id)
 
 func _build_palette_material(c_id: int) -> ShaderMaterial:
-	var base_fam: int = (c_id / 100) * 100 if c_id >= 100 else c_id
+	var base_fam: int = (c_id - (c_id % 100)) if c_id >= 100 else c_id
 	var pal: Dictionary = FALLBACK_PALETTES.get(base_fam, FALLBACK_PALETTES[100])
 	if not Engine.is_editor_hint():
 		base_fam = ColorLoadoutTrack.get_base_family(c_id)

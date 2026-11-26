@@ -6,13 +6,15 @@ extends Control
 ## particles matching the equipment's color. No square box, no text.
 ## Supports direct drag-and-drop to slots and drop-to-unequip interactions.
 
+@warning_ignore("unused_signal")
 signal shard_selected(eq: Equipment)
+@warning_ignore("unused_signal")
 signal drag_requested(eq: Equipment, mouse_pos: Vector2)
 signal shard_dropped_on_dock(drag_data: Dictionary)
 signal floating_equipment_changed(eq: Equipment)
 
-const TEX_BASIC_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_basic_unselected.png")
-const TEX_ULT_UNSELECTED = preload("res://assets/sprites/ui/inventory_overlay/ability_ult_unselected.png")
+const TEX_BASIC_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_basic_unselected.png")
+const TEX_ULT_UNSELECTED = preload("res://ui/inventory_overlay/assets/ability_ult_unselected.png")
 const PALETTE_SHADER = preload("res://assets/shaders/palette_swap_5.gdshader")
 const PixelFireParticlesClass = preload("res://ui/inventory_overlay/pixel_fire_particles.gd")
 const DIAMOND_SIZE = Vector2(59, 59)
@@ -111,18 +113,18 @@ func _setup_particles() -> void:
 	fire_particles.emission_rect_extents = Vector2(18.0, 8.0)
 	shard_item.add_child(fire_particles)
 
-func set_shard_hidden(hidden: bool) -> void:
-	is_shard_hidden = hidden
+func set_shard_hidden(should_hide: bool) -> void:
+	is_shard_hidden = should_hide
 	if shard_item != null:
-		shard_item.visible = not hidden and (current_equipment != null)
-	if not hidden:
+		shard_item.visible = not should_hide and (current_equipment != null)
+	if not should_hide:
 		for i in range(stack_frames.size()):
 			if stack_frames[i] != null:
 				stack_frames[i].visible = (current_equipment != null and i < _stack_count)
 
-func set_shard_slot_hidden(idx: int, hidden: bool) -> void:
+func set_shard_slot_hidden(idx: int, should_hide: bool) -> void:
 	if idx >= 0 and idx < stack_frames.size() and stack_frames[idx] != null:
-		stack_frames[idx].visible = (not hidden) and (current_equipment != null and idx < _stack_count)
+		stack_frames[idx].visible = (not should_hide) and (current_equipment != null and idx < _stack_count)
 
 func get_shard_global_positions() -> Array[Vector2]:
 	var result: Array[Vector2] = []

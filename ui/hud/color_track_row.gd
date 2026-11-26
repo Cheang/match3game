@@ -5,7 +5,7 @@ signal modifier_dropped_on_row(drag_data: Dictionary, target_track: ColorLoadout
 signal row_slot_clicked(mod: Equipment)
 signal row_slot_selected(mod: Equipment, track: ColorLoadoutTrack, mod_index: int)
 
-const TEX_BOTTOM = preload("res://assets/sprites/ui/combat/plr_eq_bottom.png")
+const TEX_BOTTOM = preload("res://scenes/combat/assets/plr_eq_bottom.png")
 
 var track_color: int = 100
 var track_ref: ColorLoadoutTrack = null

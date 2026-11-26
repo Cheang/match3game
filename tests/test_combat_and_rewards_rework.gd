@@ -367,7 +367,7 @@ func _test_trigger_budgets_and_blocked_entries() -> void:
 # ------------------------------------------------------------------------------
 func _test_monster_tracks_and_colorless_fallback() -> void:
 	print("\n--- 4. Monster Tracks & Colorless Fallback ---")
-	var boar: EnemyResource = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
+	var boar: EnemyResource = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
 	boar.ensure_loadout_tracks()
 	_assert(boar.has_explicit_track_for_color(Global.TileColor.RED), "Boar has explicit Red track")
 	_assert(boar.has_explicit_track_for_color(Global.TileColor.BLUE), "Boar has explicit Blue track")
@@ -383,12 +383,12 @@ func _test_monster_tracks_and_colorless_fallback() -> void:
 	_assert(purple_t == boar.colorless_fallback_track, "Boar Purple routes to colorless fallback track")
 
 	var enemy_paths := [
-		"res://entities/enemies/minions/wild_boar/wild_boar_1.tres",
-		"res://entities/enemies/minions/bear_stravnica/bear_stravnica.tres",
-		"res://entities/enemies/minions/peasant/peasant_1.tres",
-		"res://entities/enemies/minions/vila/vila.tres",
-		"res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres",
-		"res://entities/enemies/bosses/lamia/lamia.tres"
+		"res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres",
+		"res://core/entities/enemies/minions/bear_stravnica/bear_stravnica.tres",
+		"res://core/entities/enemies/minions/peasant/peasant_1.tres",
+		"res://core/entities/enemies/minions/vila/vila.tres",
+		"res://core/entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres",
+		"res://core/entities/enemies/bosses/lamia/lamia.tres"
 	]
 	for ep in enemy_paths:
 		var er: EnemyResource = load(ep)
@@ -401,9 +401,9 @@ func _test_monster_tracks_and_colorless_fallback() -> void:
 # ------------------------------------------------------------------------------
 func _test_board_smart_beast_hybrid_and_bombs() -> void:
 	print("\n--- 5. Board AI (Smart, Beast, Hybrid) & Bomb Majority Color ---")
-	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://core/entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
-	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	var cap: EnemyResource = load("res://core/entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
 	cap.reset_stats_at_beginning_of_fight()
 
@@ -423,7 +423,7 @@ func _test_board_smart_beast_hybrid_and_bombs() -> void:
 	# Instantiate game_window to test real board resolution for Smart, Beast, and Bomb majority color
 	Global.cur_char = player
 	Global.set_up_enemy(cap)
-	var gw_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var gw_scene: PackedScene = load("res://scenes/combat/combat_screen.tscn")
 	var gw: GameMaster = gw_scene.instantiate()
 	add_child(gw)
 	await get_tree().create_timer(0.55).timeout
@@ -473,15 +473,15 @@ func _test_board_smart_beast_hybrid_and_bombs() -> void:
 # ------------------------------------------------------------------------------
 func _test_enemy_target_preview_and_cascade_suppression() -> void:
 	print("\n--- 5b. Enemy Target Visualization & AOE Cascade Exclusion ---")
-	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://core/entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
-	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	var cap: EnemyResource = load("res://core/entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
 	cap.reset_stats_at_beginning_of_fight()
 
 	Global.cur_char = player
 	Global.set_up_enemy(cap)
-	var gw_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var gw_scene: PackedScene = load("res://scenes/combat/combat_screen.tscn")
 	var gw: GameMaster = gw_scene.instantiate()
 	add_child(gw)
 	await get_tree().create_timer(0.55).timeout
@@ -551,9 +551,9 @@ func _test_enemy_target_preview_and_cascade_suppression() -> void:
 # ------------------------------------------------------------------------------
 func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	print("\n--- 6. Direct-Resource Rewards & 3-Source Draft ---")
-	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://core/entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
-	var boar: EnemyResource = load("res://entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
+	var boar: EnemyResource = load("res://core/entities/enemies/minions/wild_boar/wild_boar_1.tres").duplicate(true)
 	Global.cur_char = player
 	Global.set_up_enemy(boar)
 
@@ -567,7 +567,7 @@ func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	_assert(has_direct_equipment, "Warrior class_rewards pool contains direct Equipment resources without Reward wrappers")
 	_assert(not boar.loot_table.is_empty(), "Wild Boar has a populated monster loot_table")
 
-	var reward_scene: PackedScene = load("res://rewards/reward_screen.tscn")
+	var reward_scene: PackedScene = load("res://scenes/rewards/reward_screen.tscn")
 	var rs = reward_scene.instantiate()
 	add_child(rs)
 	await get_tree().process_frame
@@ -581,7 +581,7 @@ func _test_direct_equipment_rewards_and_three_source_draft() -> void:
 	_assert(rs.last_draft_sources == ["monster", "class", "class"], "With roll 0.75 (>= 0.5), sources are [monster, class, class]")
 
 	# Verify resource isolation when drafting direct Equipment with rolled rarity
-	var template_rush: Equipment = load("res://equipment/items/rush.tres")
+	var template_rush: Equipment = load("res://core/equipment/items/rush.tres")
 	var orig_rarity: Equipment.Rarity = template_rush.rarity
 	var drafted_epic_rush: Resource = RewardGrantHandler.prepare_draft_instance(template_rush, "EPIC")
 	_assert(drafted_epic_rush is Equipment and drafted_epic_rush != template_rush, "Drafted Equipment is an independent instance")
@@ -675,7 +675,7 @@ func _test_per_action_critical_hits() -> void:
 	_assert(strike_eq.criting == false, "Equipment criting flag resets to false after activation")
 
 	# 7. Tile neutrality: board tile scene has no crit_shader or is_criting
-	var tile_scene: PackedScene = load("res://combat/tiles/tile.tscn")
+	var tile_scene: PackedScene = load("res://scenes/combat/tiles/tile.tscn")
 	_assert(tile_scene != null, "Tile scene loads cleanly")
 	var tile_instance = tile_scene.instantiate()
 	_assert(not ("is_criting" in tile_instance), "Tile has no is_criting property")
@@ -694,7 +694,7 @@ func _test_save_load_persistence() -> void:
 	var prev_save_path: String = Global.save_path
 	Global.save_path = test_save_path
 
-	var player: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
+	var player: PlayerResource = load("res://core/entities/player/classes/warrior/warrior.tres").duplicate(true)
 	player.reset_stats_at_beginning_of_game()
 	var base_might: float = player.might
 	var red_track: ColorLoadoutTrack = player.get_track_for_color(Global.TileColor.RED)
@@ -706,14 +706,14 @@ func _test_save_load_persistence() -> void:
 	p_saved.might = 3.0
 	player.equip_passive(p_saved)
 
-	var cap: EnemyResource = load("res://entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
+	var cap: EnemyResource = load("res://core/entities/enemies/minions/karjaliia_cap/karjaliia_cap_1.tres").duplicate(true)
 	cap.cur_health = cap.max_health
 	cap.reset_stats_at_beginning_of_fight()
 	cap.advance_hybrid_action_state() # hybrid_next_is_beast = true
 
 	Global.cur_char = player
 	Global.cur_enemy = cap
-	Global.cur_scene = "res://map/locations_screen.tscn"
+	Global.cur_scene = "res://scenes/locations/locations_screen.tscn"
 	Global.save()
 
 	# Clear runtime state and reload
@@ -779,7 +779,7 @@ func _test_unified_buffs_and_debuffs() -> void:
 	BuffRegistry.register_buff(
 		"test_bleed",
 		"Bleed",
-		"res://assets/sprites/ui/combat/buff_combo.png",
+		"res://scenes/combat/assets/buff_combo.png",
 		true,
 		true,
 		false,
@@ -862,7 +862,7 @@ func _test_unified_buffs_and_debuffs() -> void:
 		BuffRegistry.register_buff(
 			extra_id,
 			"Test Buff %d" % i,
-			"res://assets/sprites/ui/combat/buff_dodge.png",
+			"res://scenes/combat/assets/buff_dodge.png",
 			false,
 			false,
 			true,
@@ -964,11 +964,11 @@ func _test_five_passive_slots_and_inventory_removal() -> void:
 # ------------------------------------------------------------------------------
 func _test_unified_four_reward_types_and_build_affinity() -> void:
 	print("\n--- 11. Unified 4 Reward Types & Build-Affinity Class Pool ---")
-	var plr: PlayerResource = load("res://entities/player/classes/warrior/warrior.tres").duplicate(true)
+	var plr: PlayerResource = load("res://core/entities/player/classes/warrior/warrior.tres").duplicate(true)
 	plr.reset_stats_at_beginning_of_game()
 
 	# 1. Verify all 4 RewardType enum values exist and work on unified Reward
-	var punch_eq: Equipment = load("res://equipment/items/punch.tres")
+	var punch_eq: Equipment = load("res://core/equipment/items/punch.tres")
 	var eq_reward: Reward = Reward.from_equipment(punch_eq, int(Equipment.Rarity.RARE))
 	_assert(eq_reward.reward_type == Reward.RewardType.EQUIPMENT, "Reward.from_equipment sets reward_type == EQUIPMENT")
 	_assert(eq_reward.get_effective_family() == "fists", "EQUIPMENT Reward inherits 'fists' family from Punch")
@@ -977,7 +977,7 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 	_assert(eq_reward.get_effective_shop_price() == 75, "RARE Reward defaults to 75 gold shop price")
 
 	# 2. Verify Type 1 (PASSIVE), Type 2 (STAT_BUFF), Type 3 (MECHANIC_UNLOCK)
-	var pas_rew: Reward = load("res://rewards/cards/fists/fists1_5_iron_muscles.tres").duplicate(true)
+	var pas_rew: Reward = load("res://scenes/rewards/cards/fists/fists1_5_iron_muscles.tres").duplicate(true)
 	_assert(pas_rew.reward_type == Reward.RewardType.PASSIVE, "Iron Muscles is RewardType.PASSIVE")
 	_assert(pas_rew.get_effective_family() == "fists", "Iron Muscles has family 'fists'")
 	var might_before: float = plr.might
@@ -985,14 +985,14 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 	_assert(plr.equipped_passives.size() == 1, "Granting PASSIVE reward equips it into passives ring")
 	_assert(is_equal_approx(plr.might, might_before + 1.0), "Equipped PASSIVE reward boosts Might by +1")
 
-	var stat_rew: Reward = load("res://rewards/cards/body/body0_strong_body_1.tres").duplicate(true)
+	var stat_rew: Reward = load("res://scenes/rewards/cards/body/body0_strong_body_1.tres").duplicate(true)
 	_assert(stat_rew.reward_type == Reward.RewardType.STAT_BUFF, "Strong Body I is RewardType.STAT_BUFF")
 	var max_hp_before: float = plr.max_health
 	RewardGrantHandler.grant_reward(stat_rew, true, plr)
 	_assert(is_equal_approx(plr.max_health, max_hp_before + 2.0), "Granting STAT_BUFF reward permanently increases max_health by +2")
 	_assert(plr.has_flag("flg_rew_body_1"), "Strong Body I unlocks tag 'flg_rew_body_1'")
 
-	var mech_rew: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres").duplicate(true)
+	var mech_rew: Reward = load("res://scenes/rewards/cards/utility/bomb0_hbombs.tres").duplicate(true)
 	_assert(mech_rew.reward_type == Reward.RewardType.MECHANIC_UNLOCK, "Horizontal Bombs is RewardType.MECHANIC_UNLOCK")
 	_assert(not plr.flg_can_spawn_row_bombs, "Row bombs initially locked")
 	_assert(RewardGrantHandler.can_be_offered_to(mech_rew, plr) == true, "Horizontal Bombs can be offered while locked")
@@ -1037,8 +1037,8 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 	var fam_counts: Dictionary = fist_player.get_build_family_counts()
 	_assert(int(fam_counts.get("fists", 0)) == 4, "Build family counter detects 4 equipped 'fists' items (3 active + 1 passive)")
 
-	var fist_cand: Reward = load("res://rewards/cards/fists/fists1_punch.tres")
-	var sword_cand: Reward = load("res://rewards/cards/sword/sword0_small_sword.tres")
+	var fist_cand: Reward = load("res://scenes/rewards/cards/fists/fists1_punch.tres")
+	var sword_cand: Reward = load("res://scenes/rewards/cards/sword/sword0_small_sword.tres")
 	var w_fist_affinity: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, true)
 	var w_sword_affinity: float = RewardGrantHandler.compute_selection_weight(sword_cand, fist_player, true)
 	var w_fist_monster: float = RewardGrantHandler.compute_selection_weight(fist_cand, fist_player, false)
@@ -1115,13 +1115,13 @@ func _test_unified_four_reward_types_and_build_affinity() -> void:
 	_assert(is_equal_approx(test_plr.cur_health, 31.0), "Claiming manual RARE Health Pickup raises cur_health by +16 (from max_health) + 5 (from heal_hp) = 31")
 
 	# Fixed rarity lock test (e.g. Bomb unlocks locked at LEGENDARY)
-	var fixed_bomb: Reward = load("res://rewards/cards/utility/bomb0_hbombs.tres")
+	var fixed_bomb: Reward = load("res://scenes/rewards/cards/utility/bomb0_hbombs.tres")
 	_assert(fixed_bomb.fixed_rarity == true and fixed_bomb.rarity == Reward.Rarity.LEGENDARY, "Horizontal Bombs has fixed_rarity=true at LEGENDARY")
 	_assert(not RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "COMMON"), "Fixed LEGENDARY reward cannot roll at COMMON")
 	_assert(RewardGrantHandler.can_roll_at_rarity(fixed_bomb, "LEGENDARY"), "Fixed LEGENDARY reward rolls at LEGENDARY")
 
 	# Equipment-granting Reward scales its embedded Equipment to the rolled rarity
-	var punch_card: Reward = load("res://rewards/cards/fists/fists1_punch.tres")
+	var punch_card: Reward = load("res://scenes/rewards/cards/fists/fists1_punch.tres")
 	var epic_punch_card: Reward = RewardGrantHandler.prepare_draft_instance(punch_card, "EPIC") as Reward
 	_assert(epic_punch_card != null and epic_punch_card.rarity == Reward.Rarity.EPIC, "Drafted EQUIPMENT Reward scales to EPIC")
 	var granted_mods: Array[Equipment] = epic_punch_card.get_resolved_modifiers()
@@ -1275,14 +1275,14 @@ func _test_core_pillars_and_derived_stat_scaling() -> void:
 	_assert(modal.passive_cards.size() == PlayerResource.MAX_PASSIVE_SLOTS, "PassiveReplaceModal renders 5 pixel-art passive slots")
 	modal.queue_free()
 
-	var combat_scene: PackedScene = load("res://combat/combat_screen.tscn")
+	var combat_scene: PackedScene = load("res://scenes/combat/combat_screen.tscn")
 	var combat = combat_scene.instantiate()
 	add_child(combat)
 	await get_tree().create_timer(0.55).timeout
 	var grd2 = combat.get_node("grd")
 	grd2.clear_board()
 	grd2.all_pieces = Global.make_2d_array(grd2.grd_width, grd2.grd_height)
-	var tile_sc: PackedScene = preload("res://combat/tiles/tile.tscn")
+	var tile_sc: PackedScene = preload("res://scenes/combat/tiles/tile.tscn")
 	var colors := [100, 200, 300, 400, 500]
 	for x in range(grd2.grd_width):
 		for y in range(grd2.grd_height):
